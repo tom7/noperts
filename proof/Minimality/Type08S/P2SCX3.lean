@@ -56,22 +56,22 @@ theorem lemmaSCX_gend (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   set η0 : ℝ := -(σ * k) * (zr - zx) / Xr with hη0
   have hη : η0 * Xr = -(σ * k) * (zr - zx) := by rw [hη0]; field_simp
   refine scx_wrap hF o E (θ0 := 0) (η0 := η0) (N := N) (k := k) hL hzx hcr hYr hYr hcg
-    (by nlinarith) (by nlinarith) ?_ ?_ ?_ ?_ ?_ ?_ hE
-  · left; simp only [rA, hN]; nlinarith
+    (by linarith) (by linarith) ?_ ?_ ?_ ?_ ?_ ?_ hE
+  · left; simp only [rA, hN]; linarith
   · right; constructor
     · simp only [rA]; ring
     · simp only [rC]
       have : (η0 * L + σ * k * (zf - zx) + 1 / 2) = - (σ * ((zr - zx) * L - (zf - zx) * Xr) / Xr * k) + 1 / 2 := by
         rw [hη0]; field_simp; ring
-      nlinarith
+      linarith
   · right; constructor
     · simp only [rA]; ring
     · simp only [rC]; nlinarith
-  · left; simp only [rA, hN]; nlinarith
-  · left; simp only [rA]; nlinarith
+  · left; simp only [rA, hN]; linarith
+  · left; simp only [rA]; linarith
   · right; constructor
     · simp only [rA]; ring
-    · simp only [rC]; nlinarith
+    · simp only [rC]; linarith
 
 end Type08Sp
 end Minimality

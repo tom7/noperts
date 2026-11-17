@@ -38,14 +38,14 @@ theorem rows_T4g (hF : Fr e1 e2 e3) (O : ℝ³) {κ κv L zf Xr Yr zr Xg Yg zg z
   have hLY : 0 < L * Yg := mul_pos hL hYg
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [h11, h21, h31, Qg, quad, Matrix.cons_val, zero_add, fpt_sub]
-  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by nlinarith [hLY])
-  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by nlinarith [hcr])
+  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by linarith [hLY])
+  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by linarith [hcr])
   · refine slideTest_of_deriv hF hκ hκv _ _ _ _ _ _ ?_ ?_
     · ring
-    · nlinarith [mul_pos (sub_pos.mpr hYrg) (neg_pos.mpr hzq)]
+    · linarith [mul_pos (sub_pos.mpr hYrg) (neg_pos.mpr hzq)]
   · refine slideTest_of_deriv hF hκ hκv _ _ _ _ _ _ ?_ ?_
     · ring
-    · nlinarith [mul_pos hYg (neg_pos.mpr hzq)]
+    · linarith [mul_pos hYg (neg_pos.mpr hzq)]
 
 end Type08Sp
 end Minimality

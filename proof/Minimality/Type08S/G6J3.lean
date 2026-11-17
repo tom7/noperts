@@ -31,7 +31,7 @@ theorem allsep4_real {n q B C α1 α4 β1 γ4 β6 : ℝ} (hn : 0 < n) (hα : 1 <
   rcases s4 with ⟨⟨d1, d2⟩, ⟨d3, d4⟩⟩ | ⟨⟨d1, d2⟩, ⟨d3, d4⟩⟩ <;>
   try linarith
   · -- all of q, a', C below 0 and below B
-    have hq : q < 0 := by nlinarith
+    have hq : q < 0 := by linarith
     rcases le_total α4 α1 with h | h
     · nlinarith [mul_nonneg h4.le (sub_nonneg.2 d4), mul_nonneg (sub_nonneg.2 h) (sub_nonneg.2 d3),
         mul_pos hE (neg_pos.2 hq)]

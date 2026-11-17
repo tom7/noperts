@@ -24,7 +24,7 @@ theorem q2poly (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : 1 < θ 
     common08 θ hθ
   have dA : 0 < -1 + θ 5 := by linarith
   have dB : 0 < -1 + θ 0 := by
-    have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
+    have h : 0 < θ 4 * (θ 0 - 1) := by linarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   nlinarith [mul_pos p3 p4, mul_pos (mul_pos p3 p4) dB, mul_pos p1 dA, mul_pos p2 p1,
     mul_pos (mul_pos p1 p2) dA, mul_pos p1 dA, mul_pos p0 dA, mul_pos p3 dA, mul_pos p4 dA]

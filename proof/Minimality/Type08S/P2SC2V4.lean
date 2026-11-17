@@ -44,11 +44,11 @@ theorem exists_b {L c1 c2 c3 d : ℝ} (hL : 0 < L) (hd : 0 < d) :
     have h2 : b ≤ d / (2 * (|c3| + 1)) := min_le_right _ _
     have h1' : b * (2 * (|c1| + |c2| + 1)) ≤ L := (le_div_iff₀ (by positivity)).1 h1
     have h2' : b * (2 * (|c3| + 1)) ≤ d := (le_div_iff₀ (by positivity)).1 h2
-  · nlinarith [neg_abs_le c1, abs_nonneg c2, mul_nonneg hb0.le (abs_nonneg c1), mul_nonneg hb0.le (abs_nonneg c2),
+  · linarith [neg_abs_le c1, abs_nonneg c2, mul_nonneg hb0.le (abs_nonneg c1), mul_nonneg hb0.le (abs_nonneg c2),
       mul_le_mul_of_nonneg_left (neg_abs_le c1) hb0.le]
-  · nlinarith [neg_abs_le c2, abs_nonneg c1, mul_nonneg hb0.le (abs_nonneg c1), mul_nonneg hb0.le (abs_nonneg c2),
+  · linarith [neg_abs_le c2, abs_nonneg c1, mul_nonneg hb0.le (abs_nonneg c1), mul_nonneg hb0.le (abs_nonneg c2),
       mul_le_mul_of_nonneg_left (neg_abs_le c2) hb0.le]
-  · nlinarith [mul_nonneg hb0.le (abs_nonneg c3)]
+  · linarith [mul_nonneg hb0.le (abs_nonneg c3)]
 
 /-- **Corollary SC2-V**, frame form. -/
 theorem lemmaSC2V (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
@@ -67,7 +67,7 @@ theorem lemmaSC2V (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
       (c3 := 0) (d := 1) hL one_pos
     have hgz : zg - zr ≠ 0 := fun h0 => by rw [h0] at hsep; simp at hsep
     refine sc2V_core_r hF o E hL hzx hYg hYgr hXg hcg hb (by linarith) (by linarith) hzf
-      (κ := zg - zr) (by nlinarith [sq_pos_of_ne_zero hgz]) (by nlinarith) hE
+      (κ := zg - zr) (by linarith [sq_pos_of_ne_zero hgz]) (by linarith) hE
   · obtain ⟨hXg, hzg, hYrg, hsep⟩ := h
     subst hXg; subst hzg
     have hXr : Xg < Xr := by nlinarith
@@ -75,7 +75,7 @@ theorem lemmaSC2V (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
       (c3 := 0) (d := 1) hL one_pos
     have hxz : zx - zg ≠ 0 := fun h0 => by rw [h0] at hsep; simp at hsep
     refine sc2V_core_g hF o E hL hzx hYr hYrg hXr hcg hb (by linarith) (by linarith) hzf
-      (κ := zx - zg) (by nlinarith) (by nlinarith [sq_pos_of_ne_zero hxz]) hE
+      (κ := zx - zg) (by linarith) (by linarith [sq_pos_of_ne_zero hxz]) hE
   · obtain ⟨hYY, hXg, hzg, hXr, hsep⟩ := h
     subst hYY; subst hXg; subst hzg
     obtain ⟨b, hb, hb1, hb2, hb3'⟩ := exists_b (L := Xg) (c1 := σ * (zp - zg)) (c2 := σ * (zx - zg))
@@ -85,9 +85,9 @@ theorem lemmaSC2V (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
       have h1 : b * (σ * (zr - zg)) ≤ b * |σ * (zr - zg)| :=
         mul_le_mul_of_nonneg_left (le_abs_self _) hb.le
       have h2 : 0 < Xr - Xg - σ * b * (zr - zg) := by linarith
-      nlinarith [mul_pos (sub_pos.2 hXr) h2]
+      linarith [mul_pos (sub_pos.2 hXr) h2]
     refine sc2V_core_end hF o E hL hzx hYr hXr hb (by linarith) (by linarith) hb3 hzf
-      (κ := zx - zg) (by nlinarith) (by nlinarith [sq_pos_of_ne_zero hxz]) hE
+      (κ := zx - zg) (by linarith) (by linarith [sq_pos_of_ne_zero hxz]) hE
 
 end Type08Sp
 end Minimality

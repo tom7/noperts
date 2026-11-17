@@ -33,8 +33,8 @@ theorem triCert_cornerF (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
   refine ⟨_, h1, _, h2, _, h3, ?_, ?_, ?_, ?_⟩ <;>
   · simp only [add_sub_add_left_eq_sub, pc_sub]
     first
-    | exact tiltSign_pos hF (by nlinarith [mul_pos hL hYg])
-    | exact tiltSign_tie hF (by ring) (by nlinarith [mul_pos hab hs, mul_pos hab hL])
+    | exact tiltSign_pos hF (by linarith [mul_pos hL hYg])
+    | exact tiltSign_tie hF (by ring) (by linarith [mul_pos hab hs, mul_pos hab hL])
 
 end Type08Sp
 end Minimality

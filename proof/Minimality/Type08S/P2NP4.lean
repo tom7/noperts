@@ -38,7 +38,7 @@ theorem rows_N2 (hF : Fr e1 e2 e3) (O : ℝ³) {κ κv L zf Xr Yr zr Xg Yg zg Xa
   have hLY : 0 < L * Ya := mul_pos hL hYa
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [h11, h21, h31, Qg, quad, Matrix.cons_val, zero_add, fpt_sub] <;>
-    refine slideTest_of_cross hF hκv _ _ _ _ _ _ ?_ <;> nlinarith [hLY, hfr, hrg, hgx]
+    refine slideTest_of_cross hF hκv _ _ _ _ _ _ ?_ <;> linarith [hLY, hfr, hrg, hgx]
 
 /-- Rows of the G-middle `q` (on the screen segment `0 g`, strictly inside), T4. -/
 theorem rows_T4 (hF : Fr e1 e2 e3) (O : ℝ³) {κ κv L zf Xr Yr zr Xg Yg zg Xq Yq zq : ℝ}
@@ -59,7 +59,7 @@ theorem rows_T4 (hF : Fr e1 e2 e3) (O : ℝ³) {κ κv L zf Xr Yr zr Xg Yg zg Xq
     have h : 0 < Yg * ((Xr - L) * Yq - Yr * (Xq - L)) := by
       have e : Yg * ((Xr - L) * Yq - Yr * (Xq - L)) = Yq * ((Xg - Xr) * (-Yr) - (Yg - Yr) * (L - Xr)) +
           Yr * L * (Yg - Yq) := by linear_combination (-Yr) * hcop
-      rw [e]; nlinarith [mul_pos hYq hcr, mul_pos (mul_pos hYr hL) (sub_pos.mpr hYlt)]
+      rw [e]; linarith [mul_pos hYq hcr, mul_pos (mul_pos hYr hL) (sub_pos.mpr hYlt)]
     exact pos_of_mul_pos_right h hYg.le
   have hr2 : 0 < (Xg - Xr) * (Yq - Yr) - (Yg - Yr) * (Xq - Xr) := by
     have h : 0 < Yg * ((Xg - Xr) * (Yq - Yr) - (Yg - Yr) * (Xq - Xr)) := by
@@ -69,12 +69,12 @@ theorem rows_T4 (hF : Fr e1 e2 e3) (O : ℝ³) {κ κv L zf Xr Yr zr Xg Yg zg Xq
     exact pos_of_mul_pos_right h hYg.le
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [h11, h21, h31, Qg, quad, Matrix.cons_val, zero_add, fpt_sub]
-  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by nlinarith [hLY])
-  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by nlinarith [hr1])
-  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by nlinarith [hr2])
+  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by linarith [hLY])
+  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by linarith [hr1])
+  · exact slideTest_of_cross hF hκv _ _ _ _ _ _ (by linarith [hr2])
   · refine slideTest_of_deriv hF hκ hκv _ _ _ _ _ _ ?_ ?_
     · linear_combination hcop
-    · nlinarith [hchord]
+    · linarith [hchord]
 
 end Type08Sp
 end Minimality

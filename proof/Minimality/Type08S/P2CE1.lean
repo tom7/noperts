@@ -66,7 +66,7 @@ theorem lemEs_frame (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg : 
   have key : Yr ^ 2 * (((Xr - Xg) * (κ - zf) + L * (zr - zg)) * ((Xr - Xg) * (0 - zf) + L * (zr - zg))) < 0 := by
     convert h using 1; ring
   by_contra hc; push Not at hc
-  nlinarith [mul_nonneg (sq_nonneg Yr) hc]
+  linarith [mul_nonneg (sq_nonneg Yr) hc]
 
 theorem rob_S {κ zf zr zg s' : ℝ} (hrob : Rob4 κ zf zr zg) (h0 : 0 < s') (h1 : s' < 1)
     (hzf : zf = zr + s' * (zg - zr)) :
@@ -156,7 +156,7 @@ theorem ce_frame (hF : Fr e1 e2 e3) (O : ℝ³) (E : Finset ℝ³) {κ L zf Xr Y
     have hXrg : Xg < Xr := by
       by_contra hh; push Not at hh
       rw [← hYeq] at hcg
-      nlinarith [mul_nonneg hYr.le (sub_nonneg.2 hh)]
+      linarith [mul_nonneg hYr.le (sub_nonneg.2 hh)]
     obtain ⟨m, σ0, hzr', hzg'⟩ : ∃ m σ0 : ℝ, σ0 + m * Xr = zr ∧ σ0 + m * Xg = zg := by
       have hne : Xg - Xr ≠ 0 := (by linarith : Xg - Xr < 0).ne
       refine ⟨(zg - zr) / (Xg - Xr), zr - (zg - zr) / (Xg - Xr) * Xr, by ring, ?_⟩
@@ -172,8 +172,8 @@ theorem ce_frame (hF : Fr e1 e2 e3) (O : ℝ³) (E : Finset ℝ³) {κ L zf Xr Y
       have h2 : 0 < (Xr - Xg) ^ 2 := pow_pos (sub_pos.2 hXrg) 2
       have h3 : (κ - σ0) * (0 - σ0) < 0 := by
         by_contra hh; push Not at hh
-        nlinarith [mul_nonneg h2.le hh]
-      nlinarith [sq_nonneg σ0]
+        linarith [mul_nonneg h2.le hh]
+      linarith [sq_nonneg σ0]
     rcases hs0.eq_or_lt with h0 | h0
     · -- f̄ = r̄
       have hXr : Xr = L := by rw [hLX, ← h0]; ring

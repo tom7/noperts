@@ -103,7 +103,7 @@ theorem crimA2 (θ : Fin 6 → ℝ) (hθ : Ineq08w θ) (h6 : 1 < θ 5) :
     common08w θ hθ.1 hθ.2.1 hθ.2.2
   have dA : 0 < -1 + (θ 5) := by linarith
   have dB : 0 < -1 + (θ 0) := by
-    have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
+    have h : 0 < θ 4 * (θ 0 - 1) := by linarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10⟩ := polyAw (θ 0) (θ 1) (θ 2) (θ 3) (θ 4) (θ 5) p0 p1 p2 p3 p4 dA dB ga gb
      f3 f5 f6 f7 f8 f9
@@ -173,7 +173,7 @@ theorem impK_T4 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ 
     all_goals
       simp only [inner_wv08]
       simp [cp08]
-      nlinarith [mul_pos hD2 (show 0 < 1 - θ 5 by linarith), mul_pos hD2 p4, mul_pos hD2 (mul_pos p4 p5),
+      linarith [mul_pos hD2 (show 0 < 1 - θ 5 by linarith), mul_pos hD2 p4, mul_pos hD2 (mul_pos p4 p5),
         mul_pos hD2 (mul_pos p1 (show 0 < 1 - θ 5 by linarith)), mul_pos hD2 (mul_pos p4 p3)]
 
 theorem nfN2_nws4 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ : Fin 6 → ℝ}

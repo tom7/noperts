@@ -87,7 +87,7 @@ theorem cef_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     have k4 : ⟪b' - a', e2⟫ * (0 - 0) = ⟪a - a', e2⟫ * (N.F.abc'.f b' - 0) := by
       rw [k1, k2]
       linear_combination (-⟪N.F.abc'.N, e1⟫) * hD0 + ⟪N.F.abc'.N, e3⟫ * hW0
-    nlinarith [mul_pos hYa (neg_pos.2 k3)]
+    linarith [mul_pos hYa (neg_pos.2 k3)]
   set E : Finset ℝ³ := {a' + pc e1 e2 e3 ⟪d - a', e1⟫ 0 ⟪d - a', e3⟫,
     a' + pc e1 e2 e3 ⟪a - a', e1⟫ ⟪a - a', e2⟫ ⟪a - a', e3⟫} with hEdef
   set V5 := rim5 e1 e2 e3 a' ⟪b - a', e1⟫ 0 κ ⟪b - a', e3⟫ ⟪c' - a', e1⟫ ⟪c' - a', e2⟫ ⟪c' - a', e3⟫
@@ -102,7 +102,7 @@ theorem cef_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     rw [hEdef, Finset.mem_insert, Finset.mem_singleton] at hy
     rcases hy with rfl | rfl
     · refine triCert_midF hF a' V5 hL hYg hXd0 hXdL m1 m2 m4 ?_
-      nlinarith [hside]
+      linarith [hside]
     · exact hs
   have hR := ce_frame hF a' E hκ hL hr hYg hcr hcg hE hrob
     (fun hY => by
@@ -155,7 +155,7 @@ theorem cef_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     rw [hEdef, Finset.mem_insert, Finset.mem_singleton] at hy
     rcases hy with rfl | rfl
     · refine triCert_midF hF d V5 hL hYg hXd0 hXdL m1 m2 m4 ?_
-      nlinarith [hside]
+      linarith [hside]
     · exact hs
   have hR := ce_frame hF d E hκ hL hr hYg hcr hcg hE hrob
     (fun hY => by
@@ -208,7 +208,7 @@ theorem cef_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     rw [hEdef, Finset.mem_insert, Finset.mem_singleton] at hy
     rcases hy with rfl | rfl
     · refine triCert_midF hF b V5 hL hYg hXd0 hXdL m1 m2 m4 ?_
-      nlinarith [hside]
+      linarith [hside]
     · exact hs
   have hR := ce_frame hF b E hκ hL hr hYg hcr hcg hE hrob
     (fun hY => by

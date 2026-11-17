@@ -35,7 +35,7 @@ theorem lemmaSC_s (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     IsRupert (rim5 e1 e2 e3 o L zp zx zf Xr Yr zr Xg Yg zg E) := by
   subst hYrg
   have hcr : 0 < (Xg - Xr) * (-Yg) - (Yg - Yg) * (L - Xr) := by nlinarith
-  have hcg : 0 < Yg * Xr - Xg * Yg := by nlinarith
+  have hcg : 0 < Yg * Xr - Xg * Yg := by linarith
   obtain ⟨c, hc⟩ : ∃ c : ℝ, c = 0 := ⟨0, rfl⟩
   -- the motion (no top vertex: `c = 0`)
   have hcond : ∀ a b : ℝ, 0 ≤ a → 0 < b → 0 < a ∨ (a = 0 ∧ 0 < b) := fun a b ha hb => by

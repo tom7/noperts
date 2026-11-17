@@ -62,7 +62,7 @@ theorem abs_prod_diff {p q p' q' r B : ℝ} (h1 : |p - p'| ≤ r) (h2 : |q| ≤ 
   rw [abs_mul, abs_mul]
   have hr : 0 ≤ r := (abs_nonneg _).trans h1
   have hB : 0 ≤ B := (abs_nonneg _).trans h2
-  nlinarith [mul_le_mul h1 h2 (abs_nonneg _) hr, mul_le_mul h3 h4 (abs_nonneg _) hB]
+  linarith [mul_le_mul h1 h2 (abs_nonneg _) hr, mul_le_mul h3 h4 (abs_nonneg _) hB]
 
 theorem gWa_err {x c : Fin 6 → ℝ} {r B : ℝ} (hx : ∀ i, |x i - c i| ≤ r) (hxB : ∀ i, |x i| ≤ B)
     (hcB : ∀ i, |c i| ≤ B) : |gWa x - gWa c| ≤ r * (2 + 4 * B) := by
@@ -72,7 +72,7 @@ theorem gWa_err {x c : Fin 6 → ℝ} {r B : ℝ} (hx : ∀ i, |x i - c i| ≤ r
   have q1 := abs_le.mp p1; have q2 := abs_le.mp p2
   have r1 := abs_le.mp (hx 2); have r2 := abs_le.mp (hx 0)
   rw [abs_le]
-  constructor <;> nlinarith [q1.1, q1.2, q2.1, q2.2, r1.1, r1.2, r2.1, r2.2]
+  constructor <;> linarith [q1.1, q1.2, q2.1, q2.2, r1.1, r1.2, r2.1, r2.2]
 
 theorem gWb_err {x c : Fin 6 → ℝ} {r B : ℝ} (hx : ∀ i, |x i - c i| ≤ r) (hxB : ∀ i, |x i| ≤ B)
     (hcB : ∀ i, |c i| ≤ B) : |gWb x - gWb c| ≤ r * (2 + 4 * B) := by
@@ -82,7 +82,7 @@ theorem gWb_err {x c : Fin 6 → ℝ} {r B : ℝ} (hx : ∀ i, |x i - c i| ≤ r
   have q1 := abs_le.mp p1; have q2 := abs_le.mp p2
   have r1 := abs_le.mp (hx 1); have r2 := abs_le.mp (hx 4)
   rw [abs_le]
-  constructor <;> nlinarith [q1.1, q1.2, q2.1, q2.2, r1.1, r1.2, r2.1, r2.2]
+  constructor <;> linarith [q1.1, q1.2, q2.1, q2.2, r1.1, r1.2, r2.1, r2.2]
 
 /-- Core: approximants `θs n` within `t²` of the centre `θ + t v`, `t = 1/(n+1)`. -/
 theorem seq_core (θ : Fin 6 → ℝ) (hθ : Ineq08w θ) (v : Fin 6 → ℝ) (a0 b0 : ℝ) (ha0 : 0 < a0)

@@ -92,14 +92,14 @@ theorem sc2S_params_r {σ L zp zx Xg m σ0 : ℝ} (hL : 0 < L) (hzx : 0 < σ * (
     set T := σ * z0 - σ * zx with hT
     have hT0 : 0 < T := by rw [hT]; linarith
     refine ⟨z0, -σ, 1 + |σ * (σ0 - zx)| / T, by positivity, ?_, ?_, ?_, ?_, ?_⟩
-    · nlinarith
-    · nlinarith
-    · nlinarith
+    · linarith
+    · linarith
+    · linarith
     · have hpos : 0 < 1 + |σ * (σ0 - zx)| / T := by positivity
-      have : 0 < σ * z0 - σ * zp := by nlinarith
-      nlinarith [mul_pos hpos this]
+      have : 0 < σ * z0 - σ * zp := by linarith
+      linarith [mul_pos hpos this]
     · have : (1 + |σ * (σ0 - zx)| / T) * T = T + |σ * (σ0 - zx)| := by field_simp
-      nlinarith [neg_abs_le (σ * (σ0 - zx))]
+      linarith [neg_abs_le (σ * (σ0 - zx))]
 
 end Type08Sp
 end Minimality

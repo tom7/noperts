@@ -38,7 +38,7 @@ theorem faceN_cyc {D α γ lam : ℝ} (hD : D < 0) (hα : 1 < α) (hγ : 0 < γ)
     | exact (h2' (by decide)).elim
     | (simp only [TSc, d3, faceCycN, s0, s1, s2, s3, quad4_0, quad4_1, quad4_2, quad4_3,
         Prod.fst_sub, Prod.snd_sub]
-       left; nlinarith)
+       left; linarith)
 
 set_option maxHeartbeats 1600000 in
 theorem faceN_rest {D α γ lam β1 β6 γ6 : ℝ} (hD : D < 0) (hα : 1 < α) (hγ : 0 < γ) (hlam : 0 < lam)
@@ -56,7 +56,7 @@ theorem faceN_rest {D α γ lam β1 β6 γ6 : ℝ} (hD : D < 0) (hα : 1 < α) (
   have kg6' := mul_pos (neg_pos.2 hD) (by linarith : (0:ℝ) < 1 - γ6)
   have kA := mul_pos (neg_pos.2 hD) (by nlinarith : (0:ℝ) < (α - 1) * γ6 + γ)
   have kB := mul_pos (neg_pos.2 hD) (by nlinarith : (0:ℝ) < α * (1 - γ6))
-  have kC := mul_pos (mul_pos (neg_pos.2 hD) hβ1) (by nlinarith : (0:ℝ) < α - 1 - γ * lam)
+  have kC := mul_pos (mul_pos (neg_pos.2 hD) hβ1) (by linarith : (0:ℝ) < α - 1 - γ * lam)
   have kD := mul_pos (mul_pos (neg_pos.2 hD) hlam) hβ6
   have kE := mul_pos (neg_pos.2 hD) hγ6
   refine ⟨?_, ?_, ?_⟩ <;> intro i <;>
@@ -64,8 +64,8 @@ theorem faceN_rest {D α γ lam β1 β6 γ6 : ℝ} (hD : D < 0) (hα : 1 < α) (
     (simp only [TSc, d3, faceCycN, s0, s1, s2, s3, quad4_0, quad4_1, quad4_2, quad4_3,
         Prod.fst_sub, Prod.snd_sub]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 end Type08Sp
 end Minimality

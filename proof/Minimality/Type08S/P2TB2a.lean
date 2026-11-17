@@ -46,7 +46,7 @@ theorem pic_K2T {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT : I
   obtain ⟨p0, p1, p2, p3, p4, p5, e1', e2', e3', ga, gb, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12⟩ :=
     common08 θ hθ
   have dB : 0 < -1 + θ 0 := by linarith
-  have t3 : 0 < -θ 0 + θ 0 * θ 3 + θ 2 := by nlinarith [mul_pos p1 p2]
+  have t3 : 0 < -θ 0 + θ 0 * θ 3 + θ 2 := by linarith [mul_pos p1 p2]
   have t6 := p2
   have hu : nfShape08 d E₁ E₂ E₃ θ 6 - nfShape08 d E₁ E₂ E₃ θ 2 = κ • e3 := hxe
   have hkD : 0 < κ * det3 E₁ E₂ E₃ := by

@@ -58,8 +58,8 @@ theorem triCert_midG (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
   refine ⟨_, h1, _, h2, _, h3, ?_, ?_, ?_, ?_⟩ <;>
   · simp only [add_sub_add_left_eq_sub, pc_sub]
     first
-    | exact tiltSign_pos hF (by nlinarith [mul_pos hL hYg, mul_pos (mul_pos hL hYg) hl0, mul_pos (mul_pos hL hYg) (sub_pos.2 hl1)])
-    | exact tiltSign_tie hF (by ring) (by nlinarith [mul_pos hs (neg_pos.2 hab)])
+    | exact tiltSign_pos hF (by linarith [mul_pos hL hYg, mul_pos (mul_pos hL hYg) hl0, mul_pos (mul_pos hL hYg) (sub_pos.2 hl1)])
+    | exact tiltSign_tie hF (by ring) (by linarith [mul_pos hs (neg_pos.2 hab)])
 
 /-- **Interior vertex**: strictly inside the screen triangle `(x', f, g)`. -/
 theorem triCert_int (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
@@ -71,7 +71,7 @@ theorem triCert_int (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
     TriCert V (pc e1 e2 e3 0 0 1) (pc e1 e2 e3 (σ * s) (-σ) 0) (o + pc e1 e2 e3 Xa Ya za) := by
   refine ⟨_, h1, _, h2, _, h3, ?_, ?_, ?_, ?_⟩ <;>
   · simp only [add_sub_add_left_eq_sub, pc_sub]
-    exact tiltSign_pos hF (by nlinarith)
+    exact tiltSign_pos hF (by linarith)
 
 end Type08Sp
 end Minimality

@@ -51,15 +51,15 @@ theorem triCert_quad (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
       · exact tiltSign_pos hF (by rw [hD] at hs; linarith)
       · refine tiltSign_tie hF (by rw [hD] at hs0; linarith) ?_
         rw [hW, hM] at hs; linarith
-    · exact tiltSign_pos hF (by nlinarith)
+    · exact tiltSign_pos hF (by linarith)
   have T2 : ∀ s : ℝ, (D < 0 ∨ (D = 0 ∧ 0 < -(σ * s * W - σ * M))) →
       TriCert V (pc e1 e2 e3 0 0 1) (pc e1 e2 e3 (σ * s) (-σ) 0) (o + pc e1 e2 e3 Xa Ya za) := by
     intro s hs
     refine ⟨_, h2, _, h3, _, h4, ?_, ?_, ?_, ?_⟩ <;>
       simp only [add_sub_add_left_eq_sub, pc_sub]
-    · exact tiltSign_pos hF (by nlinarith)
-    · exact tiltSign_pos hF (by nlinarith)
-    · exact tiltSign_pos hF (by nlinarith)
+    · exact tiltSign_pos hF (by linarith)
+    · exact tiltSign_pos hF (by linarith)
+    · exact tiltSign_pos hF (by linarith)
     · rcases hs with hs | ⟨hs0, hs⟩
       · exact tiltSign_pos hF (by rw [hD] at hs; linarith)
       · refine tiltSign_tie hF (by rw [hD] at hs0; linarith) ?_
@@ -69,9 +69,9 @@ theorem triCert_quad (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
   · have hW0 : W ≠ 0 := fun h => hnc ⟨hD0, h⟩
     rcases lt_or_gt_of_ne (mul_ne_zero hσ hW0) with hn | hp
     · filter_upwards [ev_aff (-(σ * W)) (σ * M) (by linarith)] with s hs
-      exact T2 s (Or.inr ⟨hD0, by nlinarith⟩)
+      exact T2 s (Or.inr ⟨hD0, by linarith⟩)
     · filter_upwards [ev_aff (σ * W) (-(σ * M)) hp] with s hs
-      exact T1 s (Or.inr ⟨hD0, by nlinarith⟩)
+      exact T1 s (Or.inr ⟨hD0, by linarith⟩)
   · exact Eventually.of_forall fun s => T1 s (Or.inl hDp)
 
 end Type08Sp

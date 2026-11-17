@@ -53,7 +53,7 @@ theorem extra_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg
     common08w θ hθ.1 hθ.2.1 hθ.2.2
   have dA : 0 < -1 + θ 5 := by linarith
   have dB : 0 < -1 + θ 0 := by
-    have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
+    have h : 0 < θ 4 * (θ 0 - 1) := by linarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   have hu : (nfShape08 d E₁ E₂ E₃ θ 4) - (nfShape08 d E₁ E₂ E₃ θ 1) = κ • e3 := hce
   have hkD : 0 < κ * det3 E₁ E₂ E₃ := by

@@ -42,7 +42,7 @@ theorem certD_of {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L)
   rcases hz with ⟨hz1, hz2, hz3, hz4, hz5⟩ | ⟨hz1, hz2, hz3, hz4⟩
   · obtain ⟨η, hη, h1, h2, h3⟩ := exists_small (σ0 - z0) (σ0 - zp) (σ0 + m * L - zf)
       (by linarith) (by linarith) (by linarith)
-    refine ⟨σ0 - η, -1, m, -z0, 1, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> nlinarith
+    refine ⟨σ0 - η, -1, m, -z0, 1, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
   · obtain ⟨η, hη, h1, h2, h3⟩ := exists_small (zx - σ0) (σ0 - zp) (σ0 + m * L - zf)
       (by linarith) (by linarith) (by linarith)
     set K := (|σ0 - η - zx| + |σ0 - η - zp|) / (z0 - zx) + 1 with hK

@@ -49,8 +49,8 @@ theorem r5A_cyc {D α β g v1 v2 v3 : ℝ} (hD : 0 < D) (hα : 0 < α) (hαg : 1
     | (simp only [TSc, d3, r5CycA, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 theorem r5A_rest {D α β g h k v1 v2 v3 : ℝ} (hD : 0 < D) (hα : 0 < α) (hαg : 1 < α + g) (hβ : 0 < β) (hg : 0 < g)

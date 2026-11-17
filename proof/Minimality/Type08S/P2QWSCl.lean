@@ -58,7 +58,7 @@ theorem side_pos (hF : Fr e1 e2 e3) {f : ℝ³ → ℝ} {N : ℝ³} (hN : ∀ y 
     nlinarith
   have hC0 : ⟪N, e3⟫ ≠ 0 := by intro h; rw [h] at hCk; simp at hCk
   have : 0 < (⟪N, e3⟫ * κ) * (⟪N, e3⟫ * S) := mul_pos_of_neg_of_neg hCk hCS
-  have h2 : 0 < ⟪N, e3⟫ ^ 2 * (κ * S) := by nlinarith
+  have h2 : 0 < ⟪N, e3⟫ ^ 2 * (κ * S) := by linarith
   exact (pos_of_mul_pos_right h2 (sq_nonneg _)) 
 
 /-- Nondegeneracy determinants of a `Norm08w` shape, through the normal form. -/

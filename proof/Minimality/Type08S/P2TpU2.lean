@@ -36,7 +36,7 @@ theorem tpU2 {a c ν α4 γ4 β1 : ℝ} (hν : 0 < ν) (hα4 : 0 < α4) (hγ4 : 
     push Not at hcon
     obtain ⟨hc, ha⟩ := hcon
     rcases le_total a (α4 * a + γ4 * c) with h | h
-    · rw [max_eq_right h] at hM0; nlinarith [mul_nonneg hα4.le (neg_nonneg.2 ha), mul_nonneg hγ4.le (neg_nonneg.2 hc)]
+    · rw [max_eq_right h] at hM0; linarith [mul_nonneg hα4.le (neg_nonneg.2 ha), mul_nonneg hγ4.le (neg_nonneg.2 hc)]
     · rw [max_eq_left h] at hM0; linarith
   have hC : c < α4 * a + γ4 * c ∨ c < 0 := by
     by_contra hcon
@@ -48,8 +48,8 @@ theorem tpU2 {a c ν α4 γ4 β1 : ℝ} (hν : 0 < ν) (hα4 : 0 < α4) (hγ4 : 
       rcases le_total a (α4 * a + γ4 * c) with h | h
       · rw [max_eq_right h] at hM; linarith
       · rw [max_eq_left h] at hM; exact hM
-    nlinarith [mul_pos hα4 (sub_pos.2 hac), mul_nonneg hc0 (sub_nonneg.2 hE.le)]
-  have hA : a < a + β1 * ν := by nlinarith [mul_pos hβ1 hν]
+    linarith [mul_pos hα4 (sub_pos.2 hac), mul_nonneg hc0 (sub_nonneg.2 hE.le)]
+  have hA : a < a + β1 * ν := by linarith [mul_pos hβ1 hν]
   rcases lt_or_gt_of_ne h1 with p | p
   · refine ⟨3, fun i hi => ?_⟩
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>

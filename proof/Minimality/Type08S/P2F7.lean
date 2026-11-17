@@ -56,7 +56,7 @@ theorem S3_pos : 0 < r1 * b2 - r2 * b1 := by
   have hneg : FH.a * (r1 * b2 - r2 * b1) < 0 := by
     rw [e, h1]; have := mul_neg_of_pos_of_neg hb2 h2; linarith
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
+  linarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
 
 theorem delta_T2 (hz : 0 < zv) (hzw : zw < 0) : FT2.d < 0 := by
   have := h.T2_V; have := h.T2_W; simp only [Fc.ev] at *
@@ -71,11 +71,11 @@ theorem T2_a_neg_iff (hz : 0 < zv) (hzw : zw < 0) : FT2.a < 0 ↔ za > zv := by
   constructor
   · intro ha
     by_contra hc; push Not at hc
-    nlinarith [mul_pos (show 0 < -FT2.a by linarith) (mul_pos h.hxa hz),
+    linarith [mul_pos (show 0 < -FT2.a by linarith) (mul_pos h.hxa hz),
       mul_nonneg (show 0 ≤ -FT2.d by linarith) (show 0 ≤ zv - za by linarith)]
   · intro hc
     by_contra ha; push Not at ha
-    nlinarith [mul_nonneg ha (mul_pos h.hxa hz).le,
+    linarith [mul_nonneg ha (mul_pos h.hxa hz).le,
       mul_pos (show 0 < -FT2.d by linarith) (show 0 < za - zv by linarith)]
 
 theorem T2_a_neg_of_le (hz : 0 < zv) (hzw : zw < 0) (hr : b2 ≤ r2) : FT2.a < 0 := by
@@ -89,7 +89,7 @@ theorem T2_a_neg_of_le (hz : 0 < zv) (hzw : zw < 0) (hr : b2 ≤ r2) : FT2.a < 0
     have := mul_neg_of_pos_of_neg h.hb2 h2
     linarith
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hh hS.le, mul_nonneg (show 0 ≤ -FT2.d by linarith) (show 0 ≤ r2 - b2 by linarith)]
+  linarith [mul_nonneg hh hS.le, mul_nonneg (show 0 ≤ -FT2.d by linarith) (show 0 ≤ r2 - b2 by linarith)]
 
 end TpCfg
 

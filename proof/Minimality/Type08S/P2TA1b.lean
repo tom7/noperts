@@ -38,9 +38,9 @@ theorem hpm_T (hF : Fr e1 e2 e3) (O : ℝ³) {κ κv L zf zp : ℝ} (hκ : κ �
   have ht : 0 < t := ht0
   have hD : 0 < L - t * κ * (zf - κ) := by linarith
   have hr0 : 0 < t * κ * (zp - zf) / (L - t * κ * (zf - κ)) :=
-    div_pos (by nlinarith [mul_pos ht hm]) hD
+    div_pos (by linarith [mul_pos ht hm]) hD
   have hr1 : t * κ * (zp - zf) / (L - t * κ * (zf - κ)) < 1 := by
-    rw [div_lt_one hD]; nlinarith
+    rw [div_lt_one hD]; linarith
   have hDne : L - t * κ * (zf - κ) ≠ 0 := hD.ne'
   refine ⟨1 - t * κ * (zp - zf) / (L - t * κ * (zf - κ)),
     L * (zp - zf) / ((L - t * κ * (zf - κ)) * κv), by linarith, by linarith, ?_, ?_⟩

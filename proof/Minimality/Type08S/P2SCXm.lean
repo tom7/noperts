@@ -114,7 +114,7 @@ theorem scx_master (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
 theorem ev_lin {α β : ℝ} (hα : 0 < α) : ∀ᶠ M : ℝ in atTop, 0 < α * M + β := by
   filter_upwards [eventually_gt_atTop (|β| / α)] with M hM
   have := (div_lt_iff₀ hα).1 hM
-  nlinarith [neg_abs_le β]
+  linarith [neg_abs_le β]
 
 /-- **Wrapper**: `b = 1/2`, `ρ = σ k` with `k σ (zx - zp) ≥ max 1 (N (zx - zp) + 1)`; rows `q1`–`q4` and the
 `E`-certificates are discharged. -/
@@ -141,11 +141,11 @@ theorem scx_wrap (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     hL hzx hcr hYr hYg hcg ?_ ?_ ?_ ?_ q5 q6 q7 q8 q9 q10 hE
   · right
     refine ⟨by simp [rA], ?_⟩
-    simp only [rC]; nlinarith
+    simp only [rC]; linarith
   · have : (N - σ * k) * (zp - zx) = k * (σ * (zx - zp)) - N * (zx - zp) := by ring
     rw [this]; nlinarith
-  · nlinarith
-  · left; simp only [rA]; nlinarith
+  · linarith
+  · left; simp only [rA]; linarith
 
 end Type08Sp
 end Minimality

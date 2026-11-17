@@ -37,7 +37,7 @@ theorem lx_depth {σ S L zp zx zf Xr Yr zr Xg Yg zg : ℝ} (hσσ : σ * σ = 1)
   · -- t = r : r ties f in h, below it in c
     have hrf : LL (σ * zr) (S * Xr - Yr) (σ * zf) (S * L) :=
       Or.inr ⟨by rw [hzr], by rw [hXr]; linarith⟩
-    have hgf : 0 < σ * (zg - zf) := sgn_pos hσσ hxf (by nlinarith)
+    have hgf : 0 < σ * (zg - zf) := sgn_pos hσσ hxf (by linarith)
     have tri : LL (σ * zx) 0 (σ * zg) (S * Xg - Yg) ∨ LL (σ * zg) (S * Xg - Yg) (σ * zx) 0 := by
       rcases lt_trichotomy (σ * zx) (σ * zg) with h | h | h
       · exact Or.inl (Or.inl h)

@@ -58,17 +58,17 @@ theorem lemmaSCX_gvert (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   have ek2 := ev_lin (α := σ * (zx - zp)) (β := -(N * (zx - zp) + 1)) hzx
   obtain ⟨k, hk1, hk2⟩ := (ek1.and ek2).exists
   refine scx_wrap hF o E (θ0 := θ0) (η0 := η0) (N := N) (k := k) hL hzx hcr hYr hYg hcg
-    (by nlinarith) (by nlinarith) ?_ ?_ ?_ ?_ ?_ ?_ hE
-  · left; simp only [rA, hN]; nlinarith
-  · left; simp only [rA]; nlinarith [mul_pos hθpos hL]
-  · left; simp only [rA, hN]; nlinarith
-  · left; simp only [rA, hN]; nlinarith
+    (by linarith) (by linarith) ?_ ?_ ?_ ?_ ?_ ?_ hE
+  · left; simp only [rA, hN]; linarith
+  · left; simp only [rA]; linarith [mul_pos hθpos hL]
+  · left; simp only [rA, hN]; linarith
+  · left; simp only [rA, hN]; linarith
   · right; constructor
     · simp only [rA]; linear_combination (-Yg) * hθ
-    · simp only [rC]; nlinarith [mul_pos (mul_pos hYg hηpos) hYg]
+    · simp only [rC]; linarith [mul_pos (mul_pos hYg hηpos) hYg]
   · right; constructor
     · simp only [rA]; linear_combination (Yg - Yr) * hθ
-    · simp only [rC]; nlinarith
+    · simp only [rC]; linarith
 
 end Type08Sp
 end Minimality

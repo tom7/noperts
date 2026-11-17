@@ -74,8 +74,8 @@ theorem Tp_depth_sep {Zd Za Zb Zbp Zc Zcp α4 γ4 β1 : ℝ}
       have hbp1 : α4 * a + γ4 * c ≥ c := by linarith
       have hbp2 : α4 * a + γ4 * c ≥ a + β1 * (Zb - Zd) := by linarith
       rcases lt_or_ge a c with hac | hac
-      · nlinarith [mul_pos hα4 (sub_pos.2 hac), mul_nonneg (sub_pos.2 hαγ).le (neg_nonneg.2 hcc)]
-      · nlinarith [mul_neg_of_pos_of_neg (sub_pos.2 hαγ) had, mul_nonneg hγ4.le (sub_nonneg.2 hac)]
+      · linarith [mul_pos hα4 (sub_pos.2 hac), mul_nonneg (sub_pos.2 hαγ).le (neg_nonneg.2 hcc)]
+      · linarith [mul_neg_of_pos_of_neg (sub_pos.2 hαγ) had, mul_nonneg hγ4.le (sub_nonneg.2 hac)]
   obtain ⟨s1, s2, s3, s4⟩ := hsepw
   have hc0 : 0 ≤ c := by linarith
   have hq' : Zc = max Za Zbp := by rw [max_eq_right s3] at hq; exact hq
@@ -84,7 +84,7 @@ theorem Tp_depth_sep {Zd Za Zb Zbp Zc Zcp α4 γ4 β1 : ℝ}
     · rw [h] at hq'
       have hca : a = c := by rw [ha, hc, hq']
       have : Zbp - Zd = (α4 + γ4) * c := by rw [hbp', hca]; ring
-      nlinarith [mul_nonneg (sub_pos.2 hαγ).le hc0]
+      linarith [mul_nonneg (sub_pos.2 hαγ).le hc0]
     · rw [h] at hq'; exact hq'.symm
   have hcpgt : Zbp < Zcp := by
     rcases lt_or_eq_of_le s2 with h | h

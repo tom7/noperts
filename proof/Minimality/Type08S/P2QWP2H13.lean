@@ -77,19 +77,19 @@ theorem lemE_strict_w {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     have k : 0 < (-(θ 0) + (θ 0) * (θ 3) - (θ 1) * (θ 2) + (θ 2)) *
         (-(θ 0) * (θ 3) + (θ 0) * (θ 3) * (θ 4) + (θ 0) * (θ 5) + (θ 1) * (θ 2) * (θ 5) - (θ 2) * (θ 5)) :=
       mul_pos ga (by linarith)
-    nlinarith [mul_pos hD2 k]
+    linarith [mul_pos hD2 k]
   · rw [det3_nfd, det3_nfd]
     simp only [ddet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
       Matrix.head_cons]
     have k : 0 < (-(θ 0) + (θ 0) * (θ 3) - (θ 1) * (θ 2) + (θ 2)) * (θ 1 * θ 2) :=
       mul_pos ga (mul_pos p1 p2)
-    nlinarith [mul_pos hD2 k]
+    linarith [mul_pos hD2 k]
   · rw [det3_nfd, det3_nfd]
     simp only [ddet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
       Matrix.head_cons]
     have k : 0 < (-(θ 0) + (θ 0) * (θ 3) - (θ 1) * (θ 2) + (θ 2)) * (θ 1 * θ 2) :=
       mul_pos ga (mul_pos p1 p2)
-    nlinarith [mul_pos hD2 k]
+    linarith [mul_pos hD2 k]
 
 /-- The parallel set contradicts strict Lemma E (`x` would lie on `Π'`). -/
 theorem par_false (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg : ℝ}

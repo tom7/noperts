@@ -29,12 +29,12 @@ theorem exists_seq_strict (θ : Fin 6 → ℝ) (hθ : Ineq08w θ) :
       have := hθ.2.1
       rw [gWa_eq] at this ⊢
       simp
-      nlinarith)
+      linarith)
     (fun t ht _ => by
       have := hθ.2.2
       rw [gWb_eq] at this ⊢
       simp
-      nlinarith)
+      linarith)
   exact ⟨θs, h, h2, h3⟩
 
 /-- Strict generic approximants on the T4 side of a point of the T4 closure (direction `e₀ + e₃ - e₅`). -/

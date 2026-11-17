@@ -30,7 +30,7 @@ theorem cell2_rest {σ t1 ν v1 ha w1 w3 C0 α1 α4 γ4 β1 β6 : ℝ}
         (cell2Rim ν v1 ha w1 w3 C0 α1 α4 γ4 β1 β6 (i + 1)) (0, 0, C0) := by
   obtain ⟨s0, s1, s2, s3, s4, s5⟩ := c2z6_add_one
   have hr : 0 < -(σ * v1) := by linarith
-  have hB : 0 < α4 - α1 * (1 - γ4) := by nlinarith [mul_pos hα4 hβ1]
+  have hB : 0 < α4 - α1 * (1 - γ4) := by linarith [mul_pos hα4 hβ1]
   have hF : 0 < α4 + γ4 - 1 := by
     rcases le_or_gt γ4 1 with h | h
     · nlinarith

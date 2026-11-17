@@ -67,7 +67,7 @@ theorem sc2V_core_g (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   have hXL : 0 < Xr - L := sub_pos.2 hXr
   refine sc5_core2 hF o E (S := s) (⟨-(σ * b), M * κ, -1, -Yg - M * κ * zf, L - σ * b * zf⟩ : Mo)
     (⟨0, 0, 0, d9 - q - σ * s * (σ * b * Yg + M * κ * L), σ * (σ * b * Yg + M * κ * L) - G / 2⟩ : Mo)
-    hL hzx (by nlinarith [mul_pos hXL hYg]) hYr hcg (by linarith)
+    hL hzx (by linarith [mul_pos hXL hYg]) hYr hcg (by linarith)
     ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hEs
   all_goals simp only [Rw, L2, VX, VY]
   · left; linarith [mul_pos hL hb1]
@@ -76,7 +76,7 @@ theorem sc2V_core_g (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   · right; refine ⟨by ring, ?_⟩
     linarith [h3]
   · left; linarith [h4]
-  · left; nlinarith [mul_pos hYr hYg]
+  · left; linarith [mul_pos hYr hYg]
   · right; refine ⟨by ring, ?_⟩
     linarith [mul_pos hL hG0, hGL]
   · left; linarith [h7]

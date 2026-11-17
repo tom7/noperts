@@ -60,7 +60,7 @@ theorem sc2S_core_r (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     have : 0 < Xg + s * Y := by linarith
     by_contra hneg; push Not at hneg
     nlinarith [mul_nonneg (by linarith : 0 ≤ -s) hY.le, hXg, hL]
-  have hDpos : 0 < DSr σ L zp Y m σ0 z0 κ ρ μ s := by unfold DSr; nlinarith [hDs]
+  have hDpos : 0 < DSr σ L zp Y m σ0 z0 κ ρ μ s := by unfold DSr; linarith [hDs]
   have hDdef : DSr σ L zp Y m σ0 z0 κ ρ μ s = σ * κ * (ρ * s) * (σ0 - zp) * (z0 - (σ0 + m * L)) -
       L * σ ^ 2 * Y * (1 + m ^ 2) - L * σ * μ * m * Y := rfl
   obtain ⟨η, hη⟩ : ∃ η, η = DSr σ L zp Y m σ0 z0 κ ρ μ s / (2 * L) := ⟨_, rfl⟩
@@ -71,7 +71,7 @@ theorem sc2S_core_r (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   refine sc5_core2 hF o E (S := s) (moSr σ m σ0 z0 κ ρ μ L s)
     (⟨0, 0, 0, 0, -σ ^ 2 * Y * (1 + m ^ 2) - σ * μ * m * Y +
       σ * κ * (ρ * s) * (L * (1 + m ^ 2) + m * (σ0 - z0)) - η⟩ : Mo) hL hzx
-    (by nlinarith [mul_pos hY hLX]) hY (by nlinarith [mul_pos hY hLX]) (by linarith)
+    (by linarith [mul_pos hY hLX]) hY (by linarith [mul_pos hY hLX]) (by linarith)
     ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hEs
   all_goals simp only [Rw, L2, moSr, VX, VY]
   · left; linarith [mul_pos hL (sub_pos.2 hμ1)]

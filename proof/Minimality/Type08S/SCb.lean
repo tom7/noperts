@@ -29,7 +29,7 @@ theorem ev_pos_lin (α β γ : ℝ) (h : 0 < α ∨ (α = 0 ∧ 0 < β)) :
       exact div_le_self (abs_nonneg _) h1
     have := neg_abs_le β
     have := neg_abs_le (γ / s)
-    nlinarith [abs_nonneg γ]
+    linarith [abs_nonneg γ]
   · filter_upwards [eventually_gt_atTop (max 1 (|γ| / β))] with s hs
     have h1 : 1 < s := lt_of_le_of_lt (le_max_left _ _) hs
     have h2 : |γ| / β < s := lt_of_le_of_lt (le_max_right _ _) hs
@@ -38,7 +38,7 @@ theorem ev_pos_lin (α β γ : ℝ) (h : 0 < α ∨ (α = 0 ∧ 0 < β)) :
       rw [abs_div, abs_of_pos (by linarith : 0 < s), div_lt_iff₀ (by linarith)]
       linarith
     have := neg_abs_le (γ / s)
-    nlinarith
+    linarith
 
 theorem ev_of_eq {P : ℝ → ℝ} (α β γ : ℝ) (h : 0 < α ∨ (α = 0 ∧ 0 < β))
     (he : ∀ s : ℝ, 0 < s → P s = α * s + β + γ / s) : ∀ᶠ s : ℝ in atTop, 0 < P s := by

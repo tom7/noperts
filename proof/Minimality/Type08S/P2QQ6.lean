@@ -30,20 +30,20 @@ theorem exists_norm08w {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
   rcases hpick with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩
   · -- z = c
     have h : galeD G.l G.m a c * galeD G.l G.m b c < 0 := by
-      have := hC; rw [anti a c, anti b c] at this; nlinarith
+      have := hC; rw [anti a c, anti b c] at this; linarith
     rcases sign_step σ _ _ h with s | s
     · exact Or.inl ⟨⟨F, hd, G', hκ _ _ h1, hκ _ _ h2, hle _ _ s⟩⟩
     · exact Or.inr (Or.inl ⟨⟨F.perm₁₂, hd.perm₁₂, G'.perm₁₂, hκ _ _ h2, hκ _ _ h1, hle _ _ s⟩⟩)
   · -- z = b
     have h : galeD G.l G.m a b * galeD G.l G.m c b < 0 := by
-      have := hB; rw [anti a b, anti c b] at this; nlinarith
+      have := hB; rw [anti a b, anti c b] at this; linarith
     rcases sign_step σ _ _ h with s | s
     · exact Or.inr (Or.inr (Or.inl ⟨⟨F.perm₂₃, hd.perm₂₃, G'.perm₂₃, hκ _ _ h1, hκ _ _ h2, hle _ _ s⟩⟩))
     · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨⟨F.perm₂₃.perm₁₂, hd.perm₂₃.perm₁₂, G'.perm₂₃.perm₁₂,
         hκ _ _ h2, hκ _ _ h1, hle _ _ s⟩⟩)))
   · -- z = a
     have h : galeD G.l G.m b a * galeD G.l G.m c a < 0 := by
-      rw [anti a b, anti a c]; nlinarith
+      rw [anti a b, anti a c]; linarith
     rcases sign_step σ _ _ h with s | s
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨⟨F.perm₁₂.perm₂₃, hd.perm₁₂.perm₂₃,
         G'.perm₁₂.perm₂₃, hκ _ _ h1, hκ _ _ h2, hle _ _ s⟩⟩))))

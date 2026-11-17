@@ -57,7 +57,7 @@ theorem lemmaSCd_I (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     (by linarith) (by linarith) (by linarith)
   refine lemmaSC_s (σ := 1) hF o E (φ0 := σ0 - η) (φ1 := -1) (θ := m) (χ0 := -z0) (χ1 := 1)
     hL (by linarith : (0:ℝ) < 1 * (zx - zp)) hYr rfl hXrg ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hE
-  all_goals nlinarith
+  all_goals linarith
 
 /-- **Corollary SC-d, case (II)** (`x` below the crossing level): `g, x` below `z0`, `f, r` above. -/
 theorem lemmaSCd_II (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)

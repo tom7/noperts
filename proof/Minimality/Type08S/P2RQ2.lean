@@ -66,7 +66,7 @@ theorem exists_mu' (p q r : ℝ³) (hΔ : det3 p q r ≠ 0) (hpr : ⟪p, r⟫ = 
   · refine ⟨M / 3, by positivity, by linarith, ?_⟩
     rw [key] at h1 ⊢
     intro h2
-    have : ⟪p, q⟫ = 0 := by nlinarith
+    have : ⟪p, q⟫ = 0 := by linarith
     rw [this] at h1; linarith
   · exact ⟨M / 2, by positivity, by linarith, h1⟩
 

@@ -87,7 +87,7 @@ theorem side_pos (hF : Fr e1 e2 e3) {f : ℝ³ → ℝ} {N : ℝ³} (hN : ∀ y 
     nlinarith
   have hC0 : ⟪N, e3⟫ ≠ 0 := by intro h; rw [h] at hCk; simp at hCk
   have : 0 < (⟪N, e3⟫ * κ) * (⟪N, e3⟫ * S) := mul_pos_of_neg_of_neg hCk hCS
-  have h2 : 0 < ⟪N, e3⟫ ^ 2 * (κ * S) := by nlinarith
+  have h2 : 0 < ⟪N, e3⟫ ^ 2 * (κ * S) := by linarith
   exact (pos_of_mul_pos_right h2 (sq_nonneg _)) 
 
 /-- **Chord lemma** (G-side): a facet through `x` and `g`, with `xp` and `q` on its negative side,
@@ -118,10 +118,10 @@ theorem chord_neg (hF : Fr e1 e2 e3) {f : ℝ³ → ℝ} {N : ℝ³} (hN : ∀ y
     linarith
   have h1 : C * κ * (C * Δ) < 0 := mul_neg_of_pos_of_neg hCk hCΔ
   have hC0 : C ≠ 0 := by intro h; rw [h] at hCk; simp at hCk
-  have h2 : C ^ 2 * (κ * Δ) < 0 := by nlinarith
+  have h2 : C ^ 2 * (κ * Δ) < 0 := by linarith
   by_contra hh
   push Not at hh
-  nlinarith [sq_nonneg C, mul_nonneg (sq_nonneg C) hh]
+  linarith [sq_nonneg C, mul_nonneg (sq_nonneg C) hh]
 
 /-- Nondegeneracy determinants of a `Norm08` shape, through the normal form. -/
 theorem det_ne08 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) :
@@ -179,7 +179,7 @@ theorem choose_sigma {L zx zf Xr Yr zr Xg Yg zg κ S : ℝ} (hzx : zx = κ) (hκ
     (hS : 0 < κ * S) (h : TopP 0 L zx zf Xr Yr zr Xg Yg zg) :
     ∃ σ : ℝ, 0 < σ * (zx - 0) ∧ 0 < σ * S ∧ Top5 σ 0 L zx zf Xr Yr zr Xg Yg zg := by
   rcases h with h | ⟨σ0, m, Xx, z0, hYY, hXrg, hzz, rest⟩
-  · exact ⟨κ, by rw [hzx]; nlinarith [sq_pos_of_ne_zero hκ], hS, Or.inl h⟩
+  · exact ⟨κ, by rw [hzx]; linarith [sq_pos_of_ne_zero hκ], hS, Or.inl h⟩
   · have hκp : 0 < κ := by rw [← hzx]; linarith
     refine ⟨1, by linarith, ?_, Or.inr ⟨rfl, σ0, m, Xx, z0, hYY, hXrg, hzz, rest⟩⟩
     rw [one_mul]; exact (mul_pos_iff_of_pos_left hκp).mp hS

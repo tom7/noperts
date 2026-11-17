@@ -109,7 +109,7 @@ theorem isRupert_of_slide_robust (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : 
     exact isRupert_of_uniform_doubles_robustUnimodal V M ∅ R hR hr hRu x hxV hxM hp hin hz2 hnd2
       hM'' (fun y hy => absurd hy (Finset.notMem_empty _))
   rcases lt_or_gt_of_ne hρ with hn | hp
-  · exact key (-1) (Or.inr rfl) (by nlinarith)
+  · exact key (-1) (Or.inr rfl) (by linarith)
   · exact key 1 (Or.inl rfl) (by linarith)
 
 end Type08Sp

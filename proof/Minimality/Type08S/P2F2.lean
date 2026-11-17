@@ -76,7 +76,7 @@ theorem ta_cyc (q1 : 0 < r1 * b2 - r2 * b1) (q2 : 0 < (r1 - b1) * b2 + (r2 - b2)
   rcases zmod4_pairs i j h1 h2 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
       ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp only [aPts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
-    left <;> nlinarith
+    left <;> linarith
 
 theorem ta_b (hzv : 0 ≤ zv) (hzw : zw < 0)
     (t1 : 0 < py * b1 - px * b2) (t2 : 0 < -(py * A))
@@ -91,8 +91,8 @@ theorem ta_b (hzv : 0 ≤ zv) (hzw : zw < 0)
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [aPts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem ta_a' (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hmp : (1 - t) * zv < mp)
     (t2 : 0 < -(py * A)) (hA : 0 < A) (hb2 : 0 < b2)
@@ -113,8 +113,8 @@ theorem ta_a' (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hmp :
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [aPts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem ta_c' (ha3 : a3 < 0)
     (t1 : 0 < py * b1 - px * b2) (t3 : 0 < (r1 - b1) * py - (r2 - b2) * px)
@@ -129,8 +129,8 @@ theorem ta_c' (ha3 : a3 < 0)
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [aPts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 end ATests
 

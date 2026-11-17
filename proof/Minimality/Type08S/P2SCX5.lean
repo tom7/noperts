@@ -94,9 +94,9 @@ theorem lemmaSCX_open (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   · linarith
   · linarith
   · linarith
-  · rw [← hchi, hx0]; nlinarith
+  · rw [← hchi, hx0]; linarith
   · have : (zp - zx) / (zr - zx) = -((zx - zp) / (zr - zx)) := by ring
-    rw [← hchi, this]; nlinarith
+    rw [← hchi, this]; linarith
 
 end Type08Sp
 end Minimality

@@ -64,7 +64,7 @@ theorem mid_exists_end (O : ℝ³) {κ L zf zp κv : ℝ} (hL : 0 < L) (hκv : 0
     rw [this]
     have : 0 < t * (c * (zp - zf)) / (L * κv - t * c * (zf - κ)) := by
       refine div_pos (mul_pos ht0' ?_) ht4
-      rw [hc]; nlinarith [mul_pos hκv hz]
+      rw [hc]; linarith [mul_pos hκv hz]
     linarith
   · simpa using ht3
 

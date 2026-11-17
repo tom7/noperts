@@ -80,7 +80,7 @@ theorem tilt_choice {σ v1 w1 ha α1 α4 γ4 : ℝ} (hσ : σ = 1 ∨ σ = -1) (
     rw [this]
     have : ε < r * (γ4 - 1) / α4 := hεE
     rw [lt_div_iff₀ hα4] at this
-    nlinarith
+    linarith
   · linarith
   · have := key 1
     simpa [XY] using this

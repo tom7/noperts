@@ -53,7 +53,7 @@ theorem triCert_midG' (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
       rw [hY]; ring
     rw [e] at hchord
     by_contra hc; push Not at hc
-    nlinarith [mul_nonneg hYg.le hc]
+    linarith [mul_nonneg hYg.le hc]
   filter_upwards [ev_aff Yg Xg hYg] with s hs
   rw [hX, hY]
   exact triCert_midG hF o V hL hYg hl0 hl1 (by linarith) h1 h2 h3 hab
@@ -117,7 +117,7 @@ theorem pers_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg 
     rw [hEdef, Finset.mem_insert, Finset.mem_singleton] at hy
     rcases hy with rfl | rfl
     · refine triCert_midF hF d V5 hL hYg hXd0 hXdL m1 m2 m4 ?_
-      nlinarith [hside]
+      linarith [hside]
     · exact hs
   have hLem : ⟪b' - d, e2⟫ = ⟪c' - d, e2⟫ → LemEF 0 ⟪c - d, e1⟫ κ ⟪c - d, e3⟫ ⟪b' - d, e1⟫
       ⟪b' - d, e3⟫ ⟪c' - d, e1⟫ ⟪c' - d, e3⟫ := by
@@ -190,7 +190,7 @@ theorem pers_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg 
     rw [hEdef, Finset.mem_insert, Finset.mem_singleton] at hy
     rcases hy with rfl | rfl
     · refine triCert_midF hF b V5 hL hYg hXd0 hXdL m1 m2 m4 ?_
-      nlinarith [hside]
+      linarith [hside]
     · exact hs
   have hLem : ⟪b' - b, e2⟫ = ⟪c - b, e2⟫ → LemEF 0 ⟪c' - b, e1⟫ κ ⟪c' - b, e3⟫ ⟪b' - b, e1⟫
       ⟪b' - b, e3⟫ ⟪c - b, e1⟫ ⟪c - b, e3⟫ := by

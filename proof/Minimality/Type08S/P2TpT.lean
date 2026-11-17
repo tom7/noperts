@@ -88,7 +88,7 @@ theorem exists_t_C2 {σ v1 ha w1 α4 γ4 : ℝ} (hσ : σ * σ = 1) (hv : σ * v
       rw [h3]
       have : p * (1 + α4) ≤ -(σ * v1) * γ4 := by
         rw [le_div_iff₀ (by linarith)] at hp1; exact hp1
-      nlinarith [mul_pos hp0 hα4]
+      linarith [mul_pos hp0 hα4]
   set p1 := -(σ * v1) * γ4 / (1 + α4) with hp1
   have hp1pos : 0 < p1 := by positivity
   have hσ0 : σ ≠ 0 := by intro h; rw [h] at hσ; simp at hσ

@@ -71,7 +71,7 @@ theorem pers_KbT {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT : 
   have m4 : d + pc e1 e2 e3 ⟪c' - d, e1⟫ ⟪c' - d, e2⟫ ⟪c' - d, e3⟫ ∈ V5 := by simp [hV5, rim5]
   have hE : ∀ᶠ s : ℝ in atTop, ∀ y ∈ E, TriCert V5 (pc e1 e2 e3 0 0 1) (pc e1 e2 e3 (κ * s) (-κ) 0) y := by
     filter_upwards [triCert_midG' hF d V5 hL hYg hYq hYlt hcop hchord m4 m0 m2,
-      triCert_cornerF (σ := κ) hF d V5 hL hYg m1 m2 m4 (zd := ⟪a' - d, e3⟫) (by nlinarith [hDp'])] with s hs hs' y hy
+      triCert_cornerF (σ := κ) hF d V5 hL hYg m1 m2 m4 (zd := ⟪a' - d, e3⟫) (by linarith [hDp'])] with s hs hs' y hy
     rw [hEdef, Finset.mem_insert, Finset.mem_singleton] at hy
     rcases hy with rfl | rfl
     · rw [hXp]; exact hs'

@@ -54,17 +54,17 @@ theorem lemmaSCX_rend (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   have ek2 := ev_lin (α := σ * (zx - zp)) (β := -(N * (zx - zp) + 1)) hzx
   obtain ⟨k, hk1, hk2⟩ := (ek1.and ek2).exists
   refine scx_wrap hF o E (θ0 := θ0) (η0 := 0) (N := N) (k := k) hL hzx hcr hYr hYr hcg
-    (by nlinarith) (by nlinarith) ?_ ?_ ?_ ?_ ?_ ?_ hE
-  · left; simp only [rA, hN]; nlinarith
-  · left; simp only [rA]; nlinarith [mul_pos hθpos hL]
+    (by linarith) (by linarith) ?_ ?_ ?_ ?_ ?_ ?_ hE
+  · left; simp only [rA, hN]; linarith
+  · left; simp only [rA]; linarith [mul_pos hθpos hL]
   · right; constructor
     · simp only [rA]; ring
-    · simp only [rC]; nlinarith
+    · simp only [rC]; linarith
   · right; constructor
     · simp only [rA]; linear_combination Yr * hθ
-    · simp only [rC]; nlinarith
+    · simp only [rC]; linarith
   · left; simp only [rA, hN]; nlinarith
-  · left; simp only [rA]; nlinarith [mul_pos hθpos (mul_self_pos.2 hXg.ne)]
+  · left; simp only [rA]; linarith [mul_pos hθpos (mul_self_pos.2 hXg.ne)]
 
 end Type08Sp
 end Minimality

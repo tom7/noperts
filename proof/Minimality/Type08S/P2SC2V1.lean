@@ -30,7 +30,7 @@ variable {e1 e2 e3 : ℝ³}
 theorem ev_lin3 {α β : ℝ} (hα : 0 < α) : ∀ᶠ s : ℝ in atTop, 0 < α * s + β := by
   filter_upwards [eventually_gt_atTop (|β| / α)] with M hM
   have := (div_lt_iff₀ hα).1 hM
-  nlinarith [neg_abs_le β]
+  linarith [neg_abs_le β]
 
 theorem sc2V_core_r (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     {σ L zp zx zf Xg Yr Yg zg b κ : ℝ}
@@ -74,7 +74,7 @@ theorem sc2V_core_r (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   have hd8 : d8 * (4 * (Yr - Yg)) = (L - Xg) * G := by rw [hd8d]; field_simp
   refine sc5_core2 hF o E (S := s) (⟨-(σ * b), M * κ, -1, -Yr - M * κ * zf, L - σ * b * zf⟩ : Mo)
     (⟨0, 0, 0, -σ * s * (σ * b * Yr + M * κ * L) - d8, σ * (σ * b * Yr + M * κ * L) - G / 2⟩ : Mo)
-    hL hzx (by nlinarith [mul_pos hLX hYr]) hYr hcg (by linarith)
+    hL hzx (by linarith [mul_pos hLX hYr]) hYr hcg (by linarith)
     ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hEs
   all_goals simp only [Rw, L2, VX, VY]
   · left; linarith [mul_pos hL hb1]
@@ -83,7 +83,7 @@ theorem sc2V_core_r (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   · right; refine ⟨by ring, ?_⟩
     linarith [h3]
   · left; linarith [h4]
-  · left; nlinarith [mul_pos hYr hYr]
+  · left; linarith [mul_pos hYr hYr]
   · right; refine ⟨by ring, ?_⟩
     linarith [mul_pos hL hG0, hGL]
   · right; refine ⟨by ring, ?_⟩

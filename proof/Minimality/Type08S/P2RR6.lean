@@ -38,11 +38,11 @@ theorem R6real (dd da dc db α γ : ℝ) (hα : 0 < α) (hγ : 0 < γ) (hαγ : 
     rcases le_or_gt da dd with h | h
     · rw [max_eq_left h] at this
       have hc0 : dc = dd := by rw [min_eq_right (by linarith)] at this; linarith
-      have : α * (da - dd) = 0 := by rw [hc0] at hB; subst hdc; nlinarith
+      have : α * (da - dd) = 0 := by rw [hc0] at hB; subst hdc; linarith
       have := (mul_eq_zero.mp this).resolve_left hα.ne'
       exact hna (by linarith)
     · rw [max_eq_right h.le, min_eq_right (by linarith)] at this
-      nlinarith
+      linarith
 
 theorem tpQacTop_cases {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT' : IsT' a b c' d)
     (hq : QacTop a b b' c d) (hA : ¬ CaseATp a b b' c d) :

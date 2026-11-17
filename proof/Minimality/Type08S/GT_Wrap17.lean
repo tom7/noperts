@@ -31,7 +31,7 @@ theorem lex_of_tilt {tt : ℝ} {P Q S : V3} (h0 : crossYZ P Q S = 0)
   simp only [cxy] at h
   refine ⟨?_, ?_⟩
   · simp only [tst, hdet]; linarith
-  · simp only [tst, hdet]; nlinarith
+  · simp only [tst, hdet]; linarith
 
 /-- Cramer: an affine function vanishing at `P, Q`. -/
 theorem cramer4 (g0 g1 g2 : ℝ) (P Q X Y : V3)
@@ -78,7 +78,7 @@ theorem tilt_pos (F : Fc) (P Q S : V3) (hP : F.ev P = 0) (hQ : F.ev Q = 0) (hS :
   have : 0 < ((Q.z - P.z) * (S.x - P.x) - (Q.x - P.x) * (S.z - P.z)) * F.c := by
     rw [e]; exact mul_pos hn hb
   have h1 : 0 < (Q.z - P.z) * (S.x - P.x) - (Q.x - P.x) * (S.z - P.z) := pos_of_mul_pos_left this hc.le
-  nlinarith [mul_pos htt hn]
+  linarith [mul_pos htt hn]
 
 end Type08Sp
 end Minimality

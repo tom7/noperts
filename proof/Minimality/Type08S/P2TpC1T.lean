@@ -67,7 +67,7 @@ theorem tpC1_cyc {σ t1 t2 ν v1 ha w1 w3 C0 α4 γ4 β6 γ6 : ℝ}
     | (simp only [LT, ori, fo, c1rim, s0, s1, s2, s3, s4, s5, six_0, six_1, six_2, six_3, six_4, six_5]
        first
        | (left; linarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 theorem tpC1_rest {σ t1 t2 ν v1 ha w1 w3 C0 α4 γ4 β1 β6 γ6 : ℝ}

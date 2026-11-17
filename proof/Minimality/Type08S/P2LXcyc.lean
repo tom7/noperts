@@ -44,7 +44,7 @@ theorem lx_cyc {σ S L zp zx zf Xr Yr zr Xg Yg zg : ℝ}
     | exact absurd rfl h1
     | exact (h2 (by decide)).elim
     | (simp only [s0, s1, s2, s3, s4, pent, five_0, five_1, five_2, five_3, five_4, LT, ori, fo]
-       first | (left; nlinarith) | (right; exact ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; exact ⟨by ring, by linarith⟩))
 
 end Type08Sp
 end Minimality

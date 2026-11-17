@@ -39,7 +39,7 @@ theorem lemmaSC_g (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   set P := φ0 + φ1 * zg + θ * Xg with hP
   -- top vertex: choose the slope `m`
   have hm12 : (Xg - Xr) / (Yg - Yr) < Xg / Yg := by
-    rw [div_lt_div_iff₀ (by linarith) hYg]; nlinarith
+    rw [div_lt_div_iff₀ (by linarith) hYg]; linarith
   obtain ⟨m, hm2, hm1⟩ := exists_between hm12
   have hm2' : Xg - Xr < (Yg - Yr) * m := by
     have := (div_lt_iff₀ (by linarith : 0 < Yg - Yr)).1 hm2; linarith
@@ -121,7 +121,7 @@ theorem lemmaSC_r (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     IsRupert (rim5 e1 e2 e3 o L zp zx zf Xr Yr zr Xg Yg zg E) := by
   set P := φ0 + φ1 * zr + θ * Xr with hP
   have hm12 : (Xr - L) / Yr < (Xr - Xg) / (Yr - Yg) := by
-    rw [div_lt_div_iff₀ hYr (by linarith)]; nlinarith
+    rw [div_lt_div_iff₀ hYr (by linarith)]; linarith
   obtain ⟨m, hm1, hm2⟩ := exists_between hm12
   have hm1' : Xr - L < Yr * m := by
     have := (div_lt_iff₀ hYr).1 hm1; linarith

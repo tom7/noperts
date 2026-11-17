@@ -48,7 +48,7 @@ theorem S3_pos : 0 < r1 * b2 - r2 * b1 := by
   have hneg : FH.a * (r1 * b2 - r2 * b1) < 0 := by
     rw [e, h1]; have := mul_neg_of_pos_of_neg hb2 h2; linarith
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
+  linarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
 
 /-- `a` is on the side of `g` of the line `p b`. -/
 theorem U1_pos : 0 < b2 * a1 - b1 * a2 := by
@@ -61,7 +61,7 @@ theorem U1_pos : 0 < b2 * a1 - b1 * a2 := by
   have hneg : FH.a * (b2 * a1 - b1 * a2) < 0 := by
     rw [e, h1]; have := mul_neg_of_pos_of_neg hb2 h2; linarith
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
+  linarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
 
 end N2Cfg0
 
@@ -93,13 +93,13 @@ theorem n2_sminus (F : OctFacets a a' b b' c c')
   · intro y hy
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
     tauto
+  · linarith
+  · linarith
   · nlinarith
   · nlinarith
-  · nlinarith
-  · nlinarith
-  · nlinarith
-  · nlinarith
-  · nlinarith
+  · linarith
+  · linarith
+  · linarith
   · nlinarith
 
 end Type08Sp

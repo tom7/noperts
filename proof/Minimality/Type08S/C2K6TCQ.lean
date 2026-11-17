@@ -37,7 +37,7 @@ theorem k6t3_pa_setup {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
     have : 0 < det3 (a - d) (b - d) (c - d) ^ 2 := by positivity
     by_contra hh
     push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) this.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) this.le]
   have hγ4' : γ4 = 1 + α4 * (β1 - 1) := by linarith
   refine ⟨α4, β1, γ4, β6, γ6, hdet, hc', hb', ha', hb1, hα4p, hβ6, hγ6, hg61, hγ6s, by linarith, ?_⟩
   rw [hb', hγ4']; module
@@ -85,7 +85,7 @@ theorem k6t3_pa6b {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT'
   have hDc : 0 < ⟪b - d, c - d⟫ := by
     by_contra hh
     push Not at hh
-    nlinarith [mul_nonneg (sub_pos.2 hb1).le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg (sub_pos.2 hb1).le (neg_nonneg.2 hh)]
   have hDb : 0 ≤ ⟪b - d, b - d⟫ := real_inner_self_nonneg
   refine k6t3_pa_core (n := β6 * ⟪b - d, b - d⟫ / ⟪b - d, c - d⟫ + 1) hdet hc' hb' ha' hb1 hα4 hβ6 hγ6 hg61 hcv hκ'
     hu0.le ?_ (fun _ => hDc) ?_

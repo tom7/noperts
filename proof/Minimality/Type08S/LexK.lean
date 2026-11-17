@@ -39,7 +39,7 @@ syntax "lexk_row" : tactic
 macro_rules
   | `(tactic| lexk_row) =>
     `(tactic| first
-      | exact lexkPos_head (by nlinarith)
+      | exact lexkPos_head (by linarith)
       | (refine lexkPos_tail (by first | ring1 | linarith) ?_; lexk_row))
 
 /-- Positive rescaling of the entries. -/

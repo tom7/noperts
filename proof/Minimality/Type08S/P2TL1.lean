@@ -90,13 +90,13 @@ theorem exists_seq_T4side (θ : Fin 6 → ℝ) :
       · subst hi; simp [abs_of_nonneg (show (0:ℝ) ≤ ((n:ℝ)+1) by positivity)]
       · simp [hi]; positivity
     have h4 : 1 / (2 * ((n : ℝ) + 1)) ≤ 1 / ((n : ℝ) + 1) := by
-      apply one_div_le_one_div_of_le (by positivity); nlinarith [(Nat.cast_nonneg n : (0:ℝ) ≤ n)]
+      apply one_div_le_one_div_of_le (by positivity); linarith [(Nat.cast_nonneg n : (0:ℝ) ≤ n)]
     have := abs_sub_le (θs n i) (c n i) (θ i)
     linarith
   · have h1 := hθs n 5
     have h3 : c n 5 = θ 5 - 1 / ((n : ℝ) + 1) := by simp [hc]
     have h4 : 1 / (2 * ((n : ℝ) + 1)) < 1 / ((n : ℝ) + 1) := by
-      apply one_div_lt_one_div_of_lt (by positivity); nlinarith [(Nat.cast_nonneg n : (0:ℝ) ≤ n)]
+      apply one_div_lt_one_div_of_lt (by positivity); linarith [(Nat.cast_nonneg n : (0:ℝ) ≤ n)]
     rw [abs_sub_lt_iff] at h1
     linarith [h1.1]
 

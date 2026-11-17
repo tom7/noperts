@@ -70,8 +70,8 @@ theorem tc3_f (hA : 0 < A) (ht0 : 0 < t) (hzv : 0 ≤ zv) (hzw : zw < 0) (hza : 
     simp only [c3Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem tc3_g (hA : 0 < A) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hza : za < 0)
     (hza' : (1 - t) * zv < za') (hzz : zv < za') (hb2 : 0 < b2) (hq0 : 0 < q) :
@@ -79,7 +79,7 @@ theorem tc3_g (hA : 0 < A) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv) (hzw : z
         (c3Pts zv zw t A b1 b2 za' za r1 (i + 1)) ⟨A, 0, 0⟩ := by
   have hD : 0 < zv - zw := by linarith
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   have a1 := mul_pos hA hD
   have a2 := mul_pos hA (sub_pos.mpr hza')
   have a3 := mul_pos hb2 hza'0
@@ -123,7 +123,7 @@ theorem tp_C3 {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
   have hD : zw < zv := by linarith
   have htA : 0 < t * A := mul_pos ht0 hA
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   set q : ℝ := za' / (2 * b2) with hqd
   have hq0 : 0 < q := by positivity
   have hqb : q * b2 < za' := by

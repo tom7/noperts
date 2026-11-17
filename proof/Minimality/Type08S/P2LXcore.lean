@@ -53,7 +53,7 @@ theorem lex_ev {a c b d : ℝ} (h : LL a c b d) : ∀ᶠ s in 𝓝[>] (0 : ℝ),
     · exact Or.inl (by linarith)
     · exact Or.inr ⟨by linarith, by linarith⟩
   filter_upwards [eventually_pos_affine h'] with s hs
-  nlinarith
+  linarith
 
 theorem qtop_ev (h c : ZMod 5 → ℝ) (p : ZMod 5)
     (H : ∀ i, i ≠ p → LL (h i) (c i) (h (i - 1)) (c (i - 1)) ∨ LL (h i) (c i) (h (i + 1)) (c (i + 1))) :
@@ -74,13 +74,13 @@ theorem sgn_pos {σ a b : ℝ} (hσσ : σ * σ = 1) (ha : 0 < σ * a) (hab : 0 
   have e : (σ * b) * (σ * a) = a * b := by linear_combination (a * b) * hσσ
   by_contra hn
   push Not at hn
-  nlinarith [mul_nonpos_of_nonpos_of_nonneg hn ha.le]
+  linarith [mul_nonpos_of_nonpos_of_nonneg hn ha.le]
 
 theorem sgn_neg {σ a b : ℝ} (hσσ : σ * σ = 1) (ha : 0 < σ * a) (hab : a * b < 0) : σ * b < 0 := by
   have e : (σ * b) * (σ * a) = a * b := by linear_combination (a * b) * hσσ
   by_contra hn
   push Not at hn
-  nlinarith [mul_nonneg hn ha.le]
+  linarith [mul_nonneg hn ha.le]
 
 def ClassV2tail (L zx zf Xr Yr zr Xg Yg zg : ℝ) : Prop :=
   ((Xr = L ∧ zr = zf ∧ Yg < Yr ∧ 0 < (zg - zf) * (zx - zf)) ∨

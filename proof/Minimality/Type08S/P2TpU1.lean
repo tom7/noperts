@@ -39,7 +39,7 @@ theorem tpU1 {a c ν α4 γ4 β6 γ6 : ℝ} (hν : 0 < ν) (hα4 : 0 < α4) (hγ
     rcases le_total c 0 with hc | hc
     · rw [max_eq_left hc] at hMa; linarith
     · rw [max_eq_right hc] at hMa hMb
-      nlinarith [mul_nonneg ha0 (sub_nonneg.2 hE.le), mul_pos hγ4 (sub_pos.2 hMa)]
+      linarith [mul_nonneg ha0 (sub_nonneg.2 hE.le), mul_pos hγ4 (sub_pos.2 hMa)]
   -- B' has a larger neighbour
   have hB : α4 * a + γ4 * c < a ∨ α4 * a + γ4 * c < c := by
     by_contra hcon
@@ -56,7 +56,7 @@ theorem tpU1 {a c ν α4 γ4 β6 γ6 : ℝ} (hν : 0 < ν) (hα4 : 0 < α4) (hγ
       (γ6 * c + β6 * ν < ν ∧ γ6 * c + β6 * ν > c) ∨ (γ6 * c + β6 * ν > ν ∧ γ6 * c + β6 * ν < c) := by
     rcases lt_or_gt_of_ne h1 with p1 | p1 <;> rcases lt_or_gt_of_ne h2 with p2 | p2
     · exfalso
-      nlinarith [mul_pos hν (sub_pos.2 hconv), mul_pos hγ6 (sub_pos.2 p1), mul_pos hγ6 (sub_pos.2 p2),
+      linarith [mul_pos hν (sub_pos.2 hconv), mul_pos hγ6 (sub_pos.2 p1), mul_pos hγ6 (sub_pos.2 p2),
         mul_pos (sub_pos.2 hγ61) (sub_pos.2 p1)]
     · exact Or.inr (Or.inl ⟨p1, p2⟩)
     · exact Or.inr (Or.inr ⟨p1, p2⟩)

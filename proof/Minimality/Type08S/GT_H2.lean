@@ -38,7 +38,7 @@ theorem t4c_cyc (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 < zv) (hzw : zw < 0) (hb2 :
   rcases zmod4_pairs i j h1 h2 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
       ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp only [t4cPts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
-    left <;> nlinarith
+    left <;> linarith
 
 theorem t4c_c (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2)
     (hza : za < (1 - s) * zw) (hA : 0 < A) :
@@ -56,8 +56,8 @@ theorem t4c_c (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [t4cPts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem t4c_a' (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2)
     (hza : za < (1 - s) * zw) (htA : 0 < tA) (hza'0 : 0 ≤ za') (hza'v : za' < zv) :
@@ -121,7 +121,7 @@ theorem propH_t4_c {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
     (hb2 : 0 < b2) (hrb : r2 < b2) (hb1 : 0 < b1) (hr2 : 0 < r2) :
     IsRupert V := by
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 ≤ za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 ≤ za' := by linarith [mul_nonneg ht1'.le hzv]
   have hzv0 : 0 < zv := by linarith
   have hs1' : 0 < 1 - s := by linarith
   have himg : ∀ i : ZMod 4, hfΦ vb g u0 fG (quad wP bP fP aP i) = t4cPts zv zw s b1 b2 za i := by

@@ -97,11 +97,11 @@ theorem pic_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
   · linarith
   · linarith
   · rw [hXd]; exact mul_pos p5 hL
-  · rw [hXd]; nlinarith [mul_pos dA hL]
+  · rw [hXd]; linarith [mul_pos dA hL]
   · rw [hYg]
     have hpos : 0 < θ 0 * ⟪(nfShape08 d E₁ E₂ E₃ θ 0) - d, e2⟫ := mul_pos p0 hYa
     rw [div_lt_one hpos]
-    nlinarith [mul_pos dB hYa]
+    linarith [mul_pos dB hYa]
 
 end W5
 end Type08Sp

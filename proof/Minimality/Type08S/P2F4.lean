@@ -38,7 +38,7 @@ theorem tc1_cyc (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) :
       ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp only [c1Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
+    | (left; linarith)
 
 theorem tc1_c (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (hA : 0 < A) :
     ∀ i : ZMod 4, LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, 1⟩ (c1Pts zv zw b1 b2 za i)
@@ -53,8 +53,8 @@ theorem tc1_c (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (hA : 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [c1Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem tc1_a' (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (htA : 0 < tA)
     (hza'0 : 0 ≤ za') (hza'v : za' < zv) :
@@ -71,8 +71,8 @@ theorem tc1_a' (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (htA 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [c1Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem tc1_b' (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (hr2 : 0 < r2)
     (hrb : r2 < b2) :
@@ -90,7 +90,7 @@ theorem tc1_b' (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (hr2 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [c1Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
+    | (left; linarith)
 
 end C1Tests
 
@@ -117,7 +117,7 @@ theorem tp_C1 {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
     (hb2 : 0 < b2) (hrb : r2 < b2) (hb1 : 0 < b1) (hr2 : 0 < r2) :
     IsRupert V := by
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 ≤ za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 ≤ za' := by linarith [mul_nonneg ht1'.le hzv]
   have hzv0 : 0 < zv := by linarith
   have himg : ∀ i : ZMod 4, hfΦ vb g u0 fG (quad wP bP fP aP i) = c1Pts zv zw b1 b2 za i := by
     intro i

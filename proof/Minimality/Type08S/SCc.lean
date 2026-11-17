@@ -34,17 +34,17 @@ theorem sc_data {L zp zx zf Xt zt : ℝ} (hL : 0 < L) (hzx : zp ≠ zx) (hX0 : 0
   have haz : a * (zx - zp) = X0 + 1 + |M * (zx - zt) * (zp - zt)| := by rw [ha]; field_simp
   refine ⟨a * zx - X0, -a, a * (zf - zx) / L + 1, M, hMpos, ?_, ?_, ?_, ?_, ?_⟩
   · have := abs_nonneg (M * (zx - zt) * (zp - zt))
-    nlinarith
-  · field_simp; rw [hX0d]; nlinarith
+    linarith
+  · field_simp; rw [hX0d]; linarith
   · have e : a * (zf - zx) / L * Xt = a * (zt - zx) := by field_simp; linear_combination (-a) * hch
     have : a * zx - X0 + -a * zt + (a * (zf - zx) / L + 1) * Xt = Xt - X0 := by
       rw [add_mul, e]; ring
     rw [this, hX0d]; linarith
   · have : a * zx - X0 + -a * zx + (a * (zf - zx) / L + 1) * 0 = - X0 := by ring
-    rw [this]; nlinarith [hMk, hX0d]
+    rw [this]; linarith [hMk, hX0d]
   · have := abs_nonneg (M * (zx - zt) * (zp - zt))
     have := neg_abs_le (M * (zx - zt) * (zp - zt))
-    nlinarith
+    linarith
 
 
 /-- **Corollary SC-c, top vertex `g`** (`Yr < Yg`): `ḡ` lies on the open chord `x̄ f̄` of the
@@ -64,12 +64,12 @@ theorem lemmaSCc_g (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   obtain ⟨φ0, φ1, θ, M, hM, hp, hf, ht, hRx, hRp⟩ := sc_data hL (fun h : zp = zx => by rw [h] at hzx; simp at hzx) hX0 hXL hch hk
   refine lemmaSC_g hF o E (σ := σ) (φ0 := φ0) (φ1 := φ1) (θ := θ) (χ0 := -(M * (zx - zg)) * zg)
     (χ1 := M * (zx - zg)) hL hzx hcr hYr hYrg hcg ?_ ?_ ?_ ?_ hp hf ht ?_ ?_ hE
-  · nlinarith [mul_neg_of_pos_of_neg hM hdf]
-  · nlinarith [mul_neg_of_pos_of_neg hM hdr]
+  · linarith [mul_neg_of_pos_of_neg hM hdf]
+  · linarith [mul_neg_of_pos_of_neg hM hdr]
   · ring
-  · nlinarith [mul_pos hM (mul_self_pos.2 (sub_ne_zero.2 hk))]
-  · nlinarith
-  · nlinarith
+  · linarith [mul_pos hM (mul_self_pos.2 (sub_ne_zero.2 hk))]
+  · linarith
+  · linarith
 
 /-- **Corollary SC-c, top vertex `r`** (`Yg < Yr`): `r̄` on the open chord, `f` on the other side
 of `z_r` from `z_x`, `g` on the same side as `z_x`. -/
@@ -88,12 +88,12 @@ theorem lemmaSCc_r (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   obtain ⟨φ0, φ1, θ, M, hM, hp, hf, ht, hRx, hRp⟩ := sc_data hL (fun h : zp = zx => by rw [h] at hzx; simp at hzx) hX0 hXL hch hk
   refine lemmaSC_r hF o E (σ := σ) (φ0 := φ0) (φ1 := φ1) (θ := θ) (χ0 := -(M * (zx - zr)) * zr)
     (χ1 := M * (zx - zr)) hL hzx hcr hYr hYg hYrg hcg ?_ ?_ ?_ ?_ hp hf ht ?_ ?_ hE
-  · nlinarith [mul_neg_of_pos_of_neg hM hdf]
+  · linarith [mul_neg_of_pos_of_neg hM hdf]
   · ring
-  · nlinarith [mul_pos hM hdg]
-  · nlinarith [mul_pos hM (mul_self_pos.2 (sub_ne_zero.2 hk))]
-  · nlinarith
-  · nlinarith
+  · linarith [mul_pos hM hdg]
+  · linarith [mul_pos hM (mul_self_pos.2 (sub_ne_zero.2 hk))]
+  · linarith
+  · linarith
 
 end Type08Sp
 end Minimality
