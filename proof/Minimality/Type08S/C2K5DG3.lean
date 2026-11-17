@@ -79,8 +79,8 @@ theorem k5dX3_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ}
          first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
-    rcases ht with rfl <;>
-      rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
+    rcases ht with rfl
+    rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k5dX3_0, k5dX3_1, k5dX3_2, k5dX3_3, k5dX3_4, k5dX3_5, f0, f1, f2, f3, f4, f5, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
 
