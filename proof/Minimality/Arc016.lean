@@ -113,7 +113,7 @@ theorem prop33_3 {V : Finset ℝ³} (ea eb ec X3 X5 : ℝ³) (a3 b3 c3 a5 b5 c5 
   have hlam : ∀ k r, 0 ≤ lam k r := by
     intro k r
     simp only [lam]
-    split_ifs <;> first | positivity | linarith
+    split_ifs <;> positivity
   have hlam0 : 0 < ∑ k, ∑ r, lam k r := by
     simp [lam, Fintype.sum_prod_type, Fin.sum_univ_two]
     nlinarith [hF', hN', hDpos]
