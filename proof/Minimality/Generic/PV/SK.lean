@@ -62,6 +62,7 @@ lemma phi_pred (i : ZMod (m + 1)) (j : ZMod m) (hj : j ≠ 0) :
     rw [← Nat.cast_succ]; congr 1; omega
   rw [this]; ring
 
+omit [NeZero m] in
 lemma phi_zero (i : ZMod (m + 1)) : phi i 0 = i + 1 := by simp [phi]
 
 lemma phi_neg_one (i : ZMod (m + 1)) : phi i (-1) = i - 1 := by

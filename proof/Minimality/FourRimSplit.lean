@@ -108,9 +108,9 @@ theorem fourRim_unimodal_of_depthSeparated_ccw (p : ZMod 4 → ℝ²) (z : ZMod 
 /-- **Lemma B (triangle face, end condition is automatic).**  A triangle face with chord ends of
 depths `a`, `b` and middle vertex of depth `m` (pairwise distinct): its lowest depth `lo` and
 highest depth `hi` are among `a, b, m` and bound them; then `lo` or `hi` is an end. -/
-theorem triangle_end_condition {a b m lo hi : ℝ} (hab : a ≠ b) (ham : a ≠ m) (hbm : b ≠ m)
+theorem triangle_end_condition {a b m lo hi : ℝ} (ham : a ≠ m) (hbm : b ≠ m)
     (hlo : lo = a ∨ lo = b ∨ lo = m) (hhi : hi = a ∨ hi = b ∨ hi = m)
-    (hla : lo ≤ a) (hlb : lo ≤ b) (hlm : lo ≤ m) (hha : a ≤ hi) (hhb : b ≤ hi) (hhm : m ≤ hi) :
+    (hla : lo ≤ a) (hlb : lo ≤ b) (hlm : lo ≤ m) (hha : a ≤ hi) (hhm : m ≤ hi) :
     lo = a ∨ lo = b ∨ hi = a ∨ hi = b := by
   rcases hlo with h | h | h
   · exact Or.inl h
@@ -129,7 +129,7 @@ theorem lemmaW'_triangle {a b m lo hi : ℝ} {R : List ℝ} (hnd : (a :: b :: R)
     (hloR : lo ∉ R) (hhiR : hi ∉ R) :
     (CU (skel1 a lo b ++ R) ∨ CU (skel1 a hi b ++ R)) ↔ CU (a :: b :: R) := by
   rw [lemmaW' hnd hla hlb hha hhb hloR hhiR]
-  have := triangle_end_condition hab ham hbm hlo hhi hla hlb hlm hha hhb hhm
+  have := triangle_end_condition ham hbm hlo hhi hla hlb hlm hha hhm
   tauto
 
 end Minimality

@@ -19,8 +19,8 @@ open Minimality (cross)
 
 
 
-theorem iv_c4 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
-    (hxi : 0 < xi) (hb0 : 0 < b) (hd : 0 < ze * c) (hcd : 0 < c - ze * c) (hr : 0 < r) (hby : y2 ≤ b)
+theorem iv_c4 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
+
     (h1 : 0 < c0z + q * L) (h2 : c0y + p * L < 0) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 4) := by
@@ -29,8 +29,8 @@ theorem iv_c4 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hc) h1]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy6) (neg_pos.2 h2)]
 
-theorem iv_c3 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
-    (hxi : 0 < xi) (hb0 : 0 < b) (hd : 0 < ze * c) (hcd : 0 < c - ze * c) (hr : 0 < r) (hby : y2 ≤ b)
+theorem iv_c3 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c)
+ (hr : 0 < r)
     (h1 : c < c0z + q * L) (h2 : 0 < c0z + q * L - c + r * (c0y + p * L)) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 3) := by
@@ -39,8 +39,8 @@ theorem iv_c3 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
   · right; refine ⟨by simp [boxCfg, Minimality.cross], ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL h2]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hc) (sub_pos.2 h1)]
 
-theorem iv_c5 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
-    (hxi : 0 < xi) (hb0 : 0 < b) (hd : 0 < ze * c) (hcd : 0 < c - ze * c) (hr : 0 < r) (hby : y2 ≤ b)
+theorem iv_c5 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hy2 : 0 < y2)
+
     (h1 : 0 < c0y) (h2 : 0 < r * c0y + c0z - c) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 5) := by
@@ -49,8 +49,8 @@ theorem iv_c5 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy2) h1]
   · right; refine ⟨by simp [boxCfg, Minimality.cross], ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL h2]
 
-theorem iv_c6 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
-    (hxi : 0 < xi) (hb0 : 0 < b) (hd : 0 < ze * c) (hcd : 0 < c - ze * c) (hr : 0 < r) (hby : y2 ≤ b)
+theorem iv_c6 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hy6 : 0 < y6)
+ (hd : 0 < ze * c)
     (h1 : c0y + p * L < y6) (h2 : (b - y6) * (c0y + p * L) + ze * c * (c0z + q * L) < (b - y6) * y6) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 6) := by
@@ -59,8 +59,8 @@ theorem iv_c6 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy6) (sub_pos.2 h1)]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL (sub_pos.2 h2)]
 
-theorem iv_c2 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
-    (hxi : 0 < xi) (hb0 : 0 < b) (hd : 0 < ze * c) (hcd : 0 < c - ze * c) (hr : 0 < r) (hby : y2 ≤ b)
+theorem iv_c2 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hy2 : 0 < y2)
+ (hcd : 0 < c - ze * c)
     (h1 : y2 < c0y) (h2 : (b - y2) * (y2 - c0y) + (c - ze * c) * (c0z - c) < 0) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 2) := by
@@ -69,8 +69,8 @@ theorem iv_c2 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL (neg_pos.2 h2)]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy2) (sub_pos.2 h1)]
 
-theorem iv_c1 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
-    (hxi : 0 < xi) (hb0 : 0 < b) (hd : 0 < ze * c) (hcd : 0 < c - ze * c) (hr : 0 < r) (hby : y2 ≤ b)
+theorem iv_c1 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L)
+
     (hy : 0 < b * (c - ze * c) + ze * c * (b - y2)) (h1 : b * (c0y + xi * (p * L)) + ze * c * (c0z + xi * (q * L)) < b * b + ze * c * (ze * c)) (h2 : (y2 - b) * (c0y + xi * (p * L)) + (c - ze * c) * (c0z + xi * (q * L)) < (y2 - b) * b + (c - ze * c) * (ze * c)) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 1) := by
@@ -165,15 +165,15 @@ theorem rec_IV {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6
   intro i hi
   fin_cases i
   · exact absurd rfl hi
-  · exact iv_c1 hL hc hy6 hy2 hxi hb0 hd hcd hr0 hb hr1 (by rw [e3, e4]; nlinarith) (by rw [e3, e4]; nlinarith)
-  · exact iv_c2 hL hc hy6 hy2 hxi hb0 hd hcd hr0 hb hc0yy (by nlinarith [mul_nonneg (sub_nonneg.2 hb) (sub_pos.2 hc0yy).le, mul_pos hcd (sub_pos.2 hcz)])
+  · exact iv_c1 hL hr1 (by rw [e3, e4]; nlinarith) (by rw [e3, e4]; nlinarith)
+  · exact iv_c2 hL hy2 hcd hc0yy (by nlinarith [mul_nonneg (sub_nonneg.2 hb) (sub_pos.2 hc0yy).le, mul_pos hcd (sub_pos.2 hcz)])
   · have hmr : 0 < r * m := mul_pos hr0 hmp
-    exact iv_c3 hL hc hy6 hy2 hxi hb0 hd hcd hr0 hb (by rw [e2]; linarith)
+    exact iv_c3 hL hc hr0 (by rw [e2]; linarith)
       (by rw [e1, e2]; have : c + r * m + eps - c + r * -m = eps := by ring
           linarith)
   · have hmr : 0 < r * m := mul_pos hr0 hmp
-    exact iv_c4 hL hc hy6 hy2 hxi hb0 hd hcd hr0 hb (by rw [e2]; linarith) (by rw [e1]; linarith)
-  · exact iv_c5 hL hc hy6 hy2 hxi hb0 hd hcd hr0 hb hc0y0 hc5
-  · exact iv_c6 hL hc hy6 hy2 hxi hb0 hd hcd hr0 hb (by rw [e1]; linarith) (by rw [e1, e2]; linarith)
+    exact iv_c4 hL hc hy6 (by rw [e2]; linarith) (by rw [e1]; linarith)
+  · exact iv_c5 hL hy2 hc0y0 hc5
+  · exact iv_c6 hL hy6 hd (by rw [e1]; linarith) (by rw [e1, e2]; linarith)
 
 end Minimality.T24.Par

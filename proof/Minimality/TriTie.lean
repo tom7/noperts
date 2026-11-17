@@ -87,7 +87,7 @@ theorem localMax_unique_of_run {K L : ℕ} [NeZero K] (w : ZMod K → ℝ)
   · exact (key b.val a.val h hav (lmax b hb1 hb2).1 ((lmax a ha1 ha2).2 (by omega))).elim
 
 /-- `localMax_unique_of_run` for a run starting at position `c`. -/
-theorem localMax_unique_of_run_shift {K L : ℕ} [NeZero K] (hL : L < K) (c : ℕ) (w : ZMod K → ℝ)
+theorem localMax_unique_of_run_shift {K L : ℕ} [NeZero K] (c : ℕ) (w : ZMod K → ℝ)
     (hout : ∀ l : ℕ, L < l → l < K →
       w ((c + l : ℕ) : ZMod K) < w ((c + l - 1 : ℕ) : ZMod K) ∨
         w ((c + l : ℕ) : ZMod K) < w ((c + l + 1 : ℕ) : ZMod K))
@@ -149,7 +149,7 @@ theorem runSeq_smul {K L c : ℕ} {s : ℝ} {z : ZMod K → ℝ} {k : ℝ} (hk :
 theorem runSeq_localMax {K L c : ℕ} [NeZero K] (hL : L < K) {s : ℝ} {z : ZMod K → ℝ}
     (h : RunSeq K L c s z) : ∀ a b : ZMod K, s * z (a - 1) < s * z a →
       s * z (a + 1) < s * z a → s * z (b - 1) < s * z b → s * z (b + 1) < s * z b → a = b :=
-  localMax_unique_of_run_shift hL c (fun i => s * z i)
+  localMax_unique_of_run_shift c (fun i => s * z i)
     (fun l h1 h2 => h.1 l (Finset.mem_Ioo.mpr ⟨h1, h2⟩))
     (fun l h1 h2 => min_lt_iff.mpr ((h.2 l (Finset.mem_Ioo.mpr ⟨by omega, h2⟩)).imp id id))
 

@@ -40,7 +40,7 @@ theorem k94_alg : K94Alg := by
   obtain ⟨hmα, hbr⟩ := k90_class s pp qq qr rr m α1 β1 hs hm hqx hα hβ hrel hppE hW hAv
     (by linear_combination hZab) (by linear_combination hZba)
   rcases hbr with hF1 | hq3
-  · exact k94_F1 s pp qq qr rr m α1 β1 hs hpp hm hqx hqy hα hβ hrel hppE hD hD2 hcx0 hcxB hF1 hmα hne
+  · exact k94_F1 s pp qq qr rr m α1 β1 hs hpp hm hqx hqy hβ hrel hppE hD hD2 hcx0 hcxB hF1 hmα hne
   · exact k90_F3 s pp qq qr rr m α1 β1 hs hpp hm hqx hβ hrel hppE hdet hγ6 hσ hAv hX4 hcx0 hcxB hq3 hmα hne
 
 /-- relation between the screen parameter `lam` and the chart: `cx = (s+pp)*ac`, `B - cx = (s+pp)*cb`. -/

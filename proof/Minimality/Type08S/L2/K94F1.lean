@@ -11,7 +11,7 @@ set_option relaxedAutoImplicit true
 set_option maxHeartbeats 40000000
 
 theorem k94_F1 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0 < m) (hqx : qr < qq) (hqy : qr < rr)
-    (hal : 1 < al) (hbe : 1 < be)
+ (hbe : 1 < be)
     (hrel : al*s*(qq+rr-2*qr) = (be-1)*(qq*rr-qr^2))
     (hppE : pp*((al-1)*rr+be*qr) = s*((al+be-1)*s+be*(rr-qr)))
     (hD : 0 < qq*rr-qr^2) (hD2 : s^2 < pp*qq)

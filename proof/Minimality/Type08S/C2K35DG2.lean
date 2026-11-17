@@ -31,7 +31,7 @@ theorem k28h5bd_d2_gram (pp pq qq qr rr al be b g : ℝ) (hal : 0 < al) (hbe : 0
     field_simp; ring
   have hT' : 0 ≤ al * (((be*(qq*rr-qr^2)/((1+al)*((qq-qr)+(rr-qr))))^2*((qq-qr)+(rr-qr)) + (pp*(qq*rr-qr^2) - pq^2*(qq+rr-2*qr)))/(qq*rr-qr^2)) - (1+be) * (be*(qq*rr-qr^2)/((1+al)*((qq-qr)+(rr-qr)))) := by
     rw [← ht', e2]; linarith
-  have h := k28h5bd_d2_core (qq-qr) (rr-qr) (qq*rr-qr^2) (pp*(qq*rr-qr^2) - pq^2*(qq+rr-2*qr)) al be (1-b) (1-g) b g hu1 hu2 hm hy hal hbe (by linarith) (by linarith) hb hg (by ring) (by ring) hT'
+  have h := k28h5bd_d2_core (qq-qr) (rr-qr) (qq*rr-qr^2) (pp*(qq*rr-qr^2) - pq^2*(qq+rr-2*qr)) al be (1-b) (1-g) b g hu1 hu2 hm hal hbe (by linarith) (by linarith) hb hg (by ring) (by ring) hT'
   rw [← ht'] at h
   rw [e2, e3] at h
   have e4 : qq - qr + qr = qq := by ring

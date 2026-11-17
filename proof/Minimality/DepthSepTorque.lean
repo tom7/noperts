@@ -56,6 +56,7 @@ variable {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} {a c : ZMod k}
 theorem inner_outNormal_self (x y : ℝ²) : ⟪outNormal x y, y - x⟫ = 0 := by
   rw [inner_outNormal, cross2_self]; simp
 
+omit [NeZero k] in
 theorem outNormal_ne_zero (hp : IsCcwPolygon p) (a : ZMod k) :
     outNormal (p a) (p (a + 1)) ≠ 0 := by
   intro h0
@@ -68,16 +69,19 @@ theorem outNormal_ne_zero (hp : IsCcwPolygon p) (a : ZMod k) :
   · simp; linarith
   · simp; linarith
 
+omit [NeZero k] in
 theorem ne_a (h : PairInterior p a c) : c ≠ a := by
   rintro rfl
   have := h.1; rw [inner_outNormal_self] at this; exact lt_irrefl _ this
 
+omit [NeZero k] in
 theorem ne_a_succ (h : PairInterior p a c) : c ≠ a + 1 := by
   rintro rfl
   have := h.2; simp only [add_sub_cancel_right] at this
   have h2 := inner_outNormal_self (p a) (p (a + 1))
   rw [← neg_sub, inner_neg_right, h2] at this; simp at this
 
+omit [NeZero k] in
 /-- Strictly below the maximum off the edge. -/
 theorem inner_lt (hp : IsCcwPolygon p) (a j : ZMod k) (hj : j ≠ a) (hj' : j ≠ a + 1) :
     ⟪outNormal (p a) (p (a + 1)), p j⟫ < ⟪outNormal (p a) (p (a + 1)), p a⟫ := by

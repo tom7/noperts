@@ -21,7 +21,7 @@ theorem cross_swap' (a b : ℝ³) : cross b a = -cross a b := by
   ext i; fin_cases i <;> simp [cross_apply_zero, cross_apply_one, cross_apply_two] <;> ring
 
 /-- Sign bookkeeping: `c d > 0` and the sign of `s c` give the sign of `s d`. -/
-theorem kap_core (s c : Int) (d : ℝ) (hs : s = 1 ∨ s = -1) (hc : c ≠ 0) (S : 0 < (c : ℝ) * d)
+theorem kap_core (s c : Int) (d : ℝ) (hc : c ≠ 0) (S : 0 < (c : ℝ) * d)
     (hsc : s * c ≠ 0) : (0 < s * c → 0 < (s : ℝ) * d) ∧ (¬ 0 < s * c → (s : ℝ) * d < 0) := by
   have hc' : (c : ℝ) ≠ 0 := by exact_mod_cast hc
   have e : ∀ _ : Unit, ((s : ℝ) * c) * ((c : ℝ) * d) = (c : ℝ) ^ 2 * ((s : ℝ) * d) := fun _ => by ring
@@ -45,7 +45,7 @@ theorem kap_sign {g : Geo} (hO : OriOK g) (a x y : Nat) (s : Int) (hs : s = 1 �
     (if kp then 0 < (s : ℝ) * det3 (g.dv x) (g.dv y) (g.N a)
       else (s : ℝ) * det3 (g.dv x) (g.dv y) (g.N a) < 0) := by
   have hc : Aconst a x y ≠ 0 := fun h0 => hne (by rw [h0]; simp)
-  have K := kap_core s _ _ hs hc (Aconst_sound hO _ _ _ hc) hne
+  have K := kap_core s _ _ hc (Aconst_sound hO _ _ _ hc) hne
   cases kp
   · simp only [decide_eq_false_iff_not] at hk
     simpa using K.2 hk

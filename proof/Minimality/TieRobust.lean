@@ -155,7 +155,7 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
     (hconva : 0 < det3 (b - a) (a0 - a) w) (hconvb : 0 < det3 (b1 - b) (a - b) w)
     (hin : ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∀ G : ℝ³, ⟪G, w⟫ = 0 →
       (∀ q ∈ V, ⟪G, q - y⟫ ≤ 0) → G = 0)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (κ η Z K L c3 c : ℝ)
+    (σ : ℝ) (κ η Z K L c3 c : ℝ)
     (hκ : 0 < κ) (hη : 0 < η) (hc3 : 0 < c3) (hc : 0 < c) (hL : 0 ≤ L) (hZ : 0 ≤ Z)
     (hδ : 0 < σ * ⟪b - a, w⟫)
     (hM : ∀ j ∈ X ×ˢ (univ : Finset Bool), κ ≤ ⟪tgen nb0 nb1 w j, m⟫)
@@ -648,7 +648,7 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
   have wK1 : ∀ {x : ℝ}, x ≤ K1 → x ≤ K := fun h => by rw [hKdef]; linarith
   intro F hF
   refine tie_no_forces_at V X (tw v ε) a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1 hnb0 hnb1
-    hcX hca hcb hIn σ hσ κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
+    hcX hca hcb hIn σ κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
     (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => wK1 (hJε j hj).1)
     (fun j hj => wK1 (hJε j hj).2.1) (fun j hj => wK1 (hJε j hj).2.2.1)
     (fun j hj => wK1 (hJε j hj).2.2.2)
@@ -683,7 +683,7 @@ small `ε > 0` every force system vanishes. -/
 theorem tie_no_forces_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : ℝ³ → ℝ³)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪a - b, v⟫)
+    (htie : a 2 = b 2) (σ : ℝ) (hD : 0 < σ * ⟪a - b, v⟫)
     (hXz : ∀ y ∈ X, 0 < σ * (y 2 - b 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
@@ -835,7 +835,7 @@ theorem isRupert_of_tie_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 
     (hdet : farDet (cross (b1 - b) ez) (cross (b - a) ez) (cross ez (a0 - a)) b a ez ≠ 0) :
     IsRupert V := by
   obtain ⟨ε, hε⟩ := (tie_no_forces_neg V X v a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
-    hnb0 hnb1 htie σ hσ hD hXz hconvX hconva hconvb hin hm hp hpb hp3 hdet).exists
+    hnb0 hnb1 htie σ hD hXz hconvX hconva hconvb hin hm hp hpb hp3 hdet).exists
   exact isRupert_of_no_forces V hsol (tw v ε) (tw_ne_zero v ε hv)
     fun F h1 h2 h3 h4 h5 => hε F ⟨h1, h2, h3, h4, h5⟩
 

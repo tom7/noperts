@@ -14,7 +14,7 @@ set_option maxHeartbeats 0
 set_option maxRecDepth 100000
 
 set_option maxHeartbeats 8000000 in
-theorem k28h5bd_d2_core (u1 u2 m y al be ob og b g : ℝ) (hu1 : 0 < u1) (hu2 : 0 < u2) (hm : 0 < m) (hy : 0 < y)
+theorem k28h5bd_d2_core (u1 u2 m y al be ob og b g : ℝ) (hu1 : 0 < u1) (hu2 : 0 < u2) (hm : 0 < m)
     (hal : 0 < al) (hbe : 0 < be) (hob : 0 < ob) (hog : 0 < og) (hb : 0 < b) (hg : 0 < g)
     (eb : b = 1 - ob) (eg : g = 1 - og)
     (hT : 0 ≤ al * (((be*m/((1+al)*(u1+u2)))^2*(u1+u2)+y)/m) - (1+be) * (be*m/((1+al)*(u1+u2)))) :

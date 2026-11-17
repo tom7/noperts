@@ -45,7 +45,7 @@ theorem iii_row3 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
   · left; simp [boxCfg]; field_simp; nlinarith [mul_pos (mul_pos hL hc) (by linarith : 0 < c - c1z)]
 
 /-- row at 5: cone (3,2). -/
-theorem iii_row5 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
+theorem iii_row5 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hy6 : 0 < y6)
     (hy : y6 ≤ y2) (hc0y : c0y < 0) (h5 : 0 < (c - c0z) - r * c0y) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, -(c1y - c0y)/L, -(c1z-c0z)/L] !₂[0, -c0z, c0y] (boxCfg L c y2 y6 xi ze b 5) := by
@@ -84,8 +84,8 @@ theorem iii_row6 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
   · left; simp [boxCfg]; field_simp; nlinarith [mul_pos hL h6]
 
 /-- row at 1: cone (2,6). -/
-theorem iii_row1 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
-    (hze : 0 < ze) (hze1 : ze < 1) (hy : y6 ≤ y2) (hb : y2 ≤ b) (hby : y6 < b)
+theorem iii_row1 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 0 < c)
+    (hze : 0 < ze) (hze1 : ze < 1) (hb : y2 ≤ b) (hby : y6 < b)
     (hE1 : 0 < (b - y6) * ((1 - xi) * c0y + xi * c1y - b) + ze * c * ((1 - xi) * c0z + xi * c1z - ze * c))
     (hE2 : 0 < (b - y2) * (b - ((1 - xi) * c0y + xi * c1y)) + (c - ze * c) * ((1 - xi) * c0z + xi * c1z - ze * c)) :
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
@@ -95,7 +95,7 @@ theorem iii_row1 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
     (iii_mem L c y2 y6 xi ze b 2) (iii_mem L c y2 y6 xi ze b 6) ?_ ?_ ?_
   · left; simp [boxCfg]
     nlinarith [mul_nonneg hL.le (mul_nonneg (sub_nonneg.2 hb) (mul_pos hze hc).le), mul_nonneg hL.le (mul_nonneg hcd.le (sub_pos.2 hby).le),
-      mul_pos hL (mul_pos hcd (sub_pos.2 hby)), mul_nonneg (mul_nonneg hL.le (sub_nonneg.2 (le_trans hy hb))) (mul_pos hze hc).le]
+      mul_pos hL (mul_pos hcd (sub_pos.2 hby))]
   · left; simp [boxCfg]; field_simp; nlinarith [mul_pos hL hE1]
   · left; simp [boxCfg]; field_simp; nlinarith [mul_pos hL hE2]
 
@@ -169,7 +169,7 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
   intro i hi0
   fin_cases i
   · exact absurd rfl hi0
-  · exact iii_row1 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hy6 hze hze1 hy hb hby
+  · exact iii_row1 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hze hze1 hb hby
       (by rw [show (b - y6) * ((1 - xi) * -M + xi * (y6 + m) - b) + ze * c * ((1 - xi) * (c + k * M) + xi * -eps - ze * c)
             = M * h1 + g1 by rw [hh1, hg1]; ring]; linarith)
       (by rw [show (b - y2) * (b - ((1 - xi) * -M + xi * (y6 + m))) + (c - ze * c) * ((1 - xi) * (c + k * M) + xi * -eps - ze * c)
@@ -180,7 +180,7 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
       (by linarith) (by nlinarith)
   · exact iii_row4 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hy6
       (by linarith) (by linarith)
-  · exact iii_row5 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hy6 hy
+  · exact iii_row5 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hy6 hy
       (by linarith) (by nlinarith [mul_pos (sub_pos.2 hkr) hM0])
   · exact iii_row6 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hy6 hze
       (by linarith) (by nlinarith [mul_pos hm0 hbd])

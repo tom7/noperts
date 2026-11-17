@@ -24,8 +24,8 @@ theorem recI_LPzero {A B B' : ℝ} (hA : A = 0) (hB : 0 < B') (e : B = B') : LP 
 macro "rowtac" : tactic => `(tactic| (simp [boxCfg, Minimality.cross] <;> field_simp <;> ring))
 
 theorem recI_core {L c y2 y6 xi ze b r dl M : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
-    (hy : y6 < y2) (hxi : 0 < xi) (hze : 0 < ze) (hlo : y6 * xi + y2 * ze < b)
-    (hhi : b < y2 * (1 - xi) + y6 * (1 - ze)) (hb : b < y2)
+    (hy : y6 < y2) (hxi : 0 < xi) (hlo : y6 * xi + y2 * ze < b)
+
     (hr : 0 < r) (hdl : 0 < dl) (hdl2 : 2 * (y2 - y6) * dl = r * c * y2) (hM : 1 ≤ M)
     (hM6 : c ^ 2 - (y2 - y6) * y6 < M * ((y2 - y6) - 2 * r * c))
     (hM0 : (1 - xi) * (b * (y2 + dl) + ze * c * (c - r * y2)) + xi * (ze * c * c) - (b * b + ze * c * (ze * c))
@@ -161,7 +161,7 @@ theorem rec_I {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
     (g2 := (1 - xi) * (b * (y2 + dl) + ze * c * (c - r * y2)) + xi * (ze * c * c) - (b * b + ze * c * (ze * c))) hD0
     (g3 := (1 - xi) * ((y2 - b) * (y2 + dl) + (c - ze * c) * (c - r * y2)) + xi * ((c - ze * c) * c)
         - ((y2 - b) * b + (c - ze * c) * (ze * c))) hD2
-  exact recI_core hL hc hy6 hy hxi hze hlo hhi hb hr hdl' hdl2 hM hM6 hM0 hM2
+  exact recI_core hL hc hy6 hy hxi hlo hr hdl' hdl2 hM hM6 hM0 hM2
 
 end Minimality.T24.Par
 #print axioms Minimality.T24.Par.rec_I
