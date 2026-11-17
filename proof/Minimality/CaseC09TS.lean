@@ -116,15 +116,10 @@ theorem t095_cyc5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    left; nlinarith
 
 theorem t095_rest3_5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -263,15 +258,10 @@ theorem t095_cyc4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
   intro i j h1' h2'
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1'
-    | exact absurd (by decide) h2'
-    | skip
+    try (first | exact absurd rfl h1' | exact absurd (by decide) h2')
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    left; nlinarith
 
 theorem t095_rest1_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -316,9 +306,7 @@ theorem t095_rest1_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    left; nlinarith
 
 theorem t095_rest3_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
