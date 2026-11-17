@@ -44,7 +44,7 @@ theorem fourRim_unimodal_of_not_alt (z : ZMod 4 → ℝ) (hinj : Function.Inject
   rcases lt_or_gt_of_ne n01 with a | a <;> rcases lt_or_gt_of_ne n02 with b | b <;>
   rcases lt_or_gt_of_ne n03 with c | c <;> rcases lt_or_gt_of_ne n12 with d | d <;>
   rcases lt_or_gt_of_ne n13 with e | e <;> rcases lt_or_gt_of_ne n23 with f | f <;>
-  simp_all [not_lt_of_gt, a.le, b.le, c.le, d.le, e.le, f.le] <;> (try (exfalso; linarith))
+  simp_all [not_lt_of_gt] <;> (try (exfalso; linarith))
 
 
 /-- **Lemma A (4-rim).** On a 4-rim with injective depths, a depth-separated pair whose
@@ -63,8 +63,7 @@ theorem fourRim_unimodal_of_depthSeparated (p : ZMod 4 → ℝ²) (z : ZMod 4 �
   | (intro _ _ h
      rcases h with ⟨hA, hB⟩ | ⟨hA, hB⟩ <;>
      (try have a1 := hA 1 (by decide) (by decide)) <;> (try have a2 := hA 2 (by decide) (by decide)) <;>
-     (try have a3 := hA 3 (by decide) (by decide)) <;>
-     (try have b1 := hB 1 (by decide) (by decide)) <;> (try have b2 := hB 2 (by decide) (by decide)) <;>
+     (try have b2 := hB 2 (by decide) (by decide)) <;>
      (try have b3 := hB 3 (by decide) (by decide)) <;>
      simp only [Nat.cast_ofNat, Nat.cast_one, show ((0:ZMod 4)+1)=1 from by decide, show ((0:ZMod 4)+2)=2 from by decide, show ((0:ZMod 4)+3)=3 from by decide, show ((1:ZMod 4)+1)=2 from by decide, show ((1:ZMod 4)+2)=3 from by decide, show ((1:ZMod 4)+3)=0 from by decide, show ((2:ZMod 4)+1)=3 from by decide, show ((2:ZMod 4)+2)=0 from by decide, show ((2:ZMod 4)+3)=1 from by decide, show ((3:ZMod 4)+1)=0 from by decide, show ((3:ZMod 4)+2)=1 from by decide, show ((3:ZMod 4)+3)=2 from by decide] at * <;> linarith)
 
