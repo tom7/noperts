@@ -46,7 +46,7 @@ theorem recI_core {L c y2 y6 xi ze b r dl M : ℝ} (hL : 0 < L) (hc : 0 < c) (hy
     refine cone_cert L r _ _ _ _ (boxCfg L c y2 y6 xi ze b 2) (boxCfg L c y2 y6 xi ze b 0)
       (Finset.mem_image_of_mem _ (Finset.mem_univ _)) (Finset.mem_image_of_mem _ (Finset.mem_univ _)) ?_ ?_ ?_
     · refine recI_LPpos (A' := L * c * (b - ze * y2)) (by positivity) ?_
-      simp [boxCfg, Minimality.cross]; ring
+      simp [boxCfg]; ring
     · refine recI_LPpos (A' := L * (M * (xi * (b - ze * c * 2 * r)) - ((1 - xi) * (b * (y2 + dl) + ze * c * (c - r * y2)) + xi * (ze * c * c) - (b * b + ze * c * (ze * c))))) (mul_pos hL (sub_pos.2 hM0)) ?_
       simp [boxCfg, Minimality.cross]; field_simp; ring
     · refine recI_LPpos (A' := L * (M * (xi * ((y2 - b) - (c - ze * c) * 2 * r)) - ((1 - xi) * ((y2 - b) * (y2 + dl) + (c - ze * c) * (c - r * y2)) + xi * ((c - ze * c) * c)
@@ -129,7 +129,7 @@ theorem rec_I {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
   have hy2 : 0 < y2 := by linarith
   have hsum : xi + ze < 1 := by
     by_contra h
-    push_neg at h
+    push Not at h
     nlinarith [mul_pos hy2 hy6, mul_nonneg hy2.le (sub_nonneg.2 h), mul_nonneg hy6.le (sub_nonneg.2 h)]
   have hcd : 0 < c - ze * c := by nlinarith
   have hd : 0 < ze * c := mul_pos hze hc
