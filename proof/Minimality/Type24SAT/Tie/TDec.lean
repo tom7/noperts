@@ -176,7 +176,7 @@ theorem rowWc_holds (U : List LitW) (F : S0xFac 9 s0x_S24 x) (hx : Function.Inje
     exact ⟨l, hl, hU l (by simpa using hu)⟩
   · exact tieOK_sound F hx hNR hG h8
   · exact link_cover hG h9 (by simpa using h9')
-  · exact plk_cover h10 (by simpa using h10')
+  · exact plk_cover (by simpa using h10')
   · exact cram_cover hG h11 (by simpa using h11')
   · exact prow_cover h12 (by simpa using h12')
   · exact fam34_sound hG h13

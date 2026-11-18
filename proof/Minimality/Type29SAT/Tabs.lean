@@ -36,7 +36,7 @@ def tab3 : Tab := ⟨triOf, nlOf, fup3⟩
 /-- **The tables tell the truth** for a shape with `FacOK` and `OriOK`, on the keys of the lists. -/
 theorem entOK_tab3 {g : Geo} (hF : FacOK g) (hO : OriOK g) :
     EntOK tab3 g (fun a b c => hasKey3 triRoutes a b c = true) (fun a b c => hasKey3 nlRoutes a b c = true)
-      (fun t p q => p < 7 ∧ q < 7) where
+      (fun _ p q => p < 7 ∧ q < 7) where
   ent a b c h := by
     unfold hasKey3 at h
     cases hf : triRoutes.find? fun r => r.1 == (a, b, c) with

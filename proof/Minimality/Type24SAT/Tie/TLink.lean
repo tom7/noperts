@@ -130,7 +130,7 @@ theorem plk_sound {g : Geo} {t a b c d : Nat} :
   simp only [Pp, det3_expand] at this ⊢
   linear_combination this
 
-theorem plk_cover {g : Geo} {t a b c d : Nat} (hc : plkChk t a b c d = true) {cl : List LitW}
+theorem plk_cover {g : Geo} {t a b c d : Nat} {cl : List LitW}
     (hcov : (plkRows t a b c d).any (fun s => coversW cl s) = true) : HoldsW (rhoW g) cl :=
   holdsW_of_cover (plk_sound) hcov
 

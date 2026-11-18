@@ -40,7 +40,7 @@ theorem kap_core (s c : Int) (d : ℝ) (hc : c ≠ 0) (S : 0 < (c : ℝ) * d)
     exact not_le.mp fun h => absurd this (not_lt.mpr (mul_nonneg (sq_nonneg _) h))
 
 /-- The kappa sign of a line row is the sign of `s * det(d1, d2, N a)`, from the constant `Aconst`. -/
-theorem kap_sign {g : Geo} (hO : OriOK g) (a x y : Nat) (s : Int) (hs : s = 1 ∨ s = -1)
+theorem kap_sign {g : Geo} (hO : OriOK g) (a x y : Nat) (s : Int)
     (hne : s * Aconst a x y ≠ 0) (kp : Bool) (hk : decide (0 < s * Aconst a x y) = kp) :
     (if kp then 0 < (s : ℝ) * det3 (g.dv x) (g.dv y) (g.N a)
       else (s : ℝ) * det3 (g.dv x) (g.dv y) (g.N a) < 0) := by
@@ -110,14 +110,14 @@ theorem lineOK_sound {g : Geo} (hG : GeoOK g) {p : List Nat} {cl : List Lit}
   have hbound := lines_ok _ hlm
   by_cases hs0 : side = 0
   · simp only [hs0, ite_true] at ha i1 i2 i3 i4 hne hk ⊢
-    have hkk := kap_sign (g := g) hG.hO (lineOf L).1 e1 e2 1 (Or.inl rfl) (by simpa using hne) (prm p 5 == 1) (by
+    have hkk := kap_sign (g := g) hG.hO (lineOf L).1 e1 e2 1 (by simpa using hne) (prm p 5 == 1) (by
       simpa using hk)
     refine line_sound hG.eok (σ := ((1 : Int) : ℝ)) (a := (lineOf L).1) (b := (lineOf L).2) (by norm_num)
       (fun h' => hG.hv _ h') hL21 he1 he2 (by rw [hvL]; simp) (vv_lt g he1) (vv_lt g he2)
       (hG.hF.zero _ _ _ i1 i2) (hG.hF.zero _ _ _ i3 i4) (hA _ ha) ⟨hEA1.1, hEA1.2⟩ ⟨hEA2.1, hEA2.2⟩ ?_
     simpa using hkk
   · simp only [hs0, ite_false] at ha i1 i2 i3 i4 hne hk ⊢
-    have hkk := kap_sign (g := g) hG.hO (lineOf L).2 e1 e2 (-1) (Or.inr rfl) (by simpa using hne) (prm p 5 == 1) (by
+    have hkk := kap_sign (g := g) hG.hO (lineOf L).2 e1 e2 (-1) (by simpa using hne) (prm p 5 == 1) (by
       simpa using hk)
     refine line_sound hG.eok (σ := ((-1 : Int) : ℝ)) (a := (lineOf L).2) (b := (lineOf L).1) (by norm_num)
       (fun h' => hG.hv _ h') hL21 he1 he2 (by rw [hvL, cross_swap']; simp) (vv_lt g he1) (vv_lt g he2)

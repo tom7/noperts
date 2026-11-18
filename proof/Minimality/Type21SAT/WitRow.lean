@@ -72,7 +72,7 @@ theorem facet_pair : ∀ t0 t1 : Fin 8, t0 ≠ t1 → (S21 t0).Nonempty ∧ ¬ S
 
 /-- **The core of the witness soundness**: all literals of the witness clause false is impossible. -/
 theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hG : GeoOK (geoF F))
-    (e d mask sig sigp zero eps : Nat) (he : e < 36) (hd : d < 36) (hmask : mask < 256)
+    (e d mask sig sigp zero eps : Nat) (_he : e < 36) (hd : d < 36) (hmask : mask < 256)
     (hzero : zero < 256) (heps : eps = 1 ∨ eps = 999) (hsig : sigOK sig mask sigp = true)
     (hz2 : popc zero ≤ 2) (hz3 : popc zero ≤ 1 ∨ 3 ≤ popc mask)
     (hzm : ∀ s < 8, zero.testBit s = true → mask.testBit s = true)
