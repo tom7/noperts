@@ -423,7 +423,7 @@ theorem vN4_slide (hx : Function.Injective x)
     (hnd.and (hcyc.and (hrest.and (hmv.and (hmxa.and (hux.and hzev)))))).exists
   obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   refine F.toFrame7.vertex4_rim hx 0 3 4 6 _ _ _ _ F.ptC_0 F.ptC_3 F.ptC_4 F.ptC_6
-    ({5, 1} : Finset (Fin 7)) ?_ 1 (Or.inl rfl) (C3.slide F.S.u_vN4 F.S.eF1 η)
+    ({5, 1} : Finset (Fin 7)) ?_ 1 (C3.slide F.S.u_vN4 F.S.eF1 η)
     (Or.inl (by simp only [C3.slide, Shape20.u_vN4, Shape20.eF1]; exact hu.ne')) hc ?_ ?_ hnd' ?_
   · intro m hm
     simp only [Finset.mem_insert, Finset.mem_singleton] at hm

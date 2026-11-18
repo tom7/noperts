@@ -189,7 +189,7 @@ coordinates, `Frame7.rupert_vertex`), from the explicit strict tests. -/
 theorem vertex4_rim (hx : Function.Injective x) (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (M : Finset (Fin 7)) (hMc : ∀ m ∈ M, m ≠ c0 ∧ m ≠ c1 ∧ m ≠ c2 ∧ m ≠ c3)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hc : PCyc4 σ u P0 P1 P2 P3)
     (hr : ∀ j' : Fin 7, j' ∉ M → j' ≠ c0 → j' ≠ c1 → j' ≠ c2 → j' ≠ c3 →
       PRest4 σ u P0 P1 P2 P3 (F.ptC j'))
@@ -270,7 +270,7 @@ theorem Frame20.tANR_rim {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
     exact robust_quad_of_nws hA' hB'
   obtain ⟨η, hnd', hc, hr2, hm5, hm1, hz⟩ := (hnd.and_eventually ((hcev).and ((hrev2).and ((hmev5).and ((hmev1).and (hzev)))))).exists
   obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
-  refine F.toFrame7.vertex4_rim hx 0 6 4 3 _ _ _ _ (F.ptC_0) (F.ptC_6) (F.ptC_4) (F.ptC_3) ({5, 1} : Finset (Fin 7)) ?_ 1 (Or.inl rfl) (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η) ?_ hc ?_ ?_ hnd' ?_
+  refine F.toFrame7.vertex4_rim hx 0 6 4 3 _ _ _ _ F.ptC_0 F.ptC_6 F.ptC_4 F.ptC_3 ({5, 1} : Finset (Fin 7)) ?_ 1 (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η) ?_ hc ?_ ?_ hnd' ?_
   · intro m hm
     simp only [Finset.mem_insert, Finset.mem_singleton] at hm
     rcases hm with rfl | rfl <;> decide
