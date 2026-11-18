@@ -1142,6 +1142,52 @@ def WallViewLemma : Prop :=
       (∀ t : ℕ, r' ≤ t → t < k → ⟪x (t + 1), n⟫ < ⟪x t, n⟫) →
       IsRupert V
 
+/-! ## Rim cells (Lemma Q4) -/
+
+section RimCell
+
+open Matrix
+open scoped Topology
+
+/-- The four pairs `(i, j)` of opposite-diagonal corners on a 4-cycle: `i ∈ {0, 2}`, `j ∈ {1, 3}`. -/
+def diagPairs4 : Finset (ZMod 4 × ZMod 4) :=
+  ({0, 2} : Finset (ZMod 4)) ×ˢ ({1, 3} : Finset (ZMod 4))
+
+/-- **Lemma Q4: The 4-gon rim-cell test.** Let `A` be an open convex set of views not containing `0`,
+`Γ` an invertible `n × n` matrix, and `y 0, y 1, y 2, y 3` four distinct corners whose diagonal
+differences `y i - y j` (`i ∈ {0, 2}`, `j ∈ {1, 3}`) span `ℝⁿ`. If the diagonal depth forms
+`(Γ g) ⬝ᵥ (y i - y j)` take both a strictly negative value and a strictly positive value on
+`closure A`, then some view `c ∈ A` has distinct, cyclically unimodal depths. -/
+def RimCellUnimodal : Prop :=
+  ∀ {n : ℕ} (Γ : Matrix (Fin n) (Fin n) ℝ), Γ.det ≠ 0 →
+    ∀ (y : ZMod 4 → Fin n → ℝ), Function.Injective y →
+    (∀ w : Fin n → ℝ, (∀ p ∈ diagPairs4, w ⬝ᵥ (y p.1 - y p.2) = 0) → w = 0) →
+    ∀ {A : Set (Fin n → ℝ)}, IsOpen A → Convex ℝ A → (0 : Fin n → ℝ) ∉ A →
+    ∀ {g g' : Fin n → ℝ}, g ∈ closure A → g' ∈ closure A →
+    (∃ p ∈ diagPairs4, (Γ *ᵥ g) ⬝ᵥ (y p.1 - y p.2) < 0) →
+    (∃ p ∈ diagPairs4, 0 < (Γ *ᵥ g') ⬝ᵥ (y p.1 - y p.2)) →
+    ∃ c ∈ A, IsCyclicUnimodal (fun i => (Γ *ᵥ c) ⬝ᵥ y i)
+
+/-- **A rim cell in shape coordinates gives Rupert.** The points of `Y` are realised as `E u`
+for an invertible matrix `E` with `0 < E.det` (metric Gram matrix `Γ = Eᵀ E`), and `y 0 … y 3 ∈ Y`
+form the rim. `A` is an open convex set of views, `0 ∉ A`, on which every point `v ∈ Y` off the rim
+edge `y i → y (i+1)` lies strictly left of it (`0 < det (y (i+1) - y i, v - y i, c)`). If the Q4
+diagonal forms take both strict signs on `closure A`, then the polytope `E Y` is Rupert. -/
+def RimCellRupert : Prop :=
+  ∀ (E : Matrix (Fin 3) (Fin 3) ℝ), 0 < E.det →
+    ∀ (y : ZMod 4 → Fin 3 → ℝ), Function.Injective y →
+    ∀ (Y : Finset (Fin 3 → ℝ)), (∀ i, y i ∈ Y) →
+    (∀ w : Fin 3 → ℝ, (∀ p ∈ diagPairs4, w ⬝ᵥ (y p.1 - y p.2) = 0) → w = 0) →
+    ∀ {A : Set (Fin 3 → ℝ)}, IsOpen A → Convex ℝ A → (0 : Fin 3 → ℝ) ∉ A →
+    (∀ c ∈ A, ∀ i : ZMod 4, ∀ v ∈ Y, v ≠ y i → v ≠ y (i + 1) →
+      0 < (Matrix.of ![y (i + 1) - y i, v - y i, c]).det) →
+    ∀ {g g' : Fin 3 → ℝ}, g ∈ closure A → g' ∈ closure A →
+    (∃ p ∈ diagPairs4, ((Eᵀ * E) *ᵥ g) ⬝ᵥ (y p.1 - y p.2) < 0) →
+    (∃ p ∈ diagPairs4, 0 < ((Eᵀ * E) *ᵥ g') ⬝ᵥ (y p.1 - y p.2)) →
+    IsRupert (Y.image fun u => WithLp.toLp 2 (E *ᵥ u))
+
+end RimCell
+
 /-! ## Gram extension -/
 
 section GramExtension
