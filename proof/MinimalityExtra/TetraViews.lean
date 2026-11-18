@@ -203,7 +203,8 @@ theorem rimB : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN
     rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
       try (first | exact absurd rfl h1 | exact absurd rfl h2)
     all_goals norm_num [det3, TX, WB]
-  all_goals (simp [TX, WB, PiLp.inner_apply, Fin.sum_univ_three] <;> norm_num)
+  all_goals (simp [TX, WB, PiLp.inner_apply, Fin.sum_univ_three])
+  all_goals norm_num
 
 theorem rimC : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN TX WC lab ∧
     IsCyclicTwoPeaked (fun i => ⟪TX (lab i), WC⟫) := by
@@ -212,7 +213,8 @@ theorem rimC : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN
     rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
       try (first | exact absurd rfl h1 | exact absurd rfl h2)
     all_goals norm_num [det3, TX, WC]
-  all_goals (simp [TX, WC, PiLp.inner_apply, Fin.sum_univ_three] <;> norm_num)
+  all_goals (simp [TX, WC, PiLp.inner_apply, Fin.sum_univ_three])
+  all_goals norm_num
 
 /-- **Rim shape and first-order freedom are independent at a single view.** -/
 theorem existsTetrahedronViewsIndependent : ExistsTetrahedronViewsIndependent :=

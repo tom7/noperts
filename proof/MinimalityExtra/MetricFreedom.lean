@@ -34,7 +34,7 @@ theorem AM_apply (u : ℝ³) :
     Matrix.toEuclideanLin AM u = !₂[2 * u 0 - 2 * u 2, - u 0, u 0 + u 1 + u 2] := by
   ext j
   fin_cases j <;>
-    simp [AM, Matrix.mulVec, dotProduct, Fin.sum_univ_three] <;> ring
+    simp [AM, Matrix.mulVec, dotProduct, Fin.sum_univ_three]; ring
 
 theorem AM_TX (i : Fin 4) : Matrix.toEuclideanLin AM (TX i) = TY i := by
   rw [AM_apply]

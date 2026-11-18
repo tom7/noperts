@@ -49,7 +49,8 @@ theorem cornerWedgeRupert : CornerWedgeRupert := by
         fin_cases j <;>
         · simp only [cornerWedgeVertices, wpts]
           ext i
-          fin_cases i <;> simp [hρH] <;> nlinarith [hρH] }
+          fin_cases i <;> simp [hρH]
+          all_goals nlinarith [hρH] }
   exact G.wedge_rupert ρ hρ hρ1
     (by simp [Frame7.a12, G, EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_succ]) rfl
 

@@ -168,7 +168,7 @@ theorem k22z1_c3_strict {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
       linarith
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
-    rcases hl with rfl | rfl <;> (left; simp <;> linarith [mul_pos hℓ0 (sub_pos.2 hα41), hℓ0])
+    rcases hl with rfl | rfl <;> (left; simp; all_goals linarith [mul_pos hℓ0 (sub_pos.2 hα41), hℓ0])
 
 end C2
 end Type08Sp

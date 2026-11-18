@@ -140,7 +140,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     exact hdel.trans this
   -- base cases: |A|, |B| ≤ 2
   rcases A with _ | ⟨a0, _ | ⟨p, _ | ⟨_, _⟩⟩⟩ <;> rcases B with _ | ⟨q, _ | ⟨c', _ | ⟨_, _⟩⟩⟩
-  all_goals (try (exfalso; simp at hA3 hB3 hn <;> omega))
+  all_goals (try (exfalso; simp at hA3 hB3 hn; all_goals omega))
   · -- (0,2)
     simp at ha hc he hmin hB hnd ⊢
     obtain ⟨hm1, hm2⟩ := hmin
@@ -288,7 +288,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     exact hdel.trans this
   -- base cases: |A|, |B| ≤ 2
   rcases A with _ | ⟨a0, _ | ⟨p, _ | ⟨_, _⟩⟩⟩ <;> rcases B with _ | ⟨q, _ | ⟨c', _ | ⟨_, _⟩⟩⟩
-  all_goals (try (exfalso; simp at hA3 hB3 hn <;> omega))
+  all_goals (try (exfalso; simp at hA3 hB3 hn; all_goals omega))
   · -- (0,2)
     simp at ha hc he hmin hB hnd ⊢
     obtain ⟨hm1, hm2⟩ := hmin
