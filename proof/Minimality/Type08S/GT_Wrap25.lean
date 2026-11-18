@@ -64,7 +64,7 @@ variable {E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 : ℝ} {FH FQab FQac FT1 FT2 FT3
 include h hz
 
 /-- the tilt `t` with `t s b2 < m3` is below the slope of `Q_ac`. -/
-theorem ttc {t : ℝ} (ht : 0 < t) (htt : t * (s * b2) < m3) : t * FQac.c < -FQac.b := by
+theorem ttc {t : ℝ} (htt : t * (s * b2) < m3) : t * FQac.c < -FQac.b := by
   have hc := h.Qac_c hz
   have Qac_M := h.Qac_M; have d0 := h.Qac_d hz; have a0 := h.Qac_a hz
   simp only [Fc.ev] at Qac_M

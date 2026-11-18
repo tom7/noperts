@@ -34,13 +34,13 @@ theorem gt_far_N2'' (N : Norm08 a a' b b' c c' d)
       exact weak_of_not_nb hnb
     rcases P.cfg.hzv.lt_or_eq with hz | hz
     · rcases lt_trichotomy r2 b2 with hrb | hrb | hrb
-      · exact n2_lt N.F N.hd P hE hz hwb hrb
-      · exact n2_eq N.F N.hd P hE hz hwb hrb
-      · exact n2_gt N.F N.hd P hE hz hwb hrb
+      · exact n2_lt N.F P hE hz hwb hrb
+      · exact n2_eq N.F P hE hz hwb hrb
+      · exact n2_gt N.F P hE hz hwb hrb
     · rcases lt_trichotomy r2 b2 with hrb | hrb | hrb
-      · exact n2_lt0 N.F N.hd P hE hz.symm hwb hrb
-      · exact n2_eq0 N.F N.hd P hE hz.symm hwb hrb
-      · exact n2_gt0 N.F N.hd P hE hz.symm hwb hrb
+      · exact n2_lt0 N.F P hE hz.symm hwb hrb
+      · exact n2_eq0 N.F P hE hz.symm hwb hrb
+      · exact n2_gt0 N.F P hE hz.symm hwb hrb
 
 end Type08Sp
 end Minimality

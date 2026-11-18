@@ -40,7 +40,7 @@ end N2Cfg0
 
 open HFrame in
 /-- **N2, weakly beyond, `r2 > b2`, `zv = 0`.** -/
-theorem n2_gt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
+theorem n2_gt0 (F : OctFacets a a' b b' c c')
     {E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 : ℝ} {FH FQab FQac FT1 FT2 FT3 : Fc}
     (P : N2Pic a a' b b' c c' d F.a'b'c.f E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3
       FH FQab FQac FT1 FT2 FT3)
@@ -66,7 +66,7 @@ theorem n2_gt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   have htt1 : tt * (s * b2) < m3 := by
     have : tt * (s * b2) = m3 / 2 := by rw [htt]; field_simp
     rw [this]; linarith
-  have hb := cfg.ttc hz htt0 htt1
+  have hb := cfg.ttc hz htt1
   have hc := cfg.Qac_c hz
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   have row13 : LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, -tt⟩ (h5Pts zv zw s b1 b2 m3 a1 a2 a3 r1 r2 1)

@@ -51,7 +51,7 @@ end Fe
 
 open HFrame in
 /-- **N2, weakly beyond, `r2 = b2`, `zv = 0`.** -/
-theorem n2_eq0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
+theorem n2_eq0 (F : OctFacets a a' b b' c c')
     {E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 : ℝ} {FH FQab FQac FT1 FT2 FT3 : Fc}
     (P : N2Pic a a' b b' c c' d F.a'b'c.f E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3
       FH FQab FQac FT1 FT2 FT3)
