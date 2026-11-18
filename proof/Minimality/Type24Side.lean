@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type24Metric
 public import Minimality.SlideDS
+public import Minimality.RimHDN
 
 @[expose] public section
 
@@ -628,15 +629,17 @@ theorem Type24.obtuse_of_side_safe {x : Fin 7 → ℝ³} (T : Type24 x) (hside :
 depth-separated `K_v`).  The cycle `p` passes all triple tests at `u` (strictly convex,
 counterclockwise), every other point except the middles `M` and the axle end `w = p i₀ − h u`
 (`h ≠ 0`) is strictly inside, the rim has a depth-separated parallel pair (`DepthSepAt`, in
-space) and no horizontal double normal, and each middle lies over a face of the edge `p i₀ w`
-(`EdgeMiddle`).  Then `V` is Rupert, whether or not the rim depths are unimodal. -/
-theorem isRupert_of_edgeView_depthSeparated (V M Wn : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0)
+space) and no horizontal double normal *of the rim cycle only* (`NoHDNRim`), and each
+middle lies over a face of the edge `p i₀ w` (`EdgeMiddle`).  Then `V` is Rupert, whether or not
+the rim depths are unimodal.  (`isRupert_of_edgeView_depthSeparated` is the version with
+`NoHDNAt`.) -/
+theorem isRupert_of_edgeView_depthSeparated_rim (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0)
     {k : ℕ} [NeZero k] (hk : 3 ≤ k) (p : ZMod k → ℝ³) (i₀ : ZMod k) (w : ℝ³) (h : ℝ)
     (hwV : w ∈ V) (hw : w = p i₀ - h • u) (hh : h ≠ 0) (hpV : ∀ i, p i ∈ V) (hpM : ∀ i, p i ∉ M)
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < det3 (p (i + 1) - p i) (p j - p i) u)
     (hrest : ∀ v ∈ V, v ∉ M → v ≠ w → (∀ j, v ≠ p j) → ∀ i,
       0 < det3 (p (i + 1) - p i) (v - p i) u)
-    {a c : ZMod k} (hds : DepthSepAt p u a c) (hnd : NoHDNAt Wn u) (hpW : ∀ i, p i ∈ Wn)
+    {a c : ZMod k} (hds : DepthSepAt p u a c) (hnd : NoHDNRim p u)
     (hM : ∀ m ∈ M, EdgeMiddle u (p i₀) w (p (i₀ + 1)) (p (i₀ - 1)) h m) : IsRupert V := by
   classical
   obtain ⟨R, hR, ρ, hρ, hRu⟩ := exists_rotation_to_ez_pos u hu
@@ -646,11 +649,28 @@ theorem isRupert_of_edgeView_depthSeparated (V M Wn : Finset ℝ³) (u : ℝ³) 
     exact cross2_proj_rot_pos hR hρ hRu (hcyc i j hi hj)
   refine isRupert_of_edgeChords_depthSeparated V M R hR hρ hRu p i₀ w h hwV hw hh hpV hpM hp ?_
     (isDepthSeparatedPair_of_depthSepAt hR hρ hRu p hk hcyc hds)
-    (hnd R hR ρ hρ.ne' hRu k p hpW hp) hM
+    (hnd R hR ρ hρ.ne' hRu hp) hM
   intro v hv hvM hvw hvp
   refine hp.mem_interior_of_left fun i => ?_
   simp only [proj_rot_sub]
   exact cross2_proj_rot_pos hR hρ hRu (hrest v hv hvM hvw hvp i)
+
+/-- **Theorem 8.10 at an edge view given by determinant tests** (Theorem 8.9 with a
+depth-separated `K_v`).  The cycle `p` passes all triple tests at `u` (strictly convex,
+counterclockwise), every other point except the middles `M` and the axle end `w = p i₀ − h u`
+(`h ≠ 0`) is strictly inside, the rim has a depth-separated parallel pair (`DepthSepAt`, in
+space) and no horizontal double normal, and each middle lies over a face of the edge `p i₀ w`
+(`EdgeMiddle`).  Then `V` is Rupert, whether or not the rim depths are unimodal. -/
+theorem isRupert_of_edgeView_depthSeparated (V M Wn : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0)
+    {k : ℕ} [NeZero k] (hk : 3 ≤ k) (p : ZMod k → ℝ³) (i₀ : ZMod k) (w : ℝ³) (h : ℝ)
+    (hwV : w ∈ V) (hw : w = p i₀ - h • u) (hh : h ≠ 0) (hpV : ∀ i, p i ∈ V) (hpM : ∀ i, p i ∉ M)
+    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < det3 (p (i + 1) - p i) (p j - p i) u)
+    (hrest : ∀ v ∈ V, v ∉ M → v ≠ w → (∀ j, v ≠ p j) → ∀ i,
+      0 < det3 (p (i + 1) - p i) (v - p i) u)
+    {a c : ZMod k} (hds : DepthSepAt p u a c) (hnd : NoHDNAt Wn u) (hpW : ∀ i, p i ∈ Wn)
+    (hM : ∀ m ∈ M, EdgeMiddle u (p i₀) w (p (i₀ + 1)) (p (i₀ - 1)) h m) : IsRupert V :=
+  isRupert_of_edgeView_depthSeparated_rim V M u hu hk p i₀ w h hwV hw hh hpV hpM hcyc hrest hds
+    (hnd.rim p hpW) hM
 
 /-- **In a depth-separated pair `(e, c)` the two rim neighbours of `c` lie strictly on opposite
 sides of its depth** (the chain from `c` to `a` starts at `c + 1`, the chain from `a + 1` back to

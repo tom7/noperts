@@ -1,6 +1,9 @@
 module
 
 public import Minimality.Type24Circle
+public import Minimality.HDNRim24
+public import Minimality.LinkRim24
+public import Minimality.LaplacianNH
 
 @[expose] public section
 
@@ -204,6 +207,19 @@ theorem dsp_glue {x : Fin 7 → ℝ³} {u : ℝ³} {d : Fin 7} {h : ℝ} {k : �
     exact zero_ne_one (hinj (by simp))
   exact isRupert_edgeRim hu hR (Or.inr ⟨a, c, hpp, hds⟩)
 
+/-- **`dsp_glue` with the rim-only no-HDN hypothesis** (`EdgeRim'`: `NoHDNRim` of the rim cycle,
+not of its whole point set). -/
+theorem dsp_glue_rim {x : Fin 7 → ℝ³} {u : ℝ³} {d : Fin 7} {h : ℝ} {k : ℕ} [NeZero k]
+    {r : ZMod k → Fin 7} {a c : ZMod k} (hR : HDNRim.EdgeRim' x u d h k r)
+    (hpp : ParPairAt (fun i => x (r i)) u a c) (hds : DepthSepZ (fun i => ⟪x (r i), u⟫) a c) :
+    IsRupert (Finset.univ.image x) := by
+  have hu : u ≠ 0 := by
+    rintro rfl
+    obtain ⟨hk, -, -, -, -, hinj, -⟩ := hR
+    have : Fact (1 < k) := ⟨by omega⟩
+    exact zero_ne_one (hinj (by simp))
+  exact HDNRim.isRupert_edgeRim_dsp_rim hu hR hpp hds
+
 set_option hygiene false in
 macro "dsfin" : tactic => `(tactic| first | exact r1 | exact r2 | exact r3 | exact r4 | exact r5 | exact r6 | exact r7)
 
@@ -259,6 +275,59 @@ theorem dsp_d02c1 {x : Fin 7 → ℝ³} {X d : Fin 7} {h : ℝ} (hR : EdgeRim x 
     (hpp : ParPairAt (fun i => x (rim02 X i)) (x 2 - x 0) 0 2) (r1 : ⟪x 6, (x 2 - x 0)⟫ < ⟪x 3, (x 2 - x 0)⟫) (r2 : ⟪x 6, (x 2 - x 0)⟫ < ⟪x 5, (x 2 - x 0)⟫) (r3 : ⟪x 6, (x 2 - x 0)⟫ < ⟪x X, (x 2 - x 0)⟫) (r4 : ⟪x 1, (x 2 - x 0)⟫ < ⟪x 6, (x 2 - x 0)⟫) :
     IsRupert (Finset.univ.image x) :=
   dsp_glue hR hpp (ds_d02c1 (z := fun i => ⟪x (rim02 X i), (x 2 - x 0)⟫) r1 r2 r3 r4)
+
+/-- **`dsp_d02c1` with a rim-only no-HDN proof (Lemma HA).**  Rim `(2, 1, 6, 3, 5)` at the view
+`x 2 - x 0`, `K` Rupert if each rim edge `i` has a strictly farthest vertex `c i` (`hanti`, shape-only
+determinant signs) whose foot on the edge line is outside the open edge or at another depth
+(`hfoot`).  For the edge `1 -> 6` (`i = 1`) with `c 1 = 0` (the corner `x 2`) the foot condition is
+discharged by Lemma NH (`hobt`: `<x 2 - x 1, x 6 - x 1> <= 0`, with the depth rows `r3, r4`): the foot
+lies strictly beyond the apex `x 1`.  The other four edges keep explicit hypotheses. -/
+theorem dsp_d02c1_rim {x : Fin 7 → ℝ³}
+    (hD : Link24R.EdgeRimDet x (x 2 - x 0) 0 1 5 (rim02 2))
+    (hinj : Function.Injective fun i => ⟪x (rim02 2 i), (x 2 - x 0)⟫)
+    (hpp : ParPairAt (fun i => x (rim02 2 i)) (x 2 - x 0) 0 2)
+    (r1 : ⟪x 6, (x 2 - x 0)⟫ < ⟪x 3, (x 2 - x 0)⟫) (r2 : ⟪x 6, (x 2 - x 0)⟫ < ⟪x 5, (x 2 - x 0)⟫)
+    (r3 : ⟪x 6, (x 2 - x 0)⟫ < ⟪x 2, (x 2 - x 0)⟫) (r4 : ⟪x 1, (x 2 - x 0)⟫ < ⟪x 6, (x 2 - x 0)⟫)
+    (hobt : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) (c : ZMod 5 → ZMod 5) (hc1 : c 1 = 0)
+    (hanti : ∀ i l, l ≠ c i →
+      det3 (x (rim02 2 (i + 1)) - x (rim02 2 i)) (x (rim02 2 l) - x (rim02 2 i)) (x 2 - x 0) <
+        det3 (x (rim02 2 (i + 1)) - x (rim02 2 i)) (x (rim02 2 (c i)) - x (rim02 2 i)) (x 2 - x 0))
+    (hfoot : ∀ i, i ≠ 1 →
+      0 < HDNApex.scr (x 2 - x 0) (x (rim02 2 (c i)) - x (rim02 2 i))
+        (x (rim02 2 (i + 1)) - x (rim02 2 i)) →
+      HDNApex.scr (x 2 - x 0) (x (rim02 2 (c i)) - x (rim02 2 i))
+          (x (rim02 2 (i + 1)) - x (rim02 2 i)) <
+        HDNApex.scr (x 2 - x 0) (x (rim02 2 (i + 1)) - x (rim02 2 i))
+          (x (rim02 2 (i + 1)) - x (rim02 2 i)) →
+      HDNApex.scr (x 2 - x 0) (x (rim02 2 (i + 1)) - x (rim02 2 i))
+          (x (rim02 2 (i + 1)) - x (rim02 2 i)) * ⟪x (rim02 2 (c i)), x 2 - x 0⟫ ≠
+        (HDNApex.scr (x 2 - x 0) (x (rim02 2 (i + 1)) - x (rim02 2 i))
+            (x (rim02 2 (i + 1)) - x (rim02 2 i)) -
+          HDNApex.scr (x 2 - x 0) (x (rim02 2 (c i)) - x (rim02 2 i))
+            (x (rim02 2 (i + 1)) - x (rim02 2 i))) * ⟪x (rim02 2 i), x 2 - x 0⟫ +
+          HDNApex.scr (x 2 - x 0) (x (rim02 2 (c i)) - x (rim02 2 i))
+              (x (rim02 2 (i + 1)) - x (rim02 2 i)) * ⟪x (rim02 2 (i + 1)), x 2 - x 0⟫) :
+    IsRupert (Finset.univ.image x) := by
+  obtain ⟨hk, hh, hd, hcyc, hrest⟩ := hD
+  have hu : x 2 - x 0 ≠ 0 := by
+    intro h0
+    have : ⟪x 6, (x 2 - x 0)⟫ = ⟪x 3, (x 2 - x 0)⟫ := by rw [h0]; simp
+    linarith
+  have hJ : 0 < ⟪x 6 - x 1, x 2 - x 0⟫ := by rw [inner_sub_left]; linarith
+  have hM : 0 < ⟪x 2 - x 1, x 2 - x 0⟫ := by rw [inner_sub_left]; linarith
+  have hneg : HDNApex.scr (x 2 - x 0) (x 2 - x 1) (x 6 - x 1) < 0 :=
+    LaplacianNH.scr_neg_of_apex_pair hu hJ hM hobt
+  have e0 : rim02 2 0 = 2 := rfl
+  have e1 : rim02 2 1 = 1 := rfl
+  have e2 : rim02 2 2 = 6 := rfl
+  have hR := HDNRim.edgeRim'_of_anti hk hh hd hcyc hrest hinj c hanti (fun i => by
+    by_cases hi : i = 1
+    · subst hi
+      intro h0
+      rw [hc1, show (1 : ZMod 5) + 1 = 2 from rfl, e0, e1, e2] at h0
+      exact absurd h0 (not_lt.mpr hneg.le)
+    · exact hfoot i hi)
+  exact dsp_glue_rim hR hpp (ds_d02c1 (z := fun i => ⟪x (rim02 2 i), (x 2 - x 0)⟫) r1 r2 r3 r4)
 theorem ds_d02c2 {z : ZMod 5 → ℝ} (r1 : z 2 < z 3) (r2 : z 2 < z 4) (r3 : z 0 < z 2) (r4 : z 1 < z 2) : DepthSepZ z 4 2 := by
   have hv : ((4 : ZMod 5) - 2).val = 2 := by decide
   unfold DepthSepZ; left; rw [hv]
