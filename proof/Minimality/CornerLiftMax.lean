@@ -202,7 +202,7 @@ theorem offdiag_of_three (P : Matrix (Fin 3) (Fin 3) ℝ) (hP : ∀ i j, P i j =
     first
     | exact absurd rfl hxy
     | assumption
-    | (rw [hP]; assumption)
+    | rwa [hP]
 
 /-- If `H` (symmetric, obtuse) admits no feasible lift, two off-diagonal entries vanish.  Positive
 definiteness is not needed here. -/

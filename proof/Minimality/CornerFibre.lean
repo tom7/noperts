@@ -129,7 +129,7 @@ variable {κ l01 l02 l12 : ℝ}
 theorem footCombo_symm : (footCombo n κ l01 l02 l12)ᵀ = footCombo n κ l01 l02 l12 := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [footCombo, Dn, Qab, vecMulVec_apply] <;> (try ring) <;> simp
+    simp [footCombo, Dn, Qab, vecMulVec_apply] <;> (try ring_nf) <;> simp
 
 theorem footCombo_mulVec (hn : ∀ i, 0 < n i) :
     footCombo n κ l01 l02 l12 *ᵥ n = fun _ => κ := by

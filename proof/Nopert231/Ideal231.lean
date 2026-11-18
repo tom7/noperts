@@ -357,7 +357,7 @@ theorem model_vertex_prev (k : OrbitIndex) :
     norm_num
     rw [← RzL_add_two_pi]
     congr 1
-    ring
+    ring_nf
 
 /-- Quad `k` is quad 0 rotated by `2πk/5`. -/
 theorem quadVolume_eq (k : OrbitIndex) : quadVolume k = quadVolume 0 := by

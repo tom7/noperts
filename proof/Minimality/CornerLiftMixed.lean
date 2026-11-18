@@ -280,7 +280,7 @@ theorem exists_lift_K (G : Matrix (Fin 3) (Fin 3) ℝ) (hpd : G.PosDef) {a b c :
     first
     | exact absurd rfl hxy
     | assumption
-    | (rw [hsy]; assumption)
+    | rwa [hsy]
     | exact absurd hp (by rw [hG.apply]; linarith)
 
 end

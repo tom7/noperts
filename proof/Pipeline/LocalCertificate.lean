@@ -899,7 +899,7 @@ theorem valid_normalizedA_move (box : Box) (h : box.GeometricValid)
         ((box.certificate j).normalizedAAt box q offset -
             (box.certificate j).normalizedAAt box box.center.toReal 0) +
           ((box.certificate j).normalizedAAt box box.center.toReal 0 -
-            toR3 (box.approxNormalizedA j)) by abel]
+            toR3 (box.approxNormalizedA j)) by abel_nf]
       exact norm_add_le _ _
     _ ≤ (box.outerRadius : ℝ) + (centerVectorError : ℝ) :=
       add_le_add hcenterMove' happrox
