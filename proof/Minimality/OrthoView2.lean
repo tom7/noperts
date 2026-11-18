@@ -141,4 +141,16 @@ theorem isRupert_of_closedCell_ray {k : ℕ} [NeZero k] (hk : 4 ≤ k) (F : S0xF
     self_mem_nhdsWithin).exists
   exact isRupert_of_closedCell hk F hx hc hcyc hu h1.cellLe h2
 
+/-- **Theorem P, EEEV case, direction discharged.**  As `isRupert_of_orthocentre_eeev` with the
+tilt direction `d = x (c 0) - x (c 3)`, which is nonzero because the rim corners are distinct. -/
+theorem isRupert_of_orthocentre_eeev' {k : ℕ} (F : S0xFac m S x) (hx : Function.Injective x)
+    {c : ZMod 4 → Fin n} (hc : Function.Injective c) {U Dn : Finset (Fin m)}
+    (hcyc : S0xCycUD S c U Dn) {u : ℝ³} (hu : CellAt F U Dn u) (p : ℝ³) (v : Fin k → ℝ³)
+    (y : Fin n → Fin k → ℝ) (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
+    (h01 : (∑ e, y (c 0) e) < ∑ e, y (c 1) e) (h03 : (∑ e, y (c 0) e) = ∑ e, y (c 3) e) :
+    IsRupert (Finset.univ.image x) := by
+  refine isRupert_of_orthocentre_eeev F hx hc hcyc hu p v y hxy hv h01 h03
+    (x (c 0) - x (c 3)) (real_inner_self_pos.2 ?_)
+  exact sub_ne_zero.2 fun h => absurd (hc (hx h)) (by decide)
+
 end Minimality.H21
