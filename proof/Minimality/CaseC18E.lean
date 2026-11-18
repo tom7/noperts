@@ -166,7 +166,7 @@ theorem rimE2a_rest (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
        · nlinarith [mul_pos a1 hDa, mul_pos a2 hDa, mul_pos htp hDa, hDa, a7, mul_pos hsm a7, mul_pos a2 a7, mul_pos htm a7, mul_pos htp a7, mul_pos a1 a7, mul_pos a3 a7, mul_pos a5 a7])
 
 set_option maxHeartbeats 2000000 in
-theorem rimE2b_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
+theorem rimE2b_cyc (tm hm tp hp sp kp sm ap am d1 d3 : ℝ)
     (htm : 0 < tm) (htp : 0 < tp)
     (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1) (hsm1 : sm < 1)
     (hap : 0 < ap) (ham : 0 < am)
@@ -994,7 +994,7 @@ theorem lx_VMN_of (H : FPar tp tm hm sp kp sm km ρ b lam)
     simp only [Tt, Dc, dF, C3.sub, pV, pM, pN]; ring
   rw [e]; positivity
 
-theorem lx_VNM_of (H : FPar tp tm hm sp kp sm km ρ b lam)
+theorem lx_VNM_of (_H : FPar tp tm hm sp kp sm km ρ b lam)
     (h : Ot ρ b pV (pM tm hm) (pN sm km) < 0) : Lx ρ b lam pV (pN sm km) (pM tm hm) := by
   refine Lx_of_pos ?_
   rw [Ot_swap]; linarith
@@ -1750,7 +1750,7 @@ theorem sR_lt (H : FPar tp tm hm sp kp sm km ρ b lam)
   push Not at hc
   linarith [mul_pos hb a1, mul_pos hb hsp, mul_nonneg hb.le (sub_nonneg.2 hc), mul_pos hb (mul_pos hsp hρ), mul_pos htp r3, mul_nonneg a1.le (mul_nonneg hb.le (sub_nonneg.2 hc))]
 
-theorem lx_UWV (H : FPar tp tm hm sp kp sm km ρ b lam)
+theorem lx_UWV (_H : FPar tp tm hm sp kp sm km ρ b lam)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) : Lx ρ b lam (pU tp b) (pW sp kp) pV := by
   refine Lx_of_pos ?_
   have : Ot ρ b (pU tp b) (pW sp kp) pV = - Ot ρ b (pU tp b) pV (pW sp kp) := Ot_swap _ _ _ _ _
@@ -2615,7 +2615,7 @@ theorem rimE2b_rupert (hL : F.LMp) (heq : F.S.cm = F.S.dp) (d1 d3 : ℝ)
     ⟨F.S.tp, -1, F.S.hp⟩ ⟨d1, 0, d3⟩ (Or.inr (Or.inl (by norm_num))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimE2b_cyc F.S.tm F.S.hm F.S.tp F.S.hp F.S.sp F.S.kp F.S.sm F.S.km F.S.ap F.S.am d1 d3
+    exact rimE2b_cyc F.S.tm F.S.hm F.S.tp F.S.hp F.S.sp F.S.kp F.S.sm F.S.ap F.S.am d1 d3
       F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt
       F.S.ap_pos F.S.am_pos hhp hhm hkp hr1 hr2 hDa' hDe i j h1 h2
   · intro j' hj' i
@@ -3791,7 +3791,7 @@ theorem thmF_rest3 (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
 
 theorem thmF_rest (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap)
-    (hb : F.S.bp ≤ F.S.am) (h : ¬ (0 < F.oN1 ∧ 0 < F.oN2 ∧ 0 < F.oW)) :
+    (hb : F.S.bp ≤ F.S.am) :
     IsRupert (Finset.univ.image x) := by
   by_cases hW : F.oW < 0
   · exact F.thmF_rest3 heq h22 hg hc hb hW
@@ -3829,7 +3829,7 @@ theorem thmF (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hb : F.S.bp ≤ F.S.am) : IsRupert (Finset.univ.image x) := by
   by_cases hA : 0 < F.oN1 ∧ 0 < F.oN2 ∧ 0 < F.oW
   · exact F.rimFA_rupert heq h22 hg hb hA.1 hA.2.1 hA.2.2
-  · exact F.thmF_rest heq h22 hg hc hb hA
+  · exact F.thmF_rest heq h22 hg hc hb
 
 theorem thmFz (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.am * F.S.dm = F.a11) (hc : F.a11 * F.S.cm ≤ F.a22 * F.S.am)
