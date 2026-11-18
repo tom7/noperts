@@ -148,7 +148,7 @@ theorem close_T_H2'' {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
 
 
 theorem close_T2_final' {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
-    (hT : IsT a' b c d) (hco : ¬ CoT2' a a' b b' c c' d) (hnt : ¬ RTouch a a' b b' c c' d) :
+    (hT : IsT a' b c d) (hco : ¬ CoT2' a a' b b' c c' d):
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   by_cases h1 : H1 b b' c c' d
   · have hnH2 : ¬ H2 a b b' c d := fun h => hco (Or.inl ⟨h1, h⟩)

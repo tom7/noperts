@@ -144,13 +144,8 @@ theorem isRupert_type08_limit_hdn_rim {a a' b b' c c' d : ℝ³} (N : Norm08 a a
         ¬ NoHDNAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
           ((test08 t.1 t.2.1 t.2.2).view (pts08 a a' b b' c c' d)) := by
   classical
-  have hnR : ¬ RTouch a a' b b' c c' d := by
-    rintro (h | h | h)
-    · exact h (fun ht => absurd (Or.inl ht) hnt)
-    · exact h (fun ht => absurd (Or.inr ht) hnt)
-    · exact h (fun ht => absurd (Or.inr ht) hnt)
   by_cases hT : IsT a' b c d
-  · exact Or.inl (close_T2_final N hT (hTco hT) hnR)
+  · exact Or.inl (close_T2_final N hT (hTco hT))
   by_cases hT' : IsT' a b c' d
   · exact Or.inl (close_T'2_final N hT' (hT'co hT'))
   obtain ⟨o, E₁, E₂, E₃, θ, hE, hθ, hpts⟩ := exists_nf08 N

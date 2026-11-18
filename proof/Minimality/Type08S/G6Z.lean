@@ -19,9 +19,9 @@ namespace Minimality
 namespace Type08Sp
 
 /-- **T closing** (29.12 + §41): H1 by `close_T_H1`, H2 by `close_T_H2'`, off both by `close_T_off'`.
-`¬RTouch` is not needed on this route. -/
+`¬RTouch` is not needed (it was dropped from `close_T_H1`). -/
 theorem close_T2_final {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
-    (hT : IsT a' b c d) (hco : ¬ CoT2 a a' b b' c c' d) (hnt : ¬ RTouch a a' b b' c c' d) :
+    (hT : IsT a' b c d) (hco : ¬ CoT2 a a' b b' c c' d):
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   by_cases h1 : H1 b b' c c' d
   · exact close_T_H1 N hT h1 hco

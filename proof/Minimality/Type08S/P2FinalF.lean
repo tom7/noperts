@@ -54,15 +54,10 @@ theorem norm08_rupert_or_resNC' {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b'
   swap
   · exact Or.inr (Or.inr (Or.inr (Or.inl hties)))
   obtain ⟨q, hq, ties, ht, hi, hcov⟩ := hties
-  have hnR : ¬ RTouch a a' b b' c c' d := by
-    rintro (h | h | h)
-    · exact h (fun ht => absurd (Or.inl ht) hnt)
-    · exact h (fun ht => absurd (Or.inr ht) hnt)
-    · exact h (fun ht => absurd (Or.inr ht) hnt)
   by_cases hT : IsT a' b c d
   · by_cases hco : CoT2' a a' b b' c c' d
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hT, hco⟩)))))
-    · exact Or.inl (close_T2_final' N hT hco hnR)
+    · exact Or.inl (close_T2_final' N hT hco)
   by_cases hT' : IsT' a b c' d ∧ CoT'2 a a' b b' c c' d
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr hT')))))
   rcases isRupert_type08_limit_hdnC N hq ties ht hi hcov hnt (fun h => absurd h hT)
