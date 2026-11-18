@@ -82,7 +82,7 @@ theorem fnB_I (F : Frame02 x) (hr : gA12 x = gA11 x)
   have hvz : 0 < k * (1 - F.S.tp) + l * F.S.tp := by nlinarith [mul_pos hk a1, mul_pos hl F.S.tp_pos]
   refine F.toFrame7.rupert_rim4 5 3 0 2 (Pt F.S.tp F.S.tp F.S.tm F.S.sm k l 5) (Pt F.S.tp F.S.tp F.S.tm F.S.sm k l 3)
     (Pt F.S.tp F.S.tp F.S.tm F.S.sm k l 0) (Pt F.S.tp F.S.tp F.S.tm F.S.sm k l 2)
-    (by rw [hP]) (by rw [hP]) (by rw [hP]) (by rw [hP]) (-1) (Or.inr rfl) ⟨-1, 1, 0⟩
+    (by rw [hP]) (by rw [hP]) (by rw [hP]) (by rw [hP]) (-1) ⟨-1, 1, 0⟩
     ⟨2 * F.S.tp, 0, k * (1 - F.S.tp) + l * F.S.tp⟩ (Or.inl (by norm_num))
     (cycF_B _ _ _ _ _ F.S.tp_pos F.S.tm_pos hk hl a1 a3 _ _) ?_ ?_
   · intro j' c0 c1 c2 c3 i

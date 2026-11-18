@@ -234,14 +234,14 @@ variable {x : Fin 7 → ℝ³} (F : Frame7 x)
 /-- `rupert_rim` with a *robustly unimodal* limit depth cycle: no depth predicate, no tilt-tie
 bookkeeping (the tilt enters only through the determinant tests `ST`). -/
 theorem rupert_rim_rob {k : ℕ} [NeZero k] (hk : 3 ≤ k) (c : ZMod k → Fin 7) (σ : ℝ)
-    (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       ST σ u v ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))
     (hrest : ∀ j' : Fin 7, (∀ jj, j' ≠ c jj) → ∀ i : ZMod k,
       ST σ u v ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC j').sub (F.ptC (c i))))
     (hz : IsRobustUnimodal fun i => F.GG (F.ptC (c i)) u) :
     IsRupert (Finset.univ.image x) := by
-  refine F.rupert_rim hk c σ hσ u v hu hcyc hrest QRob QRob_open (fun z a ha => QRob_smul ha)
+  refine F.rupert_rim hk c σ u v hu hcyc hrest QRob QRob_open (fun z a ha => QRob_smul ha)
     (fun z a => QRob_shift a) ?_ (fun z hz hq => QRob_unimodal hz hq)
   have hQ : QRob fun i => F.GG (F.ptC (c i)) u := QRob_of_robust (by omega) hz
   have hcont : Continuous fun s : ℝ =>
@@ -1493,7 +1493,7 @@ theorem rimB_rupert (P q : ℝ) (hP : P < 0) (hV1 : F.S.sm * F.S.hm * q + F.S.tm
       s * F.toFrame7.GG (quad (⟨0, 0, 0⟩ : C3) ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩ i) ⟨q, P, 0⟩) :
     IsRupert (Finset.univ.image x) := by
   refine F.toFrame7.rupert_rim4 5 2 4 0 ⟨0, 0, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩
-    F.ptC_5 F.ptC_2 F.ptC_4 F.ptC_0 1 (Or.inl rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩
+    F.ptC_5 F.ptC_2 F.ptC_4 F.ptC_0 1 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩
     (Or.inl F.S.tm_pos.ne') (rimB_cyc F.S P q) ?_ hQe
   intro j' h0 h1 h2 h3 i
   rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -1521,7 +1521,7 @@ theorem rimC_rupert (P q : ℝ) (hP : 0 < P) (hV1 : 0 < F.S.sm * F.S.hm * q + F.
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_6, F.ptC_2, F.ptC_4, F.ptC_0, F.ptC_3]
-  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (6 : Fin 7) 2 4 0 3) 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (6 : Fin 7) 2 4 0 3) 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hc]
@@ -1561,7 +1561,7 @@ theorem rimCp_rupert (P q : ℝ) (hP : 0 < P) (hV1 : 0 < F.S.sm * F.S.hm * q + F
     intro i
     rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       simp [c, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, F.ptC_6, F.ptC_2, F.ptC_4, F.ptC_1, F.ptC_0, F.ptC_3]
-  refine F.toFrame7.rupert_rim_rob (k := 6) (by norm_num) c 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim_rob (k := 6) (by norm_num) c 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hc]
@@ -1604,7 +1604,7 @@ theorem rimM_rupert (P q : ℝ) (hP : 0 < P) (hV1 : F.S.sm * F.S.hm * q + F.S.tm
     intro i
     rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       simp [c, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, F.ptC_6, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_0, F.ptC_3]
-  refine F.toFrame7.rupert_rim (k := 6) (by norm_num) c 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim (k := 6) (by norm_num) c 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') ?_ ?_ Q6m Q6m_open
     (fun z a ha => Q6m_smul ha) (fun z a => Q6m_shift a) ?_ (fun z hz hq => Q6m_unimodal hz hq)
   · intro i j h1 h2
@@ -1981,7 +1981,7 @@ theorem rimBp_rupert (hab : F.S.am = F.S.bp) (P q : ℝ) (hP : P < 0)
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_5, F.ptC_2, F.ptC_4, F.ptC_3, F.ptC_0]
   obtain ⟨hcyc, hrest⟩ := F.rimBp_st hab P q hP hV1 hQ
-  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (5 : Fin 7) 2 4 3 0) 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (5 : Fin 7) 2 4 3 0) 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') hcyc hrest ?_
   have : (fun i : ZMod 5 => F.toFrame7.GG (F.toFrame7.ptC (quint (5 : Fin 7) 2 4 3 0 i)) ⟨F.S.tm, 0, -F.S.hm⟩) =
       fun i : ZMod 5 => ![0, F.u0Z2, F.u0X, F.u0T, F.u0Z1] i := by
@@ -2037,7 +2037,7 @@ theorem rimCe_rupert (hab : F.S.am = F.S.bp) (P q : ℝ) (hP : 0 < P)
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_6, F.ptC_2, F.ptC_4, F.ptC_0, F.ptC_3]
   obtain ⟨hcyc, hrest⟩ := F.rimCe_st hab P q hP hV1 hQ
-  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (6 : Fin 7) 2 4 0 3) 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (6 : Fin 7) 2 4 0 3) 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') hcyc hrest ?_
   have : (fun i : ZMod 5 => F.toFrame7.GG (F.toFrame7.ptC (quint (6 : Fin 7) 2 4 0 3 i)) ⟨F.S.tm, 0, -F.S.hm⟩) =
       fun i : ZMod 5 => ![F.u0R, F.u0Z2, F.u0X, F.u0Z1, F.u0T] i := by
@@ -2062,7 +2062,7 @@ theorem rimCe_rupert_Q5s (hab : F.S.am = F.S.bp) (P q : ℝ) (hP : 0 < P)
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_6, F.ptC_2, F.ptC_4, F.ptC_0, F.ptC_3]
   obtain ⟨hcyc, hrest⟩ := F.rimCe_st hab P q hP hV1 hQ
-  refine F.toFrame7.rupert_rim (k := 5) (by norm_num) (quint (6 : Fin 7) 2 4 0 3) 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim (k := 5) (by norm_num) (quint (6 : Fin 7) 2 4 0 3) 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') hcyc hrest Q5s Q5s_open
     (fun z a ha => Q5s_smul ha) (fun z a => Q5s_shift a) ?_ (fun z hz hq => Q5s_unimodal hz hq)
   simp only [hc]; exact hQe
@@ -2116,7 +2116,7 @@ theorem rimDp_rupert (hab : F.S.am = F.S.bp) (P q : ℝ) (hP : 0 < P)
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_3, F.ptC_6, F.ptC_5, F.ptC_2, F.ptC_4]
   obtain ⟨hcyc, hrest⟩ := F.rimDp_st hab P q hP hV1 hQ
-  refine F.toFrame7.rupert_rim (k := 5) (by norm_num) (quint (3 : Fin 7) 6 5 2 4) 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim (k := 5) (by norm_num) (quint (3 : Fin 7) 6 5 2 4) 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') hcyc hrest Q5t Q5t_open
     (fun z a ha => Q5t_smul ha) (fun z a => Q5t_shift a) ?_ (fun z hz hq => Q5t_unimodal hz hq)
   simp only [hc]; exact hQe
@@ -2275,7 +2275,7 @@ theorem rimS1_rupert (hb : F.S.bp < F.S.am) (P q : ℝ) (hP : 0 < P)
       s * F.toFrame7.GG (quad (⟨F.S.tm, 0, -F.S.hm⟩ : C3) ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ i) ⟨q, P, 0⟩) :
     IsRupert (Finset.univ.image x) := by
   refine F.toFrame7.rupert_rim4 6 2 4 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩
-    F.ptC_6 F.ptC_2 F.ptC_4 F.ptC_3 1 (Or.inl rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩
+    F.ptC_6 F.ptC_2 F.ptC_4 F.ptC_3 1 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩
     (Or.inl F.S.tm_pos.ne') (rimS1_cyc F.S.sm F.S.km F.S.tm F.S.hm P q F.S.sm_pos F.S.sm_lt F.S.km_pos
       F.S.tm_pos F.S.hm_pos) ?_ hQe
   intro j' h0 h1 h2 h3 i
@@ -2302,7 +2302,7 @@ theorem rimS2_rupert (hb : F.S.bp < F.S.am) (P q : ℝ) (hP : P < 0)
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_5, F.ptC_2, F.ptC_4, F.ptC_3, F.ptC_0]
-  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (5 : Fin 7) 2 4 3 0) 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (5 : Fin 7) 2 4 3 0) 1
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hc]
@@ -2476,7 +2476,7 @@ theorem tLV (heq : F.a12 = F.a11) (T : ℝ) (h1 : F.S.mum - F.S.am < T) (h2 : -F
     intro i
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp [quad_0, quad_1, quad_2, quad_3, F.ptC_4, F.ptC_0, F.ptC_5, F.ptC_6]
-  refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad (4 : Fin 7) 0 5 6) 1 (Or.inl rfl)
+  refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad (4 : Fin 7) 0 5 6) 1
     ⟨1, 0, T⟩ ⟨0, -1, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · intro i j hi hj
     simp only [hc]

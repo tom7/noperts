@@ -148,7 +148,7 @@ theorem Frame20.pent1 {x : Fin 7 → ℝ³} (F : Frame20 x) (θ : ℝ) (hθ0 : 0
   have h4 : F.dep F.S.u_tA 0 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 0 < F.dep F.S.u_tA 5 ∨
       F.dep F.S.u_tA 3 < F.dep F.S.u_tA 5 ∨ F.dep F.S.u_tA 3 < F.dep F.S.u_tA 4 :=
     Or.inr (Or.inr (Or.inl hD1))
-  refine F.toFrame7.rim5p 5 3 4 6 0 _ _ _ _ _ (F.ptC_5) (F.ptC_3) (F.ptC_4) (F.ptC_6) (F.ptC_0) (-1) (Or.inr rfl)
+  refine F.toFrame7.rim5p 5 3 4 6 0 _ _ _ _ _ (F.ptC_5) (F.ptC_3) (F.ptC_4) (F.ptC_6) (F.ptC_0) (-1)
     F.S.u_tA (F.S.w_T1 θ) (Or.inl (by simp only [Shape20.u_tA]; intro h; linarith [htp1, h]))
     (pent1_cyc F.S θ hθ0 hθ2 hA) ?_ ?_ ?_ ?_ ?_ ?_
   · intro j' h0 h1 h2 h3 h4

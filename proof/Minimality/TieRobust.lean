@@ -566,7 +566,7 @@ small `ε > 0` every force system vanishes. -/
 theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : ℝ³ → ℝ³)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪b - a, v⟫)
+    (htie : a 2 = b 2) (σ : ℝ) (hD : 0 < σ * ⟪b - a, v⟫)
     (hXz : ∀ y ∈ X, 0 < σ * (y 2 - a 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
@@ -799,7 +799,7 @@ theorem isRupert_of_tie (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hv : v 2 = 0)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪b - a, v⟫)
+    (htie : a 2 = b 2) (σ : ℝ) (hD : 0 < σ * ⟪b - a, v⟫)
     (hXz : ∀ y ∈ X, 0 < σ * (y 2 - a 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
@@ -812,7 +812,7 @@ theorem isRupert_of_tie (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 
     (hdet : farDet (cross ez (a0 - a)) (cross (b - a) ez) (cross (b1 - b) ez) a b ez ≠ 0) :
     IsRupert V := by
   obtain ⟨ε, hε⟩ := (tie_no_forces V X v a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
-    hnb0 hnb1 htie σ hσ hD hXz hconvX hconva hconvb hin hm hp hpa hp3 hdet).exists
+    hnb0 hnb1 htie σ hD hXz hconvX hconva hconvb hin hm hp hpa hp3 hdet).exists
   exact isRupert_of_no_forces V hsol (tw v ε) (tw_ne_zero v ε hv)
     fun F h1 h2 h3 h4 h5 => hε F ⟨h1, h2, h3, h4, h5⟩
 
@@ -822,7 +822,7 @@ theorem isRupert_of_tie_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hv : v 2 = 0)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪a - b, v⟫)
+    (htie : a 2 = b 2) (σ : ℝ) (hD : 0 < σ * ⟪a - b, v⟫)
     (hXz : ∀ y ∈ X, 0 < σ * (y 2 - b 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
@@ -895,7 +895,7 @@ theorem isRupert_of_tilted_tie (V : Finset ℝ³) (hsol : (interior (convexHull 
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) ez v)
     (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) ez v)
     (ia : ZMod k) (m p : ℝ³)
-    (htie : x ia 2 = x (ia + 1) 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1)
+    (htie : x ia 2 = x (ia + 1) 2) (σ : ℝ)
     (hD : 0 < σ * ⟪x (ia + 1) - x ia, v⟫)
     (hXz : ∀ i, i ≠ ia → i ≠ ia + 1 → 0 < σ * (x i 2 - x ia 2))
     (hm : ∀ i, i ≠ ia → i ≠ ia + 1 →
@@ -955,7 +955,7 @@ theorem isRupert_of_tilted_tie (V : Finset ℝ³) (hsol : (interior (convexHull 
     · exact Eventually.of_forall fun ε h => absurd h hc
   refine isRupert_of_tie V X v (x ia) (x (ia + 1)) (x (ia - 1)) (x (ia + 1 + 1)) m p nb0 nb1 hsol hv
     ?_ (hxV _) (hxV _) (fun h => hne3 ia (hx h).symm) ?_ ?_ (hxV _) (hxV _)
-    (fun y _ => hxV _) (fun y _ => hxV _) htie σ hσ hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpa hp3 hdet
+    (fun y _ => hxV _) (fun y _ => hxV _) htie σ hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpa hp3 hdet
   · intro y hy; obtain ⟨i, -, -, rfl⟩ := (memX y).mp hy; exact hxV i
   · intro h; obtain ⟨i, h1, -, e⟩ := (memX _).mp h; exact h1 (hx e)
   · intro h; obtain ⟨i, -, h2, e⟩ := (memX _).mp h; exact h2 (hx e)
@@ -1002,7 +1002,7 @@ theorem isRupert_of_tilted_tie_neg (V : Finset ℝ³) (hsol : (interior (convexH
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) ez v)
     (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) ez v)
     (ia : ZMod k) (m p : ℝ³)
-    (htie : x ia 2 = x (ia + 1) 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1)
+    (htie : x ia 2 = x (ia + 1) 2) (σ : ℝ)
     (hD : 0 < σ * ⟪x ia - x (ia + 1), v⟫)
     (hXz : ∀ i, i ≠ ia → i ≠ ia + 1 → 0 < σ * (x i 2 - x (ia + 1) 2))
     (hm : ∀ i, i ≠ ia → i ≠ ia + 1 →
@@ -1062,7 +1062,7 @@ theorem isRupert_of_tilted_tie_neg (V : Finset ℝ³) (hsol : (interior (convexH
     · exact Eventually.of_forall fun ε h => absurd h hc
   refine isRupert_of_tie_neg V X v (x ia) (x (ia + 1)) (x (ia - 1)) (x (ia + 1 + 1)) m p nb0 nb1 hsol hv
     ?_ (hxV _) (hxV _) (fun h => hne3 ia (hx h).symm) ?_ ?_ (hxV _) (hxV _)
-    (fun y _ => hxV _) (fun y _ => hxV _) htie σ hσ hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpb hp3 hdet
+    (fun y _ => hxV _) (fun y _ => hxV _) htie σ hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpb hp3 hdet
   · intro y hy; obtain ⟨i, -, -, rfl⟩ := (memX y).mp hy; exact hxV i
   · intro h; obtain ⟨i, h1, -, e⟩ := (memX _).mp h; exact h1 (hx e)
   · intro h; obtain ⟨i, -, h2, e⟩ := (memX _).mp h; exact h2 (hx e)

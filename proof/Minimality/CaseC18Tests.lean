@@ -199,7 +199,7 @@ theorem tB (hA : F.a12 < F.a11) (B2 : F.S.hm * F.S.tp < F.S.hp * (1 - F.S.tm))
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim4 0 3 4 1 ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p3 p4 p1 1 (Or.inl rfl) ⟨F.S.tp, 0, F.S.hp⟩
+    p0 p3 p4 p1 1 ⟨F.S.tp, 0, F.S.hp⟩
     ⟨-2 * F.S.tp + 1, F.S.sp, -2 * F.S.hp + F.S.kp⟩ (Or.inl htp.ne') ?_ ?_ ?_
   · exact tB_cyc F.S B2 B3
   · intro j' h0 h1 h2 h3 i
@@ -321,7 +321,7 @@ theorem t31a (hα : F.a12 < F.a11) (Hp : F.S.kp * F.S.tp < F.S.hp * F.S.sp)
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim4 5 0 3 6 ⟨0, 0, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩
-    p5 p0 p3 p6 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
+    p5 p0 p3 p6 (-1) ⟨1, -1, 0⟩
     ⟨F.S.tm + F.S.tp - 2, 0, -F.S.hm + F.S.hp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t31a_cyc F.S Hp Hm
   · intro j' h0 h1 h2 h3 i
@@ -438,7 +438,7 @@ theorem t31b (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (Hp : F.S.hp * F.S.sp <
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim5 6 5 1 0 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩
-    p6 p5 p1 p0 p3 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
+    p6 p5 p1 p0 p3 (-1) ⟨1, -1, 0⟩
     ⟨F.S.tm + F.S.tp - 2, 0, -F.S.hm + F.S.hp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t31b_cyc F.S Hp Hm hts
   · intro j' h0 h1 h2 h3 h4 i
@@ -590,7 +590,7 @@ theorem tA1 (A1 : F.S.hm * (1 - F.S.tp) < F.S.hp * F.S.tm) (hg : 0 < F.g12) :
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim4 0 4 2 5 ⟨F.S.tp, 0, F.S.hp⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 0, 0⟩
-    p0 p4 p2 p5 1 (Or.inl rfl) ⟨F.S.tp - 1, 0, F.S.hp⟩
+    p0 p4 p2 p5 1 ⟨F.S.tp - 1, 0, F.S.hp⟩
     ⟨-2 * F.S.tp, 1, -2 * F.S.hp⟩ (Or.inl (sub_ne_zero.2 htp1.ne)) ?_ ?_ ?_
   · exact tA1_cyc F.S A1
   · intro j' h0 h1 h2 h3 i
@@ -745,7 +745,7 @@ theorem tA2 (A1 : F.S.hm * (1 - F.S.tp) < F.S.hp * F.S.tm)
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim5p 0 1 5 6 3 ⟨F.S.tp, 0, F.S.hp⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩
-    p0 p1 p5 p6 p3 1 (Or.inl rfl) ⟨F.S.tp, -1, F.S.hp⟩
+    p0 p1 p5 p6 p3 1 ⟨F.S.tp, -1, F.S.hp⟩
     ⟨-b * F.S.tp - F.S.tp + 1, b * F.S.sp, -b * F.S.hp + b * F.S.kp - F.S.hp⟩ (Or.inl htp.ne') ?_ ?_ ?_
   · exact tA2_cyc F.S hb A1 A2 A3
   · intro j' h0 h1 h2 h3 h4 i

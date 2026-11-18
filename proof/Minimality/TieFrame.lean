@@ -373,7 +373,7 @@ theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m 
   rcases hcase with hDp | hDn
   · by_cases hang : r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0
     · refine isRupert_of_tilted_tie V hsol v hv0 (by omega) x hxinj hxV hcyc hrest (m : ZMod (m + n + 1))
-        mv (oblPt 0 r1 r2 (-1) 0 0) (by rw [xa, xb]; simp [oblPt]) s hs (by rw [hD' s rfl]; exact hDp)
+        mv (oblPt 0 r1 r2 (-1) 0 0) (by rw [xa, xb]; simp [oblPt]) s (by rw [hD' s rfl]; exact hDp)
         hXz' hmC ?_ ?_ ?_ ?_
       · intro i h1 h2
         rcases classify i h1 h2 with ⟨w, hw, rfl⟩ | ⟨k, hk0, hk, rfl⟩
@@ -439,7 +439,7 @@ theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m 
       exact mul_ne_zero (mul_ne_zero hAm.ne' hB0.ne') hρ'.ne'
   · by_cases hang : r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0
     · refine isRupert_of_tilted_tie_neg V hsol v hv0 (by omega) x hxinj hxV hcyc hrest (m : ZMod (m + n + 1))
-        mv (oblPt 0 r1 r2 0 (-1) 0) (by rw [xa, xb]; simp [oblPt]) s hs ?_ ?_ hmC ?_ ?_ ?_ ?_
+        mv (oblPt 0 r1 r2 0 (-1) 0) (by rw [xa, xb]; simp [oblPt]) s ?_ ?_ hmC ?_ ?_ ?_ ?_
       · have := hD' s rfl
         have e : s * ⟪x (m : ZMod (m + n + 1)) - x ((m : ZMod (m + n + 1)) + 1), v⟫ =
             -(s * ⟪x ((m : ZMod (m + n + 1)) + 1) - x (m : ZMod (m + n + 1)), v⟫) := by

@@ -228,7 +228,7 @@ coordinates, the determinant tests `ST` for the cycle and for the remaining poin
 positively homogeneous, shift-invariant depth condition `Q` holding eventually at the tilted
 depths and forcing unimodality. -/
 theorem rupert_rim {k : ℕ} [NeZero k] (hk : 3 ≤ k) (c : ZMod k → Fin 7) (σ : ℝ)
-    (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       ST σ u v ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))
     (hrest : ∀ j' : Fin 7, (∀ jj, j' ≠ c jj) → ∀ i : ZMod k,
@@ -320,7 +320,7 @@ theorem rupert_rim {k : ℕ} [NeZero k] (hk : 3 ≤ k) (c : ZMod k → Fin 7) (�
 /-- The bridge for four-corner rims. -/
 theorem rupert_rim4 (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quad P0 P1 P2 P3 (i + 1)).sub (quad P0 P1 P2 P3 i))
         ((quad P0 P1 P2 P3 j).sub (quad P0 P1 P2 P3 i)))
@@ -334,7 +334,7 @@ theorem rupert_rim4 (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
     intro i
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp [quad_0, quad_1, quad_2, quad_3, e0, e1, e2, e3]
-  refine F.rupert_rim (k := 4) (by norm_num) (quad c0 c1 c2 c3) σ hσ u v hu ?_ ?_ Q4 Q4_open
+  refine F.rupert_rim (k := 4) (by norm_num) (quad c0 c1 c2 c3) σ u v hu ?_ ?_ Q4 Q4_open
     (fun z a ha => Q4_smul ha) (fun z a => Q4_shift a) ?_ (fun z hz hq => Q4_unimodal hz hq)
   · intro i j h1 h2
     simp only [hc]
@@ -352,7 +352,7 @@ theorem rupert_rim4 (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
 theorem rupert_rim5 (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (e4 : F.ptC c4 = P4)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quint P0 P1 P2 P3 P4 (i + 1)).sub (quint P0 P1 P2 P3 P4 i))
         ((quint P0 P1 P2 P3 P4 j).sub (quint P0 P1 P2 P3 P4 i)))
@@ -366,7 +366,7 @@ theorem rupert_rim5 (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, e0, e1, e2, e3, e4]
-  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ hσ u v hu ?_ ?_ Q5c
+  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ u v hu ?_ ?_ Q5c
     Q5c_open (fun z a ha => Q5c_smul ha) (fun z a => Q5c_shift a) ?_
     (fun z hz hq => Q5c_unimodal hz hq)
   · intro i j h1 h2
@@ -386,7 +386,7 @@ theorem rupert_rim5 (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
 theorem rupert_rim5p (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (e4 : F.ptC c4 = P4)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quint P0 P1 P2 P3 P4 (i + 1)).sub (quint P0 P1 P2 P3 P4 i))
         ((quint P0 P1 P2 P3 P4 j).sub (quint P0 P1 P2 P3 P4 i)))
@@ -400,7 +400,7 @@ theorem rupert_rim5p (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, e0, e1, e2, e3, e4]
-  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ hσ u v hu ?_ ?_ Q5p
+  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ u v hu ?_ ?_ Q5p
     Q5p_open (fun z a ha => Q5p_smul ha) (fun z a => Q5p_shift a) ?_
     (fun z hz hq => Q5p_unimodal hz hq)
   · intro i j h1 h2

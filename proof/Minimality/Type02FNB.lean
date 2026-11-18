@@ -217,7 +217,7 @@ end rowsB
 
 
 theorem rim_top {k : ℕ} [NeZero k] (F : Frame02 x) (hr : gA12 x = gA11 x) {P : Fin 7 → C3}
-    (hP : F.toFrame7.ptC = P) (hk : 3 ≤ k) (c : ZMod k → Fin 7) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1)
+    (hP : F.toFrame7.ptC = P) (hk : 3 ≤ k) (c : ZMod k → Fin 7) (σ : ℝ)
     (vx vz : ℝ) (t : ZMod k)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       ST σ ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩ ((P (c (i + 1))).sub (P (c i))) ((P (c j)).sub (P (c i))))
@@ -233,7 +233,7 @@ theorem rim_top {k : ℕ} [NeZero k] (F : Frame02 x) (hr : gA12 x = gA11 x) {P :
           gA11 x * (vx * ((P (c i)).x + (P (c i)).y)) + F.toFrame7.gg * (vz * (P (c i)).z) <
           gA11 x * (vx * ((P (c (i + 1))).x + (P (c (i + 1))).y)) + F.toFrame7.gg * (vz * (P (c (i + 1))).z)))) :
     IsRupert (Finset.univ.image x) := by
-  refine F.toFrame7.rupert_rim hk c σ hσ ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩ (Or.inl (by norm_num)) ?_ ?_
+  refine F.toFrame7.rupert_rim hk c σ ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩ (Or.inl (by norm_num)) ?_ ?_
     (Qtop t) (Qtop_open t) ?_ ?_ ?_ ?_
   · intro i j h1 h2; simpa [hP] using hcyc i j h1 h2
   · intro j' hj' i; simpa [hP] using hrest j' hj' i
@@ -287,7 +287,7 @@ theorem rimR1 (F : Frame02 x) (hr : gA12 x = gA11 x)
   have ha3 := F.S.tm_pos
   have ha4 := F.S.sm_pos
   have hj : ∀ j' : Fin 7, (∀ jj, j' ≠ c1 jj) → j' = 6 := by intro j' hj'; fin_cases j' <;> first | rfl | exact absurd rfl (hj' 0) | exact absurd rfl (hj' 1) | exact absurd rfl (hj' 2) | exact absurd rfl (hj' 3) | exact absurd rfl (hj' 4) | exact absurd rfl (hj' 5)
-  refine F.rim_top hr hP (k := 6) (by norm_num) c1 (-1) (Or.inr rfl) vx vz 2 ?_ ?_ ?_
+  refine F.rim_top hr hP (k := 6) (by norm_num) c1 (-1) vx vz 2 ?_ ?_ ?_
   · exact cyc_R1 _ _ _ _ _ _ _ ha1 ha3 ha4 hk hl a1 a3 a4 hBB hsa hsb hsc
   · intro j' hj' i
     rcases hj j' hj' with rfl
@@ -317,7 +317,7 @@ theorem rimR2 (F : Frame02 x) (hr : gA12 x = gA11 x)
   have ha3 := F.S.tm_pos
   have ha4 := F.S.sm_pos
   have hj : ∀ j' : Fin 7, (∀ jj, j' ≠ c2 jj) → j' = 0 ∨ j' = 6 := by intro j' hj'; fin_cases j' <;> first | exact Or.inl rfl | exact Or.inr rfl | exact absurd rfl (hj' 0) | exact absurd rfl (hj' 1) | exact absurd rfl (hj' 2) | exact absurd rfl (hj' 3) | exact absurd rfl (hj' 4)
-  refine F.rim_top hr hP (k := 5) (by norm_num) c2 (-1) (Or.inr rfl) vx vz 2 ?_ ?_ ?_
+  refine F.rim_top hr hP (k := 5) (by norm_num) c2 (-1) vx vz 2 ?_ ?_ ?_
   · exact cyc_R2 _ _ _ _ _ _ _ ha1 ha3 ha4 hk hl a1 a3 a4 hBB hsa hsb hsc
   · intro j' hj' i
     rcases hj j' hj' with rfl | rfl
@@ -347,7 +347,7 @@ theorem rimR3 (F : Frame02 x) (hr : gA12 x = gA11 x)
   have ha3 := F.S.tm_pos
   have ha4 := F.S.sm_pos
   have hj : ∀ j' : Fin 7, (∀ jj, j' ≠ c3 jj) → j' = 3 := by intro j' hj'; fin_cases j' <;> first | rfl | exact absurd rfl (hj' 0) | exact absurd rfl (hj' 1) | exact absurd rfl (hj' 2) | exact absurd rfl (hj' 3) | exact absurd rfl (hj' 4) | exact absurd rfl (hj' 5)
-  refine F.rim_top hr hP (k := 6) (by norm_num) c3 (-1) (Or.inr rfl) vx vz 2 ?_ ?_ ?_
+  refine F.rim_top hr hP (k := 6) (by norm_num) c3 (-1) vx vz 2 ?_ ?_ ?_
   · exact cyc_R3 _ _ _ _ _ _ _ ha1 ha3 ha4 hk hl a1 a3 a4 hBB hsa hsb hsc
   · intro j' hj' i
     rcases hj j' hj' with rfl

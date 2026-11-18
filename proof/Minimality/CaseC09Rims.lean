@@ -295,7 +295,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 theorem rupert_rim5t (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (e4 : F.ptC c4 = P4)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quint P0 P1 P2 P3 P4 (i + 1)).sub (quint P0 P1 P2 P3 P4 i))
         ((quint P0 P1 P2 P3 P4 j).sub (quint P0 P1 P2 P3 P4 i)))
@@ -367,7 +367,7 @@ theorem rimT1 (hts : F.S.tm < F.S.sm) (H1 : F.S.hp * F.S.tm + F.S.hm * F.S.tp < 
   have hg : 0 < F.gg := F.g_pos
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim5t 4 3 2 5 6 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨0, 1, 0⟩
-    ⟨0, F.S.sm, -F.S.km⟩ p4 p3 p2 p5 p6 (-1) (Or.inr rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 1, 0⟩
+    ⟨0, F.S.sm, -F.S.km⟩ p4 p3 p2 p5 p6 (-1) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 1, 0⟩
     (Or.inl (ne_of_gt htm)) ?_ ?_ ?_
   · exact t1_cyc hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm H2
   · intro j' h4 h3 h2 h5 h6 i

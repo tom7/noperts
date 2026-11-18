@@ -80,7 +80,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame7 x)
 theorem rupert_rim5v (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (e4 : F.ptC c4 = P4)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quint P0 P1 P2 P3 P4 (i + 1)).sub (quint P0 P1 P2 P3 P4 i))
         ((quint P0 P1 P2 P3 P4 j).sub (quint P0 P1 P2 P3 P4 i)))
@@ -94,7 +94,7 @@ theorem rupert_rim5v (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, e0, e1, e2, e3, e4]
-  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ hσ u v hu ?_ ?_ Q5v
+  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ u v hu ?_ ?_ Q5v
     Q5v_open (fun z a ha => Q5v_smul ha) (fun z a => Q5v_shift a) ?_
     (fun z hz hq => Q5v_unimodal hz hq)
   · intro i j h1 h2
@@ -131,7 +131,7 @@ theorem t31b_le (hα : F.a12 < F.a11) (Hp : F.S.hp * F.S.sp < F.S.kp * F.S.tp)
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim5v 6 5 1 0 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩
-    p6 p5 p1 p0 p3 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
+    p6 p5 p1 p0 p3 (-1) ⟨1, -1, 0⟩
     ⟨F.S.tm + F.S.tp - 2, 0, -F.S.hm + F.S.hp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t31b_cyc F.S Hp Hm hts
   · intro j' h0 h1 h2 h3 h4 i
@@ -388,7 +388,7 @@ theorem t31_C4 (hα : F.a12 < F.a11) (hp : F.S.ap = F.S.cp) (hm : F.S.cm < F.S.a
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim5v 6 5 1 0 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩
-    p6 p5 p1 p0 p3 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
+    p6 p5 p1 p0 p3 (-1) ⟨1, -1, 0⟩
     ⟨-1, 0, F.S.hp / 2⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact C4_cyc F.S Hpe Hm hts
   · intro j' h0 h1 h2 h3 h4 i
@@ -660,7 +660,7 @@ theorem t31_C5z (hα : F.a12 < F.a11) (hm : F.S.am = F.S.cm) (hp : F.S.ap < F.S.
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim5v 6 5 1 0 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩
-    p6 p5 p1 p0 p3 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
+    p6 p5 p1 p0 p3 (-1) ⟨1, -1, 0⟩
     ⟨-(F.S.ap * F.S.tp + F.S.am * (1 - F.S.tp)), 0, 2 * F.S.am * F.S.ap * F.S.tp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact G2_C5z_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos F.S.am_pos (sub_pos.2 hp) F.S.ap_mul.symm F.S.am_mul.symm (by rw [add_sub_cancel]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb'
   · intro j' h0 h1 h2 h3 h4 i
@@ -711,7 +711,7 @@ theorem t31_C6 (hα : F.a12 < F.a11) (hp : F.S.ap = F.S.cp) (hm : F.S.am = F.S.c
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim5v 6 5 1 0 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩
-    p6 p5 p1 p0 p3 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
+    p6 p5 p1 p0 p3 (-1) ⟨1, -1, 0⟩
     ⟨-(F.S.ap * F.S.tp + F.S.am * (1 - F.S.tp)), 0, 2 * F.S.am * F.S.ap * F.S.tp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact G2_C6_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos F.S.am_pos F.S.ap_mul.symm F.S.am_mul.symm (by rw [hp]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb'
   · intro j' h0 h1 h2 h3 h4 i
@@ -874,7 +874,7 @@ theorem tB_merged (hα : F.a12 < F.a11) (hab : F.S.ap = F.S.bm) (hc : F.S.ap < F
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim4 0 3 4 1 ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p3 p4 p1 1 (Or.inl rfl) ⟨F.S.tp, 0, F.S.hp⟩
+    p0 p3 p4 p1 1 ⟨F.S.tp, 0, F.S.hp⟩
     ⟨-(2 * F.S.ap + (F.S.cp - F.S.ap)), 2 * F.S.ap, 0⟩ (Or.inl htp.ne') ?_ ?_ ?_
   · exact G3_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m'
   · intro j' h0 h1 h2 h3 i
@@ -946,7 +946,7 @@ theorem t31a_eq (heq : F.a12 = F.a11) (hp : F.S.cp < F.S.ap) (hm : F.S.cm < F.S.
   have p5 : F.toFrame7.ptC 5 = ⟨0, 0, 0⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   have p6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [Frame18.toFrame7, Frame18.pt]
   refine F.toFrame7.rupert_rim4 5 0 3 6 ⟨0, 0, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩
-    p5 p0 p3 p6 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
+    p5 p0 p3 p6 (-1) ⟨1, -1, 0⟩
     ⟨F.S.tm + F.S.tp - 2, 0, -F.S.hm + F.S.hp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t31a_cyc F.S Hp Hm
   · intro j' h0 h1 h2 h3 i

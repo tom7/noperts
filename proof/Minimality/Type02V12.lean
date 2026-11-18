@@ -229,7 +229,7 @@ theorem v12_rimT {k : ℕ} [NeZero k] (hk3 : 3 ≤ k) (c : ZMod k → Fin 7) (v 
         (F.toFrame7.GG (F.toFrame7.ptC (c i)) ⟨-1, 1, 0⟩ = F.toFrame7.GG (F.toFrame7.ptC (c (i + 1))) ⟨-1, 1, 0⟩ ∧
           F.toFrame7.GG (F.toFrame7.ptC (c i)) v < F.toFrame7.GG (F.toFrame7.ptC (c (i + 1))) v))) :
     IsRupert (Finset.univ.image x) := by
-  refine F.toFrame7.rupert_rim hk3 c (-1) (Or.inr rfl) ⟨-1, 1, 0⟩ v (Or.inl (by norm_num)) hcyc hrest
+  refine F.toFrame7.rupert_rim hk3 c (-1) ⟨-1, 1, 0⟩ v (Or.inl (by norm_num)) hcyc hrest
     (QtV t) (QtV_open t) ?_ ?_ ?_ ?_
   · intro z a ha h i hi
     rcases h i hi with h1 | h1
@@ -260,7 +260,7 @@ theorem v12_mA (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
   have a1 := sub_pos.2 F.S.tp_lt
   have a3 := sub_pos.2 F.S.tm_lt
   have hD := F.D_pos hr
-  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) vA (-1) (Or.inr rfl) ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩
+  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) vA (-1) ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩
     (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j hi hj
     rw [hP]

@@ -160,7 +160,7 @@ theorem rupert_of_foCert (σ : ℝ) (u ωc m : C3)
 
 /-- **The bridge, tilted view.**  The certificate at `u + ε d` for all small `ε > 0` (each test
 is `A + ε B` with `A, B` constants: `eventually_pos_affine` from `Tilt.lean`). -/
-theorem rupert_of_foCert_eventually (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u d ωc m : C3)
+theorem rupert_of_foCert_eventually (σ : ℝ) (u d ωc m : C3)
     (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (h : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ j, F.FoCert σ (C3.tilt u d ε) ωc m j) :
     IsRupert (Finset.univ.image x) := by

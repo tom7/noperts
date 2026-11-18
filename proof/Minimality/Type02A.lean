@@ -263,7 +263,7 @@ theorem acute_A0B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     rcases z4c i with rfl | rfl | rfl | rfl <;>
       simp [quad_0, quad_1, quad_2, quad_3, hpt]
   refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad ((5 : Fin 7)) 3 0 2)
-    (-1) (Or.inr rfl) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
+    (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1' h2'
     simp only [hc]
     exact cyc_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB i j h1' h2'
@@ -298,7 +298,7 @@ theorem acute_A1B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, hpt]
   refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint ((5 : Fin 7)) 3 0 1 2)
-    (-1) (Or.inr rfl) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
+    (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1' h2'
     simp only [hc]
     exact cyc_A1B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB i j h1' h2'
@@ -338,7 +338,7 @@ theorem acute_A1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     rcases z4c i with rfl | rfl | rfl | rfl <;>
       simp [quad_0, quad_1, quad_2, quad_3, hpt]
   refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad ((6 : Fin 7)) 4 1 2)
-    (-1) (Or.inr rfl) ⟨-1, 1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
+    (-1) ⟨-1, 1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1' h2'
     simp only [hc]
     exact cyc_A1B6 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB i j h1' h2'

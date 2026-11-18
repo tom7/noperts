@@ -270,7 +270,7 @@ theorem right_X1_pf (hr : gA12 x = gA11 x)
     rcases z6c i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       simp [cX1, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5, hpt, pX1]
   refine F.toFrame7.rupert_rim (k := 6) (by norm_num) (sext (4 : Fin 7) 6 5 2 0 1)
-    1 (Or.inl rfl) ⟨-F.S.tp, 0, -(k * F.S.tp)⟩ ⟨-1, 1, k * δ⟩ (Or.inl (by simpa using ht.ne')) ?_ ?_
+    1 ⟨-F.S.tp, 0, -(k * F.S.tp)⟩ ⟨-1, 1, k * δ⟩ (Or.inl (by simpa using ht.ne')) ?_ ?_
     Q6x Q6x_open (fun z a ha => Q6x_smul ha) (fun z a => Q6x_shift a) ?_
     (fun z hz hq => Q6x_unimodal hz hq)
   · intro i j h1 h2
@@ -479,7 +479,7 @@ theorem right_X2_obtuse_pf (hr : gA12 x = gA11 x)
     rcases z4c i with rfl | rfl | rfl | rfl <;>
       simp [cX2, quad_0, quad_1, quad_2, quad_3, hpt, pX2]
   refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad ((3 : Fin 7)) 5 6 4)
-    1 (Or.inl rfl) ⟨1 - F.S.tp, 0, -F.S.hp⟩ ⟨-1, 1, -1⟩ (Or.inl (by simp; linarith)) ?_ ?_ ?_
+    1 ⟨1 - F.S.tp, 0, -F.S.hp⟩ ⟨-1, 1, -1⟩ (Or.inl (by simp; linarith)) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hc]
     exact cyc_X2 F.S.tp F.S.tm F.S.hp F.S.hm htp htm hhp hhm hs hq1 hq2 i j h1 h2
@@ -717,7 +717,7 @@ theorem wedge_rupert (ρ : ℝ) (hρ : 0 < ρ) (hρ1 : ρ < 1) (h12 : G.a12 = 0)
   have hv : ∀ p : C3, (G.velC ωc ⟨-γ, 2 * 1, 0⟩ p).x = (G.a22 - s + γ) * p.z - G.a22 * p.y + -γ ∧
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ p).y = G.a11 * p.x + (-G.a11 - ρ * s - G.a11 / 4 - 2 * 1) * p.z + 2 * 1 := by
     intro p; rw [hωc]; exact G.vel_xy h12 _ _ _ _ p
-  refine G.rupert_of_foCert_eventually 1 (Or.inl rfl) wU (wD γ 1) ωc ⟨-γ, 2 * 1, 0⟩
+  refine G.rupert_of_foCert_eventually 1 wU (wD γ 1) ωc ⟨-γ, 2 * 1, 0⟩
     (Or.inr (Or.inr (by simp [wU]))) ?_
   rw [Filter.eventually_all]
   intro j

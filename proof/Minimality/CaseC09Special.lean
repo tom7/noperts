@@ -285,7 +285,7 @@ theorem rimT1_sector_dp (hts : F.S.tm < F.S.sm) (H1 : F.S.bp < F.S.am)
   have hg : 0 < F.gg := F.g_pos
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim5t 4 3 2 5 6 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨0, 1, 0⟩
-    ⟨0, F.S.sm, -F.S.km⟩ p4 p3 p2 p5 p6 (-1) (Or.inr rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 1, 0⟩
+    ⟨0, F.S.sm, -F.S.km⟩ p4 p3 p2 p5 p6 (-1) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 1, 0⟩
     (Or.inl (ne_of_gt htm)) ?_ ?_ ?_
   · exact t1_cycE hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm H2e
   · intro j' h4 h3 h2 h5 h6 i
@@ -359,7 +359,7 @@ theorem rimT1_sector_bp (hts : F.S.tm < F.S.sm) (H1 : F.S.am = F.S.bp)
   have hg : 0 < F.gg := F.g_pos
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim5t 4 3 2 5 6 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨0, 1, 0⟩
-    ⟨0, F.S.sm, -F.S.km⟩ p4 p3 p2 p5 p6 (-1) (Or.inr rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨dx, 1, 0⟩
+    ⟨0, F.S.sm, -F.S.km⟩ p4 p3 p2 p5 p6 (-1) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨dx, 1, 0⟩
     (Or.inl (ne_of_gt htm)) ?_ ?_ ?_
   · exact t1_cycD hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm H2' dx
   · intro j' h4 h3 h2 h5 h6 i

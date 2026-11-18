@@ -121,7 +121,7 @@ theorem Frame20.tA {x : Fin 7 → ℝ³} (F : Frame20 x) (hA1 : 0 < F.S.hm*F.S.t
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim4 0 6 4 5 _ _ _ _ (F.ptC_0) (F.ptC_6) (F.ptC_4) (F.ptC_5) 1 (Or.inl rfl) F.S.u_tA F.S.w_tA (Or.inl (by simp only [Shape20.u_tA]; intro h0; linarith [htp1, h0]))
+  refine F.toFrame7.rim4 0 6 4 5 _ _ _ _ (F.ptC_0) (F.ptC_6) (F.ptC_4) (F.ptC_5) 1 F.S.u_tA F.S.w_tA (Or.inl (by simp only [Shape20.u_tA]; intro h0; linarith [htp1, h0]))
     (tA_cyc F.S) ?_ ?_ ?_
   · intro j' h0 h1 h2 h3
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -222,7 +222,7 @@ theorem Frame20.tP {x : Fin 7 → ℝ³} (F : Frame20 x) (hA1 : 0 < -F.S.hm*F.S.
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim4 1 3 4 6 _ _ _ _ (F.ptC_1) (F.ptC_3) (F.ptC_4) (F.ptC_6) (-1) (Or.inr rfl) F.S.u_tP F.S.w_tP (Or.inl (by simp only [Shape20.u_tP]; intro h0; linarith [htp1, h0]))
+  refine F.toFrame7.rim4 1 3 4 6 _ _ _ _ (F.ptC_1) (F.ptC_3) (F.ptC_4) (F.ptC_6) (-1) F.S.u_tP F.S.w_tP (Or.inl (by simp only [Shape20.u_tP]; intro h0; linarith [htp1, h0]))
     (tP_cyc F.S hA1) ?_ ?_ ?_
   · intro j' h0 h1 h2 h3
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -329,7 +329,7 @@ theorem Frame20.vTri {x : Fin 7 → ℝ³} (F : Frame20 x) (hW : 0 < -F.S.hp*F.S
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim3 0 6 1 _ _ _ (F.ptC_0) (F.ptC_6) (F.ptC_1) (-1) (Or.inr rfl) F.S.u_vTri F.S.w_vTri (Or.inl (by simp only [Shape20.u_vTri]; intro h0; linarith [(mul_pos F.S.tp_pos hsp1), h0]))
+  refine F.toFrame7.rim3 0 6 1 _ _ _ (F.ptC_0) (F.ptC_6) (F.ptC_1) (-1) F.S.u_vTri F.S.w_vTri (Or.inl (by simp only [Shape20.u_vTri]; intro h0; linarith [(mul_pos F.S.tp_pos hsp1), h0]))
     (vTri_cyc F.S hW hQ hD) ?_ 
   · intro j' h0 h1 h2
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -439,7 +439,7 @@ theorem Frame20.vRv {x : Fin 7 → ℝ³} (F : Frame20 x) (hW : 0 < F.S.hp*F.S.s
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim4 0 6 4 5 _ _ _ _ (F.ptC_0) (F.ptC_6) (F.ptC_4) (F.ptC_5) (-1) (Or.inr rfl) F.S.u_vRv F.S.w_vRv (Or.inl (by simp only [Shape20.u_vRv]; intro h0; linarith [(mul_pos F.S.tp_pos hsp1), h0]))
+  refine F.toFrame7.rim4 0 6 4 5 _ _ _ _ (F.ptC_0) (F.ptC_6) (F.ptC_4) (F.ptC_5) (-1) F.S.u_vRv F.S.w_vRv (Or.inl (by simp only [Shape20.u_vRv]; intro h0; linarith [(mul_pos F.S.tp_pos hsp1), h0]))
     (vRv_cyc F.S hW) ?_ ?_ ?_
   · intro j' h0 h1 h2 h3
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -540,7 +540,7 @@ theorem Frame20.tB {x : Fin 7 → ℝ³} (F : Frame20 x) (hB2 : 0 < -F.S.hm*F.S.
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim4 0 1 6 2 _ _ _ _ (F.ptC_0) (F.ptC_1) (F.ptC_6) (F.ptC_2) 1 (Or.inl rfl) F.S.u_tB F.S.w_tB (Or.inl (by simp only [Shape20.u_tB]; intro h0; linarith [F.S.tp_pos, h0]))
+  refine F.toFrame7.rim4 0 1 6 2 _ _ _ _ (F.ptC_0) (F.ptC_1) (F.ptC_6) (F.ptC_2) 1 F.S.u_tB F.S.w_tB (Or.inl (by simp only [Shape20.u_tB]; intro h0; linarith [F.S.tp_pos, h0]))
     (tB_cyc F.S hB2 hB3) ?_ ?_ ?_
   · intro j' h0 h1 h2 h3
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -635,7 +635,7 @@ theorem Frame20.xX {x : Fin 7 → ℝ³} (F : Frame20 x) (hA3 : 0 < F.S.hm*F.S.s
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim5p 1 3 5 2 6 _ _ _ _ _ (F.ptC_1) (F.ptC_3) (F.ptC_5) (F.ptC_2) (F.ptC_6) 1 (Or.inl rfl) F.S.u_xX F.S.w_xX (Or.inl (by simp only [Shape20.u_xX]; intro h0; linarith [(mul_pos htp1 F.S.hm_pos), (mul_pos htm1 hCm), h0]))
+  refine F.toFrame7.rim5p 1 3 5 2 6 _ _ _ _ _ (F.ptC_1) (F.ptC_3) (F.ptC_5) (F.ptC_2) (F.ptC_6) 1 F.S.u_xX F.S.w_xX (Or.inl (by simp only [Shape20.u_xX]; intro h0; linarith [(mul_pos htp1 F.S.hm_pos), (mul_pos htm1 hCm), h0]))
     (xX_cyc F.S hBm hCm) ?_ ?_ ?_ ?_ ?_ ?_
   · intro j' h0 h1 h2 h3 h4
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -733,7 +733,7 @@ theorem Frame20.yY {x : Fin 7 → ℝ³} (F : Frame20 x) (hA2 : 0 < F.S.hm*F.S.s
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim5p 1 6 2 5 3 _ _ _ _ _ (F.ptC_1) (F.ptC_6) (F.ptC_2) (F.ptC_5) (F.ptC_3) 1 (Or.inl rfl) F.S.u_yY F.S.w_yY (Or.inl (by simp only [Shape20.u_yY]; intro h0; linarith [F.S.tp_pos, h0]))
+  refine F.toFrame7.rim5p 1 6 2 5 3 _ _ _ _ _ (F.ptC_1) (F.ptC_6) (F.ptC_2) (F.ptC_5) (F.ptC_3) 1 F.S.u_yY F.S.w_yY (Or.inl (by simp only [Shape20.u_yY]; intro h0; linarith [F.S.tp_pos, h0]))
     (yY_cyc F.S hA2 hA3) ?_ ?_ ?_ ?_ ?_ ?_
   · intro j' h0 h1 h2 h3 h4
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -831,7 +831,7 @@ theorem Frame20.yT2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hA2 : 0 < F.S.hm*F.S.
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim5p 1 0 2 5 3 _ _ _ _ _ (F.ptC_1) (F.ptC_0) (F.ptC_2) (F.ptC_5) (F.ptC_3) 1 (Or.inl rfl) F.S.u_yT2 F.S.w_yT2 (Or.inl (by simp only [Shape20.u_yT2]; intro h0; linarith [F.S.tp_pos, h0]))
+  refine F.toFrame7.rim5p 1 0 2 5 3 _ _ _ _ _ (F.ptC_1) (F.ptC_0) (F.ptC_2) (F.ptC_5) (F.ptC_3) 1 F.S.u_yT2 F.S.w_yT2 (Or.inl (by simp only [Shape20.u_yT2]; intro h0; linarith [F.S.tp_pos, h0]))
     (yT2_cyc F.S hA2 hA3) ?_ ?_ ?_ ?_ ?_ ?_
   · intro j' h0 h1 h2 h3 h4
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -935,7 +935,7 @@ theorem Frame20.eXb {x : Fin 7 → ℝ³} (F : Frame20 x) (hEa : 0 < F.S.hp*F.S.
   have hsm1 : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
-  refine F.toFrame7.rim4 0 5 4 6 _ _ _ _ (F.ptC_0) (F.ptC_5) (F.ptC_4) (F.ptC_6) 1 (Or.inl rfl) F.S.u_eXb F.S.w_eXb (Or.inl (by simp only [Shape20.u_eXb]; intro h0; linarith [F.S.tp_pos, htp1, h0]))
+  refine F.toFrame7.rim4 0 5 4 6 _ _ _ _ (F.ptC_0) (F.ptC_5) (F.ptC_4) (F.ptC_6) 1 F.S.u_eXb F.S.w_eXb (Or.inl (by simp only [Shape20.u_eXb]; intro h0; linarith [F.S.tp_pos, htp1, h0]))
     (eXb_cyc F.S hEa hEb) ?_ ?_ ?_
   · intro j' h0 h1 h2 h3
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl

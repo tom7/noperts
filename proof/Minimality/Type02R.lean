@@ -113,14 +113,14 @@ theorem Pt_quint (P : Fin 7 → C3) (a b c d e : Fin 7) (i : ZMod 5) :
 
 /-- glue for 4-cycles at the 34 view -/
 theorem glue4 (F : Frame02 x) (hr : gA12 x = gA11 x) {P : Fin 7 → C3} (hP : F.toFrame7.ptC = P)
-    (a b c d : Fin 7) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (v : C3)
+    (a b c d : Fin 7) (σ : ℝ) (v : C3)
     (hcyc : ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST σ ⟨-1, 1, 0⟩ v ((Qd P a b c d (i + 1)).sub (Qd P a b c d i)) ((Qd P a b c d j).sub (Qd P a b c d i)))
     (hrest : ∀ j' : Fin 7, j' ≠ a → j' ≠ b → j' ≠ c → j' ≠ d → ∀ i : ZMod 4,
       ST σ ⟨-1, 1, 0⟩ v ((Qd P a b c d (i + 1)).sub (Qd P a b c d i)) ((P j').sub (Qd P a b c d i)))
     (hz : IsRobustUnimodal fun i : ZMod 4 => (Qd P a b c d i).y * (gA22 x - gA12 x)) :
     IsRupert (Finset.univ.image x) := by
-  refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad a b c d) σ hσ ⟨-1, 1, 0⟩ v
+  refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad a b c d) σ ⟨-1, 1, 0⟩ v
     (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hP, Pt_quad]
@@ -141,14 +141,14 @@ theorem glue4 (F : Frame02 x) (hr : gA12 x = gA11 x) {P : Fin 7 → C3} (hP : F.
 
 /-- glue for 5-cycles at the 34 view -/
 theorem glue5 (F : Frame02 x) (hr : gA12 x = gA11 x) {P : Fin 7 → C3} (hP : F.toFrame7.ptC = P)
-    (a b c d e : Fin 7) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (v : C3)
+    (a b c d e : Fin 7) (σ : ℝ) (v : C3)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST σ ⟨-1, 1, 0⟩ v ((Qn P a b c d e (i + 1)).sub (Qn P a b c d e i)) ((Qn P a b c d e j).sub (Qn P a b c d e i)))
     (hrest : ∀ j' : Fin 7, j' ≠ a → j' ≠ b → j' ≠ c → j' ≠ d → j' ≠ e → ∀ i : ZMod 5,
       ST σ ⟨-1, 1, 0⟩ v ((Qn P a b c d e (i + 1)).sub (Qn P a b c d e i)) ((P j').sub (Qn P a b c d e i)))
     (hz : IsRobustUnimodal fun i : ZMod 5 => (Qn P a b c d e i).y * (gA22 x - gA12 x)) :
     IsRupert (Finset.univ.image x) := by
-  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint a b c d e) σ hσ ⟨-1, 1, 0⟩ v
+  refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint a b c d e) σ ⟨-1, 1, 0⟩ v
     (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hP, Pt_quint]
@@ -314,7 +314,7 @@ theorem right_A1B6_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
   have a2 := sub_pos.2 F.S.sp_lt
   have a3 := sub_pos.2 F.S.tm_lt
   have a4 := sub_pos.2 F.S.sm_lt
-  refine F.glue4 hr (F.ptC_eq h1 h2 h3 h4) 2 6 4 1 (-1) (Or.inr rfl) ⟨-1, 0, 0⟩
+  refine F.glue4 hr (F.ptC_eq h1 h2 h3 h4) 2 6 4 1 (-1) ⟨-1, 0, 0⟩
     (cyc_A1B6 _ _ _ _ k l F.S.tp_pos F.S.sp_pos F.S.tm_pos F.S.sm_pos hk hl a1 a2 a3 a4 hA hB) ?_ ?_
   · intro j' c0 c1 c2 c3 i
     have hj : j' = 0 ∨ j' = 3 ∨ j' = 5 := by
@@ -335,7 +335,7 @@ theorem right_A1B5_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
   have a2 := sub_pos.2 F.S.sp_lt
   have a3 := sub_pos.2 F.S.tm_lt
   have a4 := sub_pos.2 F.S.sm_lt
-  refine F.glue5 hr (F.ptC_eq h1 h2 h3 h4) 2 5 6 4 1 (-1) (Or.inr rfl) ⟨-1, 0, 0⟩
+  refine F.glue5 hr (F.ptC_eq h1 h2 h3 h4) 2 5 6 4 1 (-1) ⟨-1, 0, 0⟩
     (cyc_A1B5 _ _ _ _ k l F.S.tp_pos F.S.sp_pos F.S.tm_pos F.S.sm_pos hk hl a1 a2 a3 a4 hA hB) ?_ ?_
   · intro j' c0 c1 c2 c3 c4 i
     have hj : j' = 0 ∨ j' = 3 := by
@@ -355,7 +355,7 @@ theorem right_V1B6_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
   have a2 := sub_pos.2 F.S.sp_lt
   have a3 := sub_pos.2 F.S.tm_lt
   have a4 := sub_pos.2 F.S.sm_lt
-  refine F.glue5 hr (F.ptC_eq h1 h2 h3 h4) 0 2 6 4 1 (-1) (Or.inr rfl) ⟨-1, 0, 0⟩
+  refine F.glue5 hr (F.ptC_eq h1 h2 h3 h4) 0 2 6 4 1 (-1) ⟨-1, 0, 0⟩
     (cyc_V1B6 _ _ _ _ k l F.S.tp_pos F.S.sp_pos F.S.tm_pos F.S.sm_pos hk hl a1 a2 a3 a4 hA.symm hB) ?_ ?_
   · intro j' c0 c1 c2 c3 c4 i
     have hj : j' = 3 ∨ j' = 5 := by
@@ -378,7 +378,7 @@ theorem right_A0B5_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
   have ha : 0 < gA11 x := hr ▸ F.A12_pos
   refine F.toFrame7.rupert_rim4 5 3 0 2 (Pt F.S.tp F.S.sp F.S.tm F.S.sm k l 5) (Pt F.S.tp F.S.sp F.S.tm F.S.sm k l 3)
     (Pt F.S.tp F.S.sp F.S.tm F.S.sm k l 0) (Pt F.S.tp F.S.sp F.S.tm F.S.sm k l 2)
-    (by rw [hP]) (by rw [hP]) (by rw [hP]) (by rw [hP]) (-1) (Or.inr rfl) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩
+    (by rw [hP]) (by rw [hP]) (by rw [hP]) (by rw [hP]) (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩
     (Or.inl (by norm_num))
     (cyc_A0B5 _ _ _ _ k l F.S.tp_pos F.S.sp_pos F.S.tm_pos F.S.sm_pos hk hl a1 a2 a3 a4 hA hB) ?_ ?_
   · intro j' c0 c1 c2 c3 i

@@ -184,7 +184,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame7 x)
 disjunctions. -/
 theorem rim4 (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hc : Cyc4 σ u v P0 P1 P2 P3)
     (hr : ∀ j' : Fin 7, j' ≠ c0 → j' ≠ c1 → j' ≠ c2 → j' ≠ c3 →
       Rest4 σ u v P0 P1 P2 P3 (F.ptC j'))
@@ -193,7 +193,7 @@ theorem rim4 (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
     (hB : F.GG P1 u < F.GG P0 u ∨ F.GG P3 u < F.GG P0 u ∨ F.GG P1 u < F.GG P2 u ∨
       F.GG P3 u < F.GG P2 u) :
     IsRupert (Finset.univ.image x) := by
-  refine F.rupert_rim4 c0 c1 c2 c3 P0 P1 P2 P3 e0 e1 e2 e3 σ hσ u v hu hc.all
+  refine F.rupert_rim4 c0 c1 c2 c3 P0 P1 P2 P3 e0 e1 e2 e3 σ u v hu hc.all
     (fun j' h0 h1 h2 h3 => (hr j' h0 h1 h2 h3).all) ?_
   have := Q4_ev_strict (z := fun i => F.GG (quad P0 P1 P2 P3 i) u)
     (w := fun i => F.GG (quad P0 P1 P2 P3 i) v)
@@ -206,7 +206,7 @@ depth disjunctions. -/
 theorem rim5p (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (e4 : F.ptC c4 = P4)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hc : Cyc5 σ u v P0 P1 P2 P3 P4)
     (hr : ∀ j' : Fin 7, j' ≠ c0 → j' ≠ c1 → j' ≠ c2 → j' ≠ c3 → j' ≠ c4 →
       Rest5 σ u v P0 P1 P2 P3 P4 (F.ptC j'))
@@ -221,7 +221,7 @@ theorem rim5p (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (h4 : F.GG P4 u < F.GG P3 u ∨ F.GG P4 u < F.GG P0 u ∨ F.GG P1 u < F.GG P0 u ∨
       F.GG P1 u < F.GG P2 u) :
     IsRupert (Finset.univ.image x) := by
-  refine F.rupert_rim5p c0 c1 c2 c3 c4 P0 P1 P2 P3 P4 e0 e1 e2 e3 e4 σ hσ u v hu hc.all
+  refine F.rupert_rim5p c0 c1 c2 c3 c4 P0 P1 P2 P3 P4 e0 e1 e2 e3 e4 σ u v hu hc.all
     (fun j' h0 h1 h2 h3 h4 => (hr j' h0 h1 h2 h3 h4).all) ?_
   have := Q5p_ev_strict (z := fun i => F.GG (quint P0 P1 P2 P3 P4 i) u)
     (w := fun i => F.GG (quint P0 P1 P2 P3 P4 i) v)
@@ -236,14 +236,14 @@ theorem rim5p (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
 unimodal). -/
 theorem rim3 (c0 c1 c2 : Fin 7) (P0 P1 P2 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hc : Cyc3 σ u v P0 P1 P2)
     (hr : ∀ j' : Fin 7, j' ≠ c0 → j' ≠ c1 → j' ≠ c2 → Rest3 σ u v P0 P1 P2 (F.ptC j')) :
     IsRupert (Finset.univ.image x) := by
   have hc' : ∀ i, F.ptC (tri c0 c1 c2 i) = tri P0 P1 P2 i := by
     intro i
     rcases zmod3_cases i with rfl | rfl | rfl <;> simp [tri_0, tri_1, tri_2, e0, e1, e2]
-  refine F.rupert_rim (k := 3) (by norm_num) (tri c0 c1 c2) σ hσ u v hu ?_ ?_ (fun _ => True)
+  refine F.rupert_rim (k := 3) (by norm_num) (tri c0 c1 c2) σ u v hu ?_ ?_ (fun _ => True)
     isOpen_univ (fun _ _ _ _ => trivial) (fun _ _ _ => trivial) ?_
     (fun z hz _ => isCyclicUnimodal_three hz)
   · intro i j h1 h2
