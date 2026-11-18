@@ -169,6 +169,8 @@ theorem glue5 (F : Frame02 x) (hr : gA12 x = gA11 x) {P : Fin 7 → C3} (hP : F.
     rw [e]; exact hz
 
 section rows
+-- the row tactic macros (rowtac4 etc.) refer to the section hypotheses by name, so they must stay included
+set_option linter.unusedSectionVars false
 variable (tp sp tm sm k l : ℝ) (ha1 : 0 < tp) (ha2 : 0 < sp) (ha3 : 0 < tm) (ha4 : 0 < sm)
   (hk : 0 < k) (hl : 0 < l) (a1 : 0 < 1 - tp) (a2 : 0 < 1 - sp) (a3 : 0 < 1 - tm) (a4 : 0 < 1 - sm)
 

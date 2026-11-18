@@ -304,7 +304,7 @@ end Frame02
 noncomputable def pX2 (tp tm hp hm : ℝ) : Fin 7 → C3 :=
   ![⟨tp, 0, hp⟩, ⟨0, tp, hp⟩, ⟨0, 0, 0⟩, ⟨1, 0, 0⟩, ⟨0, 1, 0⟩, ⟨tm, 0, -hm⟩, ⟨0, tm, -hm⟩]
 
-noncomputable def cX2 (tp tm hp hm : ℝ) : ZMod 4 → C3 :=
+noncomputable def cX2 (tm hm : ℝ) : ZMod 4 → C3 :=
   quad ⟨1, 0, 0⟩ ⟨tm, 0, -hm⟩ ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩
 
 set_option hygiene false in
@@ -320,7 +320,7 @@ theorem cyc_X2 (tp tm hp hm : ℝ) (htp : 0 < tp) (htm : 0 < tm) (hhp : 0 < hp) 
     (hs : tp + tm < 1) (hq1 : tm * hp < hm * (1 - tp)) (hq2 : tp * hm < hp * (1 - tm)) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       CaseC09.ST 1 ⟨1 - tp, 0, -hp⟩ ⟨-1, 1, -1⟩
-        ((cX2 tp tm hp hm (i + 1)).sub (cX2 tp tm hp hm i)) ((cX2 tp tm hp hm j).sub (cX2 tp tm hp hm i)) := by
+        ((cX2 tm hm (i + 1)).sub (cX2 tm hm i)) ((cX2 tm hm j).sub (cX2 tm hm i)) := by
   have a1 : 0 < 1 - tp := by linarith
   have a2 : 0 < 1 - tm := by linarith
   have a3 : 0 < 1 - tp - tm := by linarith
@@ -347,7 +347,7 @@ theorem rest_X2 (tp tm hp hm : ℝ) (htp : 0 < tp) (htm : 0 < tm) (hhp : 0 < hp)
     (j' : Fin 7) (hw : j' = 0 ∨ j' = 1 ∨ j' = 2) :
     ∀ i : ZMod 4,
       CaseC09.ST 1 ⟨1 - tp, 0, -hp⟩ ⟨-1, 1, -1⟩
-        ((cX2 tp tm hp hm (i + 1)).sub (cX2 tp tm hp hm i)) ((pX2 tp tm hp hm j').sub (cX2 tp tm hp hm i)) := by
+        ((cX2 tm hm (i + 1)).sub (cX2 tm hm i)) ((pX2 tp tm hp hm j').sub (cX2 tm hm i)) := by
   have a1 : 0 < 1 - tp := by linarith
   have a2 : 0 < 1 - tm := by linarith
   have a3 : 0 < 1 - tp - tm := by linarith
@@ -474,7 +474,7 @@ theorem right_X2_obtuse_pf (hr : gA12 x = gA11 x)
     show Frame02.pt F.S = _
     funext j
     fin_cases j <;> simp [Frame02.pt, pX2, e2, e3, ← hA, ← hB]
-  have hc : ∀ i, F.toFrame7.ptC (quad ((3 : Fin 7)) 5 6 4 i) = cX2 F.S.tp F.S.tm F.S.hp F.S.hm i := by
+  have hc : ∀ i, F.toFrame7.ptC (quad ((3 : Fin 7)) 5 6 4 i) = cX2 F.S.tm F.S.hm i := by
     intro i
     rcases z4c i with rfl | rfl | rfl | rfl <;>
       simp [cX2, quad_0, quad_1, quad_2, quad_3, hpt, pX2]
@@ -495,7 +495,7 @@ theorem right_X2_obtuse_pf (hr : gA12 x = gA11 x)
     · exact absurd (by simp [quad_1]) (hj' 1)
     · exact absurd (by simp [quad_2]) (hj' 2)
   · have hG : ∀ i p, F.toFrame7.GG (F.toFrame7.ptC (quad ((3 : Fin 7)) 5 6 4 i)) p =
-        Gf (gA11 x) (gA11 x) (gA22 x) ⟪F.e, F.e⟫ (cX2 F.S.tp F.S.tm F.S.hp F.S.hm i) p := by
+        Gf (gA11 x) (gA11 x) (gA22 x) ⟪F.e, F.e⟫ (cX2 F.S.tm F.S.hm i) p := by
       intro i p
       rw [hc]
       show Gf (gA11 x) (gA12 x) (gA22 x) _ _ _ = _
