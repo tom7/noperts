@@ -91,6 +91,7 @@ theorem inner_lt (hp : IsCcwPolygon p) (a j : ZMod k) (hj : j ≠ a) (hj' : j �
     rw [inner_sub_right] at this; linarith
   rw [e]; linarith [hp.2 a j hj hj']
 
+omit [NeZero k] in
 /-- `c` is the unique minimizer of `⟪n_e, ·⟫`. -/
 theorem min_unique (hp : IsCcwPolygon p) {a c : ZMod k} (h : PairInterior p a c)
     (hc : -outNormal (p a) (p (a + 1)) ∈ normalConeAt (convexHull ℝ (Set.range p)) (p c))

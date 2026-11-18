@@ -146,7 +146,7 @@ theorem runSeq_smul {K L c : ℕ} {s : ℝ} {z : ZMod K → ℝ} {k : ℝ} (hk :
     exact mul_lt_mul_of_pos_left hab hk
   exact ⟨fun l hl => (h.1 l hl).imp (m _ _) (m _ _), fun l hl => (h.2 l hl).imp (m _ _) (m _ _)⟩
 
-theorem runSeq_localMax {K L c : ℕ} [NeZero K] (hL : L < K) {s : ℝ} {z : ZMod K → ℝ}
+theorem runSeq_localMax {K L c : ℕ} [NeZero K] {s : ℝ} {z : ZMod K → ℝ}
     (h : RunSeq K L c s z) : ∀ a b : ZMod K, s * z (a - 1) < s * z a →
       s * z (a + 1) < s * z a → s * z (b - 1) < s * z b → s * z (b + 1) < s * z b → a = b :=
   localMax_unique_of_run_shift c (fun i => s * z i)
@@ -468,11 +468,11 @@ theorem isRupert_triShadow_gen (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n :
         rcases this with h | h
         · left; linarith
         · right; linarith
-  obtain ⟨L, c, hLK, hR⟩ := hrun
+  obtain ⟨L, c, -, hR⟩ := hrun
   exact isRupert_of_tilted_localMax V ez v hez (k := m + n + 1) (by omega) x hxV hcyc hrest s hs
     (RunSeq (m + n + 1) L c s) (isOpen_runSeq _ _ _ s) (fun z k hk hz => runSeq_smul hk hz)
     (by rw [show (fun i => ⟪x i, ez⟫) = Z from funext hdepth]; exact hR)
-    (fun z hz => runSeq_localMax hLK hz)
+    (fun z hz => runSeq_localMax hz)
 
 /-- A chain is strictly concave in `s z`: no interior point is below both
 neighbours. -/
@@ -1224,11 +1224,11 @@ theorem isRupert_triShadow2_gen (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n 
       · obtain ⟨h1, h2⟩ := Finset.mem_Ioo.mp hl
         simp only [zero_add]
         exact min_lt_iff.mp (hconcZ l (by omega) h2)
-  obtain ⟨L, c, hLK, hR⟩ := hrun
+  obtain ⟨L, c, -, hR⟩ := hrun
   exact isRupert_of_tilted_localMax V ez v hez (k := m + n + 2) (by omega) x hxV hcyc hrest s hs
     (RunSeq (m + n + 2) L c s) (isOpen_runSeq _ _ _ s) (fun z k hk hz => runSeq_smul hk hz)
     (by rw [show (fun i => ⟪x i, ez⟫) = Z from funext hdepth]; exact hR)
-    (fun z hz => runSeq_localMax hLK hz)
+    (fun z hz => runSeq_localMax hz)
 
 set_option maxHeartbeats 4000000 in
 /-- The core of `isRupert_edge_frame_tie` in the mixed sectors, for given chains and a

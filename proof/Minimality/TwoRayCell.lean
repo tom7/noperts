@@ -71,6 +71,7 @@ theorem cross_nonneg (Y : ZMod k → ℝ × ℝ × ℝ)
   · subst h2; simp only [cross2]; ring_nf; exact le_refl _
   exact (hconv i j h1 h2).le
 
+omit [NeZero k] in
 /-- A strict mixture of two corners that are not both on edge `i` is strictly inside edge `i`. -/
 theorem mix_inside (Y : ZMod k → ℝ × ℝ × ℝ)
     (hconv : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < cross2 (Y (i + 1) - Y i) (Y j - Y i))

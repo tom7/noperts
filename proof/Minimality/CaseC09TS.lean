@@ -31,7 +31,7 @@ theorem Shape09.q3456_of_eq (S : Shape09) (hts : S.tm = S.sm) (had : S.dp < S.am
 
 /-- **09.5, part A** (`t- = s-`, `d+ < a-`): Theorem 5 with `W = 3456` holds. -/
 theorem Frame09.rupert_of_tm_eq_sm_lt {x : Fin 7 → ℝ³} (F : Frame09 x)
-    (hx : Function.Injective x) (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm)
+    (hx : Function.Injective x) (hts : F.S.tm = F.S.sm)
     (hda : F.S.dp < F.S.am) : IsRupert (Finset.univ.image x) :=
   F.rupert_of_Q3456 hx (F.S.q3456_of_eq hts hda)
 
@@ -56,7 +56,7 @@ theorem Shape09.km_eq_hm_of_eq (S : Shape09) (hts : S.tm = S.sm) : S.km = S.hm :
   rw [e]; exact e1
 
 /-- The tilt coordinate: exists iff `a- < d+` (`ds` between `(1 - s+)/k+ = 1/d+` and `t/h- = 1/a-`). -/
-theorem Shape09.exists_ds (S : Shape09) (hts : S.tm = S.sm) (hda : S.am < S.dp) :
+theorem Shape09.exists_ds (S : Shape09) (hda : S.am < S.dp) :
     ∃ ds : ℝ, S.hm * ds < S.tm ∧ 1 - S.sp < S.kp * ds := by
   have e1 := S.am_mul; have e2 := S.dp_mul
   have hhm := S.hm_pos; have hkp := S.kp_pos; have htm := S.tm_pos
@@ -86,7 +86,7 @@ tests there should already be strict, `left`, hence independent of the tilt). -/
 
 theorem t095_cyc5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
-    (roof : hp * (1 - sp) < kp * (1 - tp)) (H : kp * tp < hp * sp) (h1 : hm * ds < tm) (h2 : 1 - sp < kp * ds) :
+    (roof : hp * (1 - sp) < kp * (1 - tp)) (H : kp * tp < hp * sp) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
@@ -412,7 +412,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 /-- **09.5, case `d+ > a-`, `m1+` interior** (`a+ < c+`): the sector rim `(v, m2-, xb, m2+)`. -/
 theorem t095_4 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.dp)
     (hac : F.S.ap < F.S.cp) : IsRupert (Finset.univ.image x) := by
-  obtain ⟨ds, hd1, hd2⟩ := F.S.exists_ds hts hda
+  obtain ⟨ds, hd1, hd2⟩ := F.S.exists_ds hda
   have hkm := F.S.km_eq_hm_of_eq hts
   have hsp := F.S.sp_pos; have hsp1 := F.S.sp_lt; have htp := F.S.tp_pos; have htp1 := F.S.tp_lt
   have hhp := F.S.hp_pos; have hkp := F.S.kp_pos; have htm := F.S.tm_pos; have htm1 := F.S.tm_lt
@@ -451,7 +451,7 @@ theorem t095_4 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
 `(v, m2-, xb, m2+, m1+)`, `Q5p` with all-strict witnesses (valid also at `A12 = A11`). -/
 theorem t095_5 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.dp)
     (hac : F.S.cp < F.S.ap) : IsRupert (Finset.univ.image x) := by
-  obtain ⟨ds, hd1, hd2⟩ := F.S.exists_ds hts hda
+  obtain ⟨ds, hd1, hd2⟩ := F.S.exists_ds hda
   have hkm := F.S.km_eq_hm_of_eq hts
   have hsp := F.S.sp_pos; have hsp1 := F.S.sp_lt; have htp := F.S.tp_pos; have htp1 := F.S.tp_lt
   have hhp := F.S.hp_pos; have hkp := F.S.kp_pos; have htm := F.S.tm_pos; have htm1 := F.S.tm_lt
@@ -463,7 +463,7 @@ theorem t095_5 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
   refine F.rupert_rim5p 0 6 5 2 1 ⟨0, 0, 0⟩ ⟨0, F.S.tm, -F.S.hm⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
     ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩
     (Or.inl one_ne_zero) ?_ ?_ ?_
-  · exact t095_cyc5 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof H31 hd1 hd2
+  · exact t095_cyc5 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof H31
   · intro j' h0 h6 h5 h2 h1 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h0
@@ -500,7 +500,7 @@ theorem t095_5 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
 (`A12 < A22`, `A12 ≤ A11`), off `a+ = c+` (that case is not
 a sector: `m1+` would lie on the side `(v, m2+)`).  Since `b+ < d+`, `c+ < a+` forces `t+ < s+`, so
 `m1+` is a rim corner iff `c+ < a+`, and an interior point iff `a+ < c+`. -/
-theorem rupert_of_tm_eq_sm_gt (hx : Function.Injective x) (hA : F.a12 < F.a22)
+theorem rupert_of_tm_eq_sm_gt (hA : F.a12 < F.a22)
     (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.dp) (hac : F.S.ap ≠ F.S.cp) :
     IsRupert (Finset.univ.image x) := by
   rcases lt_or_gt_of_ne hac with h | h

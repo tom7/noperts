@@ -322,11 +322,11 @@ theorem isRupert_triShadow2_gen_tilt (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
       · obtain ⟨h1, h2⟩ := Finset.mem_Ioo.mp hl
         simp only [zero_add]
         exact min_lt_iff.mp (hconcZ l (by omega) h2)
-  obtain ⟨L, c, hLK, hR⟩ := hrun
+  obtain ⟨L, c, -, hR⟩ := hrun
   exact isRupert_of_tilted_localMax V ez v hez (k := m + n + 2) (by omega) x hxV hcyc hrest s hs
     (RunSeq (m + n + 2) L c s) (isOpen_runSeq _ _ _ s) (fun z k hk hz => runSeq_smul hk hz)
     (by rw [show (fun i => ⟪x i, ez⟫) = Z from funext hdepth]; exact hR)
-    (fun z hz => runSeq_localMax hLK hz)
+    (fun z hz => runSeq_localMax hz)
 
 /-- A tilt ratio of either sign: `σ (A β - B α) > 0`. -/
 theorem exists_tilt_sign {A B σ : ℝ} (hA : 0 < A) (hB : 0 < B) (hσ : σ = 1 ∨ σ = -1) :

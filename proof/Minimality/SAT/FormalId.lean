@@ -29,7 +29,7 @@ set_option autoImplicit false
 open scoped RealInnerProductSpace
 open Minimality.H29.SAT Minimality.SAT.Formal
 
-namespace Minimality.SAT.FormalId
+namespace Minimality.SAT.FormalIds
 
 open Minimality (det3 cross)
 
@@ -95,4 +95,4 @@ theorem formalId_sound {ρ : V → Bool} (hP : Proper ρ) (hG : GateOK ρ) {Adm 
   · have := hF c hc
     rw [sum_get]; exact this
 
-end Minimality.SAT.FormalId
+end Minimality.SAT.FormalIds

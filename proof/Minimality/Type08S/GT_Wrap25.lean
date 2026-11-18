@@ -88,7 +88,7 @@ theorem a2gt (hr : b2 < r2) (hb : b1 ≤ r1) : s * b2 < a2 := by
 theorem a2eq (hr : r2 = b2) (hb : b1 ≤ r1) : a2 = s * b2 := by
   have rel := h.a2rel hz
   have hk := h.kappa_pos hz hb
-  have hα := h.Qab_azero hz hr
+  have hα := h.Qab_azero hr
   rw [hα] at rel
   have : (a2 - s * b2) * (FQab.b * (s * b2) + FQab.c * m3) = 0 := by rw [rel]; ring
   have := (mul_eq_zero.mp this).resolve_right hk.ne'

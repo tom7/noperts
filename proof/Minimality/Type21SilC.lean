@@ -48,6 +48,7 @@ theorem det_eq (D : SilData k x c u₀) (i : ZMod k) (μ : ℝ)
   rw [D.zA0] at e1; rw [D.zB0] at e2
   rw [← e1, ← e2]; ring_nf
 
+omit [NeZero k] in
 theorem exists_mu (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Function.Injective c)
     (D : SilData k x c u₀) (i : ZMod k) :
     ∃ μ : ℝ, μ ≠ 0 ∧ x (c (i + 1)) - x (c i) = μ • cross (D.A i) (D.B i) := by

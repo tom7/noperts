@@ -425,7 +425,7 @@ theorem isRupert_triShadow_lex (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n :
           rw [hZ1 l le_rfl, hW1 l le_rfl, hZ2 (l + 1) (by omega) (by omega),
             hW2 (l + 1) (by omega) (by omega), show l + n + 1 - (l + 1) = n by omega]
           exact hA
-  obtain ⟨L, c, hLK, hR⟩ := hrun
+  obtain ⟨L, c, -, hR⟩ := hrun
   -- the depths at the tilted views
   set c0 : ℝ := O 0 * (-t * α * r1 0 + s * β * r2 0) + O 1 * (-t * α * r1 1 + s * β * r2 1)
     with hc0
@@ -454,10 +454,10 @@ theorem isRupert_triShadow_lex (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n :
   · intro z hz hP'
     rcases hs with rfl | rfl
     · exact isCyclicUnimodal_of_localMax_unique (by omega) z hz
-        (fun a b h1 h2 h3 h4 => runSeq_localMax hLK hP' a b (by linarith) (by linarith)
+        (fun a b h1 h2 h3 h4 => runSeq_localMax hP' a b (by linarith) (by linarith)
           (by linarith) (by linarith))
     · exact isCyclicUnimodal_of_localMin_unique (by omega) z hz
-        (fun a b h1 h2 h3 h4 => runSeq_localMax hLK hP' a b (by linarith) (by linarith)
+        (fun a b h1 h2 h3 h4 => runSeq_localMax hP' a b (by linarith) (by linarith)
           (by linarith) (by linarith))
 
 /-! ### The frame theorem at the triple tie -/

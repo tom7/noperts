@@ -115,6 +115,7 @@ theorem T2_apos (hr : r2 < b2) : 0 < FT2.a := by
   by_contra hh; push Not at hh
   linarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT2.d by linarith) (show 0 < b2 - r2 by linarith)]
 
+omit hz in
 theorem Qab_azero (hr : r2 = b2) : FQab.a = 0 := by
   have e := h.Qab_aeq; have hS := h.S3_pos
   have e' : FQab.a * (r1 * b2 - r2 * b1) = 0 := by rw [e, hr]; ring

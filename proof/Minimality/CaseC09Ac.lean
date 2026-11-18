@@ -429,7 +429,7 @@ theorem t31IB_eq (hA1 : F.a12 ≤ F.a11) (hA2 : F.a12 < F.a22) (hst : F.S.sm < F
 
 theorem t095_5_eq (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.dp)
     (hac : F.S.ap = F.S.cp) : IsRupert (Finset.univ.image x) := by
-  obtain ⟨ds, hd1, hd2⟩ := F.S.exists_ds hts hda
+  obtain ⟨ds, hd1, hd2⟩ := F.S.exists_ds hda
   have hkm := F.S.km_eq_hm_of_eq hts
   have hsp := F.S.sp_pos; have hsp1 := F.S.sp_lt; have htp := F.S.tp_pos; have htp1 := F.S.tp_lt
   have hhp := F.S.hp_pos; have hkp := F.S.kp_pos; have htm := F.S.tm_pos; have htm1 := F.S.tm_lt
@@ -485,8 +485,8 @@ theorem isRupert_caseC' (hx : Function.Injective x) (hA : F.a12 < F.a22)
     rcases lt_or_gt_of_ne hda with h | h
     · by_cases hac : F.S.ap = F.S.cp
       · exact F.t095_5_eq hA hts h hac
-      · exact F.rupert_of_tm_eq_sm_gt hx hA hts h hac
-    · exact F.rupert_of_tm_eq_sm_lt hx hA hts h
+      · exact F.rupert_of_tm_eq_sm_gt hA hts h hac
+    · exact F.rupert_of_tm_eq_sm_lt hx hts h
   · by_cases hac : F.S.ap = F.S.cp
     · rcases lt_or_gt_of_ne hts with h | h
       · exact F.t31II_eq F.A12_le_A11 h hac
