@@ -51,7 +51,7 @@ theorem pic_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
     common08w θ hθ.1 hθ.2.1 hθ.2.2
   have dA : 0 < 1 - θ 5 := by linarith
   have dB : 0 < -1 + θ 0 := by linarith
-  obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9⟩ := polyBw (θ 0) (θ 1) (θ 2) (θ 3) (θ 4) (θ 5)
+  obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9⟩ := polyBw (θ 0) (θ 1) (θ 2) (θ 3) (θ 5)
     p0 p1 p2 p3 p5 e2' dA dB ga
   have hu : nfShape08 d E₁ E₂ E₃ θ 6 - nfShape08 d E₁ E₂ E₃ θ 2 = κ • e3 := hxe
   have hkD : 0 < κ * det3 E₁ E₂ E₃ := by

@@ -192,7 +192,7 @@ theorem rimA : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN
   refine ⟨![0, 1, 2, 3], inj4 _ (by decide), ?_, peaks_A _ ?_ ?_ ?_ ?_⟩
   · intro m i h1 h2
     rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
-      first | exact absurd rfl h1 | exact absurd rfl h2 | skip
+      try (first | exact absurd rfl h1 | exact absurd rfl h2)
     all_goals norm_num [det3, TX, WA]
   all_goals (simp [TX, WA, PiLp.inner_apply, Fin.sum_univ_three] )
 
@@ -201,7 +201,7 @@ theorem rimB : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN
   refine ⟨![0, 1, 2, 3], inj4 _ (by decide), ?_, peaks_B _ ?_ ?_ ?_ ?_⟩
   · intro m i h1 h2
     rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
-      first | exact absurd rfl h1 | exact absurd rfl h2 | skip
+      try (first | exact absurd rfl h1 | exact absurd rfl h2)
     all_goals norm_num [det3, TX, WB]
   all_goals (simp [TX, WB, PiLp.inner_apply, Fin.sum_univ_three] <;> norm_num)
 
@@ -210,7 +210,7 @@ theorem rimC : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN
   refine ⟨![0, 1, 3, 2], inj4 _ (by decide), ?_, peaks_C _ ?_ ?_ ?_ ?_⟩
   · intro m i h1 h2
     rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
-      first | exact absurd rfl h1 | exact absurd rfl h2 | skip
+      try (first | exact absurd rfl h1 | exact absurd rfl h2)
     all_goals norm_num [det3, TX, WC]
   all_goals (simp [TX, WC, PiLp.inner_apply, Fin.sum_univ_three] <;> norm_num)
 

@@ -102,13 +102,13 @@ theorem peaks_Y (z : ZMod 4 → ℝ) (h0 : z 0 = 0) (h1 : z 1 = 109) (h2 : z 2 =
 theorem strictY : StrictRimN (k := 4) TY WY (![0, 1, 2, 3] : ZMod 4 → Fin 4) := by
   intro m i h1 h2
   rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
-    first | exact absurd rfl h1 | exact absurd rfl h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd rfl h2)
   all_goals norm_num [det3, TY, WY]
 
 theorem strictX : StrictRimN (k := 4) TX WB (![0, 1, 2, 3] : ZMod 4 → Fin 4) := by
   intro m i h1 h2
   rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
-    first | exact absurd rfl h1 | exact absurd rfl h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd rfl h2)
   all_goals norm_num [det3, TX, WB]
 
 theorem dX (i : Fin 4) : ⟪TX i, WB⟫ = ![(0:ℝ), 11, 9, 10] i := by

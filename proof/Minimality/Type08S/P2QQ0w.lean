@@ -30,7 +30,7 @@ theorem polyAw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a
   · linarith [mul_pos p2 p4]
 
 set_option maxHeartbeats 4000000 in
-theorem polyBw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p5 : 0 < g6) (e2 : 0 < a4 + g4 - 1) (dA : 0 < 1 - g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) :
+theorem polyBw (a1 b1 a4 g4 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p5 : 0 < g6) (e2 : 0 < a4 + g4 - 1) (dA : 0 < 1 - g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) :
     0 < a1 * g4 ∧ 0 < a1 ∧ 0 < a1 * g6 ∧ 0 < -a1 + a1 * g4 + a4 ∧ 0 < a1 * g4 - g4 ∧ 0 < a1 * g4 - a1 * g6 + a4 * g6 ∧ 0 < a4 ∧ 0 < -1 + a4 + g4 ∧ 0 < a4 - a4 * g6 ∧ 0 < 1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · linarith [mul_pos p0 p3]
