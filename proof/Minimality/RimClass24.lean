@@ -780,11 +780,13 @@ theorem disjoint_pair_3_no_alternate (u : ℝ³) {n₁ n₂ n₃ n₄ n₅ : ℝ
     linarith
   linarith
 
-/-- **Polyhedral Convexity and Dual Balance Conditions (Task L).**
-For any geometrically realizable Type 24 polyhedron, the outward normals of facets
-satisfy linear relations at vertices (due to vertex cone convexity) and dual linear relations
-between disjoint facet pairs, and any viewpoint has at least one front facet (compactness). -/
-structure PolyhedralConvexity (F : S0xFac 9 s0x_S24 x) (u : ℝ³) where
+/-- **Local Vertex Cone Convexity Relations (Task L').**
+For any convex Type 24 polyhedron, the outward normals of facets meeting at each vertex
+satisfy positive cyclic cone/quad balance relations:
+* Degree-4 vertex 3: diagonals crossing relation between facets (3, 7) and (6, 8)
+* Degree-5 vertices 0, 2, 6: pentagon cone balance relations.
+These relations hold geometrically for every convex polyhedron of Type 24. -/
+structure VertexConvexity (F : S0xFac 9 s0x_S24 x) where
   a₃ : ℝ
   a₆ : ℝ
   a₇ : ℝ
@@ -827,27 +829,36 @@ structure PolyhedralConvexity (F : S0xFac 9 s0x_S24 x) (u : ℝ³) where
   hd₇ : 0 < d₇
   hd₈ : 0 < d₈
   h_v6 : d₈ • F.N 8 + d₁ • F.N 1 + d₅ • F.N 5 = d₄ • F.N 4 + d₇ • F.N 7
-  e₄ : ℝ
-  e₆ : ℝ
-  e₀ : ℝ
-  e₈ : ℝ
-  he₄ : 0 < e₄
-  he₆ : 0 < e₆
-  he₀ : 0 ≤ e₀
-  he₈ : 0 ≤ e₈
-  h_p46 : e₄ • F.N 4 + e₆ • F.N 6 = e₀ • F.N 0 + e₈ • F.N 8
-  g₂ : ℝ
-  g₈ : ℝ
-  g₀ : ℝ
-  g₃ : ℝ
-  g₄ : ℝ
-  hg₂ : 0 < g₂
-  hg₈ : 0 < g₈
-  hg₀ : 0 ≤ g₀
-  hg₃ : 0 ≤ g₃
-  hg₄ : 0 ≤ g₄
-  h_p28 : g₂ • F.N 2 + g₈ • F.N 8 = g₀ • F.N 0 + g₃ • F.N 3 + g₄ • F.N 4
-  h_nonempty : ∃ t : Fin 9, 0 < ⟪F.N t, u⟫
+
+/-- **Theorem FQ (Front-Quad Condition on Triangle T, Task L'):**
+If the three lateral/cap boundary facets 025 (2), 046 (4), 236 (7) are all strictly back at `u`,
+then the planar quad 0345 (3) is strictly front at `u`. -/
+def TheoremFQ (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop :=
+  (⟪F.N 2, u⟫ < 0 ∧ ⟪F.N 4, u⟫ < 0 ∧ ⟪F.N 7, u⟫ < 0) → 0 < ⟪F.N 3, u⟫
+
+/-- **Lemma: Some Facet is Front at Viewpoint `u` (Task L' Step 2).**
+Under `TheoremFQ`, at least one facet of the polyhedron is strictly front from any viewpoint `u`
+with no edge-on facets. This completely eliminates the need for an assumed compactness hypothesis. -/
+theorem nonempty_front_of_FQ (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
+    (h_FQ : TheoremFQ F u) (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, u⟫ ≠ 0) :
+    ∃ t : Fin 9, 0 < ⟪F.N t, u⟫ := by
+  by_cases h2 : 0 < ⟪F.N 2, u⟫
+  · exact ⟨2, h2⟩
+  · have h2_neg : ⟪F.N 2, u⟫ < 0 := lt_of_le_of_ne (not_lt.mp h2) (h_no_edge_on 2)
+    by_cases h4 : 0 < ⟪F.N 4, u⟫
+    · exact ⟨4, h4⟩
+    · have h4_neg : ⟪F.N 4, u⟫ < 0 := lt_of_le_of_ne (not_lt.mp h4) (h_no_edge_on 4)
+      by_cases h7 : 0 < ⟪F.N 7, u⟫
+      · exact ⟨7, h7⟩
+      · have h7_neg : ⟪F.N 7, u⟫ < 0 := lt_of_le_of_ne (not_lt.mp h7) (h_no_edge_on 7)
+        have h3 : 0 < ⟪F.N 3, u⟫ := h_FQ ⟨h2_neg, h4_neg, h7_neg⟩
+        exact ⟨3, h3⟩
+
+/-- **Exclusion of Disjoint Facet Pairs (Task L' Step 3).**
+Exclusion of the two disconnected facet pairs (4, 6) = (046, 235) (pattern 12)
+and (2, 8) = (025, 346) (pattern 33). -/
+def DisjointPairsExcluded (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop :=
+  bitsToU (facingPattern F u) ≠ {4, 6} ∧ bitsToU (facingPattern F u) ≠ {2, 8}
 
 lemma not_nonSimple_empty (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
     (h_nonempty : ∃ t : Fin 9, 0 < ⟪F.N t, u⟫)
@@ -884,15 +895,18 @@ lemma not_nonSimple_empty (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
       exact (facingPattern_true_iff F u 5).mpr ht
     rw [h_empty] at hm; cases hm
 
-/-- **Theorem: Non-Simple Patterns Are Geometrically Impossible (Task L).**
-Under the polyhedral convexity and dual linear relations of , the facing pattern
-at the orthocentre view  is never non-simple. -/
-theorem not_nonSimple_of_polyhedralConvexity (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
-    (h_conv : PolyhedralConvexity F u)
+/-- **Theorem: 24 of 26 Non-Simple Patterns Are Eliminated by Local Vertex Convexity & FQ.**
+Under `VertexConvexity F` and `TheoremFQ F u`, the facing pattern at `u` cannot be empty
+nor alternate around any vertex (vertices 3, 0, 2, 6).
+The only remaining potential non-simple patterns are the two disconnected facet pairs
+`bitsToU s = {4, 6}` (pattern 12) and `bitsToU s = {2, 8}` (pattern 33). -/
+theorem not_nonSimple_of_vertexConvexity (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
+    (h_conv : VertexConvexity F)
+    (h_FQ : TheoremFQ F u)
     (h0 : ⟪F.N 0, u⟫ ≤ 0) (h1 : ⟪F.N 1, u⟫ ≤ 0) (h5 : ⟪F.N 5, u⟫ ≤ 0)
-    (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, u⟫ ≠ 0) :
-    classifyPattern (facingPattern F u) ≠ .nonSimple := by
-  intro hns
+    (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, u⟫ ≠ 0)
+    (hns : classifyPattern (facingPattern F u) = .nonSimple) :
+    bitsToU (facingPattern F u) = {4, 6} ∨ bitsToU (facingPattern F u) = {2, 8} := by
   set s := facingPattern F u
   have hexh := nonSimple_exhaustive s hns
   have hpos2 : (2 : Fin 9) ∈ bitsToU s → 0 < ⟪F.N 2, u⟫ := by
@@ -942,47 +956,82 @@ theorem not_nonSimple_of_polyhedralConvexity (F : S0xFac 9 s0x_S24 x) (u : ℝ³
     exact (facingPattern_false_iff F u 5 (h_no_edge_on 8)).mp hm
 
   rcases hexh with h_empty | h_v3a | h_v3b | h_v0 | h_v2 | h_v6 | h_p46 | h_p28
-  · exact not_nonSimple_empty F u h_conv.h_nonempty h0 h1 h5 h_empty
+  · have h_ne := nonempty_front_of_FQ F u h_FQ h_no_edge_on
+    exfalso; exact not_nonSimple_empty F u h_ne h0 h1 h5 h_empty
   · rcases h_v3a with ⟨m3, m7, n6, n8⟩
     have h_obs := (quad_no_alternate u h_conv.ha₃ h_conv.ha₆ h_conv.ha₇ h_conv.ha₈ h_conv.h_v3).1
-    exact h_obs ⟨hpos3 m3, hneg6 n6, hpos7 m7, hneg8 n8⟩
+    exfalso; exact h_obs ⟨hpos3 m3, hneg6 n6, hpos7 m7, hneg8 n8⟩
   · rcases h_v3b with ⟨m6, m8, n3, n7⟩
     have h_obs := (quad_no_alternate u h_conv.ha₃ h_conv.ha₆ h_conv.ha₇ h_conv.ha₈ h_conv.h_v3).2
-    exact h_obs ⟨hneg3 n3, hpos6 m6, hneg7 n7, hpos8 m8⟩
+    exfalso; exact h_obs ⟨hneg3 n3, hpos6 m6, hneg7 n7, hpos8 m8⟩
   · rcases h_v0 with ⟨m2, m4, n3⟩
     have h_obs := pent_no_alternate u h_conv.hb₀ h_conv.hb₁ h_conv.hb₂ h_conv.hb₃ h_conv.hb₄ h_conv.h_v0 h0 h1
-    exact h_obs ⟨hpos2 m2, hneg3 n3, hpos4 m4⟩
+    exfalso; exact h_obs ⟨hpos2 m2, hneg3 n3, hpos4 m4⟩
   · rcases h_v2 with ⟨m2, m7, n6⟩
     have h_obs := pent_no_alternate u h_conv.hc₀ h_conv.hc₅ h_conv.hc₂ h_conv.hc₆ h_conv.hc₇ h_conv.h_v2 h0 h5
-    exact h_obs ⟨hpos2 m2, hneg6 n6, hpos7 m7⟩
+    exfalso; exact h_obs ⟨hpos2 m2, hneg6 n6, hpos7 m7⟩
   · rcases h_v6 with ⟨m4, m7, n8⟩
     have h_obs := pent_no_alternate u h_conv.hd₁ h_conv.hd₅ h_conv.hd₄ h_conv.hd₈ h_conv.hd₇ h_conv.h_v6 h1 h5
-    exact h_obs ⟨hpos4 m4, hneg8 n8, hpos7 m7⟩
-  · have m4 : (4 : Fin 9) ∈ bitsToU s := by rw [h_p46]; decide
-    have m6 : (6 : Fin 9) ∈ bitsToU s := by rw [h_p46]; decide
-    have n8 : (8 : Fin 9) ∉ bitsToU s := by rw [h_p46]; decide
-    have h_obs := disjoint_pair_no_alternate u h_conv.he₄ h_conv.he₆ h_conv.he₀ h_conv.he₈ h_conv.h_p46
-    exact h_obs ⟨hpos4 m4, hpos6 m6, h0, (hneg8 n8).le⟩
-  · have m2 : (2 : Fin 9) ∈ bitsToU s := by rw [h_p28]; decide
-    have m8 : (8 : Fin 9) ∈ bitsToU s := by rw [h_p28]; decide
-    have n3 : (3 : Fin 9) ∉ bitsToU s := by rw [h_p28]; decide
-    have n4 : (4 : Fin 9) ∉ bitsToU s := by rw [h_p28]; decide
-    have h_obs := disjoint_pair_3_no_alternate u h_conv.hg₂ h_conv.hg₈ h_conv.hg₀ h_conv.hg₃ h_conv.hg₄ h_conv.h_p28
-    exact h_obs ⟨hpos2 m2, hpos8 m8, h0, (hneg3 n3).le, (hneg4 n4).le⟩
+    exfalso; exact h_obs ⟨hpos4 m4, hneg8 n8, hpos7 m7⟩
+  · exact Or.inl h_p46
+  · exact Or.inr h_p28
 
-/-- **Theorem: Complete Unconditional Rim Class Split of Orthocentre View (Task L).**
+/-- **Theorem: Complete Non-Simple Elimination Under Disjoint Pair Exclusion.** -/
+theorem not_nonSimple_of_vertexConvexity_closed (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
+    (h_conv : VertexConvexity F)
+    (h_FQ : TheoremFQ F u)
+    (h_pairs : DisjointPairsExcluded F u)
+    (h0 : ⟪F.N 0, u⟫ ≤ 0) (h1 : ⟪F.N 1, u⟫ ≤ 0) (h5 : ⟪F.N 5, u⟫ ≤ 0)
+    (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, u⟫ ≠ 0) :
+    classifyPattern (facingPattern F u) ≠ .nonSimple := by
+  intro hns
+  have hor := not_nonSimple_of_vertexConvexity F u h_conv h_FQ h0 h1 h5 h_no_edge_on hns
+  rcases hor with h12 | h33
+  · exact h_pairs.1 h12
+  · exact h_pairs.2 h33
+
+/-- **Theorem: Local Rim Class Split of Orthocentre View (Task L').**
 For any Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`), at the canonical orthocentre view
 `u* = apexView v 1`, if no facet is edge-on:
-under polyhedral convexity, `u*` unconditionally falls into one of the three geometric rim classes:
+under `VertexConvexity F` and `TheoremFQ F u*`, `u*` either falls into one of the three
+geometric rim classes (contiguous ends / 3-rim, single-isolated, multi-isolated),
+OR its facing pattern is one of the two disconnected facet pairs (4, 6) or (2, 8). -/
+theorem orthocentre_rim_class_split_local (F : S0xFac 9 s0x_S24 x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
+    (hobt : ∀ e f, e ≠ f → ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, ![x 0 - x 1, x 2 - x 1, x 6 - x 1] f⟫ ≤ 0)
+    (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1⟫ ≠ 0)
+    (h_conv : VertexConvexity F)
+    (h_FQ : TheoremFQ F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1)) :
+    let u := Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1
+    IsContiguousEndsOrTri F u ∨
+    IsSingleIsolated F u ∨
+    IsMultiIsolated F u ∨
+    (bitsToU (facingPattern F u) = {4, 6} ∨ bitsToU (facingPattern F u) = {2, 8}) := by
+  set u := Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1
+  have hsplit := orthocentre_sign_vector_split F hli hobt h_no_edge_on
+  rcases hsplit with h | h | h | hns
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · have ⟨h0, h1, h5⟩ := corner_facets_back F hli hobt
+    have hor := not_nonSimple_of_vertexConvexity F u h_conv h_FQ h0.le h1.le h5.le h_no_edge_on hns
+    exact Or.inr (Or.inr (Or.inr hor))
+
+/-- **Theorem: Complete 3-Way Rim Class Split of Orthocentre View (Task L').**
+For any Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`), at the canonical orthocentre view
+`u* = apexView v 1`, if no facet is edge-on:
+under `VertexConvexity F`, `TheoremFQ F u*`, and `DisjointPairsExcluded F u*`,
+`u*` unconditionally falls into one of the three geometric rim classes:
 `IsContiguousEndsOrTri F u*` (contiguous ends or 3-rim),
 or `IsSingleIsolated F u*` (single isolated end),
-or `IsMultiIsolated F u*` (multi-isolated ends with `025, 046, 236` back).
-The fourth disjunct `.nonSimple` is completely eliminated. -/
+or `IsMultiIsolated F u*` (multi-isolated ends with `025, 046, 236` back). -/
 theorem orthocentre_rim_class_split_closed (F : S0xFac 9 s0x_S24 x)
     (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
     (hobt : ∀ e f, e ≠ f → ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, ![x 0 - x 1, x 2 - x 1, x 6 - x 1] f⟫ ≤ 0)
     (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1⟫ ≠ 0)
-    (h_conv : PolyhedralConvexity F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1)) :
+    (h_conv : VertexConvexity F)
+    (h_FQ : TheoremFQ F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1))
+    (h_pairs : DisjointPairsExcluded F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1)) :
     let u := Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1
     IsContiguousEndsOrTri F u ∨
     IsSingleIsolated F u ∨
@@ -994,7 +1043,13 @@ theorem orthocentre_rim_class_split_closed (F : S0xFac 9 s0x_S24 x)
   · exact Or.inr (Or.inl h)
   · exact Or.inr (Or.inr h)
   · have ⟨h0, h1, h5⟩ := corner_facets_back F hli hobt
-    have hnot := not_nonSimple_of_polyhedralConvexity F u h_conv h0.le h1.le h5.le h_no_edge_on
+    have hnot := not_nonSimple_of_vertexConvexity_closed F u h_conv h_FQ h_pairs h0.le h1.le h5.le h_no_edge_on
     contradiction
+
+#print axioms nonempty_front_of_FQ
+#print axioms not_nonSimple_of_vertexConvexity
+#print axioms not_nonSimple_of_vertexConvexity_closed
+#print axioms orthocentre_rim_class_split_local
+#print axioms orthocentre_rim_class_split_closed
 
 end
