@@ -497,13 +497,38 @@ theorem inj_c026435_rev : Function.Injective c026435_rev := by decide
 theorem inj_c602534_rev : Function.Injective c602534_rev := by decide
 theorem inj_c260435_rev : Function.Injective c260435_rev := by decide
 
-theorem depth_trichotomy (a b c : ℝ) (h1 : a ≠ b) (h2 : a ≠ c) :
-    a < b ∨ a < c ∨ (b < a ∧ c < a) := by
-  rcases lt_or_gt_of_ne h1 with h1 | h1
+theorem depth_all_cases (a b c : ℝ) :
+    a < b ∨ a < c ∨ (b < a ∧ c < a) ∨ a = b ∨ a = c := by
+  rcases lt_trichotomy a b with h1 | rfl | h1
   · exact Or.inl h1
-  · rcases lt_or_gt_of_ne h2 with h2 | h2
+  · exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
+  · rcases lt_trichotomy a c with h2 | rfl | h2
     · exact Or.inr (Or.inl h2)
-    · exact Or.inr (Or.inr ⟨h1, h2⟩)
+    · exact Or.inr (Or.inr (Or.inr (Or.inr rfl)))
+    · exact Or.inr (Or.inr (Or.inl ⟨h1, h2⟩))
+
+theorem exists_tilt_for_tie (w1 w2 w3 : ℝ³) (d0 : ℝ³)
+    (h1 : 0 < ⟪w1, d0⟫) (h2 : 0 < ⟪w2, d0⟫)
+    (hw3 : w3 ≠ 0) (hB : 0 ≤ ⟪w3, d0⟫) :
+    ∃ d : ℝ³, 0 < ⟪w1, d⟫ ∧ 0 < ⟪w2, d⟫ ∧ 0 < ⟪w3, d⟫ := by
+  have e1 : ∀ ε : ℝ, ⟪w1, d0 + ε • w3⟫ = ⟪w1, d0⟫ + ε * ⟪w1, w3⟫ := by
+    intro ε; rw [inner_add_right, inner_smul_right]
+  have e2 : ∀ ε : ℝ, ⟪w2, d0 + ε • w3⟫ = ⟪w2, d0⟫ + ε * ⟪w2, w3⟫ := by
+    intro ε; rw [inner_add_right, inner_smul_right]
+  have e3 : ∀ ε : ℝ, ⟪w3, d0 + ε • w3⟫ = ⟪w3, d0⟫ + ε * ⟪w3, w3⟫ := by
+    intro ε; rw [inner_add_right, inner_smul_right]
+  have ev1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ⟪w1, d0 + ε • w3⟫ := by
+    refine (eventually_pos_affine (Or.inl h1)).mono fun ε hε => by
+      rw [e1]; exact hε
+  have ev2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ⟪w2, d0 + ε • w3⟫ := by
+    refine (eventually_pos_affine (Or.inl h2)).mono fun ε hε => by
+      rw [e2]; exact hε
+  have hpos3 : 0 < ⟪w3, w3⟫ := real_inner_self_pos.2 hw3
+  obtain ⟨ε, ⟨hε1, hε2⟩, hε0⟩ := (ev1.and ev2 |>.and self_mem_nhdsWithin).exists
+  refine ⟨d0 + ε • w3, hε1, hε2, ?_⟩
+  rw [e3]
+  have hmul : 0 < ε * ⟪w3, w3⟫ := mul_pos hε0 hpos3
+  linarith
 
 -- ----------------------------------------------------------------------------
 -- Contiguous Ends Verification
@@ -853,8 +878,7 @@ theorem isRupert_of_c602534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
     (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
     (hE6 : (∑ e, y 6 e) = 1) (hE0 : (∑ e, y 0 e) = 1) (hE2 : (∑ e, y 2 e) = 1)
-    (hV3 : 1 < ∑ e, y 3 e) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
-    (h_nondeg : ⟪u, x 3⟫ ≠ ⟪u, x 4⟫ ∧ ⟪u, x 3⟫ ≠ ⟪u, x 5⟫) :
+    (hV3 : 1 < ∑ e, y 3 e) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e) :
     IsRupert (univ.image x) := by
   have hx_inj := Minimality.H24.SAT.inj_of_fac F
   have hne01 : x 0 ≠ x 1 := fun heq => by have := hx_inj heq; revert this; decide
@@ -866,8 +890,8 @@ theorem isRupert_of_c602534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
   have h03 : ⟪u, x 0⟫ < ⟪u, x 3⟫ := by
     rw [inner_sub_left] at d03
     linarith [real_inner_comm u (x 3), real_inner_comm u (x 0)]
-  have ht := depth_trichotomy ⟪u, x 3⟫ ⟪u, x 4⟫ ⟪u, x 5⟫ h_nondeg.1 h_nondeg.2
-  rcases ht with hlt4 | hlt5 | ⟨hgt4, hgt5⟩
+  have ht := depth_all_cases ⟪u, x 3⟫ ⟪u, x 4⟫ ⟪u, x 5⟫
+  rcases ht with hlt4 | hlt5 | ⟨hgt4, hgt5⟩ | heq4 | heq5
   · have h35 : 0 < ⟪x 3 - x 5, u⟫ := by
       rcases type24_quad_depth_split F u h03 with h | h
       · rw [inner_sub_left] at h
@@ -896,6 +920,54 @@ theorem isRupert_of_c602534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
       linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
     exact isRupert_of_orthocentre_6rim F hx_inj inj_c602534 cyc602534 hu p v y hxy hv
       hE6 hE0 hE2 hV5 hV4 (x 1 - x 0) hd10 hd12 (Or.inl h35) (Or.inl h34)
+  · have h35 : 0 < ⟪x 3 - x 5, u⟫ := by
+      rcases type24_quad_depth_split F u h03 with h | h
+      · rw [inner_sub_left] at h
+        linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+      · exact h
+    have heq_sub : ⟪x 4 - x 3, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+    have heq_sub34 : ⟪x 3 - x 4, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+    rcases lt_or_ge (⟪x 4 - x 3, x 1 - x 0⟫) 0 with hB | hB
+    · have hd34 : 0 < ⟪x 3 - x 4, x 1 - x 0⟫ := by
+        have : ⟪x 3 - x 4, x 1 - x 0⟫ = -⟪x 4 - x 3, x 1 - x 0⟫ := by
+          rw [← inner_neg_left, neg_sub]
+        linarith
+      exact isRupert_of_orthocentre_6rim F hx_inj inj_c602534 cyc602534 hu p v y hxy hv
+        hE6 hE0 hE2 hV5 hV4 (x 1 - x 0) hd10 hd12 (Or.inl h35) (Or.inr ⟨heq_sub34, hd34⟩)
+    · have hw3 : x 4 - x 3 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      obtain ⟨d, hd10', hd12', hd43⟩ :=
+        exists_tilt_for_tie (x 6 - x 0) (x 2 - x 0) (x 4 - x 3) (x 1 - x 0) hd10 hd12 hw3 hB
+      exact isRupert_of_orthocentre_6rim_peak5 F hx_inj inj_c602534 cyc602534 hu p v y hxy hv
+        hE6 hE0 hE2 hV5 hV4 d hd10' hd12' (Or.inl h35) (Or.inr ⟨heq_sub, hd43⟩)
+  · have h34 : 0 < ⟪x 3 - x 4, u⟫ := by
+      rcases type24_quad_depth_split F u h03 with h | h
+      · exact h
+      · rw [inner_sub_left] at h
+        linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    have heq_sub : ⟪x 5 - x 3, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    have heq_sub35 : ⟪x 3 - x 5, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    rcases lt_or_ge (⟪x 5 - x 3, x 1 - x 0⟫) 0 with hB | hB
+    · have hd35 : 0 < ⟪x 3 - x 5, x 1 - x 0⟫ := by
+        have : ⟪x 3 - x 5, x 1 - x 0⟫ = -⟪x 5 - x 3, x 1 - x 0⟫ := by
+          rw [← inner_neg_left, neg_sub]
+        linarith
+      exact isRupert_of_orthocentre_6rim F hx_inj inj_c602534 cyc602534 hu p v y hxy hv
+        hE6 hE0 hE2 hV5 hV4 (x 1 - x 0) hd10 hd12 (Or.inr ⟨heq_sub35, hd35⟩) (Or.inl h34)
+    · have hw3 : x 5 - x 3 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      obtain ⟨d, hd12', hd10', hd53⟩ :=
+        exists_tilt_for_tie (x 2 - x 0) (x 6 - x 0) (x 5 - x 3) (x 1 - x 0) hd12 hd10 hw3 hB
+      exact isRupert_of_orthocentre_6rim_peak5 F hx_inj inj_c602534_rev cyc602534_rev hu p v y hxy hv
+        hE2 hE0 hE6 hV4 hV5 d hd12' hd10' (Or.inl h34) (Or.inr ⟨heq_sub, hd53⟩)
 
 /-- Theorem P dispatch for 6-rim EEEVVV cell `c260435`. -/
 theorem isRupert_of_c260435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
@@ -904,8 +976,7 @@ theorem isRupert_of_c260435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
     (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
     (hE2 : (∑ e, y 2 e) = 1) (hE6 : (∑ e, y 6 e) = 1) (hE0 : (∑ e, y 0 e) = 1)
-    (hV3 : 1 < ∑ e, y 3 e) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
-    (h_nondeg : ⟪u, x 3⟫ ≠ ⟪u, x 4⟫ ∧ ⟪u, x 3⟫ ≠ ⟪u, x 5⟫) :
+    (hV3 : 1 < ∑ e, y 3 e) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e) :
     IsRupert (univ.image x) := by
   have hx_inj := Minimality.H24.SAT.inj_of_fac F
   have hne61 : x 6 ≠ x 1 := fun heq => by have := hx_inj heq; revert this; decide
@@ -917,8 +988,8 @@ theorem isRupert_of_c260435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
   have h03 : ⟪u, x 0⟫ < ⟪u, x 3⟫ := by
     rw [inner_sub_left] at d03
     linarith [real_inner_comm u (x 3), real_inner_comm u (x 0)]
-  have ht := depth_trichotomy ⟪u, x 3⟫ ⟪u, x 4⟫ ⟪u, x 5⟫ h_nondeg.1 h_nondeg.2
-  rcases ht with hlt4 | hlt5 | ⟨hgt4, hgt5⟩
+  have ht := depth_all_cases ⟪u, x 3⟫ ⟪u, x 4⟫ ⟪u, x 5⟫
+  rcases ht with hlt4 | hlt5 | ⟨hgt4, hgt5⟩ | heq4 | heq5
   · have h35 : 0 < ⟪x 3 - x 5, u⟫ := by
       rcases type24_quad_depth_split F u h03 with h | h
       · rw [inner_sub_left] at h
@@ -947,6 +1018,54 @@ theorem isRupert_of_c260435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
       linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
     exact isRupert_of_orthocentre_6rim F hx_inj inj_c260435 cyc260435 hu p v y hxy hv
       hE2 hE6 hE0 hV4 hV5 (x 1 - x 6) hd10 hd12 (Or.inl h34) (Or.inl h35)
+  · have h35 : 0 < ⟪x 3 - x 5, u⟫ := by
+      rcases type24_quad_depth_split F u h03 with h | h
+      · rw [inner_sub_left] at h
+        linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+      · exact h
+    have heq_sub : ⟪x 4 - x 3, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+    have heq_sub34 : ⟪x 3 - x 4, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+    rcases lt_or_ge (⟪x 4 - x 3, x 1 - x 6⟫) 0 with hB | hB
+    · have hd34 : 0 < ⟪x 3 - x 4, x 1 - x 6⟫ := by
+        have : ⟪x 3 - x 4, x 1 - x 6⟫ = -⟪x 4 - x 3, x 1 - x 6⟫ := by
+          rw [← inner_neg_left, neg_sub]
+        linarith
+      exact isRupert_of_orthocentre_6rim F hx_inj inj_c260435 cyc260435 hu p v y hxy hv
+        hE2 hE6 hE0 hV4 hV5 (x 1 - x 6) hd10 hd12 (Or.inr ⟨heq_sub34, hd34⟩) (Or.inl h35)
+    · have hw3 : x 4 - x 3 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      obtain ⟨d, hd12', hd10', hd43⟩ :=
+        exists_tilt_for_tie (x 0 - x 6) (x 2 - x 6) (x 4 - x 3) (x 1 - x 6) hd12 hd10 hw3 hB
+      exact isRupert_of_orthocentre_6rim_peak5 F hx_inj inj_c260435_rev cyc260435_rev hu p v y hxy hv
+        hE0 hE6 hE2 hV5 hV4 d hd12' hd10' (Or.inl h35) (Or.inr ⟨heq_sub, hd43⟩)
+  · have h34 : 0 < ⟪x 3 - x 4, u⟫ := by
+      rcases type24_quad_depth_split F u h03 with h | h
+      · exact h
+      · rw [inner_sub_left] at h
+        linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    have heq_sub : ⟪x 5 - x 3, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    have heq_sub35 : ⟪x 3 - x 5, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    rcases lt_or_ge (⟪x 5 - x 3, x 1 - x 6⟫) 0 with hB | hB
+    · have hd35 : 0 < ⟪x 3 - x 5, x 1 - x 6⟫ := by
+        have : ⟪x 3 - x 5, x 1 - x 6⟫ = -⟪x 5 - x 3, x 1 - x 6⟫ := by
+          rw [← inner_neg_left, neg_sub]
+        linarith
+      exact isRupert_of_orthocentre_6rim F hx_inj inj_c260435 cyc260435 hu p v y hxy hv
+        hE2 hE6 hE0 hV4 hV5 (x 1 - x 6) hd10 hd12 (Or.inl h34) (Or.inr ⟨heq_sub35, hd35⟩)
+    · have hw3 : x 5 - x 3 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      obtain ⟨d, hd10', hd12', hd53⟩ :=
+        exists_tilt_for_tie (x 2 - x 6) (x 0 - x 6) (x 5 - x 3) (x 1 - x 6) hd10 hd12 hw3 hB
+      exact isRupert_of_orthocentre_6rim_peak5 F hx_inj inj_c260435 cyc260435 hu p v y hxy hv
+        hE2 hE6 hE0 hV4 hV5 d hd10' hd12' (Or.inl h34) (Or.inr ⟨heq_sub, hd53⟩)
 
 /-- Theorem P dispatch for 6-rim EEEVVV cell `c026435`. -/
 theorem isRupert_of_c026435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
@@ -955,8 +1074,7 @@ theorem isRupert_of_c026435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
     (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
     (hE0 : (∑ e, y 0 e) = 1) (hE2 : (∑ e, y 2 e) = 1) (hE6 : (∑ e, y 6 e) = 1)
-    (hV3 : 1 < ∑ e, y 3 e) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
-    (h_nondeg : ⟪u, x 3⟫ ≠ ⟪u, x 4⟫ ∧ ⟪u, x 3⟫ ≠ ⟪u, x 5⟫) :
+    (hV3 : 1 < ∑ e, y 3 e) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e) :
     IsRupert (univ.image x) := by
   have hx_inj := Minimality.H24.SAT.inj_of_fac F
   have hne21 : x 2 ≠ x 1 := fun heq => by have := hx_inj heq; revert this; decide
@@ -968,8 +1086,8 @@ theorem isRupert_of_c026435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
   have h03 : ⟪u, x 0⟫ < ⟪u, x 3⟫ := by
     rw [inner_sub_left] at d03
     linarith [real_inner_comm u (x 3), real_inner_comm u (x 0)]
-  have ht := depth_trichotomy ⟪u, x 3⟫ ⟪u, x 4⟫ ⟪u, x 5⟫ h_nondeg.1 h_nondeg.2
-  rcases ht with hlt4 | hlt5 | ⟨hgt4, hgt5⟩
+  have ht := depth_all_cases ⟪u, x 3⟫ ⟪u, x 4⟫ ⟪u, x 5⟫
+  rcases ht with hlt4 | hlt5 | ⟨hgt4, hgt5⟩ | heq4 | heq5
   · have h35 : 0 < ⟪x 3 - x 5, u⟫ := by
       rcases type24_quad_depth_split F u h03 with h | h
       · rw [inner_sub_left] at h
@@ -998,6 +1116,54 @@ theorem isRupert_of_c026435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
       linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
     exact isRupert_of_orthocentre_6rim F hx_inj inj_c026435 cyc026435 hu p v y hxy hv
       hE0 hE2 hE6 hV4 hV5 (x 1 - x 2) hd10 hd12 (Or.inl h34) (Or.inl h35)
+  · have h35 : 0 < ⟪x 3 - x 5, u⟫ := by
+      rcases type24_quad_depth_split F u h03 with h | h
+      · rw [inner_sub_left] at h
+        linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+      · exact h
+    have heq_sub : ⟪x 4 - x 3, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+    have heq_sub34 : ⟪x 3 - x 4, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+    rcases lt_or_ge (⟪x 4 - x 3, x 1 - x 2⟫) 0 with hB | hB
+    · have hd34 : 0 < ⟪x 3 - x 4, x 1 - x 2⟫ := by
+        have : ⟪x 3 - x 4, x 1 - x 2⟫ = -⟪x 4 - x 3, x 1 - x 2⟫ := by
+          rw [← inner_neg_left, neg_sub]
+        linarith
+      exact isRupert_of_orthocentre_6rim F hx_inj inj_c026435 cyc026435 hu p v y hxy hv
+        hE0 hE2 hE6 hV4 hV5 (x 1 - x 2) hd10 hd12 (Or.inr ⟨heq_sub34, hd34⟩) (Or.inl h35)
+    · have hw3 : x 4 - x 3 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      obtain ⟨d, hd12', hd10', hd43⟩ :=
+        exists_tilt_for_tie (x 6 - x 2) (x 0 - x 2) (x 4 - x 3) (x 1 - x 2) hd12 hd10 hw3 hB
+      exact isRupert_of_orthocentre_6rim_peak5 F hx_inj inj_c026435_rev cyc026435_rev hu p v y hxy hv
+        hE6 hE2 hE0 hV5 hV4 d hd12' hd10' (Or.inl h35) (Or.inr ⟨heq_sub, hd43⟩)
+  · have h34 : 0 < ⟪x 3 - x 4, u⟫ := by
+      rcases type24_quad_depth_split F u h03 with h | h
+      · exact h
+      · rw [inner_sub_left] at h
+        linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    have heq_sub : ⟪x 5 - x 3, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    have heq_sub35 : ⟪x 3 - x 5, u⟫ = 0 := by
+      rw [inner_sub_left]
+      linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+    rcases lt_or_ge (⟪x 5 - x 3, x 1 - x 2⟫) 0 with hB | hB
+    · have hd35 : 0 < ⟪x 3 - x 5, x 1 - x 2⟫ := by
+        have : ⟪x 3 - x 5, x 1 - x 2⟫ = -⟪x 5 - x 3, x 1 - x 2⟫ := by
+          rw [← inner_neg_left, neg_sub]
+        linarith
+      exact isRupert_of_orthocentre_6rim F hx_inj inj_c026435 cyc026435 hu p v y hxy hv
+        hE0 hE2 hE6 hV4 hV5 (x 1 - x 2) hd10 hd12 (Or.inl h34) (Or.inr ⟨heq_sub35, hd35⟩)
+    · have hw3 : x 5 - x 3 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      obtain ⟨d, hd10', hd12', hd53⟩ :=
+        exists_tilt_for_tie (x 0 - x 2) (x 6 - x 2) (x 5 - x 3) (x 1 - x 2) hd10 hd12 hw3 hB
+      exact isRupert_of_orthocentre_6rim_peak5 F hx_inj inj_c026435 cyc026435 hu p v y hxy hv
+        hE0 hE2 hE6 hV4 hV5 d hd10' hd12' (Or.inl h34) (Or.inr ⟨heq_sub, hd53⟩)
 
 -- ----------------------------------------------------------------------------
 -- Theorem P (Type 24 End-to-End Dispatch)
@@ -1013,8 +1179,7 @@ theorem theoremP24_of_candidateCell (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
     (hp : p = x 1)
     (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
-    (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
-    (h_nondeg : ⟪u, x 3⟫ ≠ ⟪u, x 4⟫ ∧ ⟪u, x 3⟫ ≠ ⟪u, x 5⟫) :
+    (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0) :
     IsRupert (univ.image x) := by
   have ⟨hV3, hV4, hV5, hE0, hE2, hE6⟩ := type24_sigma_gt_one F p v y hxy hp hv0 hv1 hv2
   cases cell with
@@ -1037,9 +1202,9 @@ theorem theoremP24_of_candidateCell (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
   | c60534 => exact isRupert_of_c60534 F hcell p v y hxy hv hE6 hE0 hV3 hV4 hV5
   | c62534 => exact isRupert_of_c62534 F hcell p v y hxy hv hE6 hE2 hE0 hV3 hV4 hV5
   | c02534 => exact isRupert_of_c02534 F hcell p v y hxy hv hE0 hE2 hV3 hV4 hV5
-  | c026435 => exact isRupert_of_c026435 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE0 hE2 hE6 hV3 hV4 hV5 h_nondeg
-  | c602534 => exact isRupert_of_c602534 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE6 hE0 hE2 hV3 hV4 hV5 h_nondeg
-  | c260435 => exact isRupert_of_c260435 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE2 hE6 hE0 hV3 hV4 hV5 h_nondeg
+  | c026435 => exact isRupert_of_c026435 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE0 hE2 hE6 hV3 hV4 hV5
+  | c602534 => exact isRupert_of_c602534 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE6 hE0 hE2 hV3 hV4 hV5
+  | c260435 => exact isRupert_of_c260435 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE2 hE6 hE0 hV3 hV4 hV5
 
 /-- **Theorem P (Type 24 Orthocentre Corollary).**
 For any solid of Type 24 (`F : S0xFac 9 s0x_S24 x`), with vertex 1 an obtuse corner
@@ -1051,8 +1216,7 @@ theorem theoremP24_orthocentre (F : S0xFac 9 s0x_S24 x)
     (hobt : ∀ e f, e ≠ f → ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, ![x 0 - x 1, x 2 - x 1, x 6 - x 1] f⟫ ≤ 0)
     {cell : FeasibleCellC} {u : ℝ³}
     (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
-    (hcell : InFeasibleCell F u cell)
-    (h_nondeg : ⟪u, x 3⟫ ≠ ⟪u, x 4⟫ ∧ ⟪u, x 3⟫ ≠ ⟪u, x 5⟫) :
+    (hcell : InFeasibleCell F u cell) :
     IsRupert (univ.image x) := by
   set p := x 1
   set v := ![x 0 - x 1, x 2 - x 1, x 6 - x 1]
@@ -1069,7 +1233,7 @@ theorem theoremP24_orthocentre (F : S0xFac 9 s0x_S24 x)
       exact hrepr
     rw [hsum]
     abel
-  exact theoremP24_of_candidateCell F cell hcell p v y hxy hu rfl rfl rfl rfl hobt h_nondeg
+  exact theoremP24_of_candidateCell F cell hcell p v y hxy hu rfl rfl rfl rfl hobt
 
 /-- **Theorem P (5-Rim EEVVV Orthocentre Corollary, Unconditional).**
 For any solid of Type 24 (`F : S0xFac 9 s0x_S24 x`), with vertex 1 an obtuse corner
