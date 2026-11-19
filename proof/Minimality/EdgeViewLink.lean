@@ -14,7 +14,7 @@ and the tie `z 1 = z 2` excluded (the peak is `2` or `1`).
 
 Type 24 corollary `isRupert_edgeView23`: view `u₀ = x 3 - x 2`, rim `1 6 3 5 0` (the link of vertex 2),
 facets up `B D E I`, down `A C F G H`.  Facings of `A C D F I` are automatic from the facet data; `G`, `H` are
-edge-on at `u₀` and are tilted back by an explicit `d`; `B` (016) is the hypothesis (F), `E` (046)
+edge-on at `u₀` and are tilted back by `d = (x 6 - x 2) + (x 5 - x 2)`; `B` (016) is the hypothesis (F), `E` (046)
 the connectivity hypothesis.
 -/
 
@@ -129,12 +129,12 @@ theorem inj_of_fac24 (F : S0xFac 9 s0x_S24 x) : Function.Injective x := by
     exact lt_irrefl _ this
 
 /-- **Lemma E23** (edge view `x 3 - x 2`, vertex 2 hidden behind 3, rim = link of 2). Hypotheses:
-`hB` the face `016` is front (`(F)`), `hE` the face `046` is front (connectivity), `hGH` the normals of
-the edge-on faces `235`, `236` are not parallel (so a tilt turns both back), and the depths
-`⟪x 1,u⟫ < ⟪x 0,u⟫ < ⟪x 5,u⟫ < ⟪x 3,u⟫`, `⟪x 1,u⟫ < ⟪x 6,u⟫`, `⟪x 6,u⟫ ≠ ⟪x 3,u⟫`, `u = x 3 - x 2`. -/
+`hB` the face `016` is front (`(F)`), `hE` the face `046` is front (connectivity), and the depths
+`⟪x 1,u⟫ < ⟪x 0,u⟫ < ⟪x 5,u⟫ < ⟪x 3,u⟫`, `⟪x 1,u⟫ < ⟪x 6,u⟫`, `⟪x 6,u⟫ ≠ ⟪x 3,u⟫`, `u = x 3 - x 2`.
+The edge-on faces `235`, `236` are tilted back by `d = (x 6 - x 2) + (x 5 - x 2)` (Lemma EV-Tilt,
+`EdgeTiltBD`); the earlier hypothesis that their normals are not parallel is not needed. -/
 theorem isRupert_edgeView23 (F : S0xFac 9 s0x_S24 x)
     (hB : 0 < ⟪F.N 1, x 3 - x 2⟫) (hE : 0 < ⟪F.N 4, x 3 - x 2⟫)
-    (hGH : ⟪F.N 6, F.N 7⟫ ^ 2 < ‖F.N 6‖ ^ 2 * ‖F.N 7‖ ^ 2)
     (h10 : ⟪x 1, x 3 - x 2⟫ < ⟪x 0, x 3 - x 2⟫) (h05 : ⟪x 0, x 3 - x 2⟫ < ⟪x 5, x 3 - x 2⟫)
     (h53 : ⟪x 5, x 3 - x 2⟫ < ⟪x 3, x 3 - x 2⟫) (h16 : ⟪x 1, x 3 - x 2⟫ < ⟪x 6, x 3 - x 2⟫)
     (h63 : ⟪x 6, x 3 - x 2⟫ ≠ ⟪x 3, x 3 - x 2⟫) : IsRupert (univ.image x) := by
@@ -145,23 +145,14 @@ theorem isRupert_edgeView23 (F : S0xFac 9 s0x_S24 x)
   have s2 : ∀ t, (2 : Fin 7) ∈ s0x_S24 t → F.f t (x 2) = 0 := fun t h => F.zero t 2 h
   have n3 : ∀ t, (3 : Fin 7) ∉ s0x_S24 t → F.f t (x 3) < 0 := fun t h => F.neg t 3 h
   have n2 : ∀ t, (2 : Fin 7) ∉ s0x_S24 t → F.f t (x 2) < 0 := fun t h => F.neg t 2 h
-  -- tilt direction
-  set n1 := F.N 6 with hn1
-  set n2' := F.N 7 with hn2
-  set c := ⟪n1, n2'⟫ with hc
-  set d : ℝ³ := -((‖n2'‖ ^ 2 - c) • n1 + (‖n1‖ ^ 2 - c) • n2') with hd
-  have dG : ⟪n1, d⟫ < 0 := by
-    have : ⟪n1, d⟫ = -(‖n1‖ ^ 2 * ‖n2'‖ ^ 2 - c ^ 2) := by
-      simp only [hd, inner_neg_right, inner_add_right, inner_smul_right, real_inner_self_eq_norm_sq,
-        ← hc]
-      ring
-    rw [this]; linarith
-  have dH : ⟪n2', d⟫ < 0 := by
-    have : ⟪n2', d⟫ = -(‖n1‖ ^ 2 * ‖n2'‖ ^ 2 - c ^ 2) := by
-      simp only [hd, inner_neg_right, inner_add_right, inner_smul_right, real_inner_self_eq_norm_sq,
-        real_inner_comm n1 n2', ← hc]
-      ring
-    rw [this]; linarith
+  -- tilt direction (Lemma EV-Tilt): `6 ∉ 235`, `5 ∉ 236`
+  set d : ℝ³ := (x 6 - x 2) + (x 5 - x 2) with hd
+  have dG : ⟪F.N 6, d⟫ < 0 := by
+    rw [hd, inner_add_right, F.inner_sub, F.inner_sub, s2 6 (by decide), F.zero 6 5 (by decide)]
+    have := F.neg 6 6 (by decide); linarith
+  have dH : ⟪F.N 7, d⟫ < 0 := by
+    rw [hd, inner_add_right, F.inner_sub, F.inner_sub, s2 7 (by decide), F.zero 7 6 (by decide)]
+    have := F.neg 7 5 (by decide); linarith
   have hG0 : ⟪F.N 6, u⟫ = 0 := by rw [hf, s3 6 (by decide), s2 6 (by decide)]; ring
   have hH0 : ⟪F.N 7, u⟫ = 0 := by rw [hf, s3 7 (by decide), s2 7 (by decide)]; ring
   obtain ⟨a, ha, hu'⟩ := ev_cellAt_of_tilt F (U := ULink) (Dn := DLink) (u₀ := u) (d := d)
