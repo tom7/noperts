@@ -2,7 +2,7 @@ module
 
 public import Mathlib
 public import Minimality.RimClass24
-public import Minimality.TorqueLeaves
+public import Minimality.LeafBGen
 public import Minimality.LemmaTQHex
 public import Minimality.LinkRim24
 public import Pipeline.Similarity
@@ -21,8 +21,9 @@ classes; this file closes every cell for which a Lean leaf exists and names the 
 * contiguous ends (22 cells, `FeasibleCellC`): Theorem P, `theoremP24_of_obtuse_corner`;
 * 3-rim cells `{t}` (`t = 2, 4, 6, 7, 8`): `LemmaTQ2.isRupert_of_cell_single`; the waist cell
   (all six variable facets front): `TriangleT.isRupert_of_cell026` (rim `0 2 6`);
-* single-isolated end (7 rims): Leaf B (`isRupert_leafB_04625_of_det'`, TorqueLeaves) on the rim
-  `04625` when `A(c*) > 0`; everything else is `Residual_SI`;
+* single-isolated end (7 rims): Leaf B (`isRupert_leafB_cell`, from the rim-generic
+  `LeafBGen.isRupert_leafB_gen`) when `A_r(c*) > 0` (`leafBA`); the rest, `A_r(c*) ≤ 0`, is
+  `Residual_SI`;
 * multi-isolated: `04325`, `04635` by `LemmaTQ2.lemmaTQ'`; `0435` is the Theorem P cell `c0435`; the
   hexagon `046325` by `LemmaTQHex.lemmaTQHex` under its hypotheses, else `Residual_Hex`.
 
@@ -33,9 +34,10 @@ Bridges proved here:
   on the screen, with all triple tests of one sign (either orientation occurs: the mirror image of
   a type-24 solid is a type-24 solid with the same labels);
 * `isRupert_of_neg_image`: Rupertness of `-x`, used to reduce the negative orientation to Leaf B;
-* `hang_of_key`: Leaf B's hypothesis `hang` (the angles at `6` and `2` of the rim are not both
-  right) follows from its key determinant and the tie `⟪x 2, u⟫ = ⟪x 6, u⟫`: if both were right, the
-  edges `4 → 6` and `2 → 5` and `u` would all be orthogonal to `x 2 - x 6 ≠ 0`.
+* `isRupert_leafB_rim`: Leaf B on a labelled rim `c` (stretch `V = c a, E' = c (a+1),
+  E'' = c (a+2), W = c (a+3)`, third end `c b`) in either orientation;
+* `isRupert_leafB_ortho`: the same at the orthocentre view of a strict `S0xCycUD` cell, the ties and
+  depth rows from `orthocentre_depths`; the seven rims are `decide` instances of it.
 -/
 
 set_option autoImplicit false
@@ -139,7 +141,7 @@ theorem rim_orient {k : ℕ} [NeZero k] (F : S0xFac m S x) (hx : Function.Inject
 
 end Orient
 
-/-! ## Point reflection and the hang condition -/
+/-! ## Point reflection -/
 
 /-- Rupertness is invariant under the point reflection `z ↦ -z`. -/
 theorem isRupert_of_neg_image (V : Finset ℝ³) (h : IsRupert (V.image fun z => -z)) :
@@ -155,44 +157,71 @@ theorem isRupert_of_neg_image (V : Finset ℝ³) (h : IsRupert (V.image fun z =>
     funext z; simp
   rw [this, Finset.image_id]
 
-theorem det3_neg_sub (x : Fin 7 → ℝ³) (u : ℝ³) (a b c d : Fin 7) :
-    det3 ((fun i => -x i) a - (fun i => -x i) b) ((fun i => -x i) c - (fun i => -x i) d) (-u) =
-      -det3 (x a - x b) (x c - x d) u := by
+theorem det3_neg_sub' (a b c d u : ℝ³) :
+    det3 (-a - -b) (-c - -d) (-u) = -det3 (a - b) (c - d) u := by
   simp only [det3_expand, PiLp.sub_apply, PiLp.neg_apply]; ring
 
-/-- **The hang condition of Leaf B is automatic.**  If `u ⟂ x 2 - x 6` and the key determinant is
-nonzero, the rim angles at `6` (of `2 6 4`) and at `2` (of `6 2 5`) are not both right. -/
-theorem hang_of_key {x : Fin 7 → ℝ³} {u : ℝ³} (h26 : x 2 ≠ x 6) (t6 : ⟪x 2, u⟫ = ⟪x 6, u⟫)
-    (key : det3 (x 6 - x 4) (x 5 - x 2) u ≠ 0) :
-    ⟪x 2 - x 6, x 6 - x 4⟫ ≠ 0 ∨ ⟪x 6 - x 2, x 5 - x 2⟫ ≠ 0 := by
-  by_contra hc
-  push Not at hc
-  obtain ⟨ha, hb⟩ := hc
-  set w := x 2 - x 6
-  set a := x 6 - x 4
-  set b := x 5 - x 2
-  have hb' : ⟪w, b⟫ = 0 := by
-    have : x 6 - x 2 = -w := by simp [w]
-    rw [this, inner_neg_left] at hb; linarith
-  have hu' : ⟪w, u⟫ = 0 := by simp only [w, inner_sub_left]; linarith
-  have hw : w ≠ 0 := sub_ne_zero.mpr h26
-  simp only [PiLp.inner_apply, Fin.sum_univ_three, RCLike.inner_apply, conj_trivial] at ha hb' hu'
-  rw [det3_expand] at key
-  apply hw
-  ext l
-  fin_cases l
-  · simp only [Fin.zero_eta, PiLp.zero_apply]
-    apply (mul_eq_zero.mp (?_ : _ * w 0 = 0)).resolve_left key
-    linear_combination (b 1 * u 2 - b 2 * u 1) * ha + (u 1 * a 2 - u 2 * a 1) * hb' +
-      (a 1 * b 2 - a 2 * b 1) * hu'
-  · simp only [Fin.mk_one, PiLp.zero_apply]
-    apply (mul_eq_zero.mp (?_ : _ * w 1 = 0)).resolve_left key
-    linear_combination (b 2 * u 0 - b 0 * u 2) * ha + (u 2 * a 0 - u 0 * a 2) * hb' +
-      (a 2 * b 0 - a 0 * b 2) * hu'
-  · simp only [Fin.reduceFinMk, PiLp.zero_apply]
-    apply (mul_eq_zero.mp (?_ : _ * w 2 = 0)).resolve_left key
-    linear_combination (b 0 * u 1 - b 1 * u 0) * ha + (u 0 * a 1 - u 1 * a 0) * hb' +
-      (a 0 * b 1 - a 1 * b 0) * hu'
+/-! ## Leaf B on a labelled rim, either orientation -/
+
+/-- **Leaf B on a labelled rim** (`LeafBGen.isRupert_leafB_gen` for both orientations).  The rim
+`c` of the solid `x` at the view `u` has one common strict sign of all triple tests (`rim_orient`);
+`V = c a`, `E' = c (a+1)`, `E'' = c (a+2)`, `W = c (a+3)`, `E = c b`; the depths of `E', E'', E` tie
+and every other rim corner is strictly deeper; and the Leaf B quantity
+`A = det3 (E' - V) (E'' - E') u * det3 (E' - V) (E'' - W) u` (the rim orientation times the
+antipodality row) is positive.  Then the solid is Rupert.  The negative orientation is the
+positive one for `-x` at `-u`. -/
+theorem isRupert_leafB_rim {k : ℕ} [NeZero k] (hk : 4 ≤ k) {x : Fin 7 → ℝ³}
+    {c : ZMod k → Fin 7} (hc : Function.Injective c) {u : ℝ³} (hu : u ≠ 0)
+    (hor : (∀ i r, r ≠ c i → r ≠ c (i + 1) →
+        0 < det3 (x (c (i + 1)) - x (c i)) (x r - x (c i)) u) ∨
+      (∀ i r, r ≠ c i → r ≠ c (i + 1) → det3 (x (c (i + 1)) - x (c i)) (x r - x (c i)) u < 0))
+    (a b : ZMod k) (hb0 : b ≠ a) (hb1 : b ≠ a + 1) (hb2 : b ≠ a + 2) (hb3 : b ≠ a + 3)
+    (t1 : ⟪x (c (a + 1)), u⟫ = ⟪x (c (a + 2)), u⟫) (tb : ⟪x (c b), u⟫ = ⟪x (c (a + 2)), u⟫)
+    (hv : ∀ j, j ≠ a + 1 → j ≠ a + 2 → j ≠ b → ⟪x (c (a + 2)), u⟫ < ⟪x (c j), u⟫)
+    (hA : 0 < det3 (x (c (a + 1)) - x (c a)) (x (c (a + 2)) - x (c (a + 1))) u *
+      det3 (x (c (a + 1)) - x (c a)) (x (c (a + 2)) - x (c (a + 3))) u) :
+    IsRupert (Finset.univ.image x) := by
+  classical
+  obtain ⟨-, d20, -, d21, -, -⟩ := LeafBGen.four_distinct hk a
+  have hcne : ∀ {i j : ZMod k}, i ≠ j → c i ≠ c j := fun h h' => h (hc h')
+  have eo : det3 (x (c (a + 1)) - x (c a)) (x (c (a + 2)) - x (c (a + 1))) u =
+      det3 (x (c (a + 1)) - x (c a)) (x (c (a + 2)) - x (c a)) u := by
+    simp only [det3_expand, PiLp.sub_apply]; ring
+  have ek : det3 (x (c (a + 1)) - x (c a)) (x (c (a + 2)) - x (c (a + 3))) u =
+      -det3 (x (c (a + 1)) - x (c a)) (x (c (a + 3)) - x (c (a + 2))) u := by
+    simp only [det3_expand, PiLp.sub_apply]; ring
+  rw [eo, ek] at hA
+  rcases hor with P | N
+  · have ho := P a (c (a + 2)) (hcne d20) (hcne d21)
+    have key : det3 (x (c (a + 1)) - x (c a)) (x (c (a + 3)) - x (c (a + 2))) u < 0 := by
+      by_contra h; push Not at h; nlinarith [mul_nonneg ho.le h]
+    refine LeafBGen.isRupert_leafB_gen _ hk (fun i => x (c i))
+      (fun i => Finset.mem_image_of_mem _ (Finset.mem_univ _)) hu ?_ ?_ a b hb0 hb1 hb2 hb3 t1 tb
+      hv key
+    · intro i j hi hj; exact P i (c j) (hcne hi) (hcne hj)
+    · intro v hv' hvp i
+      obtain ⟨m, -, rfl⟩ := Finset.mem_image.mp hv'
+      exact P i m (fun h => hvp i (by rw [h])) (fun h => hvp (i + 1) (by rw [h]))
+  · have ho := N a (c (a + 2)) (hcne d20) (hcne d21)
+    have key : 0 < det3 (x (c (a + 1)) - x (c a)) (x (c (a + 3)) - x (c (a + 2))) u := by
+      by_contra h; push Not at h
+      nlinarith [mul_nonneg (neg_nonneg.mpr ho.le) (neg_nonneg.mpr h)]
+    apply isRupert_of_neg_image
+    rw [Finset.image_image]
+    have ip : ∀ i, ⟪-x i, -u⟫ = ⟪x i, u⟫ := fun i => by simp
+    refine LeafBGen.isRupert_leafB_gen _ hk (fun i => -x (c i))
+      (fun i => Finset.mem_image_of_mem ((fun z => -z) ∘ x) (Finset.mem_univ (c i)))
+      (neg_ne_zero.mpr hu) ?_ ?_ a b hb0 hb1 hb2 hb3 (by simp only [ip]; exact t1)
+      (by simp only [ip]; exact tb) (fun j h1 h2 h3 => by simp only [ip]; exact hv j h1 h2 h3) ?_
+    · intro i j hi hj
+      rw [det3_neg_sub']
+      exact neg_pos.mpr (N i (c j) (hcne hi) (hcne hj))
+    · intro v hv' hvp i
+      obtain ⟨m, -, rfl⟩ := Finset.mem_image.mp hv'
+      dsimp only [Function.comp] at hvp ⊢
+      rw [det3_neg_sub']
+      exact neg_pos.mpr (N i m (fun h => hvp i (by rw [h])) (fun h => hvp (i + 1) (by rw [h])))
+    · rw [det3_neg_sub']; linarith
 
 /-! ## The orthocentre view -/
 
@@ -203,13 +232,13 @@ theorem cellAt_mono {F : S0xFac 9 s0x_S24 x} {U D U' D' : Finset (Fin 9)} {u : �
     (h : CellAt F U D u) (hU : U' ⊆ U) (hD : D' ⊆ D) : CellAt F U' D' u :=
   ⟨fun t ht => h.1 t (hU ht), fun t ht => h.2 t (hD ht)⟩
 
-/-- Depths at the orthocentre view `u* = apexView v 1`: the ends `0, 2, 6` tie, and `4`, `5` are
-strictly deeper (Theorem P's `σ > 1`). -/
+/-- Depths at the orthocentre view `u* = apexView v 1`: the ends `0, 2, 6` tie, and `3`, `4`, `5`
+are strictly deeper (Theorem P's `σ > 1`). -/
 theorem orthocentre_depths (F : S0xFac 9 s0x_S24 x)
     (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1]) :
     let u := Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1
-    u ≠ 0 ∧ ⟪x 2, u⟫ = ⟪x 0, u⟫ ∧ ⟪x 2, u⟫ = ⟪x 6, u⟫ ∧ ⟪x 2, u⟫ < ⟪x 4, u⟫ ∧
-      ⟪x 2, u⟫ < ⟪x 5, u⟫ := by
+    u ≠ 0 ∧ ⟪x 2, u⟫ = ⟪x 0, u⟫ ∧ ⟪x 2, u⟫ = ⟪x 6, u⟫ ∧ ⟪x 2, u⟫ < ⟪x 3, u⟫ ∧
+      ⟪x 2, u⟫ < ⟪x 4, u⟫ ∧ ⟪x 2, u⟫ < ⟪x 5, u⟫ := by
   intro u
   set p := x 1
   set v := ![x 0 - x 1, x 2 - x 1, x 6 - x 1]
@@ -227,82 +256,105 @@ theorem orthocentre_depths (F : S0xFac 9 s0x_S24 x)
       exact hrepr
     rw [hsum]
     abel
-  have ⟨_, hV4, hV5, hE0, hE2, hE6⟩ := type24_sigma_gt_one F p v y hxy rfl rfl rfl rfl
+  have ⟨hV3, hV4, hV5, hE0, hE2, hE6⟩ := type24_sigma_gt_one F p v y hxy rfl rfl rfl rfl
   have D := depth_orthocentre x p v y hxy u hu
+  have d30 := D 3 2
   have d40 := D 4 2
   have d50 := D 5 2
   have d02 := D 0 2
   have d62 := D 6 2
-  simp only [inner_sub_left] at d40 d50 d02 d62
+  simp only [inner_sub_left] at d30 d40 d50 d02 d62
   have hu0 : u ≠ 0 := by
     intro h0; have := hu 0; rw [h0, inner_zero_right] at this; norm_num at this
-  refine ⟨hu0, ?_, ?_, ?_, ?_⟩ <;> linarith
+  refine ⟨hu0, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
 
-/-- The Leaf B quantity `A(c*)` of the single-isolated rim `04625` (`LEAFB24.md`): the orientation
-`o = det(x6 - x4, x2 - x6, u)` of the rim times `det(x6 - x4, x5 - x2, u)`, negated.  `A > 0` iff
-the interior angles of the screen rim at `6` and `2` sum to less than `π`. -/
-noncomputable def leafBA (x : Fin 7 → ℝ³) (u : ℝ³) : ℝ :=
-  -(det3 (x 6 - x 4) (x 2 - x 6) u * det3 (x 6 - x 4) (x 5 - x 2) u)
+/-- The Leaf B quantity of a rim stretch `V, E', E'', W` (`LEAFB24.md` section 1.3): the rim
+orientation `det3 (E' - V) (E'' - E') u` times the antipodality row `det3 (E' - V) (E'' - W) u`.
+Positive iff the interior angles of the screen rim at `E'` and `E''` sum to less than `π`. -/
+noncomputable def leafBAv (x : Fin 7 → ℝ³) (u : ℝ³) (V E₁ E₂ W : Fin 7) : ℝ :=
+  det3 (x E₁ - x V) (x E₂ - x E₁) u * det3 (x E₁ - x V) (x E₂ - x W) u
 
-/-- **Leaf B at the orthocentre view, rim `04625`.**  `u*` in the open cell with front facets
-`{0345, 235, 236, 346}` and `A(c*) > 0`: Rupert (both orientations of the rim). -/
-theorem isRupert_leafB_cell04625 (F : S0xFac 9 s0x_S24 x)
+/-- **`A(c*)` of the seven single-isolated rims** (`LEAFB24.md` sections 1 and 5), with
+`(V, E', E'', W)`: `04625` `(4,6,2,5)`, `043625` `(3,6,2,5)`, `046235` `(4,6,2,3)`, `05236`
+`(3,6,0,5)`, `052346` `(4,6,0,5)`, `02364` `(4,0,2,3)`, `025364` `(4,0,2,5)`. -/
+noncomputable def leafBA (x : Fin 7 → ℝ³) (u : ℝ³) : SingleIsoRim → ℝ
+  | .c04625 => leafBAv x u 4 6 2 5
+  | .c043625 => leafBAv x u 3 6 2 5
+  | .c046235 => leafBAv x u 4 6 2 3
+  | .c05236 => leafBAv x u 3 6 0 5
+  | .c052346 => leafBAv x u 4 6 0 5
+  | .c02364 => leafBAv x u 4 0 2 3
+  | .c025364 => leafBAv x u 4 0 2 5
+
+/-- **Leaf B at the orthocentre view, any single-isolated-type rim.**  `u*` in the open cell of
+an `S0xCycUD` rim `c` with `V = c a, E' = c (a+1), E'' = c (a+2), W = c (a+3)`, the three ends
+`E', E'', E = c b` and the other corners in `{3, 4, 5}`, and `A > 0`: Rupert. -/
+theorem isRupert_leafB_ortho {k : ℕ} [NeZero k] (hk : 4 ≤ k) (F : S0xFac 9 s0x_S24 x)
     (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
-    (hcell : InSingleIsoCell F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1)
-      .c04625)
-    (hA : 0 < leafBA x (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1)) :
+    {c : ZMod k → Fin 7} (hc : Function.Injective c) (h1 : (1 : ZMod k) ≠ 0)
+    (h2 : (2 : ZMod k) ≠ 0) {U D : Finset (Fin 9)} (hcyc : S0xCycUD s0x_S24 c U D)
+    (hcell : CellAt F U D (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1))
+    (a b : ZMod k) (hb0 : b ≠ a) (hb1 : b ≠ a + 1) (hb2 : b ≠ a + 2) (hb3 : b ≠ a + 3)
+    (hE : ∀ j, (j = a + 1 ∨ j = a + 2 ∨ j = b) → c j = 0 ∨ c j = 2 ∨ c j = 6)
+    (hV : ∀ j, j ≠ a + 1 → j ≠ a + 2 → j ≠ b → c j = 3 ∨ c j = 4 ∨ c j = 5)
+    {V E₁ E₂ W : Fin 7} (cV : c a = V) (c1 : c (a + 1) = E₁) (c2 : c (a + 2) = E₂)
+    (c3 : c (a + 3) = W)
+    (hA : 0 < leafBAv x (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1)
+      V E₁ E₂ W) :
     IsRupert (Finset.univ.image x) := by
   set u := Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1
-  obtain ⟨hu0, t0, t6, h4, h5⟩ := orthocentre_depths F hli
+  obtain ⟨hu0, t0, t6, d3, d4, d5⟩ := orthocentre_depths F hli
   have hx := Minimality.H24.SAT.inj_of_fac F
-  have h26 : x 2 ≠ x 6 := fun h => absurd (hx h) (by decide)
-  have nr : ∀ i : ZMod 5, c04625 i ≠ 1 ∧ c04625 i ≠ 3 := by decide
-  have off : ∀ {w : Fin 7}, w ∈ ({1, 3} : Finset (Fin 7)) → ∀ i : ZMod 5, w ≠ c04625 i := by
-    intro w hw i
-    have hw' : w = 1 ∨ w = 3 := by simpa using hw
-    rcases hw' with rfl | rfl
-    exacts [fun h => (nr i).1 h.symm, fun h => (nr i).2 h.symm]
-  have c1 : c04625 1 = 4 := by decide
-  have c2 : c04625 (1 + 1) = 6 := by decide
-  have eo : det3 (x 6 - x 4) (x 2 - x 6) u = det3 (x 6 - x 4) (x 2 - x 4) u := by
-    simp only [det3_expand, PiLp.sub_apply]; ring
-  unfold leafBA at hA
-  rcases rim_orient F hx inj_c04625 (by decide) (by decide) cyc04625 hcell with P | N
-  · have ho : 0 < det3 (x 6 - x 4) (x 2 - x 6) u := by
-      have := P 1 2 (by decide) (by decide)
-      rw [c1, c2] at this; rw [eo]; exact this
-    have key : det3 (x 6 - x 4) (x 5 - x 2) u < 0 := by
-      by_contra hc; push Not at hc; nlinarith [mul_nonneg ho.le hc]
-    refine LeafB24.isRupert_leafB_04625_of_det' hu0 ?_ ?_ t0 t6 h4 h5 key
-      (hang_of_key h26 t6 key.ne)
-    · intro i j hi hj
-      exact P i (c04625 j) (fun h => hi (inj_c04625 h)) (fun h => hj (inj_c04625 h))
-    · intro w hw i
-      exact P i w (off hw i) (off hw (i + 1))
-  · have ho : det3 (x 6 - x 4) (x 2 - x 6) u < 0 := by
-      have := N 1 2 (by decide) (by decide)
-      rw [c1, c2] at this; rw [eo]; exact this
-    have key : 0 < det3 (x 6 - x 4) (x 5 - x 2) u := by
-      by_contra hc; push Not at hc
-      nlinarith [mul_nonneg (neg_nonneg.mpr ho.le) (neg_nonneg.mpr hc)]
-    set y : Fin 7 → ℝ³ := fun i => -x i with hy
-    apply isRupert_of_neg_image
-    rw [Finset.image_image]
-    change IsRupert (Finset.univ.image y)
-    have ip : ∀ i, ⟪y i, -u⟫ = ⟪x i, u⟫ := fun i => by simp [y]
-    have key' : det3 (y 6 - y 4) (y 5 - y 2) (-u) < 0 := by
-      rw [det3_neg_sub]; linarith
-    have t6' : ⟪y 2, -u⟫ = ⟪y 6, -u⟫ := by rw [ip, ip]; exact t6
-    refine LeafB24.isRupert_leafB_04625_of_det' (neg_ne_zero.mpr hu0) ?_ ?_
-      (by rw [ip, ip]; exact t0) t6' (by rw [ip, ip]; exact h4) (by rw [ip, ip]; exact h5) key'
-      (hang_of_key (fun h => h26 (neg_inj.mp h)) t6' key'.ne)
-    · intro i j hi hj
-      rw [det3_neg_sub]
-      have := N i (c04625 j) (fun h => hi (inj_c04625 h)) (fun h => hj (inj_c04625 h))
-      exact neg_pos.mpr this
-    · intro w hw i
-      rw [det3_neg_sub]
-      exact neg_pos.mpr (N i w (off hw i) (off hw (i + 1)))
+  have hend : ∀ j, (j = a + 1 ∨ j = a + 2 ∨ j = b) → ⟪x (c j), u⟫ = ⟪x 2, u⟫ := by
+    intro j hj
+    rcases hE j hj with h | h | h <;> rw [h] <;> first | exact t0.symm | exact t6.symm
+  have hdeep : ∀ j, j ≠ a + 1 → j ≠ a + 2 → j ≠ b → ⟪x 2, u⟫ < ⟪x (c j), u⟫ := by
+    intro j j1 j2 jb
+    rcases hV j j1 j2 jb with h | h | h <;> rw [h]
+    exacts [d3, d4, d5]
+  have e1 := hend (a + 1) (Or.inl rfl)
+  have e2 := hend (a + 2) (Or.inr (Or.inl rfl))
+  have eb := hend b (Or.inr (Or.inr rfl))
+  refine isRupert_leafB_rim hk hc hu0 (rim_orient F hx hc h1 h2 hcyc hcell) a b hb0 hb1 hb2 hb3
+    (by rw [e1, e2]) (by rw [eb, e2]) (fun j j1 j2 jb => by rw [e2]; exact hdeep j j1 j2 jb) ?_
+  rw [cV, c1, c2, c3]; exact hA
+
+/-- **Leaf B on the seven single-isolated rims.**  `u*` in the open cell of the single-isolated
+rim `r` and `A_r(c*) > 0` (`leafBA`): Rupert. -/
+theorem isRupert_leafB_cell (F : S0xFac 9 s0x_S24 x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1]) (r : SingleIsoRim)
+    (hcell : InSingleIsoCell F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1) r)
+    (hA : 0 < leafBA x (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1) r) :
+    IsRupert (Finset.univ.image x) := by
+  cases r
+  case c04625 =>
+    exact isRupert_leafB_ortho (k := 5) (by norm_num) F hli inj_c04625 (by decide) (by decide)
+      cyc04625 hcell 1 0 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) hA
+  case c043625 =>
+    exact isRupert_leafB_ortho (k := 6) (by norm_num) F hli inj_c043625 (by decide) (by decide)
+      cyc043625 hcell 2 0 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) hA
+  case c046235 =>
+    exact isRupert_leafB_ortho (k := 6) (by norm_num) F hli inj_c046235 (by decide) (by decide)
+      cyc046235 hcell 1 0 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) hA
+  case c05236 =>
+    exact isRupert_leafB_ortho (k := 5) (by norm_num) F hli inj_c05236 (by decide) (by decide)
+      cyc05236 hcell 3 2 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) hA
+  case c052346 =>
+    exact isRupert_leafB_ortho (k := 6) (by norm_num) F hli inj_c052346 (by decide) (by decide)
+      cyc052346 hcell 4 2 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) hA
+  case c02364 =>
+    exact isRupert_leafB_ortho (k := 5) (by norm_num) F hli inj_c02364 (by decide) (by decide)
+      cyc02364 hcell 4 3 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) hA
+  case c025364 =>
+    exact isRupert_leafB_ortho (k := 6) (by norm_num) F hli inj_c025364 (by decide) (by decide)
+      cyc025364 hcell 5 4 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) hA
 
 end Ortho
 
@@ -311,24 +363,16 @@ end Ortho
 section Dispatch
 variable {x : Fin 7 → ℝ³}
 
-/-- Leaf B is available in Lean on the single-isolated rim `r` at the view `u`.  Only the rim
-`04625` has a Lean Leaf B (`isRupert_leafB_cell04625`), with the condition `A(c*) > 0`.  The hand
-proof (`LEAFB24.md` section 5) gives the same leaf on the other six rims with their own `A`
-(`043625`: `det(y6 - y3, y5 - y2, c*)`, `046235`: `det(y6 - y4, y3 - y2, c*)`, `05236`:
-`det(y6 - y3, y0 - y5, c*)`, `052346`: `det(y6 - y4, y0 - y5, c*)`,
-`02364`: `det(y0 - y4, y2 - y3, c*)`,
-`025364`: `det(y0 - y4, y2 - y5, c*)`, each times the rim orientation); they are not formalized,
-so those rims are residual as a whole. -/
-def LeafBLean (x : Fin 7 → ℝ³) (u : ℝ³) : SingleIsoRim → Prop
-  | .c04625 => 0 < leafBA x u
-  | _ => False
+/-- Leaf B holds in Lean on the single-isolated rim `r` at the view `u`: `A_r(u) > 0`
+(`leafBA`, `isRupert_leafB_cell`), for each of the seven rims. -/
+def LeafBLean (x : Fin 7 → ℝ³) (u : ℝ³) (r : SingleIsoRim) : Prop :=
+  0 < leafBA x u r
 
 /-- **Residual, single-isolated end.**  `u` lies in the open cell of a single-isolated-end rim `r`
-(`InSingleIsoCell`, seven rims) and Leaf B is not available in Lean there: for `r = 04625` this is
-`A(c*) ≤ 0` (`leafBA x u ≤ 0`, the interior screen angles at `6` and `2` sum to at least `π`); for
-the other six rims it is the whole cell. -/
+(`InSingleIsoCell`, seven rims) and `A_r(u) ≤ 0` (`leafBA`): the interior screen angles of the rim
+at its two adjacent ends `E'`, `E''` sum to at least `π`. -/
 def Residual_SI (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop :=
-  ∃ r : SingleIsoRim, InSingleIsoCell F u r ∧ ¬ LeafBLean x u r
+  ∃ r : SingleIsoRim, InSingleIsoCell F u r ∧ leafBA x u r ≤ 0
 
 /-- The hypothesis of `lemmaTQHex` (HEXSPLIT24 "not S"): NOT (`b3 < 1` and `c3 < 1`), i.e. not both
 `⟪N_016, x3 - x2⟫ > 0` and `⟪N_012, x3 - x6⟫ > 0`; plus the special positions `c3 = 1`, `b3 ≤ 1`
@@ -379,11 +423,8 @@ theorem dispatch24OB1 (F : S0xFac 9 s0x_S24 x)
   · -- single-isolated end
     obtain ⟨r, hr⟩ := hB
     by_cases hL : LeafBLean x u r
-    · left
-      cases r
-      case c04625 => exact isRupert_leafB_cell04625 F hli hr hL
-      all_goals exact hL.elim
-    · exact Or.inr (Or.inl ⟨r, hr, hL⟩)
+    · exact Or.inl (isRupert_leafB_cell F hli r hr hL)
+    · exact Or.inr (Or.inl ⟨r, hr, not_lt.mp hL⟩)
   · -- multi-isolated ends
     obtain ⟨r, hr⟩ := hC
     cases r
