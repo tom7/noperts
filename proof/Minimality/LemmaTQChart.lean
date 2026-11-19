@@ -496,13 +496,12 @@ theorem a2_closed {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1
       h4350.le, h346.le, h025.le, h235.le, h236.le⟩
     rw [S.f046_eq hsum]; exact mul_nonneg (by linarith [S.hq]) (by linarith)
 
-/-- The 3-plane genericity at `T_c`: `046`, `236`, `4350` have no common nonzero chart zero with
-`g_a ≠ 0` (special position `f4350 (T_c) = 0` excluded). -/
-def Gen : Prop := ∀ a b c : ℝ, S.f046 a b c = 0 → S.f236 a b c = 0 → S.f4350 a b c = 0 → a = 0
-
-/-- **Lemma A2, open part**: for `b3 > 1` the cell `0536` is open. -/
+/-- **Lemma A2, open part**: for `b3 > 1` the cell `0536` is open.  In case C the point is
+`T_c + ε (1, -L, L - 1)` with `L > 0` small: `046` turns front, `236` back and `4350` front.  This
+covers the special position `f4350 (T_c) = 0` (the lines `L_046`, `L_236`, `L_4350` meet at `T_c`):
+the end rows `m2 < 1`, `r < 1` rule out an empty wedge there. -/
 theorem a2_open {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No346)
-    (hgen : S.Gen) (hb3 : 1 < S.b3) : ∃ a b c, S.Op0536 a b c := by
+    (hb3 : 1 < S.b3) : ∃ a b c, S.Op0536 a b c := by
   obtain ⟨hua, hus, hu⟩ := S.u_facts
   have hs2 : 0 < 1 - S.s2 := by linarith [S.hs2]
   set K := (|S.s0 - S.s2| + 1) / (1 - S.s2) with hK
@@ -515,13 +514,19 @@ theorem a2_open {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) 
   have d236 : S.f236 1 (-K) (K - 1) < 0 := by simp only [f236, L3]; linarith [S.hr]
   by_cases hC : S.thb < S.th / S.a3 * (S.b3 - 1)
   · obtain ⟨hc, h046, h236, h235, h346, h025, h4350⟩ := S.tc_facts hR hts hNo hC
-    have h4 : 0 < S.f4350 S.th S.thb (1 - S.th - S.thb) := by
-      rcases h4350.lt_or_eq with h | h
-      · exact h
-      · exact absurd (hgen _ _ _ h046 h236 h.symm) S.th_pos.ne'
-    exact S.op0536_pert (x := 1) (y := -K) (z := K - 1) (Or.inl S.th_pos) (Or.inl S.thb_pos)
-      (Or.inl hc) (Or.inr ⟨h046.ge, d046⟩) (Or.inl h4) (Or.inl h346) (Or.inl h025) (Or.inl h235)
-      (Or.inr ⟨h236.le, d236⟩)
+    have hm2 : 0 < 1 - S.m2 := by linarith [S.hm2]
+    set L := (1 - S.m2) / (|S.m1 - S.m2| + 1) with hL
+    have hL1 : L * (|S.m1 - S.m2| + 1) = 1 - S.m2 := by rw [hL]; field_simp
+    have hL0 : 0 < L := div_pos hm2 (by positivity)
+    have hm := le_abs_self (S.m1 - S.m2)
+    have e046 : 0 < S.f046 1 (-L) (L - 1) := by
+      simp only [f046, L3]; nlinarith [mul_pos hL0 (show (0:ℝ) < 1 - S.q by linarith [S.hq])]
+    have e4350 : 0 < S.f4350 1 (-L) (L - 1) := by
+      simp only [f4350, L3]; nlinarith [mul_nonneg hL0.le (abs_nonneg (S.m1 - S.m2))]
+    have e236 : S.f236 1 (-L) (L - 1) < 0 := by simp only [f236, L3]; linarith [S.hr]
+    exact S.op0536_pert (x := 1) (y := -L) (z := L - 1) (Or.inl S.th_pos) (Or.inl S.thb_pos)
+      (Or.inl hc) (Or.inr ⟨h046.ge, e046⟩) (Or.inr ⟨h4350, e4350⟩) (Or.inl h346) (Or.inl h025)
+      (Or.inl h235) (Or.inr ⟨h236.le, e236⟩)
   · push Not at hC
     obtain ⟨hsum, h235, h236, h4350, h346, h025⟩ := S.e23_facts
     have h046 : 0 ≤ S.f046 S.th (S.th / S.a3 * (S.b3 - 1)) (S.th / S.a3 * S.c3) := by
@@ -926,14 +931,13 @@ theorem ca_chart (G00 G01 G02 G11 G12 G22 h2 t0 t1 t2 P0 P1 P2 Q0 Q1 Q2 : ℝ)
 /-! ## Assembly -/
 
 /-- **Lemma TQ, chart form** (frame `04325`).  `t` is the orthocentre chart point, in the region
-`R = 04325`; the 3-rim cells `{235}`, `{346}`, `{025}` are empty; `Gen` excludes the special
-position `f4350 (T_c) = 0`.  Metric: `G t = h2 (1,1,1)`, `G_ab, G_bc ≤ 0` (no condition on `G_ac`),
+`R = 04325`; the 3-rim cells `{235}`, `{346}`, `{025}` are empty.  Metric: `G t = h2 (1,1,1)`, `G_ab, G_bc ≤ 0` (no condition on `G_ac`),
 and the strict Cauchy-Schwarz inequality for the edges `x2 - x0`, `x6 - x0`.  Then one closed-cell
 point of `0234` has `z0 < z2` or `z3 < z2` (and `0234` is open), or one closed-cell point of `0536`
 has `z0 < z6` (and `0536` is open).  Depths relative to `x1`: `(G g)_0, (G g)_1, (G g)_2` for
 `x0, x2, x6` and `a3 (G g)_0 + b3 (G g)_1 + c3 (G g)_2` for `x3`. -/
 theorem tq_chart (S : Ch24) {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1)
-    (hNo235 : S.No235) (hNo346 : S.No346) (hNo025 : S.No025) (hgen : S.Gen)
+    (hNo235 : S.No235) (hNo346 : S.No346) (hNo025 : S.No025)
     {G00 G01 G02 G11 G12 G22 h2 : ℝ} (hh2 : 0 < h2)
     (r0 : G00 * t0 + G01 * t1 + G02 * t2 = h2) (r1 : G01 * t0 + G11 * t1 + G12 * t2 = h2)
     (r2 : G02 * t0 + G12 * t1 + G22 * t2 = h2) (hab : G01 ≤ 0) (hbc : G12 ≤ 0)
@@ -985,7 +989,7 @@ theorem tq_chart (S : Ch24) {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t
     · exact ⟨x, 1 - x, 0, hPcl, Or.inr (by linarith)⟩
   · -- class `b3 > 1`: Lemma CA (TL or CX)
     obtain ⟨y', z', hs', hP'⟩ := S.a2_closed hR hts hNo346 hb3.le
-    have hop' := S.a2_open hR hts hNo346 hgen hb3
+    have hop' := S.a2_open hR hts hNo346 hb3
     have hy' : y' ≤ S.thb := by
       have h := hP'.2.2.2.1
       rw [S.f046_eq hs'] at h

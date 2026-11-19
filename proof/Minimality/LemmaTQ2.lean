@@ -31,8 +31,7 @@ theorem lemmaTQ_04325' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Func
     (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
     {u : ℝ³} (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
-    (hR : CellAt F {3, 6} {0, 1, 2, 4, 5, 7, 8} u)
-    (hgen : ∀ w : ℝ³, ⟪F.N 3, w⟫ = 0 → ⟪F.N 4, w⟫ = 0 → ⟪F.N 7, w⟫ = 0 → w = 0) :
+    (hR : CellAt F {3, 6} {0, 1, 2, 4, 5, 7, 8} u) :
     IsRupert (Finset.univ.image x) := by
   by_cases h1 : ∃ w, CellAt F {6} {0, 1, 2, 3, 4, 5, 7, 8} w
   · obtain ⟨w, hw⟩ := h1
@@ -44,15 +43,14 @@ theorem lemmaTQ_04325' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Func
   · obtain ⟨w, hw⟩ := h3
     exact isRupert_of_cell_single F (t := 2) (by decide) (by decide) hw
   push Not at h1 h2 h3
-  exact lemmaTQ_04325 F hx hli hab hbc hu hR h1 h2 h3 hgen
+  exact lemmaTQ_04325 F hx hli hab hbc hu hR h1 h2 h3
 
 /-- **Lemma TQ**, frame `04635`, without the empty-cell hypotheses. -/
 theorem lemmaTQ_04635' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Function.Injective x)
     (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
     (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
     {u : ℝ³} (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
-    (hR : CellAt F {3, 8} {0, 1, 2, 4, 5, 6, 7} u)
-    (hgen : ∀ w : ℝ³, ⟪F.N 3, w⟫ = 0 → ⟪F.N 2, w⟫ = 0 → ⟪F.N 7, w⟫ = 0 → w = 0) :
+    (hR : CellAt F {3, 8} {0, 1, 2, 4, 5, 6, 7} u) :
     IsRupert (Finset.univ.image x) := by
   by_cases h1 : ∃ w, CellAt F {8} {0, 1, 2, 3, 4, 5, 6, 7} w
   · obtain ⟨w, hw⟩ := h1
@@ -64,7 +62,7 @@ theorem lemmaTQ_04635' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Func
   · obtain ⟨w, hw⟩ := h3
     exact isRupert_of_cell_single F (t := 4) (by decide) (by decide) hw
   push Not at h1 h2 h3
-  exact lemmaTQ_04635 F hx hli hac hbc hu hR h1 h2 h3 hgen
+  exact lemmaTQ_04635 F hx hli hac hbc hu hR h1 h2 h3
 
 /-- **Lemma TQ'** (type 24, obtuse corner 1) without the four empty-cell hypotheses. -/
 theorem lemmaTQ' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Function.Injective x)
@@ -72,12 +70,10 @@ theorem lemmaTQ' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Function.I
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
     (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
     {u : ℝ³} (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
-    (hR : CellAt F {3, 6} {0, 1, 2, 4, 5, 7, 8} u ∨ CellAt F {3, 8} {0, 1, 2, 4, 5, 6, 7} u)
-    (hgen : ∀ w : ℝ³, ⟪F.N 3, w⟫ = 0 → ⟪F.N 4, w⟫ = 0 → ⟪F.N 7, w⟫ = 0 → w = 0)
-    (hgen' : ∀ w : ℝ³, ⟪F.N 3, w⟫ = 0 → ⟪F.N 2, w⟫ = 0 → ⟪F.N 7, w⟫ = 0 → w = 0) :
+    (hR : CellAt F {3, 6} {0, 1, 2, 4, 5, 7, 8} u ∨ CellAt F {3, 8} {0, 1, 2, 4, 5, 6, 7} u) :
     IsRupert (Finset.univ.image x) := by
   rcases hR with h | h
-  · exact lemmaTQ_04325' F hx hli hab hbc hu h hgen
-  · exact lemmaTQ_04635' F hx hli hac hbc hu h hgen'
+  · exact lemmaTQ_04325' F hx hli hab hbc hu h
+  · exact lemmaTQ_04635' F hx hli hac hbc hu h
 
 end Minimality.T24.TQ
