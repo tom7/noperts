@@ -1237,12 +1237,11 @@ theorem theoremP24_orthocentre (F : S0xFac 9 s0x_S24 x)
 
 /-- **Theorem P (5-Rim EEVVV Orthocentre Corollary, Unconditional).**
 For any solid of Type 24 (`F : S0xFac 9 s0x_S24 x`), with vertex 1 an obtuse corner
-with linearly independent edges `![x 0 - x 1, x 2 - x 1, x 6 - x 1]` that are pairwise non-acute,
+with linearly independent edges `![x 0 - x 1, x 2 - x 1, x 6 - x 1]`,
 if the orthocentre view `u` lies in any of the 5-rim EEVVV cells `c60534, c62534, c02534`:
-`IsRupert (univ.image x)` unconditionally (without any depth hypotheses). -/
+`IsRupert (univ.image x)` unconditionally (without any angle or depth hypotheses). -/
 theorem theoremP24_orthocentre_5rim (F : S0xFac 9 s0x_S24 x)
     (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
-    (_hobt : ∀ e f, e ≠ f → ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, ![x 0 - x 1, x 2 - x 1, x 6 - x 1] f⟫ ≤ 0)
     {cell : FeasibleCellC} {u : ℝ³}
     (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
     (hcell : InFeasibleCell F u cell)

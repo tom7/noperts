@@ -18,9 +18,11 @@ variable {x : Fin 7 → ℝ³}
 def theta0 (y : Fin 7 → Fin 3 → ℝ) : ℝ :=
   y 3 0 / ((∑ e, y 3 e) - 1)
 
+/-- The Cevian ratio θ₂ at vertex 2 in corner coordinates at vertex 1. -/
 def theta2 (y : Fin 7 → Fin 3 → ℝ) : ℝ :=
   y 4 1 / ((∑ e, y 4 e) - 1)
 
+/-- The Cevian ratio θ₆ at vertex 6 in corner coordinates at vertex 1. -/
 def theta6 (y : Fin 7 → Fin 3 → ℝ) : ℝ :=
   y 5 2 / ((∑ e, y 5 e) - 1)
 
@@ -516,8 +518,7 @@ theorem facet2_front_iff (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24
 /-- **Facet 0 ({0, 1, 2}) Backness Condition.**
 Under `c 2 > 0`, Facet 0 is strictly back (`⟪F.N 0, u⟫ < 0`). -/
 theorem facet0_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³)
-    (_hp : p = x 1)
+    (v : Fin 3 → ℝ³)
     (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
     (c : Fin 3 → ℝ) (hc2 : 0 < c 2) :
     ⟪F.N 0, ∑ e, c e • v e⟫ < 0 := by
@@ -537,8 +538,7 @@ theorem facet0_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
 /-- **Facet 1 ({0, 1, 6}) Backness Condition.**
 Under `c 1 > 0`, Facet 1 is strictly back (`⟪F.N 1, u⟫ < 0`). -/
 theorem facet1_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³)
-    (_hp : p = x 1)
+    (v : Fin 3 → ℝ³)
     (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
     (c : Fin 3 → ℝ) (hc1 : 0 < c 1) :
     ⟪F.N 1, ∑ e, c e • v e⟫ < 0 := by
@@ -558,8 +558,7 @@ theorem facet1_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
 /-- **Facet 5 ({1, 2, 6}) Backness Condition.**
 Under `c 0 > 0`, Facet 5 is strictly back (`⟪F.N 5, u⟫ < 0`). -/
 theorem facet5_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³)
-    (_hp : p = x 1)
+    (v : Fin 3 → ℝ³)
     (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
     (c : Fin 3 → ℝ) (hc0 : 0 < c 0) :
     ⟪F.N 5, ∑ e, c e • v e⟫ < 0 := by
@@ -735,11 +734,11 @@ theorem isRupert_of_theta_gt_one (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT
     · intro t ht
       fin_cases ht
       · dsimp [u]
-        exact facet0_back F p v hp hv0 hv1 hv2 c hc2_pos
+        exact facet0_back F v hv0 hv1 hv2 c hc2_pos
       · dsimp [u]
-        exact facet1_back F p v hp hv0 hv1 hv2 c hc1_pos
+        exact facet1_back F v hv0 hv1 hv2 c hc1_pos
       · dsimp [u]
-        exact facet5_back F p v hp hv0 hv1 hv2 c hc0_pos
+        exact facet5_back F v hv0 hv1 hv2 c hc0_pos
 
   exact isRupert_of_cell026 F h_cell
 
