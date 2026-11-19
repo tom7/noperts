@@ -35,6 +35,277 @@ def isContiguousEnds {k : ℕ} [NeZero k] (c : ZMod k → Fin 7) : Bool :=
   countEndTransitions c ≤ 1
 
 -- ----------------------------------------------------------------------------
+-- Derivation of Depth Ordering from Facet Data (Task B)
+-- ----------------------------------------------------------------------------
+
+/-- Affine evaluation of facet functional `F.f t` in corner coordinates. -/
+theorem s0x_affine_eval (F : S0xFac 9 s0x_S24 x) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (t : Fin 9) (i : Fin 7) :
+    F.f t (x i) - F.f t (x 1) =
+      y i 0 * (F.f t (x 0) - F.f t (x 1)) +
+      y i 1 * (F.f t (x 2) - F.f t (x 1)) +
+      y i 2 * (F.f t (x 6) - F.f t (x 1)) := by
+  have hsub : x i - x 1 = y i 0 • (x 0 - x 1) + y i 1 • (x 2 - x 1) + y i 2 • (x 6 - x 1) := by
+    have h1 := hxy i
+    rw [hp, Fin.sum_univ_three, hv0, hv1, hv2] at h1
+    rw [h1, add_sub_cancel_left]
+  have hlin : F.f t (x i) - F.f t (x 1) = ⟪F.N t, x i - x 1⟫ := F.hN t (x i) (x 1)
+  rw [hlin, hsub]
+  simp only [inner_add_right, inner_smul_right]
+  rw [← F.hN t (x 0) (x 1), ← F.hN t (x 2) (x 1), ← F.hN t (x 6) (x 1)]
+
+theorem type24_sigma5_gt_one (F : S0xFac 9 s0x_S24 x) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    1 < ∑ e, y 5 e := by
+  have he0 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 0 5
+  have hz00 : F.f 0 (x 0) = 0 := F.zero 0 0 (by decide)
+  have hz01 : F.f 0 (x 1) = 0 := F.zero 0 1 (by decide)
+  have hz02 : F.f 0 (x 2) = 0 := F.zero 0 2 (by decide)
+  have hn06 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
+  rw [hz00, hz01, hz02] at he0
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he0
+  have hy52_pos : 0 < y 5 2 := by
+    by_contra hc
+    have hle : y 5 2 ≤ 0 := not_lt.mp hc
+    have hge : 0 ≤ y 5 2 * F.f 0 (x 6) := mul_nonneg_of_nonpos_of_nonpos hle hn06.le
+    rw [← he0] at hge
+    have hn05 : F.f 0 (x 5) < 0 := F.neg 0 5 (by decide)
+    linarith
+  have he2 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 2 5
+  have hz20 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
+  have hz22 : F.f 2 (x 2) = 0 := F.zero 2 2 (by decide)
+  have hz25 : F.f 2 (x 5) = 0 := F.zero 2 5 (by decide)
+  have hn21 : F.f 2 (x 1) < 0 := F.neg 2 1 (by decide)
+  have hn26 : F.f 2 (x 6) < 0 := F.neg 2 6 (by decide)
+  rw [hz20, hz22, hz25] at he2
+  rw [Fin.sum_univ_three]
+  have heq : (1 - (y 5 0 + y 5 1 + y 5 2)) * F.f 2 (x 1) = - y 5 2 * F.f 2 (x 6) := by
+    linear_combination -he2
+  have hrhs : 0 < - y 5 2 * F.f 2 (x 6) := by
+    have : 0 < - F.f 2 (x 6) := by linarith
+    have := mul_pos hy52_pos this
+    linarith
+  rw [← heq] at hrhs
+  have hdiff : 1 - (y 5 0 + y 5 1 + y 5 2) < 0 := by
+    by_contra hc
+    have hle : 0 ≤ 1 - (y 5 0 + y 5 1 + y 5 2) := not_lt.mp hc
+    have hnonpos : (1 - (y 5 0 + y 5 1 + y 5 2)) * F.f 2 (x 1) ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hle hn21.le
+    linarith
+  linarith
+
+theorem type24_sigma4_gt_one (F : S0xFac 9 s0x_S24 x) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    1 < ∑ e, y 4 e := by
+  have he1 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 1 4
+  have hz10 : F.f 1 (x 0) = 0 := F.zero 1 0 (by decide)
+  have hz11 : F.f 1 (x 1) = 0 := F.zero 1 1 (by decide)
+  have hz16 : F.f 1 (x 6) = 0 := F.zero 1 6 (by decide)
+  have hn12 : F.f 1 (x 2) < 0 := F.neg 1 2 (by decide)
+  rw [hz10, hz11, hz16] at he1
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he1
+  have hy41_pos : 0 < y 4 1 := by
+    by_contra hc
+    have hle : y 4 1 ≤ 0 := not_lt.mp hc
+    have hge : 0 ≤ y 4 1 * F.f 1 (x 2) := mul_nonneg_of_nonpos_of_nonpos hle hn12.le
+    rw [← he1] at hge
+    have hn14 : F.f 1 (x 4) < 0 := F.neg 1 4 (by decide)
+    linarith
+  have he4 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 4 4
+  have hz40 : F.f 4 (x 0) = 0 := F.zero 4 0 (by decide)
+  have hz44 : F.f 4 (x 4) = 0 := F.zero 4 4 (by decide)
+  have hz46 : F.f 4 (x 6) = 0 := F.zero 4 6 (by decide)
+  have hn41 : F.f 4 (x 1) < 0 := F.neg 4 1 (by decide)
+  have hn42 : F.f 4 (x 2) < 0 := F.neg 4 2 (by decide)
+  rw [hz40, hz44, hz46] at he4
+  rw [Fin.sum_univ_three]
+  have heq : (1 - (y 4 0 + y 4 1 + y 4 2)) * F.f 4 (x 1) = - y 4 1 * F.f 4 (x 2) := by
+    linear_combination -he4
+  have hrhs : 0 < - y 4 1 * F.f 4 (x 2) := by
+    have : 0 < - F.f 4 (x 2) := by linarith
+    have := mul_pos hy41_pos this
+    linarith
+  rw [← heq] at hrhs
+  have hdiff : 1 - (y 4 0 + y 4 1 + y 4 2) < 0 := by
+    by_contra hc
+    have hle : 0 ≤ 1 - (y 4 0 + y 4 1 + y 4 2) := not_lt.mp hc
+    have hnonpos : (1 - (y 4 0 + y 4 1 + y 4 2)) * F.f 4 (x 1) ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hle hn41.le
+    linarith
+  linarith
+
+theorem type24_sigma3_gt_one (F : S0xFac 9 s0x_S24 x) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    1 < ∑ e, y 3 e := by
+  have he5 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 5 3
+  have hz51 : F.f 5 (x 1) = 0 := F.zero 5 1 (by decide)
+  have hz52 : F.f 5 (x 2) = 0 := F.zero 5 2 (by decide)
+  have hz56 : F.f 5 (x 6) = 0 := F.zero 5 6 (by decide)
+  have hn50 : F.f 5 (x 0) < 0 := F.neg 5 0 (by decide)
+  rw [hz51, hz52, hz56] at he5
+  simp only [sub_zero, mul_zero, add_zero] at he5
+  have hy30_pos : 0 < y 3 0 := by
+    by_contra hc
+    have hle : y 3 0 ≤ 0 := not_lt.mp hc
+    have hge : 0 ≤ y 3 0 * F.f 5 (x 0) := mul_nonneg_of_nonpos_of_nonpos hle hn50.le
+    rw [← he5] at hge
+    have hn53 : F.f 5 (x 3) < 0 := F.neg 5 3 (by decide)
+    linarith
+  have he7 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 7 3
+  have hz72 : F.f 7 (x 2) = 0 := F.zero 7 2 (by decide)
+  have hz73 : F.f 7 (x 3) = 0 := F.zero 7 3 (by decide)
+  have hz76 : F.f 7 (x 6) = 0 := F.zero 7 6 (by decide)
+  have hn71 : F.f 7 (x 1) < 0 := F.neg 7 1 (by decide)
+  have hn70 : F.f 7 (x 0) < 0 := F.neg 7 0 (by decide)
+  rw [hz72, hz73, hz76] at he7
+  rw [Fin.sum_univ_three]
+  have heq : (1 - (y 3 0 + y 3 1 + y 3 2)) * F.f 7 (x 1) = - y 3 0 * F.f 7 (x 0) := by
+    linear_combination -he7
+  have hrhs : 0 < - y 3 0 * F.f 7 (x 0) := by
+    have : 0 < - F.f 7 (x 0) := by linarith
+    have := mul_pos hy30_pos this
+    linarith
+  rw [← heq] at hrhs
+  have hdiff : 1 - (y 3 0 + y 3 1 + y 3 2) < 0 := by
+    by_contra hc
+    have hle : 0 ≤ 1 - (y 3 0 + y 3 1 + y 3 2) := not_lt.mp hc
+    have hnonpos : (1 - (y 3 0 + y 3 1 + y 3 2)) * F.f 7 (x 1) ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hle hn71.le
+    linarith
+  linarith
+
+theorem type24_sigma_ends (F : S0xFac 9 s0x_S24 x) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    (∑ e, y 0 e = 1) ∧ (∑ e, y 2 e = 1) ∧ (∑ e, y 6 e = 1) := by
+  -- For 0:
+  have he0_0 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 0 0
+  have hz00 : F.f 0 (x 0) = 0 := F.zero 0 0 (by decide)
+  have hz01 : F.f 0 (x 1) = 0 := F.zero 0 1 (by decide)
+  have hz02 : F.f 0 (x 2) = 0 := F.zero 0 2 (by decide)
+  have hn06 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
+  rw [hz00, hz01, hz02] at he0_0
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he0_0
+  have hy02_zero : y 0 2 = 0 := by
+    have h1 : y 0 2 * F.f 0 (x 6) = 0 := he0_0.symm
+    exact (mul_eq_zero.mp h1).resolve_right hn06.ne
+
+  have he1_0 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 1 0
+  have hz10 : F.f 1 (x 0) = 0 := F.zero 1 0 (by decide)
+  have hz11 : F.f 1 (x 1) = 0 := F.zero 1 1 (by decide)
+  have hz16 : F.f 1 (x 6) = 0 := F.zero 1 6 (by decide)
+  have hn12 : F.f 1 (x 2) < 0 := F.neg 1 2 (by decide)
+  rw [hz10, hz11, hz16] at he1_0
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he1_0
+  have hy01_zero : y 0 1 = 0 := by
+    have h1 : y 0 1 * F.f 1 (x 2) = 0 := he1_0.symm
+    exact (mul_eq_zero.mp h1).resolve_right hn12.ne
+
+  have he5_0 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 5 0
+  have hz51 : F.f 5 (x 1) = 0 := F.zero 5 1 (by decide)
+  have hz52 : F.f 5 (x 2) = 0 := F.zero 5 2 (by decide)
+  have hz56 : F.f 5 (x 6) = 0 := F.zero 5 6 (by decide)
+  have hn50 : F.f 5 (x 0) < 0 := F.neg 5 0 (by decide)
+  rw [hz51, hz52, hz56] at he5_0
+  simp only [sub_zero, mul_zero, add_zero] at he5_0
+  have hy00_one : y 0 0 = 1 := by
+    have h1 : (y 0 0 - 1) * F.f 5 (x 0) = 0 := by
+      calc (y 0 0 - 1) * F.f 5 (x 0) = y 0 0 * F.f 5 (x 0) - F.f 5 (x 0) := by ring
+        _ = 0 := by rw [← he5_0, sub_self]
+    have h2 := (mul_eq_zero.mp h1).resolve_right hn50.ne
+    linarith
+  have hE0 : ∑ e, y 0 e = 1 := by
+    rw [Fin.sum_univ_three, hy00_one, hy01_zero, hy02_zero]; ring
+
+  -- For 2:
+  have he0_2 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 0 2
+  rw [hz00, hz01, hz02] at he0_2
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he0_2
+  have hy22_zero : y 2 2 = 0 := by
+    have h1 : y 2 2 * F.f 0 (x 6) = 0 := he0_2.symm
+    exact (mul_eq_zero.mp h1).resolve_right hn06.ne
+
+  have he5_2 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 5 2
+  rw [hz51, hz52, hz56] at he5_2
+  simp only [sub_zero, mul_zero, add_zero] at he5_2
+  have hy20_zero : y 2 0 = 0 := by
+    have h1 : y 2 0 * F.f 5 (x 0) = 0 := he5_2.symm
+    exact (mul_eq_zero.mp h1).resolve_right hn50.ne
+
+  have he1_2 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 1 2
+  rw [hz10, hz11, hz16] at he1_2
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he1_2
+  have hy21_one : y 2 1 = 1 := by
+    have h1 : (y 2 1 - 1) * F.f 1 (x 2) = 0 := by
+      calc (y 2 1 - 1) * F.f 1 (x 2) = y 2 1 * F.f 1 (x 2) - F.f 1 (x 2) := by ring
+        _ = 0 := by rw [← he1_2, sub_self]
+    have h2 := (mul_eq_zero.mp h1).resolve_right hn12.ne
+    linarith
+  have hE2 : ∑ e, y 2 e = 1 := by
+    rw [Fin.sum_univ_three, hy20_zero, hy21_one, hy22_zero]; ring
+
+  -- For 6:
+  have he1_6 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 1 6
+  rw [hz10, hz11, hz16] at he1_6
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he1_6
+  have hy61_zero : y 6 1 = 0 := by
+    have h1 : y 6 1 * F.f 1 (x 2) = 0 := he1_6.symm
+    exact (mul_eq_zero.mp h1).resolve_right hn12.ne
+
+  have he5_6 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 5 6
+  rw [hz51, hz52, hz56] at he5_6
+  simp only [sub_zero, mul_zero, add_zero] at he5_6
+  have hy60_zero : y 6 0 = 0 := by
+    have h1 : y 6 0 * F.f 5 (x 0) = 0 := he5_6.symm
+    exact (mul_eq_zero.mp h1).resolve_right hn50.ne
+
+  have he0_6 := s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 0 6
+  rw [hz00, hz01, hz02] at he0_6
+  simp only [sub_zero, mul_zero, add_zero, zero_add] at he0_6
+  have hy62_one : y 6 2 = 1 := by
+    have h1 : (y 6 2 - 1) * F.f 0 (x 6) = 0 := by
+      calc (y 6 2 - 1) * F.f 0 (x 6) = y 6 2 * F.f 0 (x 6) - F.f 0 (x 6) := by ring
+        _ = 0 := by rw [← he0_6, sub_self]
+    have h2 := (mul_eq_zero.mp h1).resolve_right hn06.ne
+    linarith
+  have hE6 : ∑ e, y 6 e = 1 := by
+    rw [Fin.sum_univ_three, hy60_zero, hy61_zero, hy62_one]; ring
+
+  exact ⟨hE0, hE2, hE6⟩
+
+/-- **Theorem: σ > 1 for v = 3, 4, 5 and σ = 1 for ends 0, 2, 6.**
+Derivation of all edge-coordinate depth sums directly from the facet data of Type 24. -/
+theorem type24_sigma_gt_one (F : S0xFac 9 s0x_S24 x) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    1 < (∑ e, y 3 e) ∧ 1 < (∑ e, y 4 e) ∧ 1 < (∑ e, y 5 e) ∧
+    (∑ e, y 0 e = 1) ∧ (∑ e, y 2 e = 1) ∧ (∑ e, y 6 e = 1) := by
+  have h3 := type24_sigma3_gt_one F p v y hxy hp hv0 hv1 hv2
+  have h4 := type24_sigma4_gt_one F p v y hxy hp hv0 hv1 hv2
+  have h5 := type24_sigma5_gt_one F p v y hxy hp hv0 hv1 hv2
+  have ⟨e0, e2, e6⟩ := type24_sigma_ends F p v y hxy hp hv0 hv1 hv2
+  exact ⟨h3, h4, h5, e0, e2, e6⟩
+
+/-- Direction from middle end to apex breaks end ties at an obtuse corner. -/
+theorem tilt_sign_middle_end (a b apex : ℝ³)
+    (hne : b ≠ apex)
+    (hobt : ⟪a - apex, b - apex⟫ ≤ 0) :
+    0 < ⟪a - b, apex - b⟫ := by
+  have heq : ⟪a - b, apex - b⟫ = ⟪b - apex, b - apex⟫ - ⟪a - apex, b - apex⟫ := by
+    have h1 : a - b = (a - apex) - (b - apex) := by abel
+    have h2 : apex - b = - (b - apex) := by abel
+    rw [h1, h2, inner_sub_left, inner_neg_right, inner_neg_right]
+    ring
+  rw [heq]
+  have hpos : 0 < ⟪b - apex, b - apex⟫ := real_inner_self_pos.2 (sub_ne_zero.2 hne)
+  linarith
+
+-- ----------------------------------------------------------------------------
 -- Canonical Rim Cycles in C (the Orthocentre Silhouette Chamber)
 -- ----------------------------------------------------------------------------
 
@@ -283,17 +554,45 @@ def InFeasibleCell (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : FeasibleCellC → Prop
 -- The Dispatches: Per-Cell Leaves of Theorem P
 -- ----------------------------------------------------------------------------
 
-/-- Theorem P dispatch for `c0435` (EVVV / QuadCross). -/
+/-- Theorem P dispatch for `c0435` (EVVV / QuadCross): tilt discharged via Lemma S branching. -/
 theorem isRupert_of_c0435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hu : CellAt F U0435 D0435 u) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
-    (hE0 : (∑ e, y 0 e) = 1) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
-    (d : ℝ³)
-    (d1 : (∑ e, y 3 e) = ∑ e, y 4 e → 0 < ⟪x 3 - x 4, d⟫)
-    (d3 : (∑ e, y 3 e) = ∑ e, y 5 e → 0 < ⟪x 3 - x 5, d⟫) :
-    IsRupert (univ.image x) :=
-  isRupert_of_orthocentre_evvv_t24 F (Minimality.H24.SAT.inj_of_fac F) cyc0435 hu p v y hxy hv
-    (by linarith) (by linarith) d d1 d3
+    (hE0 : (∑ e, y 0 e) = 1) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e) :
+    IsRupert (univ.image x) := by
+  have D := depth_orthocentre x p v y hxy u hv
+  have key : ∀ i j, ⟪u, x (c0435 i)⟫ - ⟪u, x (c0435 j)⟫ = (∑ e, y (c0435 i) e) - ∑ e, y (c0435 j) e := by
+    intro i j; rw [← D, inner_sub_left, real_inner_comm u (x (c0435 i)),
+      real_inner_comm u (x (c0435 j))]
+  obtain ⟨s, t, hs, hs1, ht, ht1, hX⟩ := type24_quad_cross x F
+  have h01 : (∑ e, y (c0435 0) e) < ∑ e, y (c0435 1) e := by
+    change (∑ e, y 0 e) < ∑ e, y 4 e; linarith
+  have h03 : (∑ e, y (c0435 0) e) < ∑ e, y (c0435 3) e := by
+    change (∑ e, y 0 e) < ∑ e, y 5 e; linarith
+  have hS := lemmaS (x (c0435 0)) (x (c0435 2)) (x (c0435 1)) (x (c0435 3)) u 0 s t hs hs1 ht ht1 hX
+    (by simp only [add_zero]; linarith [key 1 0]) (by simp only [add_zero]; linarith [key 3 0])
+  simp only [add_zero] at hS
+  have hn : ⟪x (c0435 0) - x (c0435 1), u⟫ < 0 := by rw [D]; exact sub_neg.2 h01
+  have e1 : ⟪x (c0435 2) - x (c0435 1), u⟫ = (∑ e, y (c0435 2) e) - ∑ e, y (c0435 1) e := D _ _
+  have e3 : ⟪x (c0435 2) - x (c0435 3), u⟫ = (∑ e, y (c0435 2) e) - ∑ e, y (c0435 3) e := D _ _
+  have hx_inj := Minimality.H24.SAT.inj_of_fac F
+  rcases le_total (⟪u, x (c0435 1)⟫) (⟪u, x (c0435 3)⟫) with h | h
+  · refine isRupert_of_q4_lex F hx_inj inj_c0435 cyc0435 hu (x 3 - x 4) ⟨(0, 1), by decide, hn⟩
+      ⟨(2, 1), by decide, ?_, ?_⟩
+    · rw [e1]; rw [min_eq_left h] at hS
+      have k21 := key 2 1; linarith
+    · intro h0
+      have hne : x 3 - x 4 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      exact real_inner_self_pos.2 hne
+  · refine isRupert_of_q4_lex F hx_inj inj_c0435 cyc0435 hu (x 3 - x 5) ⟨(0, 1), by decide, hn⟩
+      ⟨(2, 3), by decide, ?_, ?_⟩
+    · rw [e3]; rw [min_eq_right h] at hS
+      have k23 := key 2 3; linarith
+    · intro h0
+      have hne : x 3 - x 5 ≠ 0 := sub_ne_zero.2 fun heq => by
+        have := hx_inj heq; revert this; decide
+      exact real_inner_self_pos.2 hne
 
 /-- Theorem P dispatch for EEVV cell `c0234`. -/
 theorem isRupert_of_c0234 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
@@ -395,19 +694,6 @@ theorem isRupert_of_c26053 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
   isRupert_of_orthocentre_5rim_eeevv F (Minimality.H24.SAT.inj_of_fac F) inj_c26053 cyc26053 hu p v y hxy hv
     hE2 hE6 hE0 hV5 hV3
 
-/-- Theorem P dispatch for 6-rim EEEVVV cell `c026435`. -/
-theorem isRupert_of_c026435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
-    (hu : CellAt F U026435 D026435 u) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
-    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
-    (hE0 : (∑ e, y 0 e) = 1) (hE2 : (∑ e, y 2 e) = 1) (hE6 : (∑ e, y 6 e) = 1)
-    (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
-    (d : ℝ³) (hd10 : 0 < ⟪x 0 - x 2, d⟫) (hd12 : 0 < ⟪x 6 - x 2, d⟫)
-    (h34 : 0 < ⟪x 3 - x 4, u⟫ ∨ (⟪x 3 - x 4, u⟫ = 0 ∧ 0 < ⟪x 3 - x 4, d⟫))
-    (h54 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_of_orthocentre_6rim F (Minimality.H24.SAT.inj_of_fac F) inj_c026435 cyc026435 hu p v y hxy hv
-    hE0 hE2 hE6 hV4 hV5 d hd10 hd12 h34 h54
-
 /-- Theorem P dispatch for 5-rim EEEVV cell `c26043`. -/
 theorem isRupert_of_c26043 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hu : CellAt F U26043 D26043 u) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
@@ -464,11 +750,13 @@ theorem isRupert_of_c60534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
     (hE6 : (∑ e, y 6 e) = 1) (hE0 : (∑ e, y 0 e) = 1)
     (hV4 : 1 < ∑ e, y 4 e)
-    (d : ℝ³) (hd : 0 < ⟪x 6 - x 0, d⟫)
-    (h35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_of_orthocentre_5rim_eevvv F (Minimality.H24.SAT.inj_of_fac F) inj_c60534 cyc60534 hu p v y hxy hv
-    hE6 hE0 hV4 d hd h35
+    (h35 : 0 < ⟪x 3 - x 5, u⟫) :
+    IsRupert (univ.image x) := by
+  have hx_inj := Minimality.H24.SAT.inj_of_fac F
+  have hd : 0 < ⟪x 6 - x 0, x 6 - x 0⟫ := real_inner_self_pos.2 (sub_ne_zero.2 fun heq => by
+    have := hx_inj heq; revert this; decide)
+  exact isRupert_of_orthocentre_5rim_eevvv F hx_inj inj_c60534 cyc60534 hu p v y hxy hv
+    hE6 hE0 hV4 (x 6 - x 0) hd (Or.inl h35)
 
 /-- Theorem P dispatch for 5-rim EEVVV cell `c62534`. -/
 theorem isRupert_of_c62534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
@@ -476,11 +764,13 @@ theorem isRupert_of_c62534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
     (hE6 : (∑ e, y 6 e) = 1) (hE2 : (∑ e, y 2 e) = 1)
     (hV4 : 1 < ∑ e, y 4 e)
-    (d : ℝ³) (hd : 0 < ⟪x 6 - x 2, d⟫)
-    (h35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_of_orthocentre_5rim_eevvv F (Minimality.H24.SAT.inj_of_fac F) inj_c62534 cyc62534 hu p v y hxy hv
-    hE6 hE2 hV4 d hd h35
+    (h35 : 0 < ⟪x 3 - x 5, u⟫) :
+    IsRupert (univ.image x) := by
+  have hx_inj := Minimality.H24.SAT.inj_of_fac F
+  have hd : 0 < ⟪x 6 - x 2, x 6 - x 2⟫ := real_inner_self_pos.2 (sub_ne_zero.2 fun heq => by
+    have := hx_inj heq; revert this; decide)
+  exact isRupert_of_orthocentre_5rim_eevvv F hx_inj inj_c62534 cyc62534 hu p v y hxy hv
+    hE6 hE2 hV4 (x 6 - x 2) hd (Or.inl h35)
 
 /-- Theorem P dispatch for 5-rim EEVVV cell `c02534`. -/
 theorem isRupert_of_c02534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
@@ -488,37 +778,70 @@ theorem isRupert_of_c02534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
     (hE0 : (∑ e, y 0 e) = 1) (hE2 : (∑ e, y 2 e) = 1)
     (hV4 : 1 < ∑ e, y 4 e)
-    (d : ℝ³) (hd : 0 < ⟪x 0 - x 2, d⟫)
-    (h35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_of_orthocentre_5rim_eevvv F (Minimality.H24.SAT.inj_of_fac F) inj_c02534 cyc02534 hu p v y hxy hv
-    hE0 hE2 hV4 d hd h35
+    (h35 : 0 < ⟪x 3 - x 5, u⟫) :
+    IsRupert (univ.image x) := by
+  have hx_inj := Minimality.H24.SAT.inj_of_fac F
+  have hd : 0 < ⟪x 0 - x 2, x 0 - x 2⟫ := real_inner_self_pos.2 (sub_ne_zero.2 fun heq => by
+    have := hx_inj heq; revert this; decide)
+  exact isRupert_of_orthocentre_5rim_eevvv F hx_inj inj_c02534 cyc02534 hu p v y hxy hv
+    hE0 hE2 hV4 (x 0 - x 2) hd (Or.inl h35)
 
 /-- Theorem P dispatch for 6-rim EEEVVV cell `c602534`. -/
 theorem isRupert_of_c602534 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hu : CellAt F U602534 D602534 u) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
     (hE6 : (∑ e, y 6 e) = 1) (hE0 : (∑ e, y 0 e) = 1) (hE2 : (∑ e, y 2 e) = 1)
     (hV5 : 1 < ∑ e, y 5 e) (hV4 : 1 < ∑ e, y 4 e)
-    (d : ℝ³) (hd10 : 0 < ⟪x 6 - x 0, d⟫) (hd12 : 0 < ⟪x 2 - x 0, d⟫)
-    (h35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d⟫))
-    (h34 : 0 < ⟪x 3 - x 4, u⟫ ∨ (⟪x 3 - x 4, u⟫ = 0 ∧ 0 < ⟪x 3 - x 4, d⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_of_orthocentre_6rim F (Minimality.H24.SAT.inj_of_fac F) inj_c602534 cyc602534 hu p v y hxy hv
-    hE6 hE0 hE2 hV5 hV4 d hd10 hd12 h35 h34
+    (h35 : 0 < ⟪x 3 - x 5, u⟫) (h34 : 0 < ⟪x 3 - x 4, u⟫) :
+    IsRupert (univ.image x) := by
+  have hx_inj := Minimality.H24.SAT.inj_of_fac F
+  have hne01 : x 0 ≠ x 1 := fun heq => by have := hx_inj heq; revert this; decide
+  have hobt20 : ⟪x 6 - x 1, x 0 - x 1⟫ ≤ 0 := by rw [← hv2, ← hv0]; exact hobt 2 0 (by decide)
+  have hobt10 : ⟪x 2 - x 1, x 0 - x 1⟫ ≤ 0 := by rw [← hv1, ← hv0]; exact hobt 1 0 (by decide)
+  have hd10 : 0 < ⟪x 6 - x 0, x 1 - x 0⟫ := tilt_sign_middle_end (x 6) (x 0) (x 1) hne01 hobt20
+  have hd12 : 0 < ⟪x 2 - x 0, x 1 - x 0⟫ := tilt_sign_middle_end (x 2) (x 0) (x 1) hne01 hobt10
+  exact isRupert_of_orthocentre_6rim F hx_inj inj_c602534 cyc602534 hu p v y hxy hv
+    hE6 hE0 hE2 hV5 hV4 (x 1 - x 0) hd10 hd12 (Or.inl h35) (Or.inl h34)
 
 /-- Theorem P dispatch for 6-rim EEEVVV cell `c260435`. -/
 theorem isRupert_of_c260435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hu : CellAt F U260435 D260435 u) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
     (hE2 : (∑ e, y 2 e) = 1) (hE6 : (∑ e, y 6 e) = 1) (hE0 : (∑ e, y 0 e) = 1)
     (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
-    (d : ℝ³) (hd10 : 0 < ⟪x 2 - x 6, d⟫) (hd12 : 0 < ⟪x 0 - x 6, d⟫)
-    (h34 : 0 < ⟪x 3 - x 4, u⟫ ∨ (⟪x 3 - x 4, u⟫ = 0 ∧ 0 < ⟪x 3 - x 4, d⟫))
-    (h35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_of_orthocentre_6rim F (Minimality.H24.SAT.inj_of_fac F) inj_c260435 cyc260435 hu p v y hxy hv
-    hE2 hE6 hE0 hV4 hV5 d hd10 hd12 h34 h35
+    (h34 : 0 < ⟪x 3 - x 4, u⟫) (h35 : 0 < ⟪x 3 - x 5, u⟫) :
+    IsRupert (univ.image x) := by
+  have hx_inj := Minimality.H24.SAT.inj_of_fac F
+  have hne61 : x 6 ≠ x 1 := fun heq => by have := hx_inj heq; revert this; decide
+  have hobt12 : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0 := by rw [← hv1, ← hv2]; exact hobt 1 2 (by decide)
+  have hobt02 : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0 := by rw [← hv0, ← hv2]; exact hobt 0 2 (by decide)
+  have hd10 : 0 < ⟪x 2 - x 6, x 1 - x 6⟫ := tilt_sign_middle_end (x 2) (x 6) (x 1) hne61 hobt12
+  have hd12 : 0 < ⟪x 0 - x 6, x 1 - x 6⟫ := tilt_sign_middle_end (x 0) (x 6) (x 1) hne61 hobt02
+  exact isRupert_of_orthocentre_6rim F hx_inj inj_c260435 cyc260435 hu p v y hxy hv
+    hE2 hE6 hE0 hV4 hV5 (x 1 - x 6) hd10 hd12 (Or.inl h34) (Or.inl h35)
+
+/-- Theorem P dispatch for 6-rim EEEVVV cell `c026435`. -/
+theorem isRupert_of_c026435 (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
+    (hu : CellAt F U026435 D026435 u) (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
+    (hE0 : (∑ e, y 0 e) = 1) (hE2 : (∑ e, y 2 e) = 1) (hE6 : (∑ e, y 6 e) = 1)
+    (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
+    (h34 : 0 < ⟪x 3 - x 4, u⟫) (h35 : 0 < ⟪x 3 - x 5, u⟫) :
+    IsRupert (univ.image x) := by
+  have hx_inj := Minimality.H24.SAT.inj_of_fac F
+  have hne21 : x 2 ≠ x 1 := fun heq => by have := hx_inj heq; revert this; decide
+  have hobt01 : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0 := by rw [← hv0, ← hv1]; exact hobt 0 1 (by decide)
+  have hobt21 : ⟪x 6 - x 1, x 2 - x 1⟫ ≤ 0 := by rw [← hv2, ← hv1]; exact hobt 2 1 (by decide)
+  have hd10 : 0 < ⟪x 0 - x 2, x 1 - x 2⟫ := tilt_sign_middle_end (x 0) (x 2) (x 1) hne21 hobt01
+  have hd12 : 0 < ⟪x 6 - x 2, x 1 - x 2⟫ := tilt_sign_middle_end (x 6) (x 2) (x 1) hne21 hobt21
+  exact isRupert_of_orthocentre_6rim F hx_inj inj_c026435 cyc026435 hu p v y hxy hv
+    hE0 hE2 hE6 hV4 hV5 (x 1 - x 2) hd10 hd12 (Or.inl h34) (Or.inl h35)
 
 -- ----------------------------------------------------------------------------
 -- Theorem P (Type 24 End-to-End Dispatch)
@@ -532,29 +855,14 @@ theorem theoremP24_of_candidateCell (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (cell : FeasibleCellC) (hcell : InFeasibleCell F u cell)
     (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
     (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
-    (hE0 : (∑ e, y 0 e) = 1) (hE2 : (∑ e, y 2 e) = 1) (hE6 : (∑ e, y 6 e) = 1)
-    (hV3 : 1 < ∑ e, y 3 e) (hV4 : 1 < ∑ e, y 4 e) (hV5 : 1 < ∑ e, y 5 e)
-    (d_0435 : ℝ³)
-    (hd_0435_1 : (∑ e, y 3 e) = ∑ e, y 4 e → 0 < ⟪x 3 - x 4, d_0435⟫)
-    (hd_0435_3 : (∑ e, y 3 e) = ∑ e, y 5 e → 0 < ⟪x 3 - x 5, d_0435⟫)
-    (d_60534 : ℝ³) (hd_60534_01 : 0 < ⟪x 6 - x 0, d_60534⟫)
-    (hd_60534_35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d_60534⟫))
-    (d_62534 : ℝ³) (hd_62534_01 : 0 < ⟪x 6 - x 2, d_62534⟫)
-    (hd_62534_35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d_62534⟫))
-    (d_02534 : ℝ³) (hd_02534_01 : 0 < ⟪x 0 - x 2, d_02534⟫)
-    (hd_02534_35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d_02534⟫))
-    (d_026435 : ℝ³) (hd_026435_10 : 0 < ⟪x 0 - x 2, d_026435⟫) (hd_026435_12 : 0 < ⟪x 6 - x 2, d_026435⟫)
-    (hd_026435_34 : 0 < ⟪x 3 - x 4, u⟫ ∨ (⟪x 3 - x 4, u⟫ = 0 ∧ 0 < ⟪x 3 - x 4, d_026435⟫))
-    (hd_026435_54 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d_026435⟫))
-    (d_602534 : ℝ³) (hd_602534_10 : 0 < ⟪x 6 - x 0, d_602534⟫) (hd_602534_12 : 0 < ⟪x 2 - x 0, d_602534⟫)
-    (hd_602534_35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d_602534⟫))
-    (hd_602534_34 : 0 < ⟪x 3 - x 4, u⟫ ∨ (⟪x 3 - x 4, u⟫ = 0 ∧ 0 < ⟪x 3 - x 4, d_602534⟫))
-    (d_260435 : ℝ³) (hd_260435_10 : 0 < ⟪x 2 - x 6, d_260435⟫) (hd_260435_12 : 0 < ⟪x 0 - x 6, d_260435⟫)
-    (hd_260435_34 : 0 < ⟪x 3 - x 4, u⟫ ∨ (⟪x 3 - x 4, u⟫ = 0 ∧ 0 < ⟪x 3 - x 4, d_260435⟫))
-    (hd_260435_35 : 0 < ⟪x 3 - x 5, u⟫ ∨ (⟪x 3 - x 5, u⟫ = 0 ∧ 0 < ⟪x 3 - x 5, d_260435⟫)) :
+    (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (hobt : ∀ e f, e ≠ f → ⟪v e, v f⟫ ≤ 0)
+    (h34 : 0 < ⟪x 3 - x 4, u⟫) (h35 : 0 < ⟪x 3 - x 5, u⟫) :
     IsRupert (univ.image x) := by
+  have ⟨hV3, hV4, hV5, hE0, hE2, hE6⟩ := type24_sigma_gt_one F p v y hxy hp hv0 hv1 hv2
   cases cell with
-  | c0435 => exact isRupert_of_c0435 F hcell p v y hxy hv hE0 hV4 hV5 d_0435 hd_0435_1 hd_0435_3
+  | c0435 => exact isRupert_of_c0435 F hcell p v y hxy hv hE0 hV4 hV5
   | c0234 => exact isRupert_of_c0234 F hcell p v y hxy hv hE0 hE2 hV3 hV4
   | c0235 => exact isRupert_of_c0235 F hcell p v y hxy hv hE0 hE2 hV3 hV5
   | c6043 => exact isRupert_of_c6043 F hcell p v y hxy hv hE6 hE0 hV4 hV3
@@ -570,11 +878,41 @@ theorem theoremP24_of_candidateCell (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
   | c02635 => exact isRupert_of_c02635 F hcell p v y hxy hv hE0 hE2 hE6 hV3 hV5
   | c02634 => exact isRupert_of_c02634 F hcell p v y hxy hv hE0 hE2 hE6 hV3 hV4
   | c60253 => exact isRupert_of_c60253 F hcell p v y hxy hv hE6 hE0 hE2 hV5 hV3
-  | c60534 => exact isRupert_of_c60534 F hcell p v y hxy hv hE6 hE0 hV4 d_60534 hd_60534_01 hd_60534_35
-  | c62534 => exact isRupert_of_c62534 F hcell p v y hxy hv hE6 hE2 hV4 d_62534 hd_62534_01 hd_62534_35
-  | c02534 => exact isRupert_of_c02534 F hcell p v y hxy hv hE0 hE2 hV4 d_02534 hd_02534_01 hd_02534_35
-  | c026435 => exact isRupert_of_c026435 F hcell p v y hxy hv hE0 hE2 hE6 hV4 hV5 d_026435 hd_026435_10 hd_026435_12 hd_026435_34 hd_026435_54
-  | c602534 => exact isRupert_of_c602534 F hcell p v y hxy hv hE6 hE0 hE2 hV5 hV4 d_602534 hd_602534_10 hd_602534_12 hd_602534_35 hd_602534_34
-  | c260435 => exact isRupert_of_c260435 F hcell p v y hxy hv hE2 hE6 hE0 hV4 hV5 d_260435 hd_260435_10 hd_260435_12 hd_260435_34 hd_260435_35
+  | c60534 => exact isRupert_of_c60534 F hcell p v y hxy hv hE6 hE0 hV4 h35
+  | c62534 => exact isRupert_of_c62534 F hcell p v y hxy hv hE6 hE2 hV4 h35
+  | c02534 => exact isRupert_of_c02534 F hcell p v y hxy hv hE0 hE2 hV4 h35
+  | c026435 => exact isRupert_of_c026435 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE0 hE2 hE6 hV4 hV5 h34 h35
+  | c602534 => exact isRupert_of_c602534 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE6 hE0 hE2 hV5 hV4 h35 h34
+  | c260435 => exact isRupert_of_c260435 F hcell p v y hxy hv hv0 hv1 hv2 hobt hE2 hE6 hE0 hV4 hV5 h34 h35
+
+/-- **Theorem P (Type 24 Orthocentre Corollary).**
+For any solid of Type 24 (`F : S0xFac 9 s0x_S24 x`), with vertex 1 an obtuse corner
+with linearly independent edges `![x 0 - x 1, x 2 - x 1, x 6 - x 1]` that are pairwise non-acute,
+if the orthocentre view `u` lies in a candidate cell with contiguous ends:
+`IsRupert (univ.image x)`. -/
+theorem theoremP24_orthocentre (F : S0xFac 9 s0x_S24 x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
+    (hobt : ∀ e f, e ≠ f → ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, ![x 0 - x 1, x 2 - x 1, x 6 - x 1] f⟫ ≤ 0)
+    {cell : FeasibleCellC} {u : ℝ³}
+    (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
+    (hcell : InFeasibleCell F u cell)
+    (h34 : 0 < ⟪x 3 - x 4, u⟫) (h35 : 0 < ⟪x 3 - x 5, u⟫) :
+    IsRupert (univ.image x) := by
+  set p := x 1
+  set v := ![x 0 - x 1, x 2 - x 1, x 6 - x 1]
+  have hcard : Fintype.card (Fin 3) = Module.finrank ℝ ℝ³ := by simp
+  set B := basisOfLinearIndependentOfCardEqFinrank hli hcard
+  set y : Fin 7 → Fin 3 → ℝ := fun i e => B.repr (x i - p) e
+  have hxy : ∀ i, x i = p + ∑ e, y i e • v e := by
+    intro i
+    have hrepr := B.sum_repr (x i - p)
+    have hcoe : ⇑B = v := coe_basisOfLinearIndependentOfCardEqFinrank hli hcard
+    have hsum : ∑ e, y i e • v e = x i - p := by
+      show ∑ e, B.repr (x i - p) e • v e = x i - p
+      rw [← hcoe]
+      exact hrepr
+    rw [hsum]
+    abel
+  exact theoremP24_of_candidateCell F cell hcell p v y hxy hu rfl rfl rfl rfl hobt h34 h35
 
 end Minimality.T24.TheoremP
