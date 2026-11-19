@@ -51,6 +51,8 @@ open Filter Finset
 open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.TheoremP
 open Minimality.T24.FrontConn
 
+namespace Minimality.T24.RimClass
+
 variable {x : Fin 7 → ℝ³}
 
 -- ----------------------------------------------------------------------------
@@ -1064,5 +1066,7 @@ theorem orthocentre_rim_class_split_local (F : S0xFac 9 s0x_S24 x)
 #print axioms not_nonSimple
 #print axioms orthocentre_rim_class_split_local
 #print axioms orthocentre_rim_class_split_closed
+
+end Minimality.T24.RimClass
 
 end
