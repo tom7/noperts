@@ -1,5 +1,7 @@
 module
 
+public import Minimality.EdgeTiltBD
+public import Minimality.RimCellClosed
 public import Mathlib
 public import Minimality.Type24
 public import Minimality.SlideDS
@@ -7,6 +9,8 @@ public import Minimality.Type24Side
 public import Minimality.LemmaTQ
 public import Minimality.SilS0XC
 public import Minimality.Type24SAT.Facets24
+
+
 
 @[expose] public section
 
@@ -447,5 +451,115 @@ theorem isRupert_hexQ91m_fac {x : Fin 7 → ℝ³} (_F : S0xFac 9 s0x_S24 x) (C 
 #print axioms isRupert_hexQ91m
 #print axioms isRupert_hexQ91m_of_coords
 #print axioms isRupert_hexQ91m_fac
+
+
+/-! ### Link chamber torque theorems (Zero HDN, Zero Conv) via Lemma EV-Tilt -/
+
+open Minimality.EdgeTilt
+open Minimality.RimCell
+
+/-- Silhouette vertex sequence for rim `K6` at `W06`. -/
+def c6 : ZMod 5 → Fin 7 := ![1, 6, 4, 3, 2]
+
+/-- Up facets along rim `K6` at `W06`: facets 5 (126), 7 (236), 8 (346). -/
+def U6 : Finset (Fin 9) := {5, 7, 8}
+
+/-- Down facets along rim `K6` at `W06`: facets 0 (012), 1 (016), 2 (025), 3 (0345), 4 (046), 6 (235). -/
+def D6 : Finset (Fin 9) := {0, 1, 2, 3, 4, 6}
+
+theorem inj_c6 : Function.Injective c6 := by decide
+theorem cyc_c6 : S0xCycUD s0x_S24 c6 U6 D6 := by decide
+
+/-- Silhouette vertex sequence for mirror rim `K2` at `W02`. -/
+def c2 : ZMod 5 → Fin 7 := ![1, 2, 5, 3, 6]
+
+/-- **Theorem Q9.1 (Link Chamber / Zero HDN)**: hexagon edge leaf at `W06 = x 6 - x 0`.
+Applies `isRupert_edgeView_link_torque` in the link chamber of edge `0 -> 6` hiding `x 0`
+(facets 016, 046). Requires NO `NoHDNRim` and NO `HexConv06` hypothesis! -/
+theorem isRupert_hexQ91_link {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (h5 : ⟪F.N 6, x 6 - x 0⟫ < 0)
+    (hpp : ParPairAt (K6 x) (W06 x) 3 0)
+    (hz : DepthSepZ (fun i => ⟪K6 x i, W06 x⟫) 3 0) :
+    IsRupert (Finset.univ.image x) := by
+  have up6 : ∀ t, (6 : Fin 7) ∈ s0x_S24 t → (0 : Fin 7) ∉ s0x_S24 t →
+      0 < ⟪F.N t, x 6 - x 0⟫ := fun t h6 h0 => by
+    rw [F.inner_sub, F.zero t 6 h6]; have := F.neg t 0 h0; linarith
+  have dn0 : ∀ t, (0 : Fin 7) ∈ s0x_S24 t → (6 : Fin 7) ∉ s0x_S24 t →
+      ⟪F.N t, x 6 - x 0⟫ < 0 := fun t h0 h6 => by
+    rw [F.inner_sub, F.zero t 0 h0]; have := F.neg t 6 h6; linarith
+  have hx : Function.Injective x := EdgeViewLink.inj_of_fac24 F
+  have hK : (fun i => x (c6 i)) = K6 x := by funext i; fin_cases i <;> rfl
+  have hpp' : ParPairAt (fun i => x (c6 i)) (x 6 - x 0) 3 0 := by rwa [hK]
+  have hz' : DepthSepZ (fun i => ⟪x (c6 i), x 6 - x 0⟫) 3 0 := by
+    have : (fun i => ⟪x (c6 i), x 6 - x 0⟫) = (fun i => ⟪K6 x i, W06 x⟫) := by
+      funext i; fin_cases i <;> rfl
+    rw [this]; exact hz
+  refine isRupert_edgeView_link_torque F hx (by norm_num) inj_c6 cyc_c6
+    (F₁ := 1) (F₂ := 4) (p := 0) (J := 6) (v₁ := 4) (v₂ := 1)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (fun t ht => ?_) (fun t ht h1 h4 => ?_) hpp' hz'
+  · simp only [U6, Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl
+    · exact up6 5 (by decide) (by decide)
+    · exact up6 7 (by decide) (by decide)
+    · exact up6 8 (by decide) (by decide)
+  · simp only [D6, Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl | rfl | rfl | rfl
+    · exact dn0 0 (by decide) (by decide)
+    · exact absurd rfl h1
+    · exact dn0 2 (by decide) (by decide)
+    · exact dn0 3 (by decide) (by decide)
+    · exact absurd rfl h4
+    · exact h5
+
+/-- **Theorem Q9.1 (Link Chamber / Zero HDN)** from corner coordinates: hexagon edge leaf at `W06 = x 6 - x 0`. -/
+theorem isRupert_hexQ91_link_of_coords {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (C : CornerCoords06 x)
+    (hV0 : vol3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) ≠ 0)
+    (hz : DepthSepDepths06 x)
+    (h5 : ⟪F.N 6, x 6 - x 0⟫ < 0) :
+    IsRupert (Finset.univ.image x) := by
+  have hds := depthSepAt_K6 x C hV0 hz.1 hz.2.1 hz.2.2.1 hz.2.2.2
+  exact isRupert_hexQ91_link F h5 hds.1 hds.2
+
+/-- **Theorem Q9.1m (Link Chamber / Zero HDN)**: mirror hexagon edge leaf at `W02 = x 2 - x 0`.
+Applies `isRupert_edgeView_link_torque` under `(2 6)(4 5)` relabelling.
+Requires NO `NoHDNRim` and NO `HexConv02` hypothesis! -/
+theorem isRupert_hexQ91m_link {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (h8 : ⟪F.N 8, x 2 - x 0⟫ < 0)
+    (hpp : ParPairAt (K2 x) (W02 x) 3 0)
+    (hz : DepthSepZ (fun i => ⟪K2 x i, W02 x⟫) 3 0) :
+    IsRupert (Finset.univ.image x) := by
+  have himg : Finset.univ.image (x ∘ sg) = Finset.univ.image x := by
+    rw [← Finset.image_image, show Finset.univ.image sg = Finset.univ from
+      Finset.image_univ_of_surjective (Finite.surjective_of_injective sg_inj)]
+  rw [← himg]
+  have hK : K6 (x ∘ sg) = K2 x := by funext i; fin_cases i <;> rfl
+  have hW : W06 (x ∘ sg) = W02 x := rfl
+  have h8' : ⟪(relab F).N 6, (x ∘ sg) 6 - (x ∘ sg) 0⟫ < 0 := by
+    show ⟪F.N 8, x 2 - x 0⟫ < 0
+    exact h8
+  have hpp' : ParPairAt (K6 (x ∘ sg)) (W06 (x ∘ sg)) 3 0 := by
+    rw [hK, hW]; exact hpp
+  have hz' : DepthSepZ (fun i => ⟪K6 (x ∘ sg) i, W06 (x ∘ sg)⟫) 3 0 := by
+    have : (fun i => ⟪K6 (x ∘ sg) i, W06 (x ∘ sg)⟫) = (fun i => ⟪K2 x i, W02 x⟫) := by
+      funext i; fin_cases i <;> rfl
+    rw [this]; exact hz
+  exact isRupert_hexQ91_link (relab F) h8' hpp' hz'
+
+/-- **Theorem Q9.1m (Link Chamber / Zero HDN)** from corner coordinates: mirror hexagon edge leaf at `W02 = x 2 - x 0`. -/
+theorem isRupert_hexQ91m_link_of_coords {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (C : CornerCoords02 x)
+    (hV0 : vol3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) ≠ 0)
+    (hz : DepthSepDepths02 x)
+    (h8 : ⟪F.N 8, x 2 - x 0⟫ < 0) :
+    IsRupert (Finset.univ.image x) := by
+  have hds := depthSepAt_K2 x C hV0 hz.1 hz.2.1 hz.2.2.1 hz.2.2.2
+  exact isRupert_hexQ91m_link F h8 hds.1 hds.2
+
+#print axioms isRupert_hexQ91_link
+#print axioms isRupert_hexQ91_link_of_coords
+#print axioms isRupert_hexQ91m_link
+#print axioms isRupert_hexQ91m_link_of_coords
 
 end Minimality.HexEdge06
