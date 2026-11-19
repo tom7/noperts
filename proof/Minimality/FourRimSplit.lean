@@ -123,7 +123,7 @@ theorem triangle_end_condition {a b m lo hi : ℝ} (ham : a ≠ m) (hbm : b ≠ 
 
 /-- Lemma W′ for a triangle face `(m, A, B)`: no end condition. -/
 theorem lemmaW'_triangle {a b m lo hi : ℝ} {R : List ℝ} (hnd : (a :: b :: R).Nodup)
-    (hab : a ≠ b) (ham : a ≠ m) (hbm : b ≠ m)
+    (ham : a ≠ m) (hbm : b ≠ m)
     (hlo : lo = a ∨ lo = b ∨ lo = m) (hhi : hi = a ∨ hi = b ∨ hi = m)
     (hla : lo ≤ a) (hlb : lo ≤ b) (hlm : lo ≤ m) (hha : a ≤ hi) (hhb : b ≤ hi) (hhm : m ≤ hi)
     (hloR : lo ∉ R) (hhiR : hi ∉ R) :

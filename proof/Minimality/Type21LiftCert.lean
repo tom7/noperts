@@ -101,7 +101,7 @@ def QEdge21 (K : Finset ℝ³) (P P' R R' c D C' v w : ℝ³) : Prop :=
 (`015`) and the quadrilateral `a b' d c'` (`0256`): an edge pair with Lemma E, with the far
 corners `c, b, c'` (`1, 4, 6`: Lemma 3 (a) of §9 at `0 → 5` in `O`, or (b) at `0 → 5` in `O2`) or
 `c, a', d` (`1, 3, 2`: Lemma 3 (b) at `5 → 0` in `O`, or (a) at `5 → 0` in `O2`). -/
-def QEdge5 (K : Finset ℝ³) (a a' b b' c c' d v w : ℝ³) : Prop :=
+def QEdge5 (K : Finset ℝ³) (_a a' b _b' c c' d v w : ℝ³) : Prop :=
   QAData K v w c c' b ∨ QAData K v w c' c b ∨ QAData K v w c d a' ∨ QAData K v w d c a'
 
 /-- `QEdge5` under `σ2` (the octahedron `K − 6`): the same four alternatives. -/

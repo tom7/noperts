@@ -79,7 +79,7 @@ theorem FarDepthOK.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop}
 
 /-- `FarDepthOK` transported by an injective map, the depth rescaled by a nonzero factor. -/
 theorem FarDepthOK.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
-    {d d' : ℝ³ → ℝ} (g : ℝ³ → ℝ³) (hg : Function.Injective g) (c : ℝ) (hc : c ≠ 0)
+    {d d' : ℝ³ → ℝ} (g : ℝ³ → ℝ³) (c : ℝ) (hc : c ≠ 0)
     (h : FarDepthOK Q1 Q2 far1 far2 d) (hf1 : ∀ p ∈ Q1, far1' (g p) ↔ far1 p)
     (hf2 : ∀ q ∈ Q2, far2' (g q) ↔ far2 q) (hd1 : ∀ p ∈ Q1, d' (g p) = c * d p)
     (hd2 : ∀ q ∈ Q2, d' (g q) = c * d q) :
@@ -1559,7 +1559,7 @@ theorem isRupert_facets_edge_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
     have k : ⟪v, w - v⟫ = ⟪w, w - v⟫ := by simpa [hr.ne'] using h
     have : ⟪w - v, w - v⟫ = 0 := by rw [inner_sub_left]; linarith
     exact hvw (sub_eq_zero.mp (inner_self_eq_zero.mp this)).symm
-  · refine hfarZ.map g hginj r⁻¹ (inv_ne_zero hr.ne') ?_ ?_ (fun p _ => ?_) (fun q _ => ?_)
+  · refine hfarZ.map g r⁻¹ (inv_ne_zero hr.ne') ?_ ?_ (fun p _ => ?_) (fun q _ => ?_)
     · intro p _; constructor
       · intro h p' hp'
         have := h (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this

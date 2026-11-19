@@ -273,7 +273,7 @@ lemma two_peaks {k : ℕ} [NeZero k] (hk : 4 ≤ k) (z : ZMod k → ℝ) (hz : F
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
       rcases hx with rfl | rfl <;> simp [*]
 
-lemma perturb {ι κ : Type} [Finite ι] [Finite κ] (ψ u : Fin 3 → ℝ) (v : ι → Fin 3 → ℝ)
+lemma perturb {ι κ : Type} [Finite ι] [Finite κ] (ψ : Fin 3 → ℝ) (v : ι → Fin 3 → ℝ)
     (d : κ → Fin 3 → ℝ) (hd : ∀ q, d q ≠ 0) (hψ : ∀ m, 0 < ψ ⬝ᵥ v m) :
     ∃ φ : Fin 3 → ℝ, (∀ m, 0 < φ ⬝ᵥ v m) ∧ ∀ q, φ ⬝ᵥ d q ≠ 0 := by
   have := Fintype.ofFinite κ
@@ -324,7 +324,7 @@ lemma core {k : ℕ} [NeZero k] (hk : 4 ≤ k) (p : ZMod k → Fin 3 → ℝ) (u
     p q - p (p0 - 1), p q - p (p0 + 1)]
   let d : {r : ZMod k × ZMod k // r.1 ≠ r.2} → Fin 3 → ℝ := fun r => p r.1.1 - p r.1.2
   have : Finite {r : ZMod k × ZMod k // r.1 ≠ r.2} := inferInstance
-  obtain ⟨φ, hφ, hφd⟩ := perturb ψ u v d (fun r h => by
+  obtain ⟨φ, hφ, hφd⟩ := perturb ψ v d (fun r h => by
       apply r.2; apply hinj; exact sub_eq_zero.1 h) (fun m => by
     fin_cases m
     · simpa [v] using hψu

@@ -799,7 +799,7 @@ theorem TieHW.map {Rb : Prop} {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h h' : ℝ
     (hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
     TieHW Rb (Q1.image g) (Q2.image g) (g v) (g p) (g q) h' := by
   rcases H with H | ⟨hRb, e, hv⟩ | ⟨e, ev, hok⟩
-  · exact Or.inl (H.map g hg hr hh)
+  · exact Or.inl (H.map g hr hh)
   · refine Or.inr (Or.inl ⟨hRb, by rw [hh, hh, e], fun e' => hv ?_⟩)
     rw [hh, hh] at e'
     have := congrArg (· * r) e'; simp only [div_mul_cancel₀ _ hr.ne'] at this; exact this

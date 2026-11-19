@@ -711,7 +711,7 @@ theorem TieH.swap {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h : ℝ³ → ℝ} (H 
 
 /-- Transport by an injective map that rescales the heights by `r > 0`. -/
 theorem TieH.map {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h h' : ℝ³ → ℝ} (g : ℝ³ → ℝ³)
-    (hg : Function.Injective g) {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
+    {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
     (H : TieH Q1 Q2 v p q h) [DecidableEq ℝ³] : TieH (Q1.image g) (Q2.image g) (g v) (g p) (g q) h' := by
   have lt : ∀ {a b : ℝ} {s : ℝ}, s * a < s * b → s * (a / r) < s * (b / r) := by
     intro a b s hab
@@ -869,7 +869,7 @@ theorem exists_third_of_card_three {Q : Finset ℝ³} (hQ : Q.card = 3) {v p : �
 
 /-- **The far-end condition from a triangle face**: `TriGenTri` (whatever it allows of parallel
 segments) gives `TieH` at the far ends. -/
-theorem TriGenTri.far {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+theorem TriGenTri.far {V Q1 Q2 : Finset ℝ³} {v : ℝ³}
     (hint : Q1 ∩ Q2 = {v}) (hcard : Q1.card = 3 ∨ Q2.card = 3) (h : TriGenTri V Q1 Q2 v) :
     ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
@@ -924,11 +924,11 @@ theorem TriGenTri.far {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V
       · exact hst.1
       · exact hst.2
 
-theorem TriGenTriN.tie {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+theorem TriGenTriN.tie {V Q1 Q2 : Finset ℝ³} {v : ℝ³}
     (hint : Q1 ∩ Q2 = {v}) (hcard : Q1.card = 3 ∨ Q2.card = 3) (h : TriGenTriN V Q1 Q2 v) :
     TriGenTie V Q1 Q2 v := fun f1 f2 z1 n1 z2 n2 e he e1 e2 =>
   ⟨(h f1 f2 z1 n1 z2 n2 e he e1 e2).1,
-    TriGenTri.far h1V h2V hint hcard h.weaken f1 f2 z1 n1 z2 n2 e he e1 e2⟩
+    TriGenTri.far hint hcard h.weaken f1 f2 z1 n1 z2 n2 e he e1 e2⟩
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, the tie allowed.** As `isRupert_triShadow2`, with

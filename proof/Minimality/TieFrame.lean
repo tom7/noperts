@@ -840,7 +840,7 @@ theorem TieHR.map {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h h' : ℝ³ → ℝ} 
     (_hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
     TieHR (Q1.image g) (Q2.image g) (g v) (g p) (g q) h' := by
   rcases H with H | ⟨e, hv⟩
-  · exact Or.inl (H.map g hg hr hh)
+  · exact Or.inl (H.map g hr hh)
   · refine Or.inr ⟨by rw [hh, hh, e], fun e' => hv ?_⟩
     rw [hh, hh] at e'
     have := congrArg (· * r) e'; simp only [div_mul_cancel₀ _ hr.ne'] at this; exact this
