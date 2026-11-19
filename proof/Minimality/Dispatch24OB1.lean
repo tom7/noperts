@@ -44,7 +44,7 @@ open scoped RealInnerProductSpace
 open Finset
 
 namespace Minimality.T24.OB1
-open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.TheoremP
+open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.TheoremP Minimality.T24.RimClass
 
 /-! ## Rim orientation at a strict cell view -/
 
