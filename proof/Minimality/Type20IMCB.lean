@@ -477,7 +477,7 @@ lemma alg_LE (hP : 0 ≤ (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm))) (hA : 0 < (S.hm
   linarith
 
 /-- `LA > 0` for `Q >= 0`, `E0 > 0`, `P1 >= 0`, `Vq <= 0`, `LF > 0`. -/
-lemma alg_LA (hQ : 0 ≤ (S.km*(1-S.tm)-S.hm*(1-S.sm*S.tp)-S.hp*S.sm*(1-S.tm))) (hE0 : 0 < (S.hm*S.tp-S.hp*(1-S.tm))) (hP : 0 ≤ (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm))) (hV : ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) ≤ 0) (hLF : 0 < (S.tm*(S.km*S.sp+S.kp*S.sm)-S.sm*(S.hm*S.tp+S.hp*S.tm))) :
+lemma alg_LA (hQ : 0 ≤ (S.km*(1-S.tm)-S.hm*(1-S.sm*S.tp)-S.hp*S.sm*(1-S.tm))) (hE0 : 0 < (S.hm*S.tp-S.hp*(1-S.tm))) (hV : ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) ≤ 0) (hLF : 0 < (S.tm*(S.km*S.sp+S.kp*S.sm)-S.sm*(S.hm*S.tp+S.hp*S.tm))) :
     0 < (S.tp*(S.km*S.sp+S.kp*S.sm)-S.sp*(S.hm*S.tp+S.hp*S.tm)) := by
   have tp := S.tp_pos; have tm := S.tm_pos; have hm := S.hm_pos; have sm := S.sm_pos
   have sp := S.sp_pos; have hp := S.hp_pos; have kp := S.kp_pos
@@ -608,7 +608,7 @@ set_option maxHeartbeats 1600000 in
 the point set is Rupert, by the line leaf `LBD:2546[B^D^]` (view `N_B x N_D`, either orientation;
 facings `hm sm LA`, `sm sp c0^2`, `LE`, `kp tp LF`, `LG` up, `-kp tm tp kap` down). -/
 theorem imc_L9 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 19))
-    (hI : F.IMC) (hQ : 0 ≤ (F.S.km*(1-F.S.tm)-F.S.hm*(1-F.S.sm*F.S.tp)-F.S.hp*F.S.sm*(1-F.S.tm))) (hA : 0 < (F.S.hm*F.S.tp-F.S.hm+F.S.hp*F.S.tm)) (hK : 0 ≤ (F.S.km-F.S.hm)) (hV : ((1-F.S.sp)*(F.S.hm*F.S.tp+F.S.hp*F.S.tm)-F.S.kp*F.S.tm) ≤ 0) (hVM : (((1-F.S.sp)*(F.S.hm*F.S.tp+F.S.hp*F.S.tm)-F.S.kp*F.S.tm)-F.S.tp*(F.S.km*(1-F.S.sp)-F.S.kp*F.S.sm)) ≤ 0)
+    (hI : F.IMC) (hQ : 0 ≤ (F.S.km*(1-F.S.tm)-F.S.hm*(1-F.S.sm*F.S.tp)-F.S.hp*F.S.sm*(1-F.S.tm))) (hA : 0 < (F.S.hm*F.S.tp-F.S.hm+F.S.hp*F.S.tm)) (hV : ((1-F.S.sp)*(F.S.hm*F.S.tp+F.S.hp*F.S.tm)-F.S.kp*F.S.tm) ≤ 0) (hVM : (((1-F.S.sp)*(F.S.hm*F.S.tp+F.S.hp*F.S.tm)-F.S.kp*F.S.tm)-F.S.tp*(F.S.km*(1-F.S.sp)-F.S.kp*F.S.sm)) ≤ 0)
     (hZ : ¬ (((1-F.S.sp)*(F.S.hm*F.S.tp+F.S.hp*F.S.tm)-F.S.kp*F.S.tm) = 0 ∧ (F.S.km*F.S.tm-F.S.sm*(F.S.hm*F.S.tp+F.S.hp*F.S.tm)) = 0)) (hLG : 0 < (F.S.tp*(F.S.km*F.S.tm-F.S.hm*F.S.sm)*(F.S.km*F.S.sp+F.S.kp*F.S.sm)-(F.S.hp*F.S.km*F.S.sp*F.S.tm-F.S.hm*F.S.kp*F.S.sm*F.S.tp)))
     (hne : ¬ ((F.S.hp*F.S.km*F.S.sp*F.S.tm-F.S.hm*F.S.kp*F.S.sm*F.S.tp) = 0 ∧ F.a12 * (F.S.tm * F.S.tp * (F.S.km*F.S.sp+F.S.kp*F.S.sm)) + F.a22 * (-F.S.sm * F.S.sp * (F.S.hm*F.S.tp+F.S.hp*F.S.tm)) = 0)) :
     IsRupert (Finset.univ.image x) := by
@@ -627,7 +627,7 @@ theorem imc_L9 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have hP1 := F.S.alg_P1 hQ hV hVM
   have hLF := F.S.alg_LF hP1 hV hZ
   have hLE := F.S.alg_LE hP1 hA
-  have hLA := F.S.alg_LA hQ hE0 hP1 hV hLF
+  have hLA := F.S.alg_LA hQ hE0 hV hLF
   obtain ⟨ν, hν, hc⟩ := F.line_view FF 1 3 (F.nrm_B FF) (F.nrm_D FF) (κ := 1)
     (wx := F.S.tm * F.S.tp * (F.S.km*F.S.sp+F.S.kp*F.S.sm)) (wy := -F.S.sm * F.S.sp * (F.S.hm*F.S.tp+F.S.hp*F.S.tm)) (wz := (F.S.hp*F.S.km*F.S.sp*F.S.tm-F.S.hm*F.S.kp*F.S.sm*F.S.tp)) one_ne_zero
     (Or.inl (mul_pos (mul_pos tm tp) hkap).ne') (by ring) (by ring) (by ring)
@@ -925,7 +925,7 @@ theorem imc_L5 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   · refine (F.nrm_F FF).seg_neg hq ?_
     simp only; linarith
   · rw [hq]
-    refine F.robUni_of_dep _ _ (robUni5_L5 ?_ ?_ ?_ ?_ ?_)
+    refine F.robUni_of_dep _ _ (robUni5_L5 ?_ ?_ ?_ ?_)
     · show F.dep ⟨1, 0, 0⟩ 0 < F.dep ⟨1, 0, 0⟩ 1
       refine F.dlt P _ ?_
       have e : F.Dd B ⟨1, 0, 0⟩ 1 - F.Dd B ⟨1, 0, 0⟩ 0 = F.S.hp * F.S.sm * F.S.hm * (1 - F.S.tp) := by
@@ -949,12 +949,6 @@ theorem imc_L5 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
       have e : F.Dd B ⟨1, 0, 0⟩ 1 - F.Dd B ⟨1, 0, 0⟩ 3 = F.S.hp * F.S.sm * F.S.hm * (1-F.S.tm) := by
         simp only [Dd]; ring
       have := mul_pos (mul_pos (mul_pos hp sm) hm) ht
-      linarith
-    · show F.dep ⟨1, 0, 0⟩ 4 ≤ F.dep ⟨1, 0, 0⟩ 3
-      refine F.dle P _ ?_
-      have e : F.Dd B ⟨1, 0, 0⟩ 3 - F.Dd B ⟨1, 0, 0⟩ 4 = F.S.hp * F.S.sm * (F.S.km-F.S.hm) * (1-F.S.tm) := by
-        simp only [Dd]; ring
-      have := mul_nonneg (mul_pos (mul_pos hp sm) ht).le hK
       linarith
 
 end Frame20

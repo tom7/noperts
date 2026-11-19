@@ -397,7 +397,7 @@ lemma S2 (hN : NF F.S) : 0 < F.S.km - (1-F.S.sm)*F.S.tm := by
   exact pos_of_mul_pos_right h1 tm1.le
 
 /-- S3: if `A56 <= 0` and `A06 <= 0` then `km > P`, `tp km >= P`, `B14 > 0`, `A14 > 0`. -/
-lemma S3 (hN : NF F.S) (h56 : (F.S.km*(1-F.S.tm)-F.S.tm) ≤ 0) (h06 : (F.S.tm-F.S.km*(1-F.S.tm)+F.S.sm*(1-F.S.tm-F.S.tp)) ≤ 0) :
+lemma S3 (h56 : (F.S.km*(1-F.S.tm)-F.S.tm) ≤ 0) (h06 : (F.S.tm-F.S.km*(1-F.S.tm)+F.S.sm*(1-F.S.tm-F.S.tp)) ≤ 0) :
     1 - F.S.tp < F.S.km ∧ 1 - F.S.tp ≤ F.S.tp * F.S.km ∧ 0 < (F.S.tp*(F.S.kp*F.S.sm+F.S.km*F.S.sp)-F.S.sp*(1-F.S.tp)) ∧ 0 < (F.S.kp*(1-F.S.tp*F.S.sm)-(1-F.S.tp)*(1-F.S.sp)+F.S.km*F.S.tp*(1-F.S.sp)) := by
   have sm0 := F.S.sm_pos; have sm1 := F.S.sm1; have tm0 := F.S.tm_pos; have tm1 := F.S.tm1
   have tp0 := F.S.tp_pos; have tp1 := F.S.tp1; have km0 := F.S.km_pos; have kp0 := F.S.kp_pos
@@ -419,7 +419,7 @@ lemma S3 (hN : NF F.S) (h56 : (F.S.km*(1-F.S.tm)-F.S.tm) ≤ 0) (h06 : (F.S.tm-F
     rw [e]; nlinarith [mul_pos kp0 this, mul_nonneg sp1.le s4]
 
 /-- S4: if `Y = Z4 = 0` and `Lq >= 0` then `A06 <= 0`. -/
-lemma S4 (hN : NF F.S) (hY : (F.a11*(1-F.S.tm)-F.gg*F.S.tm) = 0) (hZ : (F.a12*F.S.sm+F.gg*(F.S.km-F.S.tm)-F.a11*F.S.tm) = 0) (hL : 0 ≤ (F.a11*F.S.tp-F.a12-F.gg*(1-F.S.tp))) : (F.S.tm-F.S.km*(1-F.S.tm)+F.S.sm*(1-F.S.tm-F.S.tp)) ≤ 0 := by
+lemma S4 (hY : (F.a11*(1-F.S.tm)-F.gg*F.S.tm) = 0) (hZ : (F.a12*F.S.sm+F.gg*(F.S.km-F.S.tm)-F.a11*F.S.tm) = 0) (hL : 0 ≤ (F.a11*F.S.tp-F.a12-F.gg*(1-F.S.tp))) : (F.S.tm-F.S.km*(1-F.S.tm)+F.S.sm*(1-F.S.tm-F.S.tp)) ≤ 0 := by
   have hg : 0 < F.gg := F.g_pos
   have tm1 := F.S.tm1; have sm0 := F.S.sm_pos
   have e : (1-F.S.tm)*F.S.sm*(F.a11*F.S.tp-F.a12-F.gg*(1-F.S.tp)) + F.gg*(F.S.tm-F.S.km*(1-F.S.tm)+F.S.sm*(1-F.S.tm-F.S.tp)) = F.S.sm*F.S.tp*(F.a11*(1-F.S.tm)-F.gg*F.S.tm) - ((1-F.S.tm)*F.S.sm*F.a12 + F.gg*(F.S.km*(1-F.S.tm)-F.S.tm)) := by ring

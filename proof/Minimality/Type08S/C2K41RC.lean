@@ -53,7 +53,7 @@ theorem k28b2s_R1C_ts {ea ee β6 lam : ℝ} (hea : 0 < ea) (hee : 0 < ee) (hβ6 
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         exact lexkPos_head (by linear_combination 1 * (sub_nonneg.2 hL0))
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        refine lexkPos_tail (by ring1) ?_; refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination 0)
+        refine lexkPos_tail (by ring1) ?_; refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination)
     · rcases k28b2s_R1C_cases j with rfl | rfl | rfl | rfl | rfl
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         exact lexkPos_head (by linear_combination 1 * hβ6 + 1 * (sub_nonneg.2 hL0))
@@ -84,7 +84,7 @@ theorem k28b2s_R1C_ts {ea ee β6 lam : ℝ} (hea : 0 < ea) (hee : 0 < ee) (hβ6 
     · rcases k28b2s_R1C_cases j with rfl | rfl | rfl | rfl | rfl
       · exact (h2 (by decide)).elim
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        refine lexkPos_tail (by ring1) ?_; refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination 0)
+        refine lexkPos_tail (by ring1) ?_; refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination)
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         exact lexkPos_head (by linear_combination 1 * hlam + 1 * (mul_pos hβ6 hlam) + 1 * (mul_nonneg (sub_nonneg.2 hL0) (hlam).le))
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
@@ -106,7 +106,7 @@ theorem k28b2s_R1C_ts {ea ee β6 lam : ℝ} (hea : 0 < ea) (hee : 0 < ee) (hβ6 
         refine lexkPos_tail (by ring1) ?_; refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination 1 * hea)
     · rcases k28b2s_R1C_cases i with rfl | rfl | rfl | rfl | rfl
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        exact lexkPos_head (by linear_combination 0)
+        exact lexkPos_head (by linear_combination)
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         exact lexkPos_head (by linear_combination 1 * hea + 1 * hβ6 + 1 * (sub_nonneg.2 hL0))
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k28b2s_R1C_Y_0, k28b2s_R1C_Y_1, k28b2s_R1C_Y_2, k28b2s_R1C_Y_3, k28b2s_R1C_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]

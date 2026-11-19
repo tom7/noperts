@@ -15,7 +15,7 @@ namespace Type08Sp
 open C2
 
 /-- **The K7 leftover in one labelling.** -/
-def K7Slice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
+def K7Slice {a a' b b' c c' d : ℝ³} (_W : Norm08w a a' b b' c c' d) : Prop :=
   K5ZsTT a a' b b' c c' d ∨ K5ZsPa a a' b b' c c' d ∨ K5ZsPc a a' b b' c c' d ∨
   K5ZsTouch a a' b b' c c' d ∨ K5ZsTa a a' b b' c c' d ∨ K5ZsTc a a' b b' c c' d ∨
   K6sMLeftN2 a a' b b' c c' d ∨ K6sDN2one a a' b b' c c' d ∨ K6sMLeftKb a a' b b' c c' d

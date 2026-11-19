@@ -650,7 +650,7 @@ theorem imc_L12 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFace
     have := pos_of_mul_pos_right this tm0.le
     linarith
   have hU : RobUni (fun a : ZMod 6 => F.dep qu (cyc12 a)) := by
-    refine robUni6_a ?_ ?_ ?_ ?_ ?_ ?_
+    refine robUni6_a ?_ ?_ ?_ ?_ ?_
     · show F.dep qu 3 < F.dep qu 1
       exact z13
     · show F.dep qu 4 < F.dep qu 3
@@ -659,8 +659,6 @@ theorem imc_L12 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFace
       exact h46
     · show F.dep qu 0 < F.dep qu 1
       exact z01
-    · show F.dep qu 6 ≤ F.dep qu 0
-      exact h06
     · show F.dep qu 2 < F.dep qu 0
       exact z20
   refine leaf_of_view F FF hx (by norm_num) cyc12_inj cyc12_ok qu qv 0 ?_ ?_ hU
@@ -810,9 +808,9 @@ lemma imc_main (hCorner : F.CornerStmt) (hZt : F.ZtStmt)
           have hP := F.S.alg_P1 hQ hV hVM
           have hLF := F.S.alg_LF hP hV hZ
           have hLE := F.S.alg_LE hP hAp
-          have hLA := F.S.alg_LA hQ hE0 hP hV hLF
+          have hLA := F.S.alg_LA hQ hE0 hV hLF
           exact imc_L9p F hx hR hI.1 hLA hLE hLF hLG hne.1 (by simp only [kap, c0]; linarith [hne.2])
-        · exact F.imc_L9 hx hR hI hQ hAp hK hV hVM hZ hLG hne
+        · exact F.imc_L9 hx hR hI hQ hAp hV hVM hZ hLG hne
       · exact F.imc_L10 hx hR hI hQ hAp hK hV hVM hLG
 
 end Frame20

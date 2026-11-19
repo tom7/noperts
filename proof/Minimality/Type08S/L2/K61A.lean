@@ -40,7 +40,7 @@ theorem k61_pts {a a' b b' c c' d R : ℝ³} {α1 β1 β6 γ6 lam sg : ℝ}
     rw [e]
     intro h
     have hsg : sg ≠ 0 := by intro h0; rw [h0] at hs; norm_num at hs
-    exact hdet (by have := neg_eq_zero.1 h; rcases mul_eq_zero.1 this with h1 | h1; exact absurd h1 hsg; exact h1)
+    exact hdet (by have := neg_eq_zero.1 h; exact (mul_eq_zero.1 this).resolve_left hsg)
   · rw [k17f_fp]; module
   · rw [k17f_fp]; module
   · rw [k17f_fp]; module

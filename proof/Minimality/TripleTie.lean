@@ -794,7 +794,7 @@ theorem OneSided.map {Q : Finset ℝ³} {v p : ℝ³} {h h' : ℝ³ → ℝ} (g 
   exact div_lt_div_of_pos_right (H x hx (fun e => hyv (by rw [e])) (fun e => hyp (by rw [e]))) hr
 
 theorem TieHW.map {Rb : Prop} {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h h' : ℝ³ → ℝ} (g : ℝ³ → ℝ³)
-    (hg : Function.Injective g) {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
+    {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
     (H : TieHW Rb Q1 Q2 v p q h) [DecidableEq ℝ³] (hlin : ∀ x y, g (x - y) = g x - g y)
     (hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
     TieHW Rb (Q1.image g) (Q2.image g) (g v) (g p) (g q) h' := by
@@ -1369,7 +1369,7 @@ theorem isRupert_facets_vertex_tieW {Rb : Prop} (V Q1 Q2 : Finset ℝ³) (v : �
   · refine allg Q1 _ (fun p hp => allg Q2 _ (fun q hq => ?_))
     intro hpq h1 h2
     refine (hfarZ p hp q hq (fun e => hpq (by rw [e])) (fun p' hp' => ?_) (fun q' hq' => ?_)).map g
-      hginj hr (fun x => hgz x) (fun x y => map_sub g x y) (fun x y => inner_toEuclideanLin_SO3 hR x y)
+      hr (fun x => hgz x) (fun x y => map_sub g x y) (fun x y => inner_toEuclideanLin_SO3 hR x y)
     · have := h1 (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
     · have := h2 (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
   · obtain ⟨xa, hxa, xb, hxb, hxav, hxbv, h⟩ := hin

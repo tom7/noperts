@@ -835,7 +835,7 @@ theorem TieHR.swap {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h : ℝ³ → ℝ} (H
   · exact Or.inr ⟨e.symm, by rw [← e]; exact hv⟩
 
 theorem TieHR.map {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h h' : ℝ³ → ℝ} (g : ℝ³ → ℝ³)
-    (hg : Function.Injective g) {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
+    {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
     (H : TieHR Q1 Q2 v p q h) [DecidableEq ℝ³] (_hlin : ∀ x y, g (x - y) = g x - g y)
     (_hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
     TieHR (Q1.image g) (Q2.image g) (g v) (g p) (g q) h' := by

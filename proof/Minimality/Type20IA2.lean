@@ -752,8 +752,8 @@ theorem tree (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 1
     by_cases hLq : (F.a11*F.S.tp-F.a12-F.gg*(1-F.S.tp)) < 0
     · exact ia_U1 F hx hR hN hk hP hLq
     push Not at hLq
-    have h06 := S4 F hN hY0 hZ0 hLq
-    obtain ⟨hkP, -, hB, hA14⟩ := S3 F hN h56 h06
+    have h06 := S4 F hY0 hZ0 hLq
+    obtain ⟨hkP, -, hB, hA14⟩ := S3 F h56 h06
     by_cases hA : 0 < (F.S.km*F.S.sp-F.S.kp*(1-F.S.sm))
     · exact ia_C6 F hx hR hN hA hL hB hA14
     · push Not at hA

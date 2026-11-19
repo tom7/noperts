@@ -399,7 +399,7 @@ theorem zmod6_sums :     ((0:ZMod 6) + 1 = 1) ∧
 
 /-- On a 6-cycle with the peak `z1 > z2 > z3 > z4`, `z1 > z0 ≥ z4` and `z5 < z0`, `RobUni` holds. -/
 theorem robUni6_a {z : ZMod 6 → ℝ} (h12 : z 2 < z 1) (h23 : z 3 < z 2) (h34 : z 4 < z 3)
-    (h01 : z 0 < z 1) (h04 : z 4 ≤ z 0) (h50 : z 5 < z 0) : RobUni z := by
+    (h01 : z 0 < z 1) (h50 : z 5 < z 0) : RobUni z := by
   intro B b c d hb hbc hcd hd
   have hB : B = 0 ∨ B = 1 ∨ B = 2 ∨ B = 3 ∨ B = 4 ∨ B = 5 := by revert B; decide
   have hb4 : b < 6 := by omega

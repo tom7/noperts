@@ -510,7 +510,7 @@ lemma zt_I1 (hp hm tp tm sp sm km kp B : ℝ)
   linear_combination (-hp*tm + kp*tm) * tie + (-hm*hp*sm*sp*tm*tp + hm*hp*sm*sp*tp + hm*hp*sm*tm*tp - hm*hp*sm*tp + hm*hp*sp*tm*tp - hm*hp*sp*tp - hm*hp*tm*tp + hm*hp*tp - hp^2*sm*sp*tm^2 + hp^2*sm*sp*tm + hp^2*sm*tm^2 - hp^2*sm*tm + hp^2*sp*tm^2 - hp^2*sp*tm - hp^2*tm^2 + hp^2*tm - hp*kp*sm*tm^2 + hp*kp*sm*tm + hp*kp*tm^2 - hp*kp*tm) * hkm + (-hm*hp*sm^2*tm*tp + hm*hp*sm^2*tp + hm*hp*sm*tm*tp - hm*hp*sm*tm - hm*hp*sm*tp + hm*hp*tm - hp^2*sm^2*tm^2 + hp^2*sm^2*tm + hp^2*sm*tm^2 - hp^2*sm*tm) * hkp
 
 /-- Identity `sm km d3 = hp (sm km den tp + sm tp K lroof - den km tm sp)` in stratum Z under the tie. -/
-lemma zt_I2 (hp hm tp tm sp sm km kp B : ℝ)
+lemma zt_I2 (hp hm tp tm sp sm km kp : ℝ)
     (tie : sm*((1-tm)*(1-tp))*km*hm = hp*(hm+km*tm-km)*tm*(1-sm)) (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm)) :
     (tm) * (sm*km*ddT3 hp hm tp tm sp sm km kp) = (tm) * (hp*(sm*km*(hm+km*tm-km)*tp+sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm))-(hm+km*tm-km)*km*tm*sp)) := by
   simp only [ddT3]
@@ -688,7 +688,7 @@ lemma zt_I2c {hp hm tp tm sp sm km kp B : ℝ} (tm0 : 0 < tm)
     (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm)) :
     sm*km*ddT3 hp hm tp tm sp sm km kp =
       hp*(sm*km*(hm+km*tm-km)*tp+sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm))-(hm+km*tm-km)*km*tm*sp) :=
-  mul_left_cancel₀ tm0.ne' (zt_I2 hp hm tp tm sp sm km kp B tie hkm hkp)
+  mul_left_cancel₀ tm0.ne' (zt_I2 hp hm tp tm sp sm km kp tie hkm hkp)
 
 lemma zt_I4c {hp hm tp tm sp sm km kp B : ℝ} (tm0 : 0 < tm) (km0 : 0 < km)
     (tie : sm*((1-tm)*(1-tp))*km*hm = hp*(hm+km*tm-km)*tm*(1-sm))

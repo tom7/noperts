@@ -362,7 +362,7 @@ theorem robUni5_L4 {z : ZMod 5 → ℝ} (h12 : z 2 ≤ z 1) (h23 : z 3 < z 2) (h
 
 /-- Five-cycle shape for `L5` (`z1 > z0 > z4 > z3`, `z1 > z2 >= z3`). -/
 theorem robUni5_L5 {z : ZMod 5 → ℝ} (h01 : z 0 < z 1) (h40 : z 4 < z 0) (h34 : z 3 < z 4)
-    (h21 : z 2 < z 1) (h32 : z 3 ≤ z 2) : RobUni z := by robuni5
+    (h21 : z 2 < z 1) : RobUni z := by robuni5
 
 /-- Five-cycle shape for `L6` (`z1 > z2 > z3`, `z1 > z0 > z4`). -/
 theorem robUni5_L6 {z : ZMod 5 → ℝ} (h21 : z 2 < z 1) (h32 : z 3 < z 2) (h01 : z 0 < z 1)
