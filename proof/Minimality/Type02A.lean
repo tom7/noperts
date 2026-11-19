@@ -27,11 +27,22 @@ theorem z5a : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1
     (3 : ZMod 5) + 1 = 4 ∧ (4 : ZMod 5) + 1 = 0 := by decide
 theorem z5c (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
 
-set_option hygiene false in
-macro "stfin" : tactic => `(tactic| first
-  | (left; linarith [mul_pos hκp htp, mul_pos hκp htm, mul_pos hκp hsp, mul_pos hκp hsm, mul_pos hκp a1, mul_pos hκp a2, mul_pos hκp a3, mul_pos hκp a4, mul_pos hκp a5, mul_pos hκp a6, mul_pos (mul_pos hκp htp) htp, mul_pos (mul_pos hκp htp) htm, mul_pos (mul_pos hκp htp) hsp, mul_pos (mul_pos hκp htp) hsm, mul_pos (mul_pos hκp htp) a1, mul_pos (mul_pos hκp htp) a2, mul_pos (mul_pos hκp htp) a3, mul_pos (mul_pos hκp htp) a4, mul_pos (mul_pos hκp htp) a5, mul_pos (mul_pos hκp htp) a6, mul_pos (mul_pos hκp htm) htm, mul_pos (mul_pos hκp htm) hsp, mul_pos (mul_pos hκp htm) hsm, mul_pos (mul_pos hκp htm) a1, mul_pos (mul_pos hκp htm) a2, mul_pos (mul_pos hκp htm) a3, mul_pos (mul_pos hκp htm) a4, mul_pos (mul_pos hκp htm) a5, mul_pos (mul_pos hκp htm) a6, mul_pos (mul_pos hκp hsp) hsp, mul_pos (mul_pos hκp hsp) hsm, mul_pos (mul_pos hκp hsp) a1, mul_pos (mul_pos hκp hsp) a2, mul_pos (mul_pos hκp hsp) a3, mul_pos (mul_pos hκp hsp) a4, mul_pos (mul_pos hκp hsp) a5, mul_pos (mul_pos hκp hsp) a6, mul_pos (mul_pos hκp hsm) hsm, mul_pos (mul_pos hκp hsm) a1, mul_pos (mul_pos hκp hsm) a2, mul_pos (mul_pos hκp hsm) a3, mul_pos (mul_pos hκp hsm) a4, mul_pos (mul_pos hκp hsm) a5, mul_pos (mul_pos hκp hsm) a6, mul_pos (mul_pos hκp a1) a1, mul_pos (mul_pos hκp a1) a2, mul_pos (mul_pos hκp a1) a3, mul_pos (mul_pos hκp a1) a4, mul_pos (mul_pos hκp a1) a5, mul_pos (mul_pos hκp a1) a6, mul_pos (mul_pos hκp a2) a2, mul_pos (mul_pos hκp a2) a3, mul_pos (mul_pos hκp a2) a4, mul_pos (mul_pos hκp a2) a5, mul_pos (mul_pos hκp a2) a6, mul_pos (mul_pos hκp a3) a3, mul_pos (mul_pos hκp a3) a4, mul_pos (mul_pos hκp a3) a5, mul_pos (mul_pos hκp a3) a6, mul_pos (mul_pos hκp a4) a4, mul_pos (mul_pos hκp a4) a5, mul_pos (mul_pos hκp a4) a6, mul_pos (mul_pos hκp a5) a5, mul_pos (mul_pos hκp a5) a6, mul_pos (mul_pos hκp a6) a6, mul_pos hκm htp, mul_pos hκm htm, mul_pos hκm hsp, mul_pos hκm hsm, mul_pos hκm a1, mul_pos hκm a2, mul_pos hκm a3, mul_pos hκm a4, mul_pos hκm a5, mul_pos hκm a6, mul_pos (mul_pos hκm htp) htp, mul_pos (mul_pos hκm htp) htm, mul_pos (mul_pos hκm htp) hsp, mul_pos (mul_pos hκm htp) hsm, mul_pos (mul_pos hκm htp) a1, mul_pos (mul_pos hκm htp) a2, mul_pos (mul_pos hκm htp) a3, mul_pos (mul_pos hκm htp) a4, mul_pos (mul_pos hκm htp) a5, mul_pos (mul_pos hκm htp) a6, mul_pos (mul_pos hκm htm) htm, mul_pos (mul_pos hκm htm) hsp, mul_pos (mul_pos hκm htm) hsm, mul_pos (mul_pos hκm htm) a1, mul_pos (mul_pos hκm htm) a2, mul_pos (mul_pos hκm htm) a3, mul_pos (mul_pos hκm htm) a4, mul_pos (mul_pos hκm htm) a5, mul_pos (mul_pos hκm htm) a6, mul_pos (mul_pos hκm hsp) hsp, mul_pos (mul_pos hκm hsp) hsm, mul_pos (mul_pos hκm hsp) a1, mul_pos (mul_pos hκm hsp) a2, mul_pos (mul_pos hκm hsp) a3, mul_pos (mul_pos hκm hsp) a4, mul_pos (mul_pos hκm hsp) a5, mul_pos (mul_pos hκm hsp) a6, mul_pos (mul_pos hκm hsm) hsm, mul_pos (mul_pos hκm hsm) a1, mul_pos (mul_pos hκm hsm) a2, mul_pos (mul_pos hκm hsm) a3, mul_pos (mul_pos hκm hsm) a4, mul_pos (mul_pos hκm hsm) a5, mul_pos (mul_pos hκm hsm) a6, mul_pos (mul_pos hκm a1) a1, mul_pos (mul_pos hκm a1) a2, mul_pos (mul_pos hκm a1) a3, mul_pos (mul_pos hκm a1) a4, mul_pos (mul_pos hκm a1) a5, mul_pos (mul_pos hκm a1) a6, mul_pos (mul_pos hκm a2) a2, mul_pos (mul_pos hκm a2) a3, mul_pos (mul_pos hκm a2) a4, mul_pos (mul_pos hκm a2) a5, mul_pos (mul_pos hκm a2) a6, mul_pos (mul_pos hκm a3) a3, mul_pos (mul_pos hκm a3) a4, mul_pos (mul_pos hκm a3) a5, mul_pos (mul_pos hκm a3) a6, mul_pos (mul_pos hκm a4) a4, mul_pos (mul_pos hκm a4) a5, mul_pos (mul_pos hκm a4) a6, mul_pos (mul_pos hκm a5) a5, mul_pos (mul_pos hκm a5) a6, mul_pos (mul_pos hκm a6) a6])
-  | (right; refine ⟨by ring, ?_⟩; linarith [mul_pos hκp htp, mul_pos hκp htm, mul_pos hκp hsp, mul_pos hκp hsm, mul_pos hκp a1, mul_pos hκp a2, mul_pos hκp a3, mul_pos hκp a4, mul_pos hκp a5, mul_pos hκp a6, mul_pos (mul_pos hκp htp) htp, mul_pos (mul_pos hκp htp) htm, mul_pos (mul_pos hκp htp) hsp, mul_pos (mul_pos hκp htp) hsm, mul_pos (mul_pos hκp htp) a1, mul_pos (mul_pos hκp htp) a2, mul_pos (mul_pos hκp htp) a3, mul_pos (mul_pos hκp htp) a4, mul_pos (mul_pos hκp htp) a5, mul_pos (mul_pos hκp htp) a6, mul_pos (mul_pos hκp htm) htm, mul_pos (mul_pos hκp htm) hsp, mul_pos (mul_pos hκp htm) hsm, mul_pos (mul_pos hκp htm) a1, mul_pos (mul_pos hκp htm) a2, mul_pos (mul_pos hκp htm) a3, mul_pos (mul_pos hκp htm) a4, mul_pos (mul_pos hκp htm) a5, mul_pos (mul_pos hκp htm) a6, mul_pos (mul_pos hκp hsp) hsp, mul_pos (mul_pos hκp hsp) hsm, mul_pos (mul_pos hκp hsp) a1, mul_pos (mul_pos hκp hsp) a2, mul_pos (mul_pos hκp hsp) a3, mul_pos (mul_pos hκp hsp) a4, mul_pos (mul_pos hκp hsp) a5, mul_pos (mul_pos hκp hsp) a6, mul_pos (mul_pos hκp hsm) hsm, mul_pos (mul_pos hκp hsm) a1, mul_pos (mul_pos hκp hsm) a2, mul_pos (mul_pos hκp hsm) a3, mul_pos (mul_pos hκp hsm) a4, mul_pos (mul_pos hκp hsm) a5, mul_pos (mul_pos hκp hsm) a6, mul_pos (mul_pos hκp a1) a1, mul_pos (mul_pos hκp a1) a2, mul_pos (mul_pos hκp a1) a3, mul_pos (mul_pos hκp a1) a4, mul_pos (mul_pos hκp a1) a5, mul_pos (mul_pos hκp a1) a6, mul_pos (mul_pos hκp a2) a2, mul_pos (mul_pos hκp a2) a3, mul_pos (mul_pos hκp a2) a4, mul_pos (mul_pos hκp a2) a5, mul_pos (mul_pos hκp a2) a6, mul_pos (mul_pos hκp a3) a3, mul_pos (mul_pos hκp a3) a4, mul_pos (mul_pos hκp a3) a5, mul_pos (mul_pos hκp a3) a6, mul_pos (mul_pos hκp a4) a4, mul_pos (mul_pos hκp a4) a5, mul_pos (mul_pos hκp a4) a6, mul_pos (mul_pos hκp a5) a5, mul_pos (mul_pos hκp a5) a6, mul_pos (mul_pos hκp a6) a6, mul_pos hκm htp, mul_pos hκm htm, mul_pos hκm hsp, mul_pos hκm hsm, mul_pos hκm a1, mul_pos hκm a2, mul_pos hκm a3, mul_pos hκm a4, mul_pos hκm a5, mul_pos hκm a6, mul_pos (mul_pos hκm htp) htp, mul_pos (mul_pos hκm htp) htm, mul_pos (mul_pos hκm htp) hsp, mul_pos (mul_pos hκm htp) hsm, mul_pos (mul_pos hκm htp) a1, mul_pos (mul_pos hκm htp) a2, mul_pos (mul_pos hκm htp) a3, mul_pos (mul_pos hκm htp) a4, mul_pos (mul_pos hκm htp) a5, mul_pos (mul_pos hκm htp) a6, mul_pos (mul_pos hκm htm) htm, mul_pos (mul_pos hκm htm) hsp, mul_pos (mul_pos hκm htm) hsm, mul_pos (mul_pos hκm htm) a1, mul_pos (mul_pos hκm htm) a2, mul_pos (mul_pos hκm htm) a3, mul_pos (mul_pos hκm htm) a4, mul_pos (mul_pos hκm htm) a5, mul_pos (mul_pos hκm htm) a6, mul_pos (mul_pos hκm hsp) hsp, mul_pos (mul_pos hκm hsp) hsm, mul_pos (mul_pos hκm hsp) a1, mul_pos (mul_pos hκm hsp) a2, mul_pos (mul_pos hκm hsp) a3, mul_pos (mul_pos hκm hsp) a4, mul_pos (mul_pos hκm hsp) a5, mul_pos (mul_pos hκm hsp) a6, mul_pos (mul_pos hκm hsm) hsm, mul_pos (mul_pos hκm hsm) a1, mul_pos (mul_pos hκm hsm) a2, mul_pos (mul_pos hκm hsm) a3, mul_pos (mul_pos hκm hsm) a4, mul_pos (mul_pos hκm hsm) a5, mul_pos (mul_pos hκm hsm) a6, mul_pos (mul_pos hκm a1) a1, mul_pos (mul_pos hκm a1) a2, mul_pos (mul_pos hκm a1) a3, mul_pos (mul_pos hκm a1) a4, mul_pos (mul_pos hκm a1) a5, mul_pos (mul_pos hκm a1) a6, mul_pos (mul_pos hκm a2) a2, mul_pos (mul_pos hκm a2) a3, mul_pos (mul_pos hκm a2) a4, mul_pos (mul_pos hκm a2) a5, mul_pos (mul_pos hκm a2) a6, mul_pos (mul_pos hκm a3) a3, mul_pos (mul_pos hκm a3) a4, mul_pos (mul_pos hκm a3) a5, mul_pos (mul_pos hκm a3) a6, mul_pos (mul_pos hκm a4) a4, mul_pos (mul_pos hκm a4) a5, mul_pos (mul_pos hκm a4) a6, mul_pos (mul_pos hκm a5) a5, mul_pos (mul_pos hκm a5) a6, mul_pos (mul_pos hκm a6) a6])
-  | linarith [mul_pos hκp htp, mul_pos hκp htm, mul_pos hκp hsp, mul_pos hκp hsm, mul_pos hκp a1, mul_pos hκp a2, mul_pos hκp a3, mul_pos hκp a4, mul_pos hκp a5, mul_pos hκp a6, mul_pos (mul_pos hκp htp) htp, mul_pos (mul_pos hκp htp) htm, mul_pos (mul_pos hκp htp) hsp, mul_pos (mul_pos hκp htp) hsm, mul_pos (mul_pos hκp htp) a1, mul_pos (mul_pos hκp htp) a2, mul_pos (mul_pos hκp htp) a3, mul_pos (mul_pos hκp htp) a4, mul_pos (mul_pos hκp htp) a5, mul_pos (mul_pos hκp htp) a6, mul_pos (mul_pos hκp htm) htm, mul_pos (mul_pos hκp htm) hsp, mul_pos (mul_pos hκp htm) hsm, mul_pos (mul_pos hκp htm) a1, mul_pos (mul_pos hκp htm) a2, mul_pos (mul_pos hκp htm) a3, mul_pos (mul_pos hκp htm) a4, mul_pos (mul_pos hκp htm) a5, mul_pos (mul_pos hκp htm) a6, mul_pos (mul_pos hκp hsp) hsp, mul_pos (mul_pos hκp hsp) hsm, mul_pos (mul_pos hκp hsp) a1, mul_pos (mul_pos hκp hsp) a2, mul_pos (mul_pos hκp hsp) a3, mul_pos (mul_pos hκp hsp) a4, mul_pos (mul_pos hκp hsp) a5, mul_pos (mul_pos hκp hsp) a6, mul_pos (mul_pos hκp hsm) hsm, mul_pos (mul_pos hκp hsm) a1, mul_pos (mul_pos hκp hsm) a2, mul_pos (mul_pos hκp hsm) a3, mul_pos (mul_pos hκp hsm) a4, mul_pos (mul_pos hκp hsm) a5, mul_pos (mul_pos hκp hsm) a6, mul_pos (mul_pos hκp a1) a1, mul_pos (mul_pos hκp a1) a2, mul_pos (mul_pos hκp a1) a3, mul_pos (mul_pos hκp a1) a4, mul_pos (mul_pos hκp a1) a5, mul_pos (mul_pos hκp a1) a6, mul_pos (mul_pos hκp a2) a2, mul_pos (mul_pos hκp a2) a3, mul_pos (mul_pos hκp a2) a4, mul_pos (mul_pos hκp a2) a5, mul_pos (mul_pos hκp a2) a6, mul_pos (mul_pos hκp a3) a3, mul_pos (mul_pos hκp a3) a4, mul_pos (mul_pos hκp a3) a5, mul_pos (mul_pos hκp a3) a6, mul_pos (mul_pos hκp a4) a4, mul_pos (mul_pos hκp a4) a5, mul_pos (mul_pos hκp a4) a6, mul_pos (mul_pos hκp a5) a5, mul_pos (mul_pos hκp a5) a6, mul_pos (mul_pos hκp a6) a6, mul_pos hκm htp, mul_pos hκm htm, mul_pos hκm hsp, mul_pos hκm hsm, mul_pos hκm a1, mul_pos hκm a2, mul_pos hκm a3, mul_pos hκm a4, mul_pos hκm a5, mul_pos hκm a6, mul_pos (mul_pos hκm htp) htp, mul_pos (mul_pos hκm htp) htm, mul_pos (mul_pos hκm htp) hsp, mul_pos (mul_pos hκm htp) hsm, mul_pos (mul_pos hκm htp) a1, mul_pos (mul_pos hκm htp) a2, mul_pos (mul_pos hκm htp) a3, mul_pos (mul_pos hκm htp) a4, mul_pos (mul_pos hκm htp) a5, mul_pos (mul_pos hκm htp) a6, mul_pos (mul_pos hκm htm) htm, mul_pos (mul_pos hκm htm) hsp, mul_pos (mul_pos hκm htm) hsm, mul_pos (mul_pos hκm htm) a1, mul_pos (mul_pos hκm htm) a2, mul_pos (mul_pos hκm htm) a3, mul_pos (mul_pos hκm htm) a4, mul_pos (mul_pos hκm htm) a5, mul_pos (mul_pos hκm htm) a6, mul_pos (mul_pos hκm hsp) hsp, mul_pos (mul_pos hκm hsp) hsm, mul_pos (mul_pos hκm hsp) a1, mul_pos (mul_pos hκm hsp) a2, mul_pos (mul_pos hκm hsp) a3, mul_pos (mul_pos hκm hsp) a4, mul_pos (mul_pos hκm hsp) a5, mul_pos (mul_pos hκm hsp) a6, mul_pos (mul_pos hκm hsm) hsm, mul_pos (mul_pos hκm hsm) a1, mul_pos (mul_pos hκm hsm) a2, mul_pos (mul_pos hκm hsm) a3, mul_pos (mul_pos hκm hsm) a4, mul_pos (mul_pos hκm hsm) a5, mul_pos (mul_pos hκm hsm) a6, mul_pos (mul_pos hκm a1) a1, mul_pos (mul_pos hκm a1) a2, mul_pos (mul_pos hκm a1) a3, mul_pos (mul_pos hκm a1) a4, mul_pos (mul_pos hκm a1) a5, mul_pos (mul_pos hκm a1) a6, mul_pos (mul_pos hκm a2) a2, mul_pos (mul_pos hκm a2) a3, mul_pos (mul_pos hκm a2) a4, mul_pos (mul_pos hκm a2) a5, mul_pos (mul_pos hκm a2) a6, mul_pos (mul_pos hκm a3) a3, mul_pos (mul_pos hκm a3) a4, mul_pos (mul_pos hκm a3) a5, mul_pos (mul_pos hκm a3) a6, mul_pos (mul_pos hκm a4) a4, mul_pos (mul_pos hκm a4) a5, mul_pos (mul_pos hκm a4) a6, mul_pos (mul_pos hκm a5) a5, mul_pos (mul_pos hκm a5) a6, mul_pos (mul_pos hκm a6) a6])
+open Lean in
+/-- Positivity-product linarith closer for the Type 02 cyc/rest rows. The positivity facts to multiply are
+passed as arguments (so the linter sees the uses): `stfin htp htm hsp hsm`. -/
+macro "stfin" hs:(ppSpace ident)* : tactic => do
+  let ks : Array Ident := #[mkIdent `hκp, mkIdent `hκm]
+  let atoms : Array Ident := hs ++ (#[`a1, `a2, `a3, `a4, `a5, `a6].map mkIdent)
+  let mut ts : Array (TSyntax `term) := #[]
+  for k in ks do
+    for x in atoms do ts := ts.push (← `(mul_pos $k $x))
+    for i in [0:atoms.size] do
+      for j in [i:atoms.size] do
+        ts := ts.push (← `(mul_pos (mul_pos $k $(atoms[i]!)) $(atoms[j]!)))
+  `(tactic| first
+    | (left; linarith [$ts,*])
+    | (right; refine ⟨by ring, ?_⟩; linarith [$ts,*])
+    | linarith [$ts,*])
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
@@ -51,7 +62,7 @@ set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
 theorem cyc_A0B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1)
-    (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
+    (hsp1 : sp < 1) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
     (hA : tp < sp) (hB : tm < sm) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩
@@ -73,13 +84,13 @@ theorem cyc_A0B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     norm_num
-    stfin
+    stfin htp htm
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
 theorem rest_A0B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1)
-    (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
+    (hsp : 0 < sp) (hsp1 : sp < 1) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
     (hA : tp < sp) (hB : tm < sm) (j' : Fin 7) (hw : j' = 1 ∨ j' = 4 ∨ j' = 6) :
     ∀ i : ZMod 4,
       CaseC09.ST (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩
@@ -96,13 +107,13 @@ theorem rest_A0B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   rcases z4c i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     norm_num
-    stfin
+    stfin htp htm hsp
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
 theorem cyc_A1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1)
-    (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
+    (hsp : 0 < sp) (hsp1 : sp < 1) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
     (hA : sp < tp) (hB : tm < sm) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩
@@ -124,13 +135,13 @@ theorem cyc_A1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     norm_num
-    stfin
+    stfin htp htm hsp
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
 theorem rest_A1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1)
-    (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
+    (hsp : 0 < sp) (hsp1 : sp < 1) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
     (hA : sp < tp) (hB : tm < sm) (j' : Fin 7) (hw : j' = 4 ∨ j' = 6) :
     ∀ i : ZMod 5,
       CaseC09.ST (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩
@@ -147,12 +158,12 @@ theorem rest_A1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     norm_num
-    stfin
+    stfin htp htm hsp
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem cyc_A1B6 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1)
+theorem cyc_A1B6 (tp tm sp sm κp κm : ℝ) (htp1 : tp < 1) (htm1 : tm < 1)
     (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1) (hκp : 0 < κp) (hκm : 0 < κm)
     (hA : sp < tp) (hB : sm < tm) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
@@ -175,7 +186,7 @@ theorem cyc_A1B6 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     norm_num
-    stfin
+    stfin hsp hsm
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
@@ -198,7 +209,7 @@ theorem rest_A1B6 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   rcases z4c i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     norm_num
-    stfin
+    stfin htp htm hsp hsm
 
 
 
@@ -266,18 +277,18 @@ theorem acute_A0B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1' h2'
     simp only [hc]
-    exact cyc_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB i j h1' h2'
+    exact cyc_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_lt F.S.sm_lt hκp hκm hA hB i j h1' h2'
   · intro j' hj' i
     simp only [hc]
     rw [hpt]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd (by simp [quad_2]) (hj' 2)
-    · exact rest_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB _ (Or.inl rfl) i
+    · exact rest_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt hκp hκm hA hB _ (Or.inl rfl) i
     · exact absurd (by simp [quad_3]) (hj' 3)
     · exact absurd (by simp [quad_1]) (hj' 1)
-    · exact rest_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB _ (Or.inr (Or.inl rfl)) i
+    · exact rest_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt hκp hκm hA hB _ (Or.inr (Or.inl rfl)) i
     · exact absurd (by simp [quad_0]) (hj' 0)
-    · exact rest_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB _ (Or.inr (Or.inr rfl)) i
+    · exact rest_A0B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt hκp hκm hA hB _ (Or.inr (Or.inr rfl)) i
   · have hz : (fun i : ZMod 4 => F.toFrame7.GG (F.toFrame7.ptC (quad ((5 : Fin 7)) 3 0 2 i))
         ⟨-1, 1, 0⟩) = fun i : ZMod 4 => quad (-((gA11 x - gA12 x) * F.S.tm)) (-(gA11 x - gA12 x)) (-((gA11 x - gA12 x) * F.S.tp)) 0 i := by
       funext i
@@ -301,7 +312,7 @@ theorem acute_A1B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1' h2'
     simp only [hc]
-    exact cyc_A1B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB i j h1' h2'
+    exact cyc_A1B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt hκp hκm hA hB i j h1' h2'
   · intro j' hj' i
     simp only [hc]
     rw [hpt]
@@ -310,9 +321,9 @@ theorem acute_A1B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     · exact absurd (by simp [quint_3]) (hj' 3)
     · exact absurd (by simp [quint_4]) (hj' 4)
     · exact absurd (by simp [quint_1]) (hj' 1)
-    · exact rest_A1B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB _ (Or.inl rfl) i
+    · exact rest_A1B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt hκp hκm hA hB _ (Or.inl rfl) i
     · exact absurd (by simp [quint_0]) (hj' 0)
-    · exact rest_A1B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB _ (Or.inr rfl) i
+    · exact rest_A1B5 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt hκp hκm hA hB _ (Or.inr rfl) i
   · have hz : (fun i : ZMod 5 => F.toFrame7.GG (F.toFrame7.ptC (quint ((5 : Fin 7)) 3 0 1 2 i))
         ⟨-1, 1, 0⟩) = fun i : ZMod 5 => quint (-((gA11 x - gA12 x) * F.S.tm)) (-(gA11 x - gA12 x)) (-((gA11 x - gA12 x) * F.S.tp)) ((gA22 x - gA12 x) * F.S.sp) 0 i := by
       funext i
@@ -341,7 +352,7 @@ theorem acute_A1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     (-1) ⟨-1, 1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
   · intro i j h1' h2'
     simp only [hc]
-    exact cyc_A1B6 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB i j h1' h2'
+    exact cyc_A1B6 F.S.tp F.S.tm F.S.sp F.S.sm κp κm F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt hκp hκm hA hB i j h1' h2'
   · intro j' hj' i
     simp only [hc]
     rw [hpt]

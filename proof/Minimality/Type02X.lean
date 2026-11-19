@@ -521,11 +521,19 @@ end Frame02
 noncomputable def wpts (ρ : ℝ) : Fin 7 → C3 :=
   ![⟨1, 0, 0⟩, ⟨1, ρ, 0⟩, ⟨0, 0, 0⟩, ⟨1, 0, 1⟩, ⟨1, 1, 1⟩, ⟨0, 0, 1⟩, ⟨0, 1 - ρ, 1⟩]
 
-set_option hygiene false in
-macro "stw" : tactic => `(tactic| first
-  | (left; linarith [ha, hb, hρ, hρ1, hγ, hδ, hs, hr, hsb, hP, hf5, (mul_pos ha ha), (mul_pos ha hb), (mul_pos ha hρ), (mul_pos ha hρ1), (mul_pos ha hγ), (mul_pos ha hδ), (mul_pos ha hs), (mul_pos ha hr), (mul_pos ha hsb), (mul_pos ha hP), (mul_pos ha hf5), (mul_pos hb hb), (mul_pos hb hρ), (mul_pos hb hρ1), (mul_pos hb hγ), (mul_pos hb hδ), (mul_pos hb hs), (mul_pos hb hr), (mul_pos hb hsb), (mul_pos hb hP), (mul_pos hb hf5), (mul_pos hρ hρ), (mul_pos hρ hρ1), (mul_pos hρ hγ), (mul_pos hρ hδ), (mul_pos hρ hs), (mul_pos hρ hr), (mul_pos hρ hsb), (mul_pos hρ hP), (mul_pos hρ hf5), (mul_pos hρ1 hρ1), (mul_pos hρ1 hγ), (mul_pos hρ1 hδ), (mul_pos hρ1 hs), (mul_pos hρ1 hr), (mul_pos hρ1 hsb), (mul_pos hρ1 hP), (mul_pos hρ1 hf5), (mul_pos hγ hγ), (mul_pos hγ hδ), (mul_pos hγ hs), (mul_pos hγ hr), (mul_pos hγ hsb), (mul_pos hγ hP), (mul_pos hγ hf5), (mul_pos hδ hδ), (mul_pos hδ hs), (mul_pos hδ hr), (mul_pos hδ hsb), (mul_pos hδ hP), (mul_pos hδ hf5), (mul_pos hs hs), (mul_pos hs hr), (mul_pos hs hsb), (mul_pos hs hP), (mul_pos hs hf5), (mul_pos hr hr), (mul_pos hr hsb), (mul_pos hr hP), (mul_pos hr hf5), (mul_pos hsb hsb), (mul_pos hsb hP), (mul_pos hsb hf5), (mul_pos hP hP), (mul_pos hP hf5), (mul_pos hf5 hf5)])
-  | (right; refine ⟨by ring, ?_⟩; linarith [ha, hb, hρ, hρ1, hγ, hδ, hs, hr, hsb, hP, hf5, (mul_pos ha ha), (mul_pos ha hb), (mul_pos ha hρ), (mul_pos ha hρ1), (mul_pos ha hγ), (mul_pos ha hδ), (mul_pos ha hs), (mul_pos ha hr), (mul_pos ha hsb), (mul_pos ha hP), (mul_pos ha hf5), (mul_pos hb hb), (mul_pos hb hρ), (mul_pos hb hρ1), (mul_pos hb hγ), (mul_pos hb hδ), (mul_pos hb hs), (mul_pos hb hr), (mul_pos hb hsb), (mul_pos hb hP), (mul_pos hb hf5), (mul_pos hρ hρ), (mul_pos hρ hρ1), (mul_pos hρ hγ), (mul_pos hρ hδ), (mul_pos hρ hs), (mul_pos hρ hr), (mul_pos hρ hsb), (mul_pos hρ hP), (mul_pos hρ hf5), (mul_pos hρ1 hρ1), (mul_pos hρ1 hγ), (mul_pos hρ1 hδ), (mul_pos hρ1 hs), (mul_pos hρ1 hr), (mul_pos hρ1 hsb), (mul_pos hρ1 hP), (mul_pos hρ1 hf5), (mul_pos hγ hγ), (mul_pos hγ hδ), (mul_pos hγ hs), (mul_pos hγ hr), (mul_pos hγ hsb), (mul_pos hγ hP), (mul_pos hγ hf5), (mul_pos hδ hδ), (mul_pos hδ hs), (mul_pos hδ hr), (mul_pos hδ hsb), (mul_pos hδ hP), (mul_pos hδ hf5), (mul_pos hs hs), (mul_pos hs hr), (mul_pos hs hsb), (mul_pos hs hP), (mul_pos hs hf5), (mul_pos hr hr), (mul_pos hr hsb), (mul_pos hr hP), (mul_pos hr hf5), (mul_pos hsb hsb), (mul_pos hsb hP), (mul_pos hsb hf5), (mul_pos hP hP), (mul_pos hP hf5), (mul_pos hf5 hf5)])
-  | linarith [ha, hb, hρ, hρ1, hγ, hδ, hs, hr, hsb, hP, hf5, (mul_pos ha ha), (mul_pos ha hb), (mul_pos ha hρ), (mul_pos ha hρ1), (mul_pos ha hγ), (mul_pos ha hδ), (mul_pos ha hs), (mul_pos ha hr), (mul_pos ha hsb), (mul_pos ha hP), (mul_pos ha hf5), (mul_pos hb hb), (mul_pos hb hρ), (mul_pos hb hρ1), (mul_pos hb hγ), (mul_pos hb hδ), (mul_pos hb hs), (mul_pos hb hr), (mul_pos hb hsb), (mul_pos hb hP), (mul_pos hb hf5), (mul_pos hρ hρ), (mul_pos hρ hρ1), (mul_pos hρ hγ), (mul_pos hρ hδ), (mul_pos hρ hs), (mul_pos hρ hr), (mul_pos hρ hsb), (mul_pos hρ hP), (mul_pos hρ hf5), (mul_pos hρ1 hρ1), (mul_pos hρ1 hγ), (mul_pos hρ1 hδ), (mul_pos hρ1 hs), (mul_pos hρ1 hr), (mul_pos hρ1 hsb), (mul_pos hρ1 hP), (mul_pos hρ1 hf5), (mul_pos hγ hγ), (mul_pos hγ hδ), (mul_pos hγ hs), (mul_pos hγ hr), (mul_pos hγ hsb), (mul_pos hγ hP), (mul_pos hγ hf5), (mul_pos hδ hδ), (mul_pos hδ hs), (mul_pos hδ hr), (mul_pos hδ hsb), (mul_pos hδ hP), (mul_pos hδ hf5), (mul_pos hs hs), (mul_pos hs hr), (mul_pos hs hsb), (mul_pos hs hP), (mul_pos hs hf5), (mul_pos hr hr), (mul_pos hr hsb), (mul_pos hr hP), (mul_pos hr hf5), (mul_pos hsb hsb), (mul_pos hsb hP), (mul_pos hsb hf5), (mul_pos hP hP), (mul_pos hP hf5), (mul_pos hf5 hf5)])
+open Lean in
+/-- Positivity-product closer for the wedge rows: the positivity facts are passed as arguments, linarith gets them
+and all their pairwise products. -/
+macro "stw" hs:(ppSpace ident)* : tactic => do
+  let mut ts : Array (TSyntax `term) := #[]
+  for h in hs do ts := ts.push h
+  for i in [0:hs.size] do
+    for j in [i:hs.size] do
+      ts := ts.push (← `(mul_pos $(hs[i]!) $(hs[j]!)))
+  `(tactic| first
+    | (left; linarith [$ts,*])
+    | (right; refine ⟨by ring, ?_⟩; linarith [$ts,*])
+    | linarith [$ts,*])
 
 /-- base view `e_Z` and tilt `γ e_X - δ e_y`. -/
 def wU : C3 := ⟨0, 0, 1⟩
@@ -534,78 +542,78 @@ def wD (γ δ : ℝ) : C3 := ⟨γ, -δ, 0⟩
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem wrow2 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
-    (hγ : 0 < γ) (hδ : 0 < δ) (hs : 0 < s) (hr : 0 < r) (hsb : 0 < b * ρ - s) (hP : 0 < b - s)
-    (hf5 : 0 < δ * (b - s) + γ * (-a - ρ * s - r)) (V : C3) (hx : V.x = -γ) (hy : V.y = 2 * δ) :
+theorem wrow2 (ρ γ δ : ℝ) 
+    (hγ : 0 < γ) (hδ : 0 < δ) 
+    (V : C3) (hx : V.x = -γ) (hy : V.y = 2 * δ) :
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 0).sub (wpts ρ 2)) ((wpts ρ 5).sub (wpts ρ 2)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 0).sub (wpts ρ 2)) V ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 2).sub (wpts ρ 5)) V := by
   refine ⟨?_, ?_, ?_⟩ <;>
   · simp only [CaseC09.ST, wU, wD, Dc, C3.sub, wpts, hx, hy]
     norm_num
-    stw
+    stw     hγ hδ     
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem wrow0 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
-    (hγ : 0 < γ) (hδ : 0 < δ) (hs : 0 < s) (hr : 0 < r) (hsb : 0 < b * ρ - s) (hP : 0 < b - s)
-    (hf5 : 0 < δ * (b - s) + γ * (-a - ρ * s - r)) (V : C3) (hx : V.x = -γ) (hy : V.y = a + 2 * δ) :
+theorem wrow0 (ρ a γ δ : ℝ) (ha : 0 < a) (hρ : 0 < ρ) 
+    (hγ : 0 < γ) (hδ : 0 < δ) 
+    (V : C3) (hx : V.x = -γ) (hy : V.y = a + 2 * δ) :
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 1).sub (wpts ρ 0)) ((wpts ρ 2).sub (wpts ρ 0)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 1).sub (wpts ρ 0)) V ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 0).sub (wpts ρ 2)) V := by
   refine ⟨?_, ?_, ?_⟩ <;>
   · simp only [CaseC09.ST, wU, wD, Dc, C3.sub, wpts, hx, hy]
     norm_num
-    stw
+    stw ha  hρ  hγ hδ     
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem wrow1 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
-    (hγ : 0 < γ) (hδ : 0 < δ) (hs : 0 < s) (hr : 0 < r) (hsb : 0 < b * ρ - s) (hP : 0 < b - s)
-    (hf5 : 0 < δ * (b - s) + γ * (-a - ρ * s - r)) (V : C3) (hx : V.x = -γ - b * ρ) (hy : V.y = a + 2 * δ) :
+theorem wrow1 (ρ a b γ δ s : ℝ) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
+    (hγ : 0 < γ) (hs : 0 < s) (hsb : 0 < b * ρ - s)
+    (V : C3) (hx : V.x = -γ - b * ρ) (hy : V.y = a + 2 * δ) :
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 4).sub (wpts ρ 1)) ((wpts ρ 0).sub (wpts ρ 1)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 4).sub (wpts ρ 1)) V ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 1).sub (wpts ρ 0)) V := by
   refine ⟨?_, ?_, ?_⟩ <;>
   · simp only [CaseC09.ST, wU, wD, Dc, C3.sub, wpts, hx, hy]
     norm_num
-    stw
+    stw   hρ hρ1 hγ  hs  hsb  
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem wrow4 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
-    (hγ : 0 < γ) (hδ : 0 < δ) (hs : 0 < s) (hr : 0 < r) (hsb : 0 < b * ρ - s) (hP : 0 < b - s)
-    (hf5 : 0 < δ * (b - s) + γ * (-a - ρ * s - r)) (V : C3) (hx : V.x = -s) (hy : V.y = -(ρ * s) - r) :
+theorem wrow4 (ρ γ δ s r : ℝ) (hρ1 : 0 < 1 - ρ)
+    (hs : 0 < s) (hr : 0 < r)
+    (V : C3) (hx : V.x = -s) (hy : V.y = -(ρ * s) - r) :
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 6).sub (wpts ρ 4)) ((wpts ρ 1).sub (wpts ρ 4)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 6).sub (wpts ρ 4)) V ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 4).sub (wpts ρ 1)) V := by
   refine ⟨?_, ?_, ?_⟩ <;>
   · simp only [CaseC09.ST, wU, wD, Dc, C3.sub, wpts, hx, hy]
     norm_num
-    stw
+    stw    hρ1   hs hr   
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem wrow6 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
-    (hγ : 0 < γ) (hδ : 0 < δ) (hs : 0 < s) (hr : 0 < r) (hsb : 0 < b * ρ - s) (hP : 0 < b - s)
-    (hf5 : 0 < δ * (b - s) + γ * (-a - ρ * s - r)) (V : C3) (hx : V.x = b * ρ - s) (hy : V.y = -a - ρ * s - r) :
+theorem wrow6 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
+    (hs : 0 < s) (hr : 0 < r) (hsb : 0 < b * ρ - s)
+    (V : C3) (hx : V.x = b * ρ - s) (hy : V.y = -a - ρ * s - r) :
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 5).sub (wpts ρ 6)) ((wpts ρ 4).sub (wpts ρ 6)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 5).sub (wpts ρ 6)) V ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 6).sub (wpts ρ 4)) V := by
   refine ⟨?_, ?_, ?_⟩ <;>
   · simp only [CaseC09.ST, wU, wD, Dc, C3.sub, wpts, hx, hy]
     norm_num
-    stw
+    stw ha  hρ hρ1   hs hr hsb  
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem wrow5 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
-    (hγ : 0 < γ) (hδ : 0 < δ) (hs : 0 < s) (hr : 0 < r) (hsb : 0 < b * ρ - s) (hP : 0 < b - s)
+theorem wrow5 (ρ a b γ δ s r : ℝ) (hρ1 : 0 < 1 - ρ)
+    (hγ : 0 < γ) (hP : 0 < b - s)
     (hf5 : 0 < δ * (b - s) + γ * (-a - ρ * s - r)) (V : C3) (hx : V.x = b - s) (hy : V.y = -a - ρ * s - r) :
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 2).sub (wpts ρ 5)) ((wpts ρ 6).sub (wpts ρ 5)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 2).sub (wpts ρ 5)) V ∧
@@ -613,20 +621,20 @@ theorem wrow5 (ρ a b γ δ s r : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) 
   refine ⟨?_, ?_, ?_⟩ <;>
   · simp only [CaseC09.ST, wU, wD, Dc, C3.sub, wpts, hx, hy]
     norm_num
-    stw
+    stw    hρ1 hγ     hP hf5
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
-theorem wtri (ρ a b γ δ : ℝ) (ha : 0 < a) (hb : 0 < b) (hρ : 0 < ρ) (hρ1 : 0 < 1 - ρ)
-    (hγ : 0 < γ) (hδ : 0 < δ) (hs : 0 < γ) (hr : 0 < γ) (hsb : 0 < γ) (hP : 0 < γ) (hf5 : 0 < γ) :
+theorem wtri (ρ γ δ : ℝ)
+    (hγ : 0 < γ) (hδ : 0 < δ) :
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 0).sub (wpts ρ 2)) ((wpts ρ 4).sub (wpts ρ 2)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 0).sub (wpts ρ 2)) ((wpts ρ 3).sub (wpts ρ 2)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 4).sub (wpts ρ 0)) ((wpts ρ 3).sub (wpts ρ 0)) ∧
     CaseC09.ST 1 wU (wD γ δ) ((wpts ρ 2).sub (wpts ρ 4)) ((wpts ρ 3).sub (wpts ρ 4)) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
   · simp only [CaseC09.ST, wU, wD, Dc, C3.sub, wpts]
-    norm_num <;> stw
+    norm_num <;> stw     hγ hδ     
 
 theorem Dc_tilt' (a b W d : C3) (ε : ℝ) :
     Dc a b (C3.tilt W d ε) = Dc a b W + ε * Dc a b d := by
@@ -722,35 +730,35 @@ theorem wedge_rupert (ρ : ℝ) (hρ : 0 < ρ) (hρ1 : ρ < 1) (h12 : G.a12 = 0)
   rw [Filter.eventually_all]
   intro j
   rcases fin7_cases j with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-  · obtain ⟨k1, k2, k3⟩ := wrow0 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
+  · obtain ⟨k1, k2, k3⟩ := wrow0 ρ G.a11 γ 1 ha hρ hγ one_pos
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 0)) (by rw [(hv _).1]; norm_num [wpts] )
       (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 0 2 1 k1 k2 k3
-  · obtain ⟨k1, k2, k3⟩ := wrow1 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
+  · obtain ⟨k1, k2, k3⟩ := wrow1 ρ G.a11 G.a22 γ 1 s hρ hρ1' hγ hs0 hsb
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 1)) (by rw [(hv _).1]; norm_num [wpts]; ring)
       (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 1 0 4 k1 k2 k3
-  · obtain ⟨k1, k2, k3⟩ := wrow2 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
+  · obtain ⟨k1, k2, k3⟩ := wrow2 ρ γ 1 hγ one_pos
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 2)) (by rw [(hv _).1]; norm_num [wpts] )
       (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 2 5 0 k1 k2 k3
-  · obtain ⟨k0, k1, k2, k3⟩ := wtri ρ G.a11 G.a22 γ 1 ha hb hρ hρ1' hγ one_pos hγ hγ hγ hγ hγ
+  · obtain ⟨k0, k1, k2, k3⟩ := wtri ρ γ 1 hγ one_pos
     rw [← hpt] at k0 k1 k2 k3
     exact G.ev_tri _ _ _ _ 3 2 0 4 k0 k1 k2 k3
-  · obtain ⟨k1, k2, k3⟩ := wrow4 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
+  · obtain ⟨k1, k2, k3⟩ := wrow4 ρ γ 1 s (G.a11 / 4) hρ1' hs0 hr
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 4)) (by rw [(hv _).1]; norm_num [wpts]; ring)
       (by rw [(hv _).2]; norm_num [wpts]; ring)
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 4 1 6 k1 k2 k3
-  · obtain ⟨k1, k2, k3⟩ := wrow5 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
+  · obtain ⟨k1, k2, k3⟩ := wrow5 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) hρ1' hγ hP hf5
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 5)) (by rw [(hv _).1]; norm_num [wpts] )
       (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 5 6 2 k1 k2 k3
-  · obtain ⟨k1, k2, k3⟩ := wrow6 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
+  · obtain ⟨k1, k2, k3⟩ := wrow6 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hρ hρ1' hs0 hr hsb
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 6)) (by rw [(hv _).1]; norm_num [wpts]; ring)
       (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
