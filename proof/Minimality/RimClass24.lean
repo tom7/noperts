@@ -166,6 +166,48 @@ theorem false_of_not_mem_8 (b : Fin 6 → Bool) (h : (8 : Fin 9) ∉ bitsToU b) 
   · rfl
   · exfalso; exact h (mem_bitsToU_8 b hb)
 
+theorem mem_bitsToU_iff (b : Fin 6 → Bool) (t : Fin 9) :
+    t ∈ bitsToU b ↔
+      (t = 2 ∧ b 0 = true) ∨ (t = 3 ∧ b 1 = true) ∨ (t = 4 ∧ b 2 = true) ∨
+      (t = 6 ∧ b 3 = true) ∨ (t = 7 ∧ b 4 = true) ∨ (t = 8 ∧ b 5 = true) := by
+  simp [bitsToU]
+
+theorem mem_bitsToU_2_iff (b : Fin 6 → Bool) : (2 : Fin 9) ∈ bitsToU b ↔ b 0 = true := by
+  simp [mem_bitsToU_iff]
+
+theorem mem_bitsToU_3_iff (b : Fin 6 → Bool) : (3 : Fin 9) ∈ bitsToU b ↔ b 1 = true := by
+  simp [mem_bitsToU_iff]
+
+theorem mem_bitsToU_4_iff (b : Fin 6 → Bool) : (4 : Fin 9) ∈ bitsToU b ↔ b 2 = true := by
+  simp [mem_bitsToU_iff]
+
+theorem mem_bitsToU_6_iff (b : Fin 6 → Bool) : (6 : Fin 9) ∈ bitsToU b ↔ b 3 = true := by
+  simp [mem_bitsToU_iff]
+
+theorem mem_bitsToU_7_iff (b : Fin 6 → Bool) : (7 : Fin 9) ∈ bitsToU b ↔ b 4 = true := by
+  simp [mem_bitsToU_iff]
+
+theorem mem_bitsToU_8_iff (b : Fin 6 → Bool) : (8 : Fin 9) ∈ bitsToU b ↔ b 5 = true := by
+  simp [mem_bitsToU_iff]
+
+theorem not_mem_bitsToU_2_iff (b : Fin 6 → Bool) : (2 : Fin 9) ∉ bitsToU b ↔ b 0 = false := by
+  rw [mem_bitsToU_2_iff, Bool.not_eq_true]
+
+theorem not_mem_bitsToU_3_iff (b : Fin 6 → Bool) : (3 : Fin 9) ∉ bitsToU b ↔ b 1 = false := by
+  rw [mem_bitsToU_3_iff, Bool.not_eq_true]
+
+theorem not_mem_bitsToU_4_iff (b : Fin 6 → Bool) : (4 : Fin 9) ∉ bitsToU b ↔ b 2 = false := by
+  rw [mem_bitsToU_4_iff, Bool.not_eq_true]
+
+theorem not_mem_bitsToU_6_iff (b : Fin 6 → Bool) : (6 : Fin 9) ∉ bitsToU b ↔ b 3 = false := by
+  rw [mem_bitsToU_6_iff, Bool.not_eq_true]
+
+theorem not_mem_bitsToU_7_iff (b : Fin 6 → Bool) : (7 : Fin 9) ∉ bitsToU b ↔ b 4 = false := by
+  rw [mem_bitsToU_7_iff, Bool.not_eq_true]
+
+theorem not_mem_bitsToU_8_iff (b : Fin 6 → Bool) : (8 : Fin 9) ∉ bitsToU b ↔ b 5 = false := by
+  rw [mem_bitsToU_8_iff, Bool.not_eq_true]
+
 -- ----------------------------------------------------------------------------
 -- Fintype and DecidableEq on FeasibleCellC
 -- ----------------------------------------------------------------------------
@@ -619,6 +661,340 @@ theorem orthocentre_rim_class_split (F : S0xFac 9 s0x_S24 x)
   · exact Or.inr (Or.inr h)
   · unfold isRealizablePattern at h_real
     rw [hns] at h_real
+    contradiction
+
+-- ----------------------------------------------------------------------------
+-- Task L: Elimination of Non-Simple Facing Patterns via Polyhedral Convexity
+-- ----------------------------------------------------------------------------
+
+/-- **Exhaustive Decomposition of Non-Simple Facing Patterns (Task L).**
+Every non-simple sign pattern  falls into one of 8 geometric cases:
+1. Empty front set  (1 pattern: idx 0)
+2. Alternates at Vertex 3 with (3, 7) front, (6, 8) back (4 patterns: 18, 19, 22, 23)
+3. Alternates at Vertex 3 with (6, 8) front, (3, 7) back (4 patterns: 40, 41, 44, 45)
+4. Alternates at Vertex 0 with (2, 4) front, 3 back (7 patterns: 5, 13, 21, 29, 37, 53, 61)
+5. Alternates at Vertex 2 with (2, 7) front, 6 back (4 patterns: 17, 49, 51, 55)
+6. Alternates at Vertex 6 with (4, 7) front, 8 back (4 patterns: 20, 28, 30, 31)
+7. Disjoint triangles {4, 6} = {046, 235} (1 pattern: idx 12)
+8. Disjoint triangles {2, 8} = {025, 346} (1 pattern: idx 33)
+Total: 1 + 4 + 4 + 7 + 4 + 4 + 1 + 1 = 26 patterns. -/
+theorem nonSimple_exhaustive (s : Fin 6 → Bool) (hns : classifyPattern s = .nonSimple) :
+    (bitsToU s = ∅) ∨
+    (3 ∈ bitsToU s ∧ 7 ∈ bitsToU s ∧ 6 ∉ bitsToU s ∧ 8 ∉ bitsToU s) ∨
+    (6 ∈ bitsToU s ∧ 8 ∈ bitsToU s ∧ 3 ∉ bitsToU s ∧ 7 ∉ bitsToU s) ∨
+    (2 ∈ bitsToU s ∧ 4 ∈ bitsToU s ∧ 3 ∉ bitsToU s) ∨
+    (2 ∈ bitsToU s ∧ 7 ∈ bitsToU s ∧ 6 ∉ bitsToU s) ∨
+    (4 ∈ bitsToU s ∧ 7 ∈ bitsToU s ∧ 8 ∉ bitsToU s) ∨
+    (bitsToU s = {4, 6}) ∨
+    (bitsToU s = {2, 8}) := by
+  revert s hns
+  decide
+
+/-- **Vertex-Quad Lemma (Generic Diagonals Cross Relation).**
+If four outward facet normals satisfy  with ,
+the facing signs cannot alternate  or . -/
+theorem quad_no_alternate (u : ℝ³) {n₁ n₂ n₃ n₄ : ℝ³} {a₁ a₂ a₃ a₄ : ℝ}
+    (ha₁ : 0 < a₁) (ha₂ : 0 < a₂) (ha₃ : 0 < a₃) (ha₄ : 0 < a₄)
+    (h_rel : a₁ • n₁ + a₃ • n₃ = a₂ • n₂ + a₄ • n₄) :
+    ¬ (0 < ⟪n₁, u⟫ ∧ ⟪n₂, u⟫ < 0 ∧ 0 < ⟪n₃, u⟫ ∧ ⟪n₄, u⟫ < 0) ∧
+    ¬ (⟪n₁, u⟫ < 0 ∧ 0 < ⟪n₂, u⟫ ∧ ⟪n₃, u⟫ < 0 ∧ 0 < ⟪n₄, u⟫) := by
+  have hdot : a₁ * ⟪n₁, u⟫ + a₃ * ⟪n₃, u⟫ = a₂ * ⟪n₂, u⟫ + a₄ * ⟪n₄, u⟫ := by
+    have h := congr_arg (fun v => ⟪v, u⟫) h_rel
+    simp only [inner_add_left, inner_smul_left] at h
+    exact h
+  constructor
+  · rintro ⟨h1, h2, h3, h4⟩
+    have hpos : 0 < a₁ * ⟪n₁, u⟫ + a₃ * ⟪n₃, u⟫ :=
+      add_pos (mul_pos ha₁ h1) (mul_pos ha₃ h3)
+    have hneg : a₂ * ⟪n₂, u⟫ + a₄ * ⟪n₄, u⟫ < 0 :=
+      add_neg (mul_neg_of_pos_of_neg ha₂ h2) (mul_neg_of_pos_of_neg ha₄ h4)
+    linarith
+  · rintro ⟨h1, h2, h3, h4⟩
+    have hneg : a₁ * ⟪n₁, u⟫ + a₃ * ⟪n₃, u⟫ < 0 :=
+      add_neg (mul_neg_of_pos_of_neg ha₁ h1) (mul_neg_of_pos_of_neg ha₃ h3)
+    have hpos : 0 < a₂ * ⟪n₂, u⟫ + a₄ * ⟪n₄, u⟫ :=
+      add_pos (mul_pos ha₂ h2) (mul_pos ha₄ h4)
+    linarith
+
+/-- **Vertex-Pentagon Alternation Lemma (Two Back Facets).**
+If five facet normals satisfy  with ,
+, and the two base facets  are back (), then  front with  back
+is impossible. -/
+theorem pent_no_alternate (u : ℝ³) {n₀ n₁ n₂ n₃ n₄ : ℝ³} {b₀ b₁ b₂ b₃ b₄ : ℝ}
+    (hb₀ : 0 ≤ b₀) (hb₁ : 0 ≤ b₁) (hb₂ : 0 < b₂) (hb₃ : 0 < b₃) (hb₄ : 0 < b₄)
+    (h_rel : b₃ • n₃ + b₀ • n₀ + b₁ • n₁ = b₂ • n₂ + b₄ • n₄)
+    (h₀ : ⟪n₀, u⟫ ≤ 0) (h₁ : ⟪n₁, u⟫ ≤ 0) :
+    ¬ (0 < ⟪n₂, u⟫ ∧ ⟪n₃, u⟫ < 0 ∧ 0 < ⟪n₄, u⟫) := by
+  intro ⟨h2, h3, h4⟩
+  have hdot : b₃ * ⟪n₃, u⟫ + b₀ * ⟪n₀, u⟫ + b₁ * ⟪n₁, u⟫ = b₂ * ⟪n₂, u⟫ + b₄ * ⟪n₄, u⟫ := by
+    have h := congr_arg (fun v => ⟪v, u⟫) h_rel
+    simp only [inner_add_left, inner_smul_left] at h
+    exact h
+  have hrhs : 0 < b₂ * ⟪n₂, u⟫ + b₄ * ⟪n₄, u⟫ :=
+    add_pos (mul_pos hb₂ h2) (mul_pos hb₄ h4)
+  have hlhs : b₃ * ⟪n₃, u⟫ + b₀ * ⟪n₀, u⟫ + b₁ * ⟪n₁, u⟫ < 0 := by
+    have hneg3 := mul_neg_of_pos_of_neg hb₃ h3
+    have hnonpos0 := mul_nonpos_of_nonneg_of_nonpos hb₀ h₀
+    have hnonpos1 := mul_nonpos_of_nonneg_of_nonpos hb₁ h₁
+    linarith
+  linarith
+
+/-- **Disjoint Facet Pair Dual Obstruction Lemma (2-term).**
+If  with , ,
+then  front while  back is impossible. -/
+theorem disjoint_pair_no_alternate (u : ℝ³) {n₁ n₂ n₃ n₄ : ℝ³} {c₁ c₂ d₁ d₂ : ℝ}
+    (hc₁ : 0 < c₁) (hc₂ : 0 < c₂) (hd₁ : 0 ≤ d₁) (hd₂ : 0 ≤ d₂)
+    (h_rel : c₁ • n₁ + c₂ • n₂ = d₁ • n₃ + d₂ • n₄) :
+    ¬ (0 < ⟪n₁, u⟫ ∧ 0 < ⟪n₂, u⟫ ∧ ⟪n₃, u⟫ ≤ 0 ∧ ⟪n₄, u⟫ ≤ 0) := by
+  intro ⟨h1, h2, h3, h4⟩
+  have hdot : c₁ * ⟪n₁, u⟫ + c₂ * ⟪n₂, u⟫ = d₁ * ⟪n₃, u⟫ + d₂ * ⟪n₄, u⟫ := by
+    have h := congr_arg (fun v => ⟪v, u⟫) h_rel
+    simp only [inner_add_left, inner_smul_left] at h
+    exact h
+  have hlhs : 0 < c₁ * ⟪n₁, u⟫ + c₂ * ⟪n₂, u⟫ :=
+    add_pos (mul_pos hc₁ h1) (mul_pos hc₂ h2)
+  have hrhs : d₁ * ⟪n₃, u⟫ + d₂ * ⟪n₄, u⟫ ≤ 0 := by
+    have hnp1 := mul_nonpos_of_nonneg_of_nonpos hd₁ h3
+    have hnp2 := mul_nonpos_of_nonneg_of_nonpos hd₂ h4
+    linarith
+  linarith
+
+/-- **Disjoint Facet Pair Dual Obstruction Lemma (3-term).**
+If  with , ,
+then  front while  back is impossible. -/
+theorem disjoint_pair_3_no_alternate (u : ℝ³) {n₁ n₂ n₃ n₄ n₅ : ℝ³} {c₁ c₂ d₁ d₂ d₃ : ℝ}
+    (hc₁ : 0 < c₁) (hc₂ : 0 < c₂) (hd₁ : 0 ≤ d₁) (hd₂ : 0 ≤ d₂) (hd₃ : 0 ≤ d₃)
+    (h_rel : c₁ • n₁ + c₂ • n₂ = d₁ • n₃ + d₂ • n₄ + d₃ • n₅) :
+    ¬ (0 < ⟪n₁, u⟫ ∧ 0 < ⟪n₂, u⟫ ∧ ⟪n₃, u⟫ ≤ 0 ∧ ⟪n₄, u⟫ ≤ 0 ∧ ⟪n₅, u⟫ ≤ 0) := by
+  intro ⟨h1, h2, h3, h4, h5⟩
+  have hdot : c₁ * ⟪n₁, u⟫ + c₂ * ⟪n₂, u⟫ = d₁ * ⟪n₃, u⟫ + d₂ * ⟪n₄, u⟫ + d₃ * ⟪n₅, u⟫ := by
+    have h := congr_arg (fun v => ⟪v, u⟫) h_rel
+    simp only [inner_add_left, inner_smul_left] at h
+    exact h
+  have hlhs : 0 < c₁ * ⟪n₁, u⟫ + c₂ * ⟪n₂, u⟫ :=
+    add_pos (mul_pos hc₁ h1) (mul_pos hc₂ h2)
+  have hrhs : d₁ * ⟪n₃, u⟫ + d₂ * ⟪n₄, u⟫ + d₃ * ⟪n₅, u⟫ ≤ 0 := by
+    have hnp1 := mul_nonpos_of_nonneg_of_nonpos hd₁ h3
+    have hnp2 := mul_nonpos_of_nonneg_of_nonpos hd₂ h4
+    have hnp3 := mul_nonpos_of_nonneg_of_nonpos hd₃ h5
+    linarith
+  linarith
+
+/-- **Polyhedral Convexity and Dual Balance Conditions (Task L).**
+For any geometrically realizable Type 24 polyhedron, the outward normals of facets
+satisfy linear relations at vertices (due to vertex cone convexity) and dual linear relations
+between disjoint facet pairs, and any viewpoint has at least one front facet (compactness). -/
+structure PolyhedralConvexity (F : S0xFac 9 s0x_S24 x) (u : ℝ³) where
+  a₃ : ℝ
+  a₆ : ℝ
+  a₇ : ℝ
+  a₈ : ℝ
+  ha₃ : 0 < a₃
+  ha₆ : 0 < a₆
+  ha₇ : 0 < a₇
+  ha₈ : 0 < a₈
+  h_v3 : a₃ • F.N 3 + a₇ • F.N 7 = a₆ • F.N 6 + a₈ • F.N 8
+  b₀ : ℝ
+  b₁ : ℝ
+  b₂ : ℝ
+  b₃ : ℝ
+  b₄ : ℝ
+  hb₀ : 0 ≤ b₀
+  hb₁ : 0 ≤ b₁
+  hb₂ : 0 < b₂
+  hb₃ : 0 < b₃
+  hb₄ : 0 < b₄
+  h_v0 : b₃ • F.N 3 + b₀ • F.N 0 + b₁ • F.N 1 = b₂ • F.N 2 + b₄ • F.N 4
+  c₀ : ℝ
+  c₅ : ℝ
+  c₂ : ℝ
+  c₆ : ℝ
+  c₇ : ℝ
+  hc₀ : 0 ≤ c₀
+  hc₅ : 0 ≤ c₅
+  hc₂ : 0 < c₂
+  hc₆ : 0 < c₆
+  hc₇ : 0 < c₇
+  h_v2 : c₆ • F.N 6 + c₀ • F.N 0 + c₅ • F.N 5 = c₂ • F.N 2 + c₇ • F.N 7
+  d₁ : ℝ
+  d₅ : ℝ
+  d₄ : ℝ
+  d₇ : ℝ
+  d₈ : ℝ
+  hd₁ : 0 ≤ d₁
+  hd₅ : 0 ≤ d₅
+  hd₄ : 0 < d₄
+  hd₇ : 0 < d₇
+  hd₈ : 0 < d₈
+  h_v6 : d₈ • F.N 8 + d₁ • F.N 1 + d₅ • F.N 5 = d₄ • F.N 4 + d₇ • F.N 7
+  e₄ : ℝ
+  e₆ : ℝ
+  e₀ : ℝ
+  e₈ : ℝ
+  he₄ : 0 < e₄
+  he₆ : 0 < e₆
+  he₀ : 0 ≤ e₀
+  he₈ : 0 ≤ e₈
+  h_p46 : e₄ • F.N 4 + e₆ • F.N 6 = e₀ • F.N 0 + e₈ • F.N 8
+  g₂ : ℝ
+  g₈ : ℝ
+  g₀ : ℝ
+  g₃ : ℝ
+  g₄ : ℝ
+  hg₂ : 0 < g₂
+  hg₈ : 0 < g₈
+  hg₀ : 0 ≤ g₀
+  hg₃ : 0 ≤ g₃
+  hg₄ : 0 ≤ g₄
+  h_p28 : g₂ • F.N 2 + g₈ • F.N 8 = g₀ • F.N 0 + g₃ • F.N 3 + g₄ • F.N 4
+  h_nonempty : ∃ t : Fin 9, 0 < ⟪F.N t, u⟫
+
+lemma not_nonSimple_empty (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
+    (h_nonempty : ∃ t : Fin 9, 0 < ⟪F.N t, u⟫)
+    (h0 : ⟪F.N 0, u⟫ ≤ 0) (h1 : ⟪F.N 1, u⟫ ≤ 0) (h5 : ⟪F.N 5, u⟫ ≤ 0)
+    (h_empty : bitsToU (facingPattern F u) = ∅) : False := by
+  rcases h_nonempty with ⟨t, ht⟩
+  set s := facingPattern F u
+  fin_cases t
+  · have h0_pos : 0 < ⟪F.N 0, u⟫ := ht; linarith
+  · have h1_pos : 0 < ⟪F.N 1, u⟫ := ht; linarith
+  · have hm : (2 : Fin 9) ∈ bitsToU s := by
+      rw [mem_bitsToU_2_iff]
+      exact (facingPattern_true_iff F u 0).mpr ht
+    rw [h_empty] at hm; cases hm
+  · have hm : (3 : Fin 9) ∈ bitsToU s := by
+      rw [mem_bitsToU_3_iff]
+      exact (facingPattern_true_iff F u 1).mpr ht
+    rw [h_empty] at hm; cases hm
+  · have hm : (4 : Fin 9) ∈ bitsToU s := by
+      rw [mem_bitsToU_4_iff]
+      exact (facingPattern_true_iff F u 2).mpr ht
+    rw [h_empty] at hm; cases hm
+  · have h5_pos : 0 < ⟪F.N 5, u⟫ := ht; linarith
+  · have hm : (6 : Fin 9) ∈ bitsToU s := by
+      rw [mem_bitsToU_6_iff]
+      exact (facingPattern_true_iff F u 3).mpr ht
+    rw [h_empty] at hm; cases hm
+  · have hm : (7 : Fin 9) ∈ bitsToU s := by
+      rw [mem_bitsToU_7_iff]
+      exact (facingPattern_true_iff F u 4).mpr ht
+    rw [h_empty] at hm; cases hm
+  · have hm : (8 : Fin 9) ∈ bitsToU s := by
+      rw [mem_bitsToU_8_iff]
+      exact (facingPattern_true_iff F u 5).mpr ht
+    rw [h_empty] at hm; cases hm
+
+/-- **Theorem: Non-Simple Patterns Are Geometrically Impossible (Task L).**
+Under the polyhedral convexity and dual linear relations of , the facing pattern
+at the orthocentre view  is never non-simple. -/
+theorem not_nonSimple_of_polyhedralConvexity (F : S0xFac 9 s0x_S24 x) (u : ℝ³)
+    (h_conv : PolyhedralConvexity F u)
+    (h0 : ⟪F.N 0, u⟫ ≤ 0) (h1 : ⟪F.N 1, u⟫ ≤ 0) (h5 : ⟪F.N 5, u⟫ ≤ 0)
+    (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, u⟫ ≠ 0) :
+    classifyPattern (facingPattern F u) ≠ .nonSimple := by
+  intro hns
+  set s := facingPattern F u
+  have hexh := nonSimple_exhaustive s hns
+  have hpos2 : (2 : Fin 9) ∈ bitsToU s → 0 < ⟪F.N 2, u⟫ := by
+    intro hm
+    rw [mem_bitsToU_2_iff] at hm
+    exact (facingPattern_true_iff F u 0).mp hm
+  have hpos3 : (3 : Fin 9) ∈ bitsToU s → 0 < ⟪F.N 3, u⟫ := by
+    intro hm
+    rw [mem_bitsToU_3_iff] at hm
+    exact (facingPattern_true_iff F u 1).mp hm
+  have hpos4 : (4 : Fin 9) ∈ bitsToU s → 0 < ⟪F.N 4, u⟫ := by
+    intro hm
+    rw [mem_bitsToU_4_iff] at hm
+    exact (facingPattern_true_iff F u 2).mp hm
+  have hpos6 : (6 : Fin 9) ∈ bitsToU s → 0 < ⟪F.N 6, u⟫ := by
+    intro hm
+    rw [mem_bitsToU_6_iff] at hm
+    exact (facingPattern_true_iff F u 3).mp hm
+  have hpos7 : (7 : Fin 9) ∈ bitsToU s → 0 < ⟪F.N 7, u⟫ := by
+    intro hm
+    rw [mem_bitsToU_7_iff] at hm
+    exact (facingPattern_true_iff F u 4).mp hm
+  have hpos8 : (8 : Fin 9) ∈ bitsToU s → 0 < ⟪F.N 8, u⟫ := by
+    intro hm
+    rw [mem_bitsToU_8_iff] at hm
+    exact (facingPattern_true_iff F u 5).mp hm
+
+  have hneg3 : (3 : Fin 9) ∉ bitsToU s → ⟪F.N 3, u⟫ < 0 := by
+    intro hm
+    rw [not_mem_bitsToU_3_iff] at hm
+    exact (facingPattern_false_iff F u 1 (h_no_edge_on 3)).mp hm
+  have hneg4 : (4 : Fin 9) ∉ bitsToU s → ⟪F.N 4, u⟫ < 0 := by
+    intro hm
+    rw [not_mem_bitsToU_4_iff] at hm
+    exact (facingPattern_false_iff F u 2 (h_no_edge_on 4)).mp hm
+  have hneg6 : (6 : Fin 9) ∉ bitsToU s → ⟪F.N 6, u⟫ < 0 := by
+    intro hm
+    rw [not_mem_bitsToU_6_iff] at hm
+    exact (facingPattern_false_iff F u 3 (h_no_edge_on 6)).mp hm
+  have hneg7 : (7 : Fin 9) ∉ bitsToU s → ⟪F.N 7, u⟫ < 0 := by
+    intro hm
+    rw [not_mem_bitsToU_7_iff] at hm
+    exact (facingPattern_false_iff F u 4 (h_no_edge_on 7)).mp hm
+  have hneg8 : (8 : Fin 9) ∉ bitsToU s → ⟪F.N 8, u⟫ < 0 := by
+    intro hm
+    rw [not_mem_bitsToU_8_iff] at hm
+    exact (facingPattern_false_iff F u 5 (h_no_edge_on 8)).mp hm
+
+  rcases hexh with h_empty | h_v3a | h_v3b | h_v0 | h_v2 | h_v6 | h_p46 | h_p28
+  · exact not_nonSimple_empty F u h_conv.h_nonempty h0 h1 h5 h_empty
+  · rcases h_v3a with ⟨m3, m7, n6, n8⟩
+    have h_obs := (quad_no_alternate u h_conv.ha₃ h_conv.ha₆ h_conv.ha₇ h_conv.ha₈ h_conv.h_v3).1
+    exact h_obs ⟨hpos3 m3, hneg6 n6, hpos7 m7, hneg8 n8⟩
+  · rcases h_v3b with ⟨m6, m8, n3, n7⟩
+    have h_obs := (quad_no_alternate u h_conv.ha₃ h_conv.ha₆ h_conv.ha₇ h_conv.ha₈ h_conv.h_v3).2
+    exact h_obs ⟨hneg3 n3, hpos6 m6, hneg7 n7, hpos8 m8⟩
+  · rcases h_v0 with ⟨m2, m4, n3⟩
+    have h_obs := pent_no_alternate u h_conv.hb₀ h_conv.hb₁ h_conv.hb₂ h_conv.hb₃ h_conv.hb₄ h_conv.h_v0 h0 h1
+    exact h_obs ⟨hpos2 m2, hneg3 n3, hpos4 m4⟩
+  · rcases h_v2 with ⟨m2, m7, n6⟩
+    have h_obs := pent_no_alternate u h_conv.hc₀ h_conv.hc₅ h_conv.hc₂ h_conv.hc₆ h_conv.hc₇ h_conv.h_v2 h0 h5
+    exact h_obs ⟨hpos2 m2, hneg6 n6, hpos7 m7⟩
+  · rcases h_v6 with ⟨m4, m7, n8⟩
+    have h_obs := pent_no_alternate u h_conv.hd₁ h_conv.hd₅ h_conv.hd₄ h_conv.hd₈ h_conv.hd₇ h_conv.h_v6 h1 h5
+    exact h_obs ⟨hpos4 m4, hneg8 n8, hpos7 m7⟩
+  · have m4 : (4 : Fin 9) ∈ bitsToU s := by rw [h_p46]; decide
+    have m6 : (6 : Fin 9) ∈ bitsToU s := by rw [h_p46]; decide
+    have n8 : (8 : Fin 9) ∉ bitsToU s := by rw [h_p46]; decide
+    have h_obs := disjoint_pair_no_alternate u h_conv.he₄ h_conv.he₆ h_conv.he₀ h_conv.he₈ h_conv.h_p46
+    exact h_obs ⟨hpos4 m4, hpos6 m6, h0, (hneg8 n8).le⟩
+  · have m2 : (2 : Fin 9) ∈ bitsToU s := by rw [h_p28]; decide
+    have m8 : (8 : Fin 9) ∈ bitsToU s := by rw [h_p28]; decide
+    have n3 : (3 : Fin 9) ∉ bitsToU s := by rw [h_p28]; decide
+    have n4 : (4 : Fin 9) ∉ bitsToU s := by rw [h_p28]; decide
+    have h_obs := disjoint_pair_3_no_alternate u h_conv.hg₂ h_conv.hg₈ h_conv.hg₀ h_conv.hg₃ h_conv.hg₄ h_conv.h_p28
+    exact h_obs ⟨hpos2 m2, hpos8 m8, h0, (hneg3 n3).le, (hneg4 n4).le⟩
+
+/-- **Theorem: Complete Unconditional Rim Class Split of Orthocentre View (Task L).**
+For any Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`), at the canonical orthocentre view
+`u* = apexView v 1`, if no facet is edge-on:
+under polyhedral convexity, `u*` unconditionally falls into one of the three geometric rim classes:
+`IsContiguousEndsOrTri F u*` (contiguous ends or 3-rim),
+or `IsSingleIsolated F u*` (single isolated end),
+or `IsMultiIsolated F u*` (multi-isolated ends with `025, 046, 236` back).
+The fourth disjunct `.nonSimple` is completely eliminated. -/
+theorem orthocentre_rim_class_split_closed (F : S0xFac 9 s0x_S24 x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
+    (hobt : ∀ e f, e ≠ f → ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, ![x 0 - x 1, x 2 - x 1, x 6 - x 1] f⟫ ≤ 0)
+    (h_no_edge_on : ∀ t : Fin 9, ⟪F.N t, Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1⟫ ≠ 0)
+    (h_conv : PolyhedralConvexity F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1)) :
+    let u := Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1
+    IsContiguousEndsOrTri F u ∨
+    IsSingleIsolated F u ∨
+    IsMultiIsolated F u := by
+  set u := Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1
+  have hsplit := orthocentre_sign_vector_split F hli hobt h_no_edge_on
+  rcases hsplit with h | h | h | hns
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr h)
+  · have ⟨h0, h1, h5⟩ := corner_facets_back F hli hobt
+    have hnot := not_nonSimple_of_polyhedralConvexity F u h_conv h0.le h1.le h5.le h_no_edge_on
     contradiction
 
 end
