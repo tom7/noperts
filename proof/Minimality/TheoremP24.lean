@@ -1269,4 +1269,20 @@ theorem theoremP24_orthocentre_5rim (F : S0xFac 9 s0x_S24 x)
   · exact isRupert_of_c62534 F hcell p v y hxy hu hE6 hE2 hE0 hV3 hV4 hV5
   · exact isRupert_of_c02534 F hcell p v y hxy hu hE0 hE2 hV3 hV4 hV5
 
+/-- **Theorem P (Type 24 Pure Orthocentre View Corollary).**
+For any solid of Type 24 (`F : S0xFac 9 s0x_S24 x`), with vertex 1 an obtuse corner
+with linearly independent edges `v = ![x 0 - x 1, x 2 - x 1, x 6 - x 1]` that are pairwise non-acute:
+if the canonical orthocentre view `apexView v 1` lies in any candidate cell with contiguous ends:
+`IsRupert (univ.image x)`, with NO assumed `u`, `p`, or `y`. -/
+theorem theoremP24_of_obtuse_corner (F : S0xFac 9 s0x_S24 x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
+    (hobt : ∀ e f, e ≠ f → ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, ![x 0 - x 1, x 2 - x 1, x 6 - x 1] f⟫ ≤ 0)
+    (cell : FeasibleCellC)
+    (hcell : InFeasibleCell F (Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] (1 : Fin 3 → ℝ)) cell) :
+    IsRupert (univ.image x) := by
+  have hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, Minimality.NCone.apexView ![x 0 - x 1, x 2 - x 1, x 6 - x 1] 1⟫ = 1 := by
+    intro e
+    exact Minimality.NCone.inner_edge_apexView hli 1 e
+  exact theoremP24_orthocentre F hli hobt hu hcell
+
 end Minimality.T24.TheoremP
