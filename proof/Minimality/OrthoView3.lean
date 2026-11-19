@@ -88,6 +88,62 @@ theorem robUni_v6 (z : ZMod 6 → ℝ)
              a51, a52, a53, a54, a55] at h1 h2 h3 h4 <;>
   linarith
 
+/-- **Robust unimodality for a 6-cycle with valley at 1 and peak at 5.** -/
+theorem robUni_v6_peak5 (z : ZMod 6 → ℝ)
+    (h10 : z 1 < z 0) (h12 : z 1 < z 2)
+    (h23 : z 2 < z 3) (h34 : z 3 < z 4)
+    (h45 : z 4 < z 5) (h05 : z 0 < z 5) :
+    RobUni z := by
+  have tab :
+      ((0 : ZMod 6) + 1 = 1) ∧
+      ((0 : ZMod 6) + 2 = 2) ∧
+      ((0 : ZMod 6) + 3 = 3) ∧
+      ((0 : ZMod 6) + 4 = 4) ∧
+      ((0 : ZMod 6) + 5 = 5) ∧
+      ((1 : ZMod 6) + 1 = 2) ∧
+      ((1 : ZMod 6) + 2 = 3) ∧
+      ((1 : ZMod 6) + 3 = 4) ∧
+      ((1 : ZMod 6) + 4 = 5) ∧
+      ((1 : ZMod 6) + 5 = 0) ∧
+      ((2 : ZMod 6) + 1 = 3) ∧
+      ((2 : ZMod 6) + 2 = 4) ∧
+      ((2 : ZMod 6) + 3 = 5) ∧
+      ((2 : ZMod 6) + 4 = 0) ∧
+      ((2 : ZMod 6) + 5 = 1) ∧
+      ((3 : ZMod 6) + 1 = 4) ∧
+      ((3 : ZMod 6) + 2 = 5) ∧
+      ((3 : ZMod 6) + 3 = 0) ∧
+      ((3 : ZMod 6) + 4 = 1) ∧
+      ((3 : ZMod 6) + 5 = 2) ∧
+      ((4 : ZMod 6) + 1 = 5) ∧
+      ((4 : ZMod 6) + 2 = 0) ∧
+      ((4 : ZMod 6) + 3 = 1) ∧
+      ((4 : ZMod 6) + 4 = 2) ∧
+      ((4 : ZMod 6) + 5 = 3) ∧
+      ((5 : ZMod 6) + 1 = 0) ∧
+      ((5 : ZMod 6) + 2 = 1) ∧
+      ((5 : ZMod 6) + 3 = 2) ∧
+      ((5 : ZMod 6) + 4 = 3) ∧
+      ((5 : ZMod 6) + 5 = 4) := by decide
+  obtain ⟨a01, a02, a03, a04, a05, a11, a12, a13, a14, a15, a21, a22, a23, a24, a25,
+          a31, a32, a33, a34, a35, a41, a42, a43, a44, a45, a51, a52, a53, a54, a55⟩ := tab
+  intro B b c d hb hbc hcd hd
+  have hB : B = 0 ∨ B = 1 ∨ B = 2 ∨ B = 3 ∨ B = 4 ∨ B = 5 := by revert B; decide
+  have hbcd :
+      (b = 1 ∧ c = 2 ∧ d = 3) ∨ (b = 1 ∧ c = 2 ∧ d = 4) ∨ (b = 1 ∧ c = 2 ∧ d = 5) ∨
+      (b = 1 ∧ c = 3 ∧ d = 4) ∨ (b = 1 ∧ c = 3 ∧ d = 5) ∨ (b = 1 ∧ c = 4 ∧ d = 5) ∨
+      (b = 2 ∧ c = 3 ∧ d = 4) ∨ (b = 2 ∧ c = 3 ∧ d = 5) ∨ (b = 2 ∧ c = 4 ∧ d = 5) ∨
+      (b = 3 ∧ c = 4 ∧ d = 5) := by omega
+  rintro ⟨h1, h2, h3, h4⟩
+  rcases hbcd with ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ |
+      ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ |
+      ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ <;>
+  rcases hB with rfl | rfl | rfl | rfl | rfl | rfl <;>
+  simp only [Nat.cast_one, Nat.cast_ofNat, a01, a02, a03, a04, a05, a11, a12, a13, a14, a15,
+             a21, a22, a23, a24, a25, a31, a32, a33, a34, a35, a41, a42, a43, a44, a45,
+             a51, a52, a53, a54, a55] at h1 h2 h3 h4 <;>
+  linarith
+
 set_option maxHeartbeats 200000
 
 /-- **Ray unimodality for 5-cycle (EEEVV).**
@@ -215,6 +271,49 @@ theorem isRupert_of_orthocentre_6rim {m n k : ℕ} {S : Fin m → Finset (Fin n)
     (h54 : 0 < ⟪x (c 4) - x (c 5), u⟫ ∨ (⟪x (c 4) - x (c 5), u⟫ = 0 ∧ 0 < ⟪x (c 4) - x (c 5), d⟫)) :
     IsRupert (Finset.univ.image x) := by
   have hR := robUni_ray_6 x p v y hxy hv c hE0 hE1 hE2 hV3 hV5 d hd10 hd12 h34 h54
+  exact isRupert_of_closedCell_ray (by norm_num) F hx hc hcyc hu d hR
+
+/-- **Ray unimodality for 6-cycle (EEEVVV) with peak at `c 5`.** -/
+theorem robUni_ray_6_peak5 {n k : ℕ} (x : Fin n → ℝ³) (p : ℝ³) (v : Fin k → ℝ³)
+    (y : Fin n → Fin k → ℝ) (hxy : ∀ i, x i = p + ∑ e, y i e • v e)
+    {u : ℝ³} (hv : ∀ e, ⟪v e, u⟫ = 1)
+    (c : ZMod 6 → Fin n)
+    (hE0 : (∑ e, y (c 0) e) = 1) (hE1 : (∑ e, y (c 1) e) = 1) (hE2 : (∑ e, y (c 2) e) = 1)
+    (hV3 : 1 < ∑ e, y (c 3) e) (hV5 : 1 < ∑ e, y (c 5) e)
+    (d : ℝ³) (hd10 : 0 < ⟪x (c 0) - x (c 1), d⟫) (hd12 : 0 < ⟪x (c 2) - x (c 1), d⟫)
+    (h34 : 0 < ⟪x (c 4) - x (c 3), u⟫ ∨ (⟪x (c 4) - x (c 3), u⟫ = 0 ∧ 0 < ⟪x (c 4) - x (c 3), d⟫))
+    (h45 : 0 < ⟪x (c 5) - x (c 4), u⟫ ∨ (⟪x (c 5) - x (c 4), u⟫ = 0 ∧ 0 < ⟪x (c 5) - x (c 4), d⟫)) :
+    ∀ᶠ ε in 𝓝[>] (0 : ℝ), RobUni (fun i => ⟪x (c i), u + ε • d⟫) := by
+  have d10 : ⟪x (c 0) - x (c 1), u⟫ = 0 := by
+    rw [depth_orthocentre x p v y hxy u hv]; linarith
+  have d12 : ⟪x (c 2) - x (c 1), u⟫ = 0 := by
+    rw [depth_orthocentre x p v y hxy u hv]; linarith
+  have d23 : 0 < ⟪x (c 3) - x (c 2), u⟫ := by
+    rw [depth_orthocentre x p v y hxy u hv]; linarith
+  have d05 : 0 < ⟪x (c 5) - x (c 0), u⟫ := by
+    rw [depth_orthocentre x p v y hxy u hv]; linarith
+  have ev10 := eventually_inner_sub_pos (x (c 1)) (x (c 0)) u d (Or.inr ⟨d10, hd10⟩)
+  have ev12 := eventually_inner_sub_pos (x (c 1)) (x (c 2)) u d (Or.inr ⟨d12, hd12⟩)
+  have ev23 := eventually_inner_sub_pos (x (c 2)) (x (c 3)) u d (Or.inl d23)
+  have ev34 := eventually_inner_sub_pos (x (c 3)) (x (c 4)) u d h34
+  have ev45 := eventually_inner_sub_pos (x (c 4)) (x (c 5)) u d h45
+  have ev05 := eventually_inner_sub_pos (x (c 0)) (x (c 5)) u d (Or.inl d05)
+  filter_upwards [ev10, ev12, ev23, ev34, ev45, ev05] with ε h1 h2 h3 h4 h5 h6
+  exact robUni_v6_peak5 _ h1 h2 h3 h4 h5 h6
+
+/-- **Theorem P, 6-rim EEEVVV case with peak at `c 5`.** -/
+theorem isRupert_of_orthocentre_6rim_peak5 {m n k : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (hx : Function.Injective x) {c : ZMod 6 → Fin n}
+    (hc : Function.Injective c) {U Dn : Finset (Fin m)} (hcyc : S0xCycUD S c U Dn)
+    {u : ℝ³} (hu : CellAt F U Dn u) (p : ℝ³) (v : Fin k → ℝ³) (y : Fin n → Fin k → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hv : ∀ e, ⟪v e, u⟫ = 1)
+    (hE0 : (∑ e, y (c 0) e) = 1) (hE1 : (∑ e, y (c 1) e) = 1) (hE2 : (∑ e, y (c 2) e) = 1)
+    (hV3 : 1 < ∑ e, y (c 3) e) (hV5 : 1 < ∑ e, y (c 5) e)
+    (d : ℝ³) (hd10 : 0 < ⟪x (c 0) - x (c 1), d⟫) (hd12 : 0 < ⟪x (c 2) - x (c 1), d⟫)
+    (h34 : 0 < ⟪x (c 4) - x (c 3), u⟫ ∨ (⟪x (c 4) - x (c 3), u⟫ = 0 ∧ 0 < ⟪x (c 4) - x (c 3), d⟫))
+    (h45 : 0 < ⟪x (c 5) - x (c 4), u⟫ ∨ (⟪x (c 5) - x (c 4), u⟫ = 0 ∧ 0 < ⟪x (c 5) - x (c 4), d⟫)) :
+    IsRupert (Finset.univ.image x) := by
+  have hR := robUni_ray_6_peak5 x p v y hxy hv c hE0 hE1 hE2 hV3 hV5 d hd10 hd12 h34 h45
   exact isRupert_of_closedCell_ray (by norm_num) F hx hc hcyc hu d hR
 
 end Minimality.H21
