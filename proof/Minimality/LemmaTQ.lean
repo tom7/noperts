@@ -17,7 +17,9 @@ orthocentre view `c* = H 1` of the corner 1 in the region `04325` (front set `{0
 The proof is the chart layer `Minimality.LemmaTQChart` (Lemmas A1, A1', A2, B, C, WT, CA and the
 assembly `tq_chart`); this file is the bridge from the solid to the chart:
 * `v3_3d`: the vertex-figure relation V3 at vertex 3 (Cramer's rule plus the edge signs);
-* `mkCh`: the chart data (normalized facet normals, `y3`, `θ`, `θb`, `γ`, V3);
+* `exists_ch`: the chart data (normalized facet normals, `y3`, `θ`, `θb`, `γ`, V3);
+* `tq_bridge`: from a chart statement (Q4 on `0234` or `0536` at the chart point `t` of `u`) to
+  `IsRupert`, for `u` in any cell with `012`, `016`, `126` back (also used by `LemmaTQHex`);
 * `lemmaTQ_04325`: the theorem.
 -/
 
@@ -316,19 +318,41 @@ theorem chf_of_cellAt {S : Ch24} (hfac : ∀ a b c t, ⟪F.N t, vw x a b c⟫ = 
   ⟨fun t ht => by have := h.1 t ht; rw [hfac] at this; exact pos_of_mul_pos_right this (kp_pos F t).le,
    fun t ht => by have := h.2 t ht; rw [hfac] at this; exact neg_of_mul_neg_right this (kp_pos F t).le⟩
 
-/-- **Lemma TQ, frame `04325`.**  Type-24 solid `x`, corner 1 with linearly independent edges,
-`G_ab = <x0 - x1, x2 - x1> ≤ 0`, `G_bc = <x2 - x1, x6 - x1> ≤ 0` (`G_ac` free), orthocentre view `u`
-(`<x_e - x1, u> = 1`) in the region `04325` (front facets exactly `0345` and `235`), the 3-rim cells
-with front sets `{235}`, `{346}`, `{025}` empty.  Then `IsRupert`: Q4 holds
-on the cell `0234` (at one point, `z0 < z2` or `z3 < z2`) or on `0536` (`z0 < z6`). -/
-theorem lemmaTQ_04325 (hx : Function.Injective x)
+omit F in
+theorem chf_div (S : Ch24) (a b c σ : ℝ) (t : Fin 9) :
+    chf S (a / σ) (b / σ) (c / σ) t = chf S a b c t / σ := by
+  fin_cases t <;>
+    simp only [chf, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val, Ch24.f025,
+      Ch24.f4350, Ch24.f046, Ch24.f235, Ch24.f236, Ch24.f346, L3] <;> ring
+
+/-- **Bridge** from the solid to the chart (for an orthocentre view `u` in
+any cell `CellAt F U Dn u` with `012`, `016`, `126` back): a chart statement `hch` giving Q4 on
+`0234` or `0536` from the chart data `S` (with `x3 - x1 = vw (a3, b3, c3)` and the facing of `346`),
+the facings of `t = u / |u|_1` and the metric gives `IsRupert`. -/
+theorem tq_bridge (hx : Function.Injective x)
     (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
     {u : ℝ³} (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
-    (hR : CellAt F {3, 6} {0, 1, 2, 4, 5, 7, 8} u)
+    {U Dn : Finset (Fin 9)} (hR : CellAt F U Dn u) (hD0 : (0 : Fin 9) ∈ Dn)
+    (hD1 : (1 : Fin 9) ∈ Dn) (hD5 : (5 : Fin 9) ∈ Dn)
     (hNo235 : ∀ w, ¬ CellAt F {6} {0, 1, 2, 3, 4, 5, 7, 8} w)
     (hNo346 : ∀ w, ¬ CellAt F {8} {0, 1, 2, 3, 4, 5, 6, 7} w)
-    (hNo025 : ∀ w, ¬ CellAt F {2} {0, 1, 3, 4, 5, 6, 7, 8} w) :
+    (hNo025 : ∀ w, ¬ CellAt F {2} {0, 1, 3, 4, 5, 6, 7, 8} w)
+    (hch : ∀ (S : Ch24) (t0 t1 t2 : ℝ), x 3 - x 1 = vw x S.a3 S.b3 S.c3 →
+      (∀ a b c, ⟪F.N 8, vw x a b c⟫ = kap F 8 * S.f346 a b c) →
+      (∀ s ∈ U, 0 < chf S t0 t1 t2 s) → (∀ s ∈ Dn, chf S t0 t1 t2 s < 0) →
+      t0 + t1 + t2 = 1 → S.No235 → S.No346 → S.No025 →
+      ∀ G00 G01 G02 G11 G12 G22 h2 : ℝ, 0 < h2 →
+      G00 * t0 + G01 * t1 + G02 * t2 = h2 → G01 * t0 + G11 * t1 + G12 * t2 = h2 →
+      G02 * t0 + G12 * t1 + G22 * t2 = h2 → G01 ≤ 0 → G12 ≤ 0 →
+      0 < G00 - 2 * G01 + G11 → 0 < G00 - 2 * G02 + G22 →
+      (G00 - G01 - G02 + G12) ^ 2 < (G00 - 2 * G01 + G11) * (G00 - 2 * G02 + G22) →
+      ((∃ a b c, S.Op0234 a b c) ∧ ∃ g0 g1 g2, S.Cl0234 g0 g1 g2 ∧
+        (G00 * g0 + G01 * g1 + G02 * g2 < G01 * g0 + G11 * g1 + G12 * g2 ∨
+          S.a3 * (G00 * g0 + G01 * g1 + G02 * g2) + S.b3 * (G01 * g0 + G11 * g1 + G12 * g2) +
+            S.c3 * (G02 * g0 + G12 * g1 + G22 * g2) < G01 * g0 + G11 * g1 + G12 * g2)) ∨
+      ((∃ a b c, S.Op0536 a b c) ∧ ∃ g0 g1 g2, S.Cl0536 g0 g1 g2 ∧
+        G00 * g0 + G01 * g1 + G02 * g2 < G02 * g0 + G12 * g1 + G22 * g2)) :
     IsRupert (Finset.univ.image x) := by
   -- coordinates along the corner edges
   have hcard : Fintype.card (Fin 3) = Module.finrank ℝ ℝ³ := by simp
@@ -349,6 +373,7 @@ theorem lemmaTQ_04325 (hx : Function.Injective x)
   have hxy : ∀ i, x i - x 1 = vw x (y i 0) (y i 1) (y i 2) := fun i => hrep _
   obtain ⟨S, ha3, hb3, hc3, e2, e3, e4, e6, e7, e8⟩ := exists_ch F hxy
   have hfac := facing_vw F e2 e3 e4 e6 e7 e8
+  have h3 : x 3 - x 1 = vw x S.a3 S.b3 S.c3 := by rw [ha3, hb3, hc3]; exact hxy 3
   -- Gram entries and depths
   set G00 := ⟪x 0 - x 1, x 0 - x 1⟫
   set G01 := ⟪x 0 - x 1, x 2 - x 1⟫
@@ -374,27 +399,15 @@ theorem lemmaTQ_04325 (hx : Function.Injective x)
   have q2 : G02 * c0 + G12 * c1 + G22 * c2 = 1 := by have := hu 2; rw [hu'] at this; simpa [d6] using this
   rw [hu'] at hR
   obtain ⟨hRU, hRD⟩ := chf_of_cellAt F hfac hR
-  have hc2 : 0 < c2 := by have := hRD 0 (by decide); simp [chf] at this; linarith
-  have hc1 : 0 < c1 := by have := hRD 1 (by decide); simp [chf] at this; linarith
-  have hc0 : 0 < c0 := by have := hRD 5 (by decide); simp [chf] at this; linarith
-  have f4 : 0 < S.f4350 c0 c1 c2 := by simpa [chf] using hRU 3 (by decide)
-  have f6 : 0 < S.f235 c0 c1 c2 := by simpa [chf] using hRU 6 (by decide)
-  have f2 : S.f025 c0 c1 c2 < 0 := by simpa [chf] using hRD 2 (by decide)
-  have f4' : S.f046 c0 c1 c2 < 0 := by simpa [chf] using hRD 4 (by decide)
-  have f7 : S.f236 c0 c1 c2 < 0 := by simpa [chf] using hRD 7 (by decide)
-  have f8 : S.f346 c0 c1 c2 < 0 := by simpa [chf] using hRD 8 (by decide)
+  have hc2 : 0 < c2 := by have := hRD 0 hD0; simp [chf] at this; linarith
+  have hc1 : 0 < c1 := by have := hRD 1 hD1; simp [chf] at this; linarith
+  have hc0 : 0 < c0 := by have := hRD 5 hD5; simp [chf] at this; linarith
   set σ := c0 + c1 + c2
   have hσ : 0 < σ := by positivity
-  have sc : ∀ α β γ : ℝ, L3 α β γ (c0 / σ) (c1 / σ) (c2 / σ) = L3 α β γ c0 c1 c2 / σ := by
-    intro α β γ; unfold L3; ring
-  have hR' : S.InR (c0 / σ) (c1 / σ) (c2 / σ) := by
-    refine ⟨div_pos hc0 hσ, div_pos hc1 hσ, div_pos hc2 hσ, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · show 0 < L3 _ _ _ _ _ _; rw [sc]; exact div_pos f4 hσ
-    · show 0 < L3 _ _ _ _ _ _; rw [sc]; exact div_pos f6 hσ
-    · show L3 _ _ _ _ _ _ < 0; rw [sc]; exact div_neg_of_neg_of_pos f2 hσ
-    · show L3 _ _ _ _ _ _ < 0; rw [sc]; exact div_neg_of_neg_of_pos f4' hσ
-    · show L3 _ _ _ _ _ _ < 0; rw [sc]; exact div_neg_of_neg_of_pos f7 hσ
-    · show L3 _ _ _ _ _ _ < 0; rw [sc]; exact div_neg_of_neg_of_pos f8 hσ
+  have hU' : ∀ s ∈ U, 0 < chf S (c0 / σ) (c1 / σ) (c2 / σ) s := fun s hs => by
+    rw [chf_div]; exact div_pos (hRU s hs) hσ
+  have hD' : ∀ s ∈ Dn, chf S (c0 / σ) (c1 / σ) (c2 / σ) s < 0 := fun s hs => by
+    rw [chf_div]; exact div_neg_of_neg_of_pos (hRD s hs) hσ
   have hts : c0 / σ + c1 / σ + c2 / σ = 1 := by
     rw [show c0 / σ + c1 / σ + c2 / σ = (c0 + c1 + c2) / σ by ring]; exact div_self hσ.ne'
   have r0 : G00 * (c0 / σ) + G01 * (c1 / σ) + G02 * (c2 / σ) = 1 / σ := by
@@ -441,7 +454,8 @@ theorem lemmaTQ_04325 (hx : Function.Injective x)
   have hC : (G00 - G01 - G02 + G12) ^ 2 < (G00 - 2 * G01 + G11) * (G00 - 2 * G02 + G22) := by
     convert hCS using 2 <;> ring
   -- the chart theorem
-  rcases tq_chart S hR' hts No235 No346 No025 (by positivity) r0 r1 r2 hab hbc hA hB hC with
+  rcases hch S _ _ _ h3 e8 hU' hD' hts No235 No346 No025 G00 G01 G02 G11 G12 G22 (1 / σ)
+      (by positivity) r0 r1 r2 hab hbc hA hB hC with
     ⟨⟨a, b, c, hop⟩, g0, g1, g2, hcl, hneg⟩ | ⟨⟨a, b, c, hop⟩, g0, g1, g2, hcl, hneg⟩
   · obtain ⟨o0, o1, o2, o025, o4350, o235, o046, o236, o346⟩ := hop
     obtain ⟨l0, l1, l2, l025, l4350, l235, l046, l236, l346⟩ := hcl
@@ -464,10 +478,8 @@ theorem lemmaTQ_04325 (hx : Function.Injective x)
       rw [← d2, inner_sub_left]; ring
     have z3 : ⟪x 3, vw x g0 g1 g2⟫ = ⟪x 1, vw x g0 g1 g2⟫ + (S.a3 * (G00 * g0 + G01 * g1 + G02 * g2) +
         S.b3 * (G01 * g0 + G11 * g1 + G12 * g2) + S.c3 * (G02 * g0 + G12 * g1 + G22 * g2)) := by
-      have h : ⟪x 3 - x 1, vw x g0 g1 g2⟫ = ⟪vw x (y 3 0) (y 3 1) (y 3 2), vw x g0 g1 g2⟫ := by
-        rw [← hxy 3]
+      have h : ⟪x 3 - x 1, vw x g0 g1 g2⟫ = ⟪vw x S.a3 S.b3 S.c3, vw x g0 g1 g2⟫ := by rw [← h3]
       rw [inner_vw_left, d0, d2, d6, inner_sub_left] at h
-      rw [ha3, hb3, hc3]
       linarith
     rcases hneg with h | h
     · left; rw [z0, z2]; linarith
@@ -492,6 +504,36 @@ theorem lemmaTQ_04325 (hx : Function.Injective x)
     have z6 : ⟪x 6, vw x g0 g1 g2⟫ = ⟪x 1, vw x g0 g1 g2⟫ + (G02 * g0 + G12 * g1 + G22 * g2) := by
       rw [← d6, inner_sub_left]; ring
     rw [z0, z6]; linarith
+
+/-- **Lemma TQ, frame `04325`.**  Type-24 solid `x`, corner 1 with linearly independent edges,
+`G_ab = <x0 - x1, x2 - x1> ≤ 0`, `G_bc = <x2 - x1, x6 - x1> ≤ 0` (`G_ac` free), orthocentre view `u`
+(`<x_e - x1, u> = 1`) in the region `04325` (front facets exactly `0345` and `235`), the 3-rim cells
+with front sets `{235}`, `{346}`, `{025}` empty.  Then `IsRupert`: Q4 holds
+on the cell `0234` (at one point, `z0 < z2` or `z3 < z2`) or on `0536` (`z0 < z6`). -/
+theorem lemmaTQ_04325 (hx : Function.Injective x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
+    (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
+    {u : ℝ³} (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
+    (hR : CellAt F {3, 6} {0, 1, 2, 4, 5, 7, 8} u)
+    (hNo235 : ∀ w, ¬ CellAt F {6} {0, 1, 2, 3, 4, 5, 7, 8} w)
+    (hNo346 : ∀ w, ¬ CellAt F {8} {0, 1, 2, 3, 4, 5, 6, 7} w)
+    (hNo025 : ∀ w, ¬ CellAt F {2} {0, 1, 3, 4, 5, 6, 7, 8} w) :
+    IsRupert (Finset.univ.image x) := by
+  refine tq_bridge F hx hli hab hbc hu hR (by decide) (by decide) (by decide) hNo235 hNo346 hNo025 ?_
+  intro S t0 t1 t2 _ _ hU hD hts No235 No346 No025 G00 G01 G02 G11 G12 G22 h2 hh2 r0 r1 r2
+    hab' hbc' hA hB hC
+  have hR' : S.InR t0 t1 t2 := by
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · have := hD 5 (by decide); simp [chf] at this; linarith
+    · have := hD 1 (by decide); simp [chf] at this; linarith
+    · have := hD 0 (by decide); simp [chf] at this; linarith
+    · simpa [chf] using hU 3 (by decide)
+    · simpa [chf] using hU 6 (by decide)
+    · simpa [chf] using hD 2 (by decide)
+    · simpa [chf] using hD 4 (by decide)
+    · simpa [chf] using hD 7 (by decide)
+    · simpa [chf] using hD 8 (by decide)
+  exact tq_chart S hR' hts No235 No346 No025 hh2 r0 r1 r2 hab' hbc' hA hB hC
 
 end Bridge
 

@@ -138,6 +138,14 @@ def InR (a b c : ℝ) : Prop :=
   0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < S.f4350 a b c ∧ 0 < S.f235 a b c ∧ S.f025 a b c < 0 ∧
     S.f046 a b c < 0 ∧ S.f236 a b c < 0 ∧ S.f346 a b c < 0
 
+/-- The weak region: `025`, `046`, `236` back (no condition on `4350`, `235`, `346`).  It contains the
+region `04325` and the hexagon `046325`; Lemmas A2, B (case `c3 ≥ 1`) only use these facings of `t`. -/
+def InW (a b c : ℝ) : Prop :=
+  0 < a ∧ 0 < b ∧ 0 < c ∧ S.f025 a b c < 0 ∧ S.f046 a b c < 0 ∧ S.f236 a b c < 0
+
+theorem InR.toW {S : Ch24} {a b c : ℝ} (h : S.InR a b c) : S.InW a b c :=
+  ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.2.2.1, h.2.2.2.2.2.2.1, h.2.2.2.2.2.2.2.1⟩
+
 /-- The open cell `0234` (front `{025, 4350, 235}`). -/
 def Op0234 (a b c : ℝ) : Prop :=
   0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < S.f025 a b c ∧ 0 < S.f4350 a b c ∧ 0 < S.f235 a b c ∧
@@ -264,9 +272,9 @@ theorem Cl0234_congr {a b c a' b' c' : ℝ} (h : S.Cl0234 a b c) (ha : a = a') (
     (hc : c = c') : S.Cl0234 a' b' c' := by subst ha hb hc; exact h
 
 /-- The chart point `t` of the region: `θ < t_a`, `θb < t_b`, `γ < t_c`. -/
-theorem R_lt {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) :
+theorem R_lt {t0 t1 t2 : ℝ} (hW : S.InW t0 t1 t2) (hts : t0 + t1 + t2 = 1) :
     S.th < t0 ∧ S.thb < t1 ∧ S.ga < t2 := by
-  obtain ⟨-, -, -, -, -, h025, h046, h236, -⟩ := hR
+  obtain ⟨-, -, -, h025, h046, h236⟩ := hW
   rw [S.f025_eq hts] at h025
   rw [S.f046_eq hts] at h046
   rw [S.f236_eq hts] at h236
@@ -281,7 +289,7 @@ theorem wall_facts {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 
     0 < t1 + t2 - S.ga ∧ S.f025 t0 (t1 + t2 - S.ga) S.ga = 0 ∧
       0 < S.f235 t0 (t1 + t2 - S.ga) S.ga ∧ S.f046 t0 (t1 + t2 - S.ga) S.ga < 0 ∧
       S.f236 t0 (t1 + t2 - S.ga) S.ga < 0 ∧ S.f346 t0 (t1 + t2 - S.ga) S.ga < 0 := by
-  obtain ⟨θ, θb, γ⟩ := S.R_lt hR hts
+  obtain ⟨θ, θb, γ⟩ := S.R_lt hR.toW hts
   obtain ⟨_, h1, _, _, h235, _, h046, h236, h346⟩ := hR
   have hc : 0 < t2 - S.ga := by linarith
   refine ⟨by linarith, ?_, ?_, ?_, ?_, ?_⟩
@@ -297,7 +305,7 @@ theorem wall_facts {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 
 /-- **The cell 0234 is open** (from `R` and the empty cell `{235}`, via the wall ray). -/
 theorem wall_open {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No235) :
     ∃ a b c, S.Op0234 a b c := by
-  obtain ⟨θ, θb, γ⟩ := S.R_lt hR hts
+  obtain ⟨θ, θb, γ⟩ := S.R_lt hR.toW hts
   obtain ⟨hwb, hw025, hw235, hw046, hw236, hw346⟩ := S.wall_facts hR hts
   have ht0 := hR.1
   have hga := S.ga_pos
@@ -344,7 +352,7 @@ theorem a1 {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1)
       S.f025 τ (1 - τ - S.ga) S.ga = 0 ∧ S.f346 τ (1 - τ - S.ga) S.ga = 0 ∧
       0 < S.f4350 τ (1 - τ - S.ga) S.ga ∧ 0 < S.f235 τ (1 - τ - S.ga) S.ga ∧
       S.f236 τ (1 - τ - S.ga) S.ga < 0 ∧ S.f046 τ (1 - τ - S.ga) S.ga < 0 := by
-  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR hts
+  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR.toW hts
   obtain ⟨hwb, hw025, hw235, hw046, hw236, hw346⟩ := S.wall_facts hR hts
   have hwb' : t1 + t2 - S.ga = 1 - t0 - S.ga := by linarith
   rw [hwb'] at hw235 hw046 hw346
@@ -389,7 +397,7 @@ theorem a1' {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo
     (hTb : S.f346 S.th (1 - S.th - S.ga) S.ga ≤ 0) :
     0 ≤ S.f4350 S.th (1 - S.th - S.ga) S.ga ∧ 0 < S.f235 S.th (1 - S.th - S.ga) S.ga ∧
       S.f046 S.th (1 - S.th - S.ga) S.ga < 0 := by
-  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR hts
+  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR.toW hts
   obtain ⟨hwb, hw025, hw235, hw046, hw236, hw346⟩ := S.wall_facts hR hts
   have hwb' : t1 + t2 - S.ga = 1 - t0 - S.ga := by linarith
   rw [hwb'] at hw235 hw046
@@ -421,16 +429,16 @@ theorem a1' {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo
     rw [this]; exact seg_neg hTb h346t
 
 /-- Facings at `T_c = 046 × 236` in case C (`u (b3 - 1) > θb`); `f4350 ≥ 0` uses the empty cell `{346}`. -/
-theorem tc_facts {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No346)
+theorem tc_facts {t0 t1 t2 : ℝ} (hW : S.InW t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No346)
     (hC : S.thb < S.th / S.a3 * (S.b3 - 1)) :
     0 < 1 - S.th - S.thb ∧ S.f046 S.th S.thb (1 - S.th - S.thb) = 0 ∧
       S.f236 S.th S.thb (1 - S.th - S.thb) = 0 ∧ S.f235 S.th S.thb (1 - S.th - S.thb) < 0 ∧
       0 < S.f346 S.th S.thb (1 - S.th - S.thb) ∧ S.f025 S.th S.thb (1 - S.th - S.thb) < 0 ∧
       0 ≤ S.f4350 S.th S.thb (1 - S.th - S.thb) := by
-  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR hts
+  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hW hts
   obtain ⟨hua, hus, hu⟩ := S.u_facts
   set u := S.th / S.a3
-  have hc : 0 < 1 - S.th - S.thb := by linarith [hR.2.2.1]
+  have hc : 0 < 1 - S.th - S.thb := by linarith [hW.2.2.1]
   have h046 : S.f046 S.th S.thb (1 - S.th - S.thb) = 0 := by rw [S.f046_eq (by ring)]; ring
   have h236 : S.f236 S.th S.thb (1 - S.th - S.thb) = 0 := by rw [S.f236_eq (by ring)]; ring
   have h235 : S.f235 S.th S.thb (1 - S.th - S.thb) < 0 := by
@@ -448,7 +456,7 @@ theorem tc_facts {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1)
   refine ⟨hc, h046, h236, h235, h346, h025, ?_⟩
   by_contra h4
   push Not at h4
-  obtain ⟨ht0, ht1, ht2, -, -, -, h046t, h236t, -⟩ := hR
+  obtain ⟨ht0, ht1, ht2, -, h046t, h236t⟩ := hW
   refine S.no346_pert hNo (x := t0 - S.th) (y := t1 - S.thb) (z := t2 - (1 - S.th - S.thb))
     (Or.inl S.th_pos) (Or.inl S.thb_pos) (Or.inl hc) (Or.inl h346) (Or.inl h4) (Or.inl h235)
     (Or.inl h025) (Or.inr ⟨h046.le, ?_⟩) (Or.inr ⟨h236.le, ?_⟩)
@@ -483,11 +491,11 @@ theorem e23_facts :
     rw [e]; exact mul_neg_of_pos_of_neg hu (by linarith [S.o025])
 
 /-- **Lemma A2, closed part**: for `b3 ≥ 1`, `cl 0536` meets `L_236` (at `E23` or `T_c`). -/
-theorem a2_closed {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No346)
+theorem a2_closed {t0 t1 t2 : ℝ} (hW : S.InW t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No346)
     (hb3 : 1 ≤ S.b3) : ∃ y z, S.th + y + z = 1 ∧ S.Cl0536 S.th y z := by
   obtain ⟨hua, hus, hu⟩ := S.u_facts
   by_cases hC : S.thb < S.th / S.a3 * (S.b3 - 1)
-  · obtain ⟨hc, h046, h236, h235, h346, h025, h4350⟩ := S.tc_facts hR hts hNo hC
+  · obtain ⟨hc, h046, h236, h235, h346, h025, h4350⟩ := S.tc_facts hW hts hNo hC
     exact ⟨S.thb, 1 - S.th - S.thb, by ring, S.th_pos.le, S.thb_pos.le, hc.le, h046.ge, h4350,
       h346.le, h025.le, h235.le, h236.le⟩
   · push Not at hC
@@ -500,7 +508,7 @@ theorem a2_closed {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1
 `T_c + ε (1, -L, L - 1)` with `L > 0` small: `046` turns front, `236` back and `4350` front.  This
 covers the special position `f4350 (T_c) = 0` (the lines `L_046`, `L_236`, `L_4350` meet at `T_c`):
 the end rows `m2 < 1`, `r < 1` rule out an empty wedge there. -/
-theorem a2_open {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No346)
+theorem a2_open {t0 t1 t2 : ℝ} (hW : S.InW t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No346)
     (hb3 : 1 < S.b3) : ∃ a b c, S.Op0536 a b c := by
   obtain ⟨hua, hus, hu⟩ := S.u_facts
   have hs2 : 0 < 1 - S.s2 := by linarith [S.hs2]
@@ -513,7 +521,7 @@ theorem a2_open {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) 
   have d235 : S.f235 1 (-K) (K - 1) < 0 := by simp only [f235, L3]; nlinarith
   have d236 : S.f236 1 (-K) (K - 1) < 0 := by simp only [f236, L3]; linarith [S.hr]
   by_cases hC : S.thb < S.th / S.a3 * (S.b3 - 1)
-  · obtain ⟨hc, h046, h236, h235, h346, h025, h4350⟩ := S.tc_facts hR hts hNo hC
+  · obtain ⟨hc, h046, h236, h235, h346, h025, h4350⟩ := S.tc_facts hW hts hNo hC
     have hm2 : 0 < 1 - S.m2 := by linarith [S.hm2]
     set L := (1 - S.m2) / (|S.m1 - S.m2| + 1) with hL
     have hL1 : L * (|S.m1 - S.m2| + 1) = 1 - S.m2 := by rw [hL]; field_simp
@@ -538,7 +546,7 @@ theorem a2_open {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) 
 /-- **Mirror of Lemma A2, closed part**: for `c3 ≥ 1`, `cl 0234` meets `L_236` (at `E36` or `T_b`). -/
 theorem a2m_closed {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No235)
     (hc3 : 1 ≤ S.c3) : ∃ y z, S.th + y + z = 1 ∧ S.Cl0234 S.th y z := by
-  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR hts
+  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR.toW hts
   obtain ⟨hua, hus, hu⟩ := S.u_facts
   set u := S.th / S.a3
   by_cases hC : S.ga < u * (S.c3 - 1)
@@ -596,16 +604,17 @@ theorem e36_facts :
       simp only [f046, L3]; linear_combination -hua
     rw [e]; exact mul_neg_of_pos_of_neg hu (by linarith [S.o046])
 
-/-- **Lemma B** (`cl 0234` meets the side `L_012`, every class): a point `P = (x, 1 - x, 0)` of
-`cl 0234` with `0 < x < 1` (at `X = 012 × 236`, `012 × 4350` (uses the empty cell `{025}`) or
-`012 × 346`). -/
-theorem lemB {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No025) :
+/-- **Lemma B, cases B1, B2** (`cl 0234` meets the side `L_012` when `f4350 (X) < 0` or `c3 ≥ 1`):
+a point `P = (x, 1 - x, 0)` of `cl 0234` with `0 < x < 1`, at `X = 012 × 236` or `012 × 4350`
+(uses the empty cell `{025}`).  Only the weak region `InW` of `t` is used. -/
+theorem lemB_w {t0 t1 t2 : ℝ} (hW : S.InW t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No025)
+    (hX : S.f4350 S.th (1 - S.th) 0 < 0 ∨ 1 ≤ S.c3) :
     ∃ x, 0 < x ∧ x < 1 ∧ S.Cl0234 x (1 - x) 0 := by
-  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR hts
+  obtain ⟨hθ, hθb, -⟩ := S.R_lt hW hts
   obtain ⟨hua, hus, hu⟩ := S.u_facts
   have hθ0 := S.th_pos
   have hθb0 := S.thb_pos
-  have hsum : S.th + S.thb < 1 := by linarith [hR.2.2.1]
+  have hsum : S.th + S.thb < 1 := by linarith [hW.2.2.1]
   -- facings at X = (θ, 1 - θ, 0) and Y = (1 - θb, θb, 0)
   have X025 : S.f025 S.th (1 - S.th) 0 = 1 := by simp only [f025, L3]; ring
   have X236 : S.f236 S.th (1 - S.th) 0 = 0 := by rw [S.f236_eq (by ring)]; ring
@@ -707,68 +716,81 @@ theorem lemB {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hN
     exact ⟨x', by linarith, by linarith, by linarith, by linarith, le_refl _, by rw [P025]; norm_num,
       P4350.ge, P235, P046.le, P236.le, P346.le⟩
   · push Not at h4X
-    by_cases hc3 : 1 ≤ S.c3
-    · -- B1: `P = X`
-      refine ⟨S.th, hθ0, by linarith, hθ0.le, by linarith, le_refl _, by rw [X025]; norm_num, h4X,
-        X235.le, X046.le, X236.le, ?_⟩
-      rw [X346]
-      exact mul_nonpos_of_nonneg_of_nonpos (mul_nonneg hu.le (by linarith)) (by linarith [S.hw1])
-    · -- B3: `P = 012 × 346`, between `E36` and the wall end `T` of Lemma A1
-      push Not at hc3
-      obtain ⟨τ, hτθ, hτt, hτb, -, hT025, hT346, hT4350, hT235, hT236, hT046⟩ :=
-        S.a1 hR hts (S.tb346_pos hc3.le)
-      obtain ⟨hEs, hE236, hE346, hE4350, hE235, hE046⟩ := S.e36_facts
-      set u := S.th / S.a3
-      have hk : 0 < S.ga + u * (1 - S.c3) := by
-        have h1 := mul_pos hu (show 0 < 1 - S.c3 by linarith)
-        linarith [S.ga_pos]
-      set l := u * (1 - S.c3) / (S.ga + u * (1 - S.c3)) with hl
-      have hl0 : 0 < l := div_pos (mul_pos hu (by linarith)) hk
-      have hl1 : l < 1 := by rw [hl, div_lt_one hk]; linarith [S.ga_pos]
-      have hle : l * (S.ga + u * (1 - S.c3)) = u * (1 - S.c3) := by rw [hl, div_mul_cancel₀ _ hk.ne']
-      have c3z : (1 - l) * (u * (S.c3 - 1)) + l * S.ga = 0 := by linear_combination hle
-      have hl1' : 0 < 1 - l := by linarith
-      have hE025 : 0 < S.f025 S.th (u * S.b3) (u * (S.c3 - 1)) := by
-        have h1 := mul_pos hu (show 0 < 1 - S.c3 by linarith)
-        rw [S.f025_eq hEs]
-        exact mul_pos (by linarith [S.hp]) (by linarith [S.ga_pos])
-      have hA0p : 0 < (1 - l) * S.th + l * τ := by
-        linarith [mul_pos hl1' S.th_pos, mul_pos hl0 (show 0 < τ by linarith)]
-      have hA0q : (1 - l) * S.th + l * τ < 1 := by
-        linarith [mul_pos hl1' (show 0 < 1 - S.th by linarith), mul_pos hl0 (show 0 < 1 - τ by linarith [hR.2.1, hR.2.2.1])]
-      have hA1 : (1 - l) * (u * S.b3) + l * (1 - τ - S.ga) = 1 - ((1 - l) * S.th + l * τ) := by
-        linear_combination (1 - l) * hEs - c3z
-      set A0 := (1 - l) * S.th + l * τ with hA0
-      have q : ∀ α β γ' : ℝ, L3 α β γ' A0 (1 - A0) 0 =
-          (1 - l) * L3 α β γ' S.th (u * S.b3) (u * (S.c3 - 1)) + l * L3 α β γ' τ (1 - τ - S.ga) S.ga := by
-        intro α β γ'
-        rw [← L3_cvx, ← hA1, ← c3z]
-      refine ⟨A0, hA0p, hA0q, hA0p.le, by linarith, le_refl _, ?_, ?_, ?_, ?_, ?_, ?_⟩
-      · have := q 1 1 S.p
-        simp only [f025] at hE025 hT025 ⊢
-        rw [this, hT025]; linarith [mul_pos hl1' hE025]
-      · have := q 1 S.m1 S.m2
-        simp only [f4350] at hE4350 hT4350 ⊢
-        rw [this]; linarith [mul_pos hl1' hE4350, mul_pos hl0 hT4350]
-      · have := q S.s0 1 S.s2
-        simp only [f235] at hE235 hT235 ⊢
-        rw [this]; linarith [mul_pos hl1' hE235, mul_pos hl0 hT235]
-      · have := q 1 S.q 1
-        simp only [f046] at hE046 hT046 ⊢
-        rw [this]; linarith [mul_neg_of_pos_of_neg hl1' hE046, mul_neg_of_pos_of_neg hl0 hT046]
-      · have := q S.r 1 1
-        simp only [f236] at hE236 hT236 ⊢
-        rw [this, hE236]; linarith [mul_neg_of_pos_of_neg hl0 hT236]
-      · have := q S.w0 S.w1 1
-        simp only [f346] at hE346 hT346 ⊢
-        rw [this, hE346, hT346]; simp
+    have hc3 : 1 ≤ S.c3 := hX.resolve_left (not_lt.2 h4X)
+    -- B1: `P = X`
+    refine ⟨S.th, hθ0, by linarith, hθ0.le, by linarith, le_refl _, by rw [X025]; norm_num, h4X,
+      X235.le, X046.le, X236.le, ?_⟩
+    rw [X346]
+    exact mul_nonpos_of_nonneg_of_nonpos (mul_nonneg hu.le (by linarith)) (by linarith [S.hw1])
+
+/-- **Lemma B** (`cl 0234` meets the side `L_012`, every class): a point `P = (x, 1 - x, 0)` of
+`cl 0234` with `0 < x < 1` (at `X = 012 × 236`, `012 × 4350` (uses the empty cell `{025}`) or
+`012 × 346`). -/
+theorem lemB {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t1 + t2 = 1) (hNo : S.No025) :
+    ∃ x, 0 < x ∧ x < 1 ∧ S.Cl0234 x (1 - x) 0 := by
+  by_cases hX : S.f4350 S.th (1 - S.th) 0 < 0 ∨ 1 ≤ S.c3
+  · exact S.lemB_w hR.toW hts hNo hX
+  push Not at hX
+  have hc3 := hX.2
+  obtain ⟨hθ, -, -⟩ := S.R_lt hR.toW hts
+  obtain ⟨-, -, hu⟩ := S.u_facts
+  have hθ0 := S.th_pos
+  have hθ1 : S.th < 1 := by linarith [hR.2.1, hR.2.2.1]
+  -- B3: `P = 012 × 346`, between `E36` and the wall end `T` of Lemma A1
+  obtain ⟨τ, hτθ, hτt, hτb, -, hT025, hT346, hT4350, hT235, hT236, hT046⟩ :=
+    S.a1 hR hts (S.tb346_pos hc3.le)
+  obtain ⟨hEs, hE236, hE346, hE4350, hE235, hE046⟩ := S.e36_facts
+  set u := S.th / S.a3
+  have hk : 0 < S.ga + u * (1 - S.c3) := by
+    have h1 := mul_pos hu (show 0 < 1 - S.c3 by linarith)
+    linarith [S.ga_pos]
+  set l := u * (1 - S.c3) / (S.ga + u * (1 - S.c3)) with hl
+  have hl0 : 0 < l := div_pos (mul_pos hu (by linarith)) hk
+  have hl1 : l < 1 := by rw [hl, div_lt_one hk]; linarith [S.ga_pos]
+  have hle : l * (S.ga + u * (1 - S.c3)) = u * (1 - S.c3) := by rw [hl, div_mul_cancel₀ _ hk.ne']
+  have c3z : (1 - l) * (u * (S.c3 - 1)) + l * S.ga = 0 := by linear_combination hle
+  have hl1' : 0 < 1 - l := by linarith
+  have hE025 : 0 < S.f025 S.th (u * S.b3) (u * (S.c3 - 1)) := by
+    have h1 := mul_pos hu (show 0 < 1 - S.c3 by linarith)
+    rw [S.f025_eq hEs]
+    exact mul_pos (by linarith [S.hp]) (by linarith [S.ga_pos])
+  have hA0p : 0 < (1 - l) * S.th + l * τ := by
+    linarith [mul_pos hl1' S.th_pos, mul_pos hl0 (show 0 < τ by linarith)]
+  have hA0q : (1 - l) * S.th + l * τ < 1 := by
+    linarith [mul_pos hl1' (show 0 < 1 - S.th by linarith), mul_pos hl0 (show 0 < 1 - τ by linarith [hR.2.1, hR.2.2.1])]
+  have hA1 : (1 - l) * (u * S.b3) + l * (1 - τ - S.ga) = 1 - ((1 - l) * S.th + l * τ) := by
+    linear_combination (1 - l) * hEs - c3z
+  set A0 := (1 - l) * S.th + l * τ with hA0
+  have q : ∀ α β γ' : ℝ, L3 α β γ' A0 (1 - A0) 0 =
+      (1 - l) * L3 α β γ' S.th (u * S.b3) (u * (S.c3 - 1)) + l * L3 α β γ' τ (1 - τ - S.ga) S.ga := by
+    intro α β γ'
+    rw [← L3_cvx, ← hA1, ← c3z]
+  refine ⟨A0, hA0p, hA0q, hA0p.le, by linarith, le_refl _, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · have := q 1 1 S.p
+    simp only [f025] at hE025 hT025 ⊢
+    rw [this, hT025]; linarith [mul_pos hl1' hE025]
+  · have := q 1 S.m1 S.m2
+    simp only [f4350] at hE4350 hT4350 ⊢
+    rw [this]; linarith [mul_pos hl1' hE4350, mul_pos hl0 hT4350]
+  · have := q S.s0 1 S.s2
+    simp only [f235] at hE235 hT235 ⊢
+    rw [this]; linarith [mul_pos hl1' hE235, mul_pos hl0 hT235]
+  · have := q 1 S.q 1
+    simp only [f046] at hE046 hT046 ⊢
+    rw [this]; linarith [mul_neg_of_pos_of_neg hl1' hE046, mul_neg_of_pos_of_neg hl0 hT046]
+  · have := q S.r 1 1
+    simp only [f236] at hE236 hT236 ⊢
+    rw [this, hE236]; linarith [mul_neg_of_pos_of_neg hl0 hT236]
+  · have := q S.w0 S.w1 1
+    simp only [f346] at hE346 hT346 ⊢
+    rw [this, hE346, hT346]; simp
 
 end Ch24
 
 /-! ## Metric lemmas -/
 
 /-- **Lemma WT, general wall end** (fourth pass, sections B, C; WTg): `T = (τ, 1 - τ - γ, γ)` with
-`θ ≤ τ < t_a`, `P = (p, 1 - p, 0)`.  Only `G_ab, G_bc ≤ 0` are used; `b3 ≤ 1` (so the class
+`θ ≤ τ < t_a`, `0 ≤ γ < t_c`, `P = (p, 1 - p, 0)`.  Only `G_ab, G_bc ≤ 0` are used; `b3 ≤ 1` (so the class
 boundary `b3 = 1` is included, the strictness comes from `p α_T (t_a - τ) > 0`).  Conclusion:
 `z0 < z2` at `T` or `z3 < z2` at `P`. -/
 theorem wt_gen (G00 G01 G02 G11 G12 h2 t0 t1 t2 a3 b3 c3 θ s3 τ γ p : ℝ)
@@ -778,7 +800,7 @@ theorem wt_gen (G00 G01 G02 G11 G12 h2 t0 t1 t2 a3 b3 c3 θ s3 τ γ p : ℝ)
     (hab : G01 ≤ 0) (hbc : G12 ≤ 0) (hd : 0 < G00 + G11 - 2 * G01)
     (hc3 : 0 < c3) (hb3 : b3 ≤ 1) (hs3 : 0 < s3) (ha3e : a3 = θ * s3)
     (hb3e : b3 = s3 + 1 - θ * s3 - c3) (hθ0 : 0 < θ)
-    (hθτ : θ ≤ τ) (hτ : τ < t0) (hγ : 0 < γ) (hγt : γ < t2)
+    (hθτ : θ ≤ τ) (hτ : τ < t0) (hγ : 0 ≤ γ) (hγt : γ < t2)
     (hp0 : 0 < p) (hp1 : p ≤ 1) (hal : 0 ≤ c3 * t0 - a3 * t2) (halT : 0 < c3 * τ - a3 * γ) :
     (G00 * τ + G01 * (1 - τ - γ) + G02 * γ) - (G01 * τ + G11 * (1 - τ - γ) + G12 * γ) < 0 ∨
       a3 * (G00 * p + G01 * (1 - p)) + (b3 - 1) * (G01 * p + G11 * (1 - p)) +
@@ -852,7 +874,7 @@ theorem wt_gen (G00 G01 G02 G11 G12 h2 t0 t1 t2 a3 b3 c3 θ s3 τ γ p : ℝ)
         have : t2 * (1 - τ - γ) - (1 - t0 - t2) * γ = (t2 - γ) * (1 - τ - γ) + γ * ((t0 - τ) + (t2 - γ)) := by
           ring
         rw [this]; linarith [mul_pos (show (0:ℝ) < t2 - γ by linarith) (show (0:ℝ) < 1 - τ - γ by linarith),
-          mul_pos hγ (show (0:ℝ) < (t0 - τ) + (t2 - γ) by linarith)]
+          mul_nonneg hγ (show (0:ℝ) ≤ (t0 - τ) + (t2 - γ) by linarith)]
       have e1 : 0 ≤ (c3 * t0 - θ * s3 * t2) * p * (t2 * (1 - τ - γ) - (1 - t0 - t2) * γ) :=
         mul_nonneg (mul_nonneg hal hp0.le) hβ.le
       have e2 : 0 ≤ (1 - (s3 + 1 - θ * s3 - c3)) * t2 + c3 * (1 - t0 - t2) := by
@@ -949,7 +971,7 @@ theorem tq_chart (S : Ch24) {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t
             S.c3 * (G02 * g0 + G12 * g1 + G22 * g2) < G01 * g0 + G11 * g1 + G12 * g2)) ∨
       ((∃ a b c, S.Op0536 a b c) ∧ ∃ g0 g1 g2, S.Cl0536 g0 g1 g2 ∧
         G00 * g0 + G01 * g1 + G02 * g2 < G02 * g0 + G12 * g1 + G22 * g2) := by
-  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR hts
+  obtain ⟨hθ, hθb, hγ⟩ := S.R_lt hR.toW hts
   obtain ⟨ht0, ht1, ht2, h4350t, h235t, h025t, h046t, h236t, h346t⟩ := id hR
   have hop := S.wall_open hR hts hNo235
   rcases le_or_gt S.b3 1 with hb3 | hb3
@@ -984,12 +1006,12 @@ theorem tq_chart (S : Ch24) {t0 t1 t2 : ℝ} (hR : S.InR t0 t1 t2) (hts : t0 + t
       exact pos_of_mul_pos_right this hs2.le
     rcases wt_gen G00 G01 G02 G11 G12 h2 t0 t1 t2 S.a3 S.b3 S.c3 S.th (S.a3 + S.b3 + S.c3 - 1) τ S.ga x
         hh2 r0 r1 ht1 ht2 hts hab hbc (by linarith) S.hc3 hb3 S.s3_pos S.th_s3.symm
-        (by linarith [S.th_s3]) S.th_pos hθτ hτt S.ga_pos hγ hx0 hx1.le hal halT with h | h
+        (by linarith [S.th_s3]) S.th_pos hθτ hτt S.ga_pos.le hγ hx0 hx1.le hal halT with h | h
     · exact ⟨τ, 1 - τ - S.ga, S.ga, hTcl, Or.inl (by linarith)⟩
     · exact ⟨x, 1 - x, 0, hPcl, Or.inr (by linarith)⟩
   · -- class `b3 > 1`: Lemma CA (TL or CX)
-    obtain ⟨y', z', hs', hP'⟩ := S.a2_closed hR hts hNo346 hb3.le
-    have hop' := S.a2_open hR hts hNo346 hb3
+    obtain ⟨y', z', hs', hP'⟩ := S.a2_closed hR.toW hts hNo346 hb3.le
+    have hop' := S.a2_open hR.toW hts hNo346 hb3
     have hy' : y' ≤ S.thb := by
       have h := hP'.2.2.2.1
       rw [S.f046_eq hs'] at h
