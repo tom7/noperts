@@ -234,7 +234,7 @@ and `c 1 - c 3` (4 to 5) cross strictly:
 there exist `s, t ∈ (0, 1)` with `(1 - s) • x (c 0) + s • x (c 2) = (1 - t) • x (c 1) + t • x (c 3)`. -/
 theorem type24_quad_cross (x : Fin 7 → ℝ³)
     (F : S0xFac 9 T24.SAT.s0x_S24 x) :
-    ∃ s t : ℝ, 0 < s ∧ s ≤ 1 ∧ 0 ≤ t ∧ t ≤ 1 ∧
+    ∃ s t : ℝ, 0 < s ∧ s < 1 ∧ 0 ≤ t ∧ t ≤ 1 ∧
       (1 - s) • x (c0435 0) + s • x (c0435 2) = (1 - t) • x (c0435 1) + t • x (c0435 3) := by
   obtain ⟨al, be, hparam⟩ := type24_param F
   have h_n04 : ⟪F.N 4, x 3 - x 0⟫ < 0 := by
@@ -250,7 +250,7 @@ theorem type24_quad_cross (x : Fin 7 → ℝ³)
   obtain ⟨hal, hbe, hsum⟩ := type24_param_signs F hparam h_n04 h_n50_w h_n43_u
   obtain ⟨s, t, hs0, hs1, ht0, ht1, hcross⟩ := quad_cross_of_param (x 0) (x 3) (x 4) (x 5)
     hal hbe hsum hparam
-  refine ⟨s, t, hs0, hs1.le, ht0.le, ht1.le, hcross⟩
+  refine ⟨s, t, hs0, hs1, ht0.le, ht1.le, hcross⟩
 
 /-- **Theorem P, EVVV case for Type 24.**
 The EVVV case of Theorem P with the quad diagonal crossing hypothesis `hX` discharged
@@ -266,6 +266,47 @@ theorem isRupert_of_orthocentre_evvv_t24 {k : ℕ} {x : Fin 7 → ℝ³} (F : S0
     (d3 : (∑ e, y 3 e) = ∑ e, y 5 e → 0 < ⟪x 3 - x 5, d⟫) :
     IsRupert (Finset.univ.image x) := by
   obtain ⟨s, t, hs, hs1, ht, ht1, hX⟩ := type24_quad_cross x F
-  exact isRupert_of_orthocentre_evvv F hx inj_c0435 hcyc hu p v y hxy hv h01 h03 hs hs1 ht ht1 hX d d1 d3
+  exact isRupert_of_orthocentre_evvv F hx inj_c0435 hcyc hu p v y hxy hv h01 h03 hs hs1.le ht ht1 hX d d1 d3
+
+/-- Depth contradiction lemma: a point strictly inside the segment `v0 - v3`
+cannot have depth greater than or equal to both `v4` and `v5` when `v0` is strictly
+shallower than `v3`. -/
+theorem no_triple_tie (v0 v3 v4 v5 : ℝ³) (s t : ℝ)
+    (hs : s < 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hX : (1 - s) • v0 + s • v3 = (1 - t) • v4 + t • v5)
+    (u : ℝ³) (h03 : ⟪u, v0⟫ < ⟪u, v3⟫)
+    (h4 : ⟪u, v3⟫ ≤ ⟪u, v4⟫) (h5 : ⟪u, v3⟫ ≤ ⟪u, v5⟫) : False := by
+  have h_inner : ⟪u, (1 - s) • v0 + s • v3⟫ = ⟪u, (1 - t) • v4 + t • v5⟫ := by rw [hX]
+  simp only [inner_add_right, inner_smul_right] at h_inner
+  have hX_id : (1 - t) * (⟪u, v4⟫ - ⟪u, v3⟫) + t * (⟪u, v5⟫ - ⟪u, v3⟫) + (1 - s) * (⟪u, v3⟫ - ⟪u, v0⟫) = 0 := by
+    calc
+      (1 - t) * (⟪u, v4⟫ - ⟪u, v3⟫) + t * (⟪u, v5⟫ - ⟪u, v3⟫) + (1 - s) * (⟪u, v3⟫ - ⟪u, v0⟫)
+        = ((1 - t) * ⟪u, v4⟫ + t * ⟪u, v5⟫) - ((1 - s) * ⟪u, v0⟫ + s * ⟪u, v3⟫) := by ring
+      _ = 0 := by rw [h_inner, sub_self]
+  have hpos : 0 < (1 - s) * (⟪u, v3⟫ - ⟪u, v0⟫) := mul_pos (by linarith) (by linarith)
+  have hnonneg4 : 0 ≤ (1 - t) * (⟪u, v4⟫ - ⟪u, v3⟫) := mul_nonneg (by linarith) (by linarith)
+  have hnonneg5 : 0 ≤ t * (⟪u, v5⟫ - ⟪u, v3⟫) := mul_nonneg ht0 (by linarith)
+  linarith
+
+/-- **Lemma S Depth Split for Type 24.**
+For any view `u` in which vertex 3 is strictly deeper than vertex 0 (`⟪u, x 0⟫ < ⟪u, x 3⟫`),
+vertex 3 is strictly deeper than at least one of vertex 4 or vertex 5:
+`0 < ⟪x 3 - x 4, u⟫ ∨ 0 < ⟪x 3 - x 5, u⟫`. -/
+theorem type24_quad_depth_split {x : Fin 7 → ℝ³} (F : S0xFac 9 T24.SAT.s0x_S24 x)
+    (u : ℝ³) (h03 : ⟪u, x 0⟫ < ⟪u, x 3⟫) :
+    0 < ⟪x 3 - x 4, u⟫ ∨ 0 < ⟪x 3 - x 5, u⟫ := by
+  obtain ⟨s, t, hs0, hs1, ht0, ht1, hX⟩ := type24_quad_cross x F
+  by_contra hc
+  push Not at hc
+  have h4 : ⟪u, x 3⟫ ≤ ⟪u, x 4⟫ := by
+    have h := hc.1
+    rw [inner_sub_left] at h
+    linarith [real_inner_comm u (x 3), real_inner_comm u (x 4)]
+  have h5 : ⟪u, x 3⟫ ≤ ⟪u, x 5⟫ := by
+    have h := hc.2
+    rw [inner_sub_left] at h
+    linarith [real_inner_comm u (x 3), real_inner_comm u (x 5)]
+  change (1 - s) • x 0 + s • x 3 = (1 - t) • x 4 + t • x 5 at hX
+  exact no_triple_tie (x 0) (x 3) (x 4) (x 5) s t hs1 ht0 ht1 hX u h03 h4 h5
 
 end Minimality.H21
