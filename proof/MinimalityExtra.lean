@@ -1188,6 +1188,41 @@ def RimCellRupert : Prop :=
 
 end RimCell
 
+/-! ## Closed-cell Q4 leaf -/
+
+section ClosedCellQ4
+
+/-- **Lemma Q4 on a closed cell.** A polytope with `n` vertices `x` and `m` facets `S`
+(facet `t` supported by plane `⟪N t, ·⟫ = h t` with vertices `S t` on it and all other
+vertices strictly beneath) has a nonempty open cell `A` of views `a` with strict facings
+(`⟪N t, a⟫ > 0` on up facets `U` and `< 0` on down facets `Dn`) for which a 4-cycle `c` of
+vertices is a silhouette (every edge `c i → c (i+1)` lies on an up facet `a` and a down
+facet `b`, and every other vertex is off at least one of them). If the closed cell (weak
+facings `⟪N t, ·⟫ ≥ 0` on `U` and `≤ 0` on `Dn`) contains views `g, g'` at which some diagonal
+depth difference `⟪x (c i) - x (c j), ·⟫` (`(i, j) ∈ diagPairs4`) takes a strictly negative
+resp. strictly positive value, then the polytope is Rupert.
+
+Unlike `RimCellRupert`, this version requires no rim non-coplanarity hypothesis and uses the
+facet planes directly. -/
+def ClosedCellQ4 : Prop :=
+  ∀ {n m : ℕ} (x : Fin n → ℝ³), Function.Injective x →
+    ∀ (S : Fin m → Finset (Fin n)) (N : Fin m → ℝ³) (h : Fin m → ℝ),
+    (∀ t, ∀ i ∈ S t, ⟪N t, x i⟫ = h t) →
+    (∀ t, ∀ i ∉ S t, ⟪N t, x i⟫ < h t) →
+    ∀ (c : ZMod 4 → Fin n), Function.Injective c →
+      ∀ (U Dn : Finset (Fin m)),
+      (∀ i, ∃ a ∈ U, ∃ b ∈ Dn, c i ∈ S a ∧ c i ∈ S b ∧ c (i + 1) ∈ S a ∧ c (i + 1) ∈ S b ∧
+        ∀ q : Fin n, q ≠ c i → q ≠ c (i + 1) → q ∉ S a ∨ q ∉ S b) →
+      ∀ (a : ℝ³), (∀ t ∈ U, 0 < ⟪N t, a⟫) → (∀ t ∈ Dn, ⟪N t, a⟫ < 0) →
+      ∀ (g g' : ℝ³),
+        (∀ t ∈ U, 0 ≤ ⟪N t, g⟫) → (∀ t ∈ Dn, ⟪N t, g⟫ ≤ 0) →
+        (∀ t ∈ U, 0 ≤ ⟪N t, g'⟫) → (∀ t ∈ Dn, ⟪N t, g'⟫ ≤ 0) →
+        (∃ p ∈ diagPairs4, ⟪x (c p.1) - x (c p.2), g⟫ < 0) →
+        (∃ p ∈ diagPairs4, 0 < ⟪x (c p.1) - x (c p.2), g'⟫) →
+        IsRupert (Finset.univ.image x)
+
+end ClosedCellQ4
+
 /-! ## Gram extension -/
 
 section GramExtension
