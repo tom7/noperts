@@ -331,8 +331,8 @@ def D6043 : Finset (Fin 9) := {0, 1, 2, 3, 5, 6, 7}
 
 /-- Rim 6053 (EEVV, rotation of 0536). -/
 def c6053 : ZMod 4 → Fin 7 := ![6, 0, 5, 3]
-def U6053 : Finset (Fin 9) := {3, 4, 7}
-def D6053 : Finset (Fin 9) := {0, 1, 2, 5, 6, 8}
+def U6053 : Finset (Fin 9) := {3, 4, 8}
+def D6053 : Finset (Fin 9) := {0, 1, 2, 5, 6, 7}
 
 /-- Rim 6253 (EEVV, rotation of 2536). -/
 def c6253 : ZMod 4 → Fin 7 := ![6, 2, 5, 3]
@@ -346,23 +346,23 @@ def D6234 : Finset (Fin 9) := {0, 1, 2, 3, 4, 5, 6}
 
 /-- Rim 0526 (EEEV). -/
 def c0526 : ZMod 4 → Fin 7 := ![0, 5, 2, 6]
-def U0526 : Finset (Fin 9) := {2, 4, 7}
-def D0526 : Finset (Fin 9) := {0, 1, 3, 5, 6, 8}
+def U0526 : Finset (Fin 9) := {3, 4, 6, 7, 8}
+def D0526 : Finset (Fin 9) := {0, 1, 2, 5}
 
 /-- Rim 6402 (EEEV, rotation of 0264). -/
 def c6402 : ZMod 4 → Fin 7 := ![6, 4, 0, 2]
-def U6402 : Finset (Fin 9) := {2, 4, 7}
-def D6402 : Finset (Fin 9) := {0, 1, 3, 5, 6, 8}
+def U6402 : Finset (Fin 9) := {2, 3, 6, 7, 8}
+def D6402 : Finset (Fin 9) := {0, 1, 4, 5}
 
 /-- Rim 2360 (EEEV, rotation of 0236). -/
 def c2360 : ZMod 4 → Fin 7 := ![2, 3, 6, 0]
-def U2360 : Finset (Fin 9) := {2, 4, 7}
-def D2360 : Finset (Fin 9) := {0, 1, 3, 5, 6, 8}
+def U2360 : Finset (Fin 9) := {2, 3, 4, 6, 8}
+def D2360 : Finset (Fin 9) := {0, 1, 5, 7}
 
 /-- Rim 26053 (5-rim EEEVV, rotation of 05326). -/
 def c26053 : ZMod 5 → Fin 7 := ![2, 6, 0, 5, 3]
-def U26053 : Finset (Fin 9) := {1, 2, 5, 6}
-def D26053 : Finset (Fin 9) := {3, 4, 7}
+def U26053 : Finset (Fin 9) := {3, 4, 7, 8}
+def D26053 : Finset (Fin 9) := {0, 1, 2, 5, 6}
 
 /-- Rim 26043 (5-rim EEEVV, rotation of 04326). -/
 def c26043 : ZMod 5 → Fin 7 := ![2, 6, 0, 4, 3]
@@ -381,13 +381,13 @@ def D02635 : Finset (Fin 9) := {0, 1, 3, 4, 5, 8}
 
 /-- Rim 02634 (5-rim EEEVV). -/
 def c02634 : ZMod 5 → Fin 7 := ![0, 2, 6, 3, 4]
-def U02634 : Finset (Fin 9) := {2, 3, 7}
-def D02634 : Finset (Fin 9) := {0, 1, 4, 5, 6, 8}
+def U02634 : Finset (Fin 9) := {2, 3, 6, 7}
+def D02634 : Finset (Fin 9) := {0, 1, 4, 5, 8}
 
 /-- Rim 60253 (5-rim EEEVV, rotation of 02536). -/
 def c60253 : ZMod 5 → Fin 7 := ![6, 0, 2, 5, 3]
-def U60253 : Finset (Fin 9) := {2, 3, 4, 7}
-def D60253 : Finset (Fin 9) := {0, 1, 5, 6, 8}
+def U60253 : Finset (Fin 9) := {2, 3, 4, 8}
+def D60253 : Finset (Fin 9) := {0, 1, 5, 6, 7}
 
 /-- Rim 60534 (5-rim EEVVV, rotation of 05346). -/
 def c60534 : ZMod 5 → Fin 7 := ![6, 0, 5, 3, 4]
