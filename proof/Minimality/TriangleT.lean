@@ -4,8 +4,9 @@ public import Minimality.TheoremP24
 
 @[expose] public section
 
-open scoped RealInnerProductSpace BigOperators
-open Minimality.RimCell
+open scoped RealInnerProductSpace BigOperators Topology
+open Filter Finset
+open Minimality Minimality.H21 Minimality.T24.SAT
 
 namespace Minimality.T24.Hexagon
 
@@ -268,6 +269,479 @@ theorem facet2_back_iff (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 
       mul_neg_of_pos_of_neg h_factor_pos hn21
     rw [hident] at h_lhs_neg
     exact neg_of_mul_neg_right h_lhs_neg hy52_pos.le
+
+/-- The region `T_026`: views in `Simplex2` where all three cap facets
+are strictly front (`c 0 < theta0 y ∧ c 1 < theta2 y ∧ c 2 < theta6 y`). -/
+def TriangleT026 (y : Fin 7 → Fin 3 → ℝ) : Set (Fin 3 → ℝ) :=
+  {c ∈ Simplex2 | c 0 < theta0 y ∧ c 1 < theta2 y ∧ c 2 < theta6 y}
+
+/-- **Non-emptiness of T_026.**
+`TriangleT026 y` is non-empty if and only if `1 < ThetaInv y`. -/
+theorem triangleT026_nonempty_iff (y : Fin 7 → Fin 3 → ℝ)
+    (h0 : 0 < theta0 y) (h2 : 0 < theta2 y) (h6 : 0 < theta6 y) :
+    (TriangleT026 y).Nonempty ↔ 1 < ThetaInv y := by
+  constructor
+  · rintro ⟨c, ⟨⟨hc_nonneg, hsum⟩, ⟨hc0, hc1, hc2⟩⟩⟩
+    have hsum3 : c 0 + c 1 + c 2 = 1 := by
+      rw [← hsum, Fin.sum_univ_three]
+    dsimp [ThetaInv]
+    linarith
+  · intro hT
+    dsimp [ThetaInv] at hT
+    set Θ := theta0 y + theta2 y + theta6 y
+    have hΘ_pos : 0 < Θ := by dsimp [Θ]; linarith
+    set c : Fin 3 → ℝ := ![theta0 y / Θ, theta2 y / Θ, theta6 y / Θ]
+    refine ⟨c, ?_⟩
+    dsimp [TriangleT026, Simplex2]
+    have hc0 : c 0 = theta0 y / Θ := rfl
+    have hc1 : c 1 = theta2 y / Θ := rfl
+    have hc2 : c 2 = theta6 y / Θ := rfl
+    have hsum : ∑ e, c e = 1 := by
+      rw [Fin.sum_univ_three, hc0, hc1, hc2]
+      have : theta0 y / Θ + theta2 y / Θ + theta6 y / Θ = (theta0 y + theta2 y + theta6 y) / Θ := by ring
+      rw [this]
+      exact div_self hΘ_pos.ne'
+    have hpos0 : 0 ≤ c 0 := by rw [hc0]; positivity
+    have hpos1 : 0 ≤ c 1 := by rw [hc1]; positivity
+    have hpos2 : 0 ≤ c 2 := by rw [hc2]; positivity
+    have hnonneg : ∀ e, 0 ≤ c e := by
+      intro e
+      fin_cases e
+      · exact hpos0
+      · exact hpos1
+      · exact hpos2
+    refine ⟨⟨hnonneg, hsum⟩, ?_, ?_, ?_⟩
+    · rw [hc0]
+      rw [div_lt_iff₀ hΘ_pos]
+      nlinarith
+    · rw [hc1]
+      rw [div_lt_iff₀ hΘ_pos]
+      nlinarith
+    · rw [hc2]
+      rw [div_lt_iff₀ hΘ_pos]
+      nlinarith
+
+/-- **Facet 7 ({2, 3, 6}) Frontness Condition.**
+Under `c ∈ Simplex2` with `u = ∑ e, c e • v e`, Facet 7 is strictly front
+(`0 < ⟪F.N 7, u⟫`) if and only if `c 0 < theta0 y`. -/
+theorem facet7_front_iff (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (c : Fin 3 → ℝ) (hc_sum : ∑ e, c e = 1) :
+    0 < ⟪F.N 7, ∑ e, c e • v e⟫ ↔ c 0 < theta0 y := by
+  have he7 := Minimality.T24.TheoremP.s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 7 3
+  have hz72 : F.f 7 (x 2) = 0 := F.zero 7 2 (by decide)
+  have hz73 : F.f 7 (x 3) = 0 := F.zero 7 3 (by decide)
+  have hz76 : F.f 7 (x 6) = 0 := F.zero 7 6 (by decide)
+  have hn71 : F.f 7 (x 1) < 0 := F.neg 7 1 (by decide)
+  have hn70 : F.f 7 (x 0) < 0 := F.neg 7 0 (by decide)
+  rw [hz72, hz73, hz76] at he7
+  simp only [zero_sub] at he7
+  have hlin : ⟪F.N 7, ∑ e, c e • v e⟫ = c 0 * F.f 7 (x 0) - F.f 7 (x 1) := by
+    have hsum : ∑ e, c e • v e = c 0 • (x 0 - x 1) + c 1 • (x 2 - x 1) + c 2 • (x 6 - x 1) := by
+      rw [Fin.sum_univ_three, hv0, hv1, hv2]
+    rw [hsum]
+    simp only [inner_add_right, inner_smul_right]
+    rw [← F.hN 7 (x 0) (x 1), ← F.hN 7 (x 2) (x 1), ← F.hN 7 (x 6) (x 1)]
+    rw [hz72, hz76]
+    have hc_sum3 : c 0 + c 1 + c 2 = 1 := by rw [← hc_sum, Fin.sum_univ_three]
+    calc c 0 * (F.f 7 (x 0) - F.f 7 (x 1)) + c 1 * (0 - F.f 7 (x 1)) + c 2 * (0 - F.f 7 (x 1))
+      _ = c 0 * F.f 7 (x 0) - (c 0 + c 1 + c 2) * F.f 7 (x 1) := by ring
+      _ = c 0 * F.f 7 (x 0) - 1 * F.f 7 (x 1) := by rw [hc_sum3]
+      _ = c 0 * F.f 7 (x 0) - F.f 7 (x 1) := by ring
+  rw [hlin]
+  have hV3 := Minimality.T24.TheoremP.type24_sigma3_gt_one F p v y hxy hp hv0 hv1 hv2
+  have hS_pos : 0 < (∑ e, y 3 e) - 1 := by linarith
+  have hE3 : ∑ e, y 3 e = y 3 0 + y 3 1 + y 3 2 := by rw [Fin.sum_univ_three]
+  have hrel : y 3 0 * F.f 7 (x 0) = ((∑ e, y 3 e) - 1) * F.f 7 (x 1) := by
+    rw [hE3]
+    linarith
+  have hy30_pos : 0 < y 3 0 := by
+    have hprod : ((∑ e, y 3 e) - 1) * F.f 7 (x 1) < 0 := mul_neg_of_pos_of_neg hS_pos hn71
+    have hprod2 : y 3 0 * F.f 7 (x 0) < 0 := by rwa [hrel]
+    exact pos_of_mul_neg_left hprod2 hn70.le
+  dsimp [theta0]
+  have hident : (c 0 * ((∑ e, y 3 e) - 1) - y 3 0) * F.f 7 (x 1) =
+      y 3 0 * (c 0 * F.f 7 (x 0) - F.f 7 (x 1)) := by
+    calc (c 0 * ((∑ e, y 3 e) - 1) - y 3 0) * F.f 7 (x 1)
+      _ = c 0 * (((∑ e, y 3 e) - 1) * F.f 7 (x 1)) - y 3 0 * F.f 7 (x 1) := by ring
+      _ = c 0 * (y 3 0 * F.f 7 (x 0)) - y 3 0 * F.f 7 (x 1) := by rw [hrel]
+      _ = y 3 0 * (c 0 * F.f 7 (x 0) - F.f 7 (x 1)) := by ring
+  constructor
+  · intro hpos
+    have h_rhs_pos : 0 < y 3 0 * (c 0 * F.f 7 (x 0) - F.f 7 (x 1)) :=
+      mul_pos hy30_pos hpos
+    rw [← hident] at h_rhs_pos
+    have h_factor_neg : c 0 * ((∑ e, y 3 e) - 1) - y 3 0 < 0 :=
+      neg_of_mul_pos_left h_rhs_pos hn71.le
+    have h_step : c 0 * ((∑ e, y 3 e) - 1) < y 3 0 := by linarith
+    exact (lt_div_iff₀ hS_pos).2 h_step
+  · intro hlt
+    have h_step : c 0 * ((∑ e, y 3 e) - 1) < y 3 0 := (lt_div_iff₀ hS_pos).1 hlt
+    have h_factor_neg : c 0 * ((∑ e, y 3 e) - 1) - y 3 0 < 0 := by linarith
+    have h_lhs_pos : 0 < (c 0 * ((∑ e, y 3 e) - 1) - y 3 0) * F.f 7 (x 1) :=
+      mul_pos_of_neg_of_neg h_factor_neg hn71
+    rw [hident] at h_lhs_pos
+    exact pos_of_mul_pos_right h_lhs_pos hy30_pos.le
+
+/-- **Facet 4 ({0, 4, 6}) Frontness Condition.**
+Under `c ∈ Simplex2` with `u = ∑ e, c e • v e`, Facet 4 is strictly front
+(`0 < ⟪F.N 4, u⟫`) if and only if `c 1 < theta2 y`. -/
+theorem facet4_front_iff (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (c : Fin 3 → ℝ) (hc_sum : ∑ e, c e = 1) :
+    0 < ⟪F.N 4, ∑ e, c e • v e⟫ ↔ c 1 < theta2 y := by
+  have he4 := Minimality.T24.TheoremP.s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 4 4
+  have hz40 : F.f 4 (x 0) = 0 := F.zero 4 0 (by decide)
+  have hz44 : F.f 4 (x 4) = 0 := F.zero 4 4 (by decide)
+  have hz46 : F.f 4 (x 6) = 0 := F.zero 4 6 (by decide)
+  have hn41 : F.f 4 (x 1) < 0 := F.neg 4 1 (by decide)
+  have hn42 : F.f 4 (x 2) < 0 := F.neg 4 2 (by decide)
+  rw [hz40, hz44, hz46] at he4
+  simp only [zero_sub] at he4
+  have hlin : ⟪F.N 4, ∑ e, c e • v e⟫ = c 1 * F.f 4 (x 2) - F.f 4 (x 1) := by
+    have hsum : ∑ e, c e • v e = c 0 • (x 0 - x 1) + c 1 • (x 2 - x 1) + c 2 • (x 6 - x 1) := by
+      rw [Fin.sum_univ_three, hv0, hv1, hv2]
+    rw [hsum]
+    simp only [inner_add_right, inner_smul_right]
+    rw [← F.hN 4 (x 0) (x 1), ← F.hN 4 (x 2) (x 1), ← F.hN 4 (x 6) (x 1)]
+    rw [hz40, hz46]
+    have hc_sum3 : c 0 + c 1 + c 2 = 1 := by rw [← hc_sum, Fin.sum_univ_three]
+    calc c 0 * (0 - F.f 4 (x 1)) + c 1 * (F.f 4 (x 2) - F.f 4 (x 1)) + c 2 * (0 - F.f 4 (x 1))
+      _ = c 1 * F.f 4 (x 2) - (c 0 + c 1 + c 2) * F.f 4 (x 1) := by ring
+      _ = c 1 * F.f 4 (x 2) - 1 * F.f 4 (x 1) := by rw [hc_sum3]
+      _ = c 1 * F.f 4 (x 2) - F.f 4 (x 1) := by ring
+  rw [hlin]
+  have hV4 := Minimality.T24.TheoremP.type24_sigma4_gt_one F p v y hxy hp hv0 hv1 hv2
+  have hS_pos : 0 < (∑ e, y 4 e) - 1 := by linarith
+  have hE4 : ∑ e, y 4 e = y 4 0 + y 4 1 + y 4 2 := by rw [Fin.sum_univ_three]
+  have hrel : y 4 1 * F.f 4 (x 2) = ((∑ e, y 4 e) - 1) * F.f 4 (x 1) := by
+    rw [hE4]
+    linarith
+  have hy41_pos : 0 < y 4 1 := by
+    have hprod : ((∑ e, y 4 e) - 1) * F.f 4 (x 1) < 0 := mul_neg_of_pos_of_neg hS_pos hn41
+    have hprod2 : y 4 1 * F.f 4 (x 2) < 0 := by rwa [hrel]
+    exact pos_of_mul_neg_left hprod2 hn42.le
+  dsimp [theta2]
+  have hident : (c 1 * ((∑ e, y 4 e) - 1) - y 4 1) * F.f 4 (x 1) =
+      y 4 1 * (c 1 * F.f 4 (x 2) - F.f 4 (x 1)) := by
+    calc (c 1 * ((∑ e, y 4 e) - 1) - y 4 1) * F.f 4 (x 1)
+      _ = c 1 * (((∑ e, y 4 e) - 1) * F.f 4 (x 1)) - y 4 1 * F.f 4 (x 1) := by ring
+      _ = c 1 * (y 4 1 * F.f 4 (x 2)) - y 4 1 * F.f 4 (x 1) := by rw [hrel]
+      _ = y 4 1 * (c 1 * F.f 4 (x 2) - F.f 4 (x 1)) := by ring
+  constructor
+  · intro hpos
+    have h_rhs_pos : 0 < y 4 1 * (c 1 * F.f 4 (x 2) - F.f 4 (x 1)) :=
+      mul_pos hy41_pos hpos
+    rw [← hident] at h_rhs_pos
+    have h_factor_neg : c 1 * ((∑ e, y 4 e) - 1) - y 4 1 < 0 :=
+      neg_of_mul_pos_left h_rhs_pos hn41.le
+    have h_step : c 1 * ((∑ e, y 4 e) - 1) < y 4 1 := by linarith
+    exact (lt_div_iff₀ hS_pos).2 h_step
+  · intro hlt
+    have h_step : c 1 * ((∑ e, y 4 e) - 1) < y 4 1 := (lt_div_iff₀ hS_pos).1 hlt
+    have h_factor_neg : c 1 * ((∑ e, y 4 e) - 1) - y 4 1 < 0 := by linarith
+    have h_lhs_pos : 0 < (c 1 * ((∑ e, y 4 e) - 1) - y 4 1) * F.f 4 (x 1) :=
+      mul_pos_of_neg_of_neg h_factor_neg hn41
+    rw [hident] at h_lhs_pos
+    exact pos_of_mul_pos_right h_lhs_pos hy41_pos.le
+
+/-- **Facet 2 ({0, 2, 5}) Frontness Condition.**
+Under `c ∈ Simplex2` with `u = ∑ e, c e • v e`, Facet 2 is strictly front
+(`0 < ⟪F.N 2, u⟫`) if and only if `c 2 < theta6 y`. -/
+theorem facet2_front_iff (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (c : Fin 3 → ℝ) (hc_sum : ∑ e, c e = 1) :
+    0 < ⟪F.N 2, ∑ e, c e • v e⟫ ↔ c 2 < theta6 y := by
+  have he2 := Minimality.T24.TheoremP.s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 2 5
+  have hz20 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
+  have hz22 : F.f 2 (x 2) = 0 := F.zero 2 2 (by decide)
+  have hz25 : F.f 2 (x 5) = 0 := F.zero 2 5 (by decide)
+  have hn21 : F.f 2 (x 1) < 0 := F.neg 2 1 (by decide)
+  have hn26 : F.f 2 (x 6) < 0 := F.neg 2 6 (by decide)
+  rw [hz20, hz22, hz25] at he2
+  simp only [zero_sub] at he2
+  have hlin : ⟪F.N 2, ∑ e, c e • v e⟫ = c 2 * F.f 2 (x 6) - F.f 2 (x 1) := by
+    have hsum : ∑ e, c e • v e = c 0 • (x 0 - x 1) + c 1 • (x 2 - x 1) + c 2 • (x 6 - x 1) := by
+      rw [Fin.sum_univ_three, hv0, hv1, hv2]
+    rw [hsum]
+    simp only [inner_add_right, inner_smul_right]
+    rw [← F.hN 2 (x 0) (x 1), ← F.hN 2 (x 2) (x 1), ← F.hN 2 (x 6) (x 1)]
+    rw [hz20, hz22]
+    have hc_sum3 : c 0 + c 1 + c 2 = 1 := by rw [← hc_sum, Fin.sum_univ_three]
+    calc c 0 * (0 - F.f 2 (x 1)) + c 1 * (0 - F.f 2 (x 1)) + c 2 * (F.f 2 (x 6) - F.f 2 (x 1))
+      _ = c 2 * F.f 2 (x 6) - (c 0 + c 1 + c 2) * F.f 2 (x 1) := by ring
+      _ = c 2 * F.f 2 (x 6) - 1 * F.f 2 (x 1) := by rw [hc_sum3]
+      _ = c 2 * F.f 2 (x 6) - F.f 2 (x 1) := by ring
+  rw [hlin]
+  have hV5 := Minimality.T24.TheoremP.type24_sigma5_gt_one F p v y hxy hp hv0 hv1 hv2
+  have hS_pos : 0 < (∑ e, y 5 e) - 1 := by linarith
+  have hE5 : ∑ e, y 5 e = y 5 0 + y 5 1 + y 5 2 := by rw [Fin.sum_univ_three]
+  have hrel : y 5 2 * F.f 2 (x 6) = ((∑ e, y 5 e) - 1) * F.f 2 (x 1) := by
+    rw [hE5]
+    linarith
+  have hy52_pos : 0 < y 5 2 := by
+    have hprod : ((∑ e, y 5 e) - 1) * F.f 2 (x 1) < 0 := mul_neg_of_pos_of_neg hS_pos hn21
+    have hprod2 : y 5 2 * F.f 2 (x 6) < 0 := by rwa [hrel]
+    exact pos_of_mul_neg_left hprod2 hn26.le
+  dsimp [theta6]
+  have hident : (c 2 * ((∑ e, y 5 e) - 1) - y 5 2) * F.f 2 (x 1) =
+      y 5 2 * (c 2 * F.f 2 (x 6) - F.f 2 (x 1)) := by
+    calc (c 2 * ((∑ e, y 5 e) - 1) - y 5 2) * F.f 2 (x 1)
+      _ = c 2 * (((∑ e, y 5 e) - 1) * F.f 2 (x 1)) - y 5 2 * F.f 2 (x 1) := by ring
+      _ = c 2 * (y 5 2 * F.f 2 (x 6)) - y 5 2 * F.f 2 (x 1) := by rw [hrel]
+      _ = y 5 2 * (c 2 * F.f 2 (x 6) - F.f 2 (x 1)) := by ring
+  constructor
+  · intro hpos
+    have h_rhs_pos : 0 < y 5 2 * (c 2 * F.f 2 (x 6) - F.f 2 (x 1)) :=
+      mul_pos hy52_pos hpos
+    rw [← hident] at h_rhs_pos
+    have h_factor_neg : c 2 * ((∑ e, y 5 e) - 1) - y 5 2 < 0 :=
+      neg_of_mul_pos_left h_rhs_pos hn21.le
+    have h_step : c 2 * ((∑ e, y 5 e) - 1) < y 5 2 := by linarith
+    exact (lt_div_iff₀ hS_pos).2 h_step
+  · intro hlt
+    have h_step : c 2 * ((∑ e, y 5 e) - 1) < y 5 2 := (lt_div_iff₀ hS_pos).1 hlt
+    have h_factor_neg : c 2 * ((∑ e, y 5 e) - 1) - y 5 2 < 0 := by linarith
+    have h_lhs_pos : 0 < (c 2 * ((∑ e, y 5 e) - 1) - y 5 2) * F.f 2 (x 1) :=
+      mul_pos_of_neg_of_neg h_factor_neg hn21
+    rw [hident] at h_lhs_pos
+    exact pos_of_mul_pos_right h_lhs_pos hy52_pos.le
+
+/-- **Facet 0 ({0, 1, 2}) Backness Condition.**
+Under `c 2 > 0`, Facet 0 is strictly back (`⟪F.N 0, u⟫ < 0`). -/
+theorem facet0_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³)
+    (_hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (c : Fin 3 → ℝ) (hc2 : 0 < c 2) :
+    ⟪F.N 0, ∑ e, c e • v e⟫ < 0 := by
+  have hsum : ∑ e, c e • v e = c 0 • (x 0 - x 1) + c 1 • (x 2 - x 1) + c 2 • (x 6 - x 1) := by
+    rw [Fin.sum_univ_three, hv0, hv1, hv2]
+  rw [hsum]
+  simp only [inner_add_right, inner_smul_right]
+  rw [← F.hN 0 (x 0) (x 1), ← F.hN 0 (x 2) (x 1), ← F.hN 0 (x 6) (x 1)]
+  have hz0 : F.f 0 (x 0) = 0 := F.zero 0 0 (by decide)
+  have hz1 : F.f 0 (x 1) = 0 := F.zero 0 1 (by decide)
+  have hz2 : F.f 0 (x 2) = 0 := F.zero 0 2 (by decide)
+  have hn6 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
+  rw [hz0, hz1, hz2]
+  simp only [sub_self, mul_zero, zero_add, sub_zero]
+  exact mul_neg_of_pos_of_neg hc2 hn6
+
+/-- **Facet 1 ({0, 1, 6}) Backness Condition.**
+Under `c 1 > 0`, Facet 1 is strictly back (`⟪F.N 1, u⟫ < 0`). -/
+theorem facet1_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³)
+    (_hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (c : Fin 3 → ℝ) (hc1 : 0 < c 1) :
+    ⟪F.N 1, ∑ e, c e • v e⟫ < 0 := by
+  have hsum : ∑ e, c e • v e = c 0 • (x 0 - x 1) + c 1 • (x 2 - x 1) + c 2 • (x 6 - x 1) := by
+    rw [Fin.sum_univ_three, hv0, hv1, hv2]
+  rw [hsum]
+  simp only [inner_add_right, inner_smul_right]
+  rw [← F.hN 1 (x 0) (x 1), ← F.hN 1 (x 2) (x 1), ← F.hN 1 (x 6) (x 1)]
+  have hz0 : F.f 1 (x 0) = 0 := F.zero 1 0 (by decide)
+  have hz1 : F.f 1 (x 1) = 0 := F.zero 1 1 (by decide)
+  have hz6 : F.f 1 (x 6) = 0 := F.zero 1 6 (by decide)
+  have hn2 : F.f 1 (x 2) < 0 := F.neg 1 2 (by decide)
+  rw [hz0, hz1, hz6]
+  simp only [sub_self, mul_zero, zero_add, add_zero, sub_zero]
+  exact mul_neg_of_pos_of_neg hc1 hn2
+
+/-- **Facet 5 ({1, 2, 6}) Backness Condition.**
+Under `c 0 > 0`, Facet 5 is strictly back (`⟪F.N 5, u⟫ < 0`). -/
+theorem facet5_back (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³)
+    (_hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (c : Fin 3 → ℝ) (hc0 : 0 < c 0) :
+    ⟪F.N 5, ∑ e, c e • v e⟫ < 0 := by
+  have hsum : ∑ e, c e • v e = c 0 • (x 0 - x 1) + c 1 • (x 2 - x 1) + c 2 • (x 6 - x 1) := by
+    rw [Fin.sum_univ_three, hv0, hv1, hv2]
+  rw [hsum]
+  simp only [inner_add_right, inner_smul_right]
+  rw [← F.hN 5 (x 0) (x 1), ← F.hN 5 (x 2) (x 1), ← F.hN 5 (x 6) (x 1)]
+  have hz1 : F.f 5 (x 1) = 0 := F.zero 5 1 (by decide)
+  have hz2 : F.f 5 (x 2) = 0 := F.zero 5 2 (by decide)
+  have hz6 : F.f 5 (x 6) = 0 := F.zero 5 6 (by decide)
+  have hn0 : F.f 5 (x 0) < 0 := F.neg 5 0 (by decide)
+  rw [hz1, hz2, hz6]
+  simp only [sub_self, mul_zero, add_zero, sub_zero]
+  exact mul_neg_of_pos_of_neg hc0 hn0
+
+/-- The waist triangle cycle `![0, 2, 6]`. -/
+def c026 : ZMod 3 → Fin 7 := ![(0 : Fin 7), (2 : Fin 7), (6 : Fin 7)]
+
+/-- The up facets of the waist cell `c026` in `s0x_S24`. -/
+def U026 : Finset (Fin 9) := {2, 4, 7}
+
+/-- The down facets of the waist cell `c026` in `s0x_S24`. -/
+def D026 : Finset (Fin 9) := {0, 1, 5}
+
+theorem c026_inj : Function.Injective c026 := by decide
+
+theorem cyc026 : S0xCycUD s0x_S24 c026 U026 D026 := by decide
+
+theorem robUni_three (z : ZMod 3 → ℝ) : Minimality.H21.RobUni z := by
+  intro B b c d hb hbc hcd hd3
+  omega
+
+/-- Rupert closure for any cell view in `c026`. -/
+theorem isRupert_of_cell026 (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x) {u : ℝ³}
+    (hu : Minimality.H21.CellAt F U026 D026 u) : IsRupert (univ.image x) := by
+  obtain ⟨D⟩ := Minimality.H21.silL_of_cell F cyc026 hu.cellLe hu
+  have hu0 : u ≠ 0 := by
+    rintro rfl
+    have := hu.1 2 (by decide)
+    simp at this
+  exact s0x_sil_isRupert_lex (by norm_num) (Minimality.H24.SAT.inj_of_fac F) c026_inj hu0 D
+    (robUni_three _)
+
+theorem theta0_pos (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    0 < theta0 y := by
+  have he7 := Minimality.T24.TheoremP.s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 7 3
+  have hz72 : F.f 7 (x 2) = 0 := F.zero 7 2 (by decide)
+  have hz73 : F.f 7 (x 3) = 0 := F.zero 7 3 (by decide)
+  have hz76 : F.f 7 (x 6) = 0 := F.zero 7 6 (by decide)
+  have hn71 : F.f 7 (x 1) < 0 := F.neg 7 1 (by decide)
+  have hn70 : F.f 7 (x 0) < 0 := F.neg 7 0 (by decide)
+  rw [hz72, hz73, hz76] at he7
+  simp only [zero_sub] at he7
+  have hV3 := Minimality.T24.TheoremP.type24_sigma3_gt_one F p v y hxy hp hv0 hv1 hv2
+  have hS_pos : 0 < (∑ e, y 3 e) - 1 := by linarith
+  have hE3 : ∑ e, y 3 e = y 3 0 + y 3 1 + y 3 2 := by rw [Fin.sum_univ_three]
+  have hrel : y 3 0 * F.f 7 (x 0) = ((∑ e, y 3 e) - 1) * F.f 7 (x 1) := by
+    rw [hE3]
+    linarith
+  have hy30_pos : 0 < y 3 0 := by
+    have hprod : ((∑ e, y 3 e) - 1) * F.f 7 (x 1) < 0 := mul_neg_of_pos_of_neg hS_pos hn71
+    have hprod2 : y 3 0 * F.f 7 (x 0) < 0 := by rwa [hrel]
+    exact pos_of_mul_neg_left hprod2 hn70.le
+  dsimp [theta0]
+  exact div_pos hy30_pos hS_pos
+
+theorem theta2_pos (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    0 < theta2 y := by
+  have he4 := Minimality.T24.TheoremP.s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 4 4
+  have hz40 : F.f 4 (x 0) = 0 := F.zero 4 0 (by decide)
+  have hz44 : F.f 4 (x 4) = 0 := F.zero 4 4 (by decide)
+  have hz46 : F.f 4 (x 6) = 0 := F.zero 4 6 (by decide)
+  have hn41 : F.f 4 (x 1) < 0 := F.neg 4 1 (by decide)
+  have hn42 : F.f 4 (x 2) < 0 := F.neg 4 2 (by decide)
+  rw [hz40, hz44, hz46] at he4
+  simp only [zero_sub] at he4
+  have hV4 := Minimality.T24.TheoremP.type24_sigma4_gt_one F p v y hxy hp hv0 hv1 hv2
+  have hS_pos : 0 < (∑ e, y 4 e) - 1 := by linarith
+  have hE4 : ∑ e, y 4 e = y 4 0 + y 4 1 + y 4 2 := by rw [Fin.sum_univ_three]
+  have hrel : y 4 1 * F.f 4 (x 2) = ((∑ e, y 4 e) - 1) * F.f 4 (x 1) := by
+    rw [hE4]
+    linarith
+  have hy41_pos : 0 < y 4 1 := by
+    have hprod : ((∑ e, y 4 e) - 1) * F.f 4 (x 1) < 0 := mul_neg_of_pos_of_neg hS_pos hn41
+    have hprod2 : y 4 1 * F.f 4 (x 2) < 0 := by rwa [hrel]
+    exact pos_of_mul_neg_left hprod2 hn42.le
+  dsimp [theta2]
+  exact div_pos hy41_pos hS_pos
+
+theorem theta6_pos (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
+    0 < theta6 y := by
+  have he2 := Minimality.T24.TheoremP.s0x_affine_eval F p v y hxy hp hv0 hv1 hv2 2 5
+  have hz20 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
+  have hz22 : F.f 2 (x 2) = 0 := F.zero 2 2 (by decide)
+  have hz25 : F.f 2 (x 5) = 0 := F.zero 2 5 (by decide)
+  have hn21 : F.f 2 (x 1) < 0 := F.neg 2 1 (by decide)
+  have hn26 : F.f 2 (x 6) < 0 := F.neg 2 6 (by decide)
+  rw [hz20, hz22, hz25] at he2
+  simp only [zero_sub] at he2
+  have hV5 := Minimality.T24.TheoremP.type24_sigma5_gt_one F p v y hxy hp hv0 hv1 hv2
+  have hS_pos : 0 < (∑ e, y 5 e) - 1 := by linarith
+  have hE5 : ∑ e, y 5 e = y 5 0 + y 5 1 + y 5 2 := by rw [Fin.sum_univ_three]
+  have hrel : y 5 2 * F.f 2 (x 6) = ((∑ e, y 5 e) - 1) * F.f 2 (x 1) := by
+    rw [hE5]
+    linarith
+  have hy52_pos : 0 < y 5 2 := by
+    have hprod : ((∑ e, y 5 e) - 1) * F.f 2 (x 1) < 0 := mul_neg_of_pos_of_neg hS_pos hn21
+    have hprod2 : y 5 2 * F.f 2 (x 6) < 0 := by rwa [hrel]
+    exact pos_of_mul_neg_left hprod2 hn26.le
+  dsimp [theta6]
+  exact div_pos hy52_pos hS_pos
+
+/-- **Theorem T026**: If `1 < ThetaInv y`, then `univ.image x` is Rupert. -/
+theorem isRupert_of_theta_gt_one (F : Minimality.H21.S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
+    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
+    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
+    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
+    (hTheta : 1 < ThetaInv y) :
+    IsRupert (univ.image x) := by
+  have h0 := theta0_pos F p v y hxy hp hv0 hv1 hv2
+  have h2 := theta2_pos F p v y hxy hp hv0 hv1 hv2
+  have h6 := theta6_pos F p v y hxy hp hv0 hv1 hv2
+  set Θ := ThetaInv y
+  have hΘ_pos : 0 < Θ := by dsimp [Θ, ThetaInv]; linarith
+  set c : Fin 3 → ℝ := ![theta0 y / Θ, theta2 y / Θ, theta6 y / Θ]
+  have hc0 : c 0 = theta0 y / Θ := rfl
+  have hc1 : c 1 = theta2 y / Θ := rfl
+  have hc2 : c 2 = theta6 y / Θ := rfl
+  have hc_sum : ∑ e, c e = 1 := by
+    rw [Fin.sum_univ_three, hc0, hc1, hc2]
+    dsimp [Θ, ThetaInv]
+    have : theta0 y / (theta0 y + theta2 y + theta6 y) + theta2 y / (theta0 y + theta2 y + theta6 y) +
+        theta6 y / (theta0 y + theta2 y + theta6 y) = (theta0 y + theta2 y + theta6 y) / (theta0 y + theta2 y + theta6 y) := by ring
+    rw [this]
+    exact div_self hΘ_pos.ne'
+  have hc0_pos : 0 < c 0 := by rw [hc0]; positivity
+  have hc1_pos : 0 < c 1 := by rw [hc1]; positivity
+  have hc2_pos : 0 < c 2 := by rw [hc2]; positivity
+  have hc0_lt : c 0 < theta0 y := by
+    rw [hc0, div_lt_iff₀ hΘ_pos]
+    nlinarith
+  have hc1_lt : c 1 < theta2 y := by
+    rw [hc1, div_lt_iff₀ hΘ_pos]
+    nlinarith
+  have hc2_lt : c 2 < theta6 y := by
+    rw [hc2, div_lt_iff₀ hΘ_pos]
+    nlinarith
+
+  set u : ℝ³ := ∑ e, c e • v e
+  have h_cell : Minimality.H21.CellAt F U026 D026 u := by
+    constructor
+    · intro t ht
+      fin_cases ht
+      · dsimp [u]
+        rw [facet2_front_iff F p v y hxy hp hv0 hv1 hv2 c hc_sum]
+        exact hc2_lt
+      · dsimp [u]
+        rw [facet4_front_iff F p v y hxy hp hv0 hv1 hv2 c hc_sum]
+        exact hc1_lt
+      · dsimp [u]
+        rw [facet7_front_iff F p v y hxy hp hv0 hv1 hv2 c hc_sum]
+        exact hc0_lt
+    · intro t ht
+      fin_cases ht
+      · dsimp [u]
+        exact facet0_back F p v hp hv0 hv1 hv2 c hc2_pos
+      · dsimp [u]
+        exact facet1_back F p v hp hv0 hv1 hv2 c hc1_pos
+      · dsimp [u]
+        exact facet5_back F p v hp hv0 hv1 hv2 c hc0_pos
+
+  exact isRupert_of_cell026 F h_cell
 
 end
 
