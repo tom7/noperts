@@ -502,4 +502,84 @@ theorem lemmaTQ_04325 (hx : Function.Injective x)
 
 end Bridge
 
+/-! ## The mirror frame `04635` (relabelling `(2 6)(4 5)`) -/
+
+/-- The vertex relabelling `(2 6)(4 5)`. -/
+def sg : Fin 7 → Fin 7 := ![0, 1, 6, 3, 5, 4, 2]
+/-- The induced facet relabelling `012 ↔ 016`, `025 ↔ 046`, `235 ↔ 346`. -/
+def tg : Fin 9 → Fin 9 := ![1, 0, 4, 3, 2, 5, 8, 7, 6]
+
+theorem sg_mem : ∀ (t : Fin 9) (i : Fin 7), i ∈ s0x_S24 t ↔ sg i ∈ s0x_S24 (tg t) := by decide
+theorem tg_tg : ∀ t : Fin 9, tg (tg t) = t := by decide
+theorem sg_inj : Function.Injective sg := by decide
+
+/-- The relabelled solid `x ∘ (2 6)(4 5)` is again of type 24. -/
+def relab {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : S0xFac 9 s0x_S24 (x ∘ sg) where
+  f t := F.f (tg t)
+  N t := F.N (tg t)
+  hN t := F.hN (tg t)
+  zero t i hi := F.zero (tg t) (sg i) ((sg_mem t i).1 hi)
+  neg t i hi := F.neg (tg t) (sg i) (fun h => hi ((sg_mem t i).2 h))
+
+theorem cellAt_relab {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {U D U' D' : Finset (Fin 9)} {w : ℝ³}
+    (h : CellAt F U' D' w) (hU : ∀ t ∈ U, tg t ∈ U') (hD : ∀ t ∈ D, tg t ∈ D') :
+    CellAt (relab F) U D w :=
+  ⟨fun t ht => h.1 _ (hU t ht), fun t ht => h.2 _ (hD t ht)⟩
+
+theorem cellAt_unrelab {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {U D U' D' : Finset (Fin 9)}
+    {w : ℝ³} (h : CellAt (relab F) U D w) (hU : ∀ t ∈ U', tg t ∈ U) (hD : ∀ t ∈ D', tg t ∈ D) :
+    CellAt F U' D' w :=
+  ⟨fun t ht => by have := h.1 _ (hU t ht); rwa [show F.N t = F.N (tg (tg t)) by rw [tg_tg]],
+   fun t ht => by have := h.2 _ (hD t ht); rwa [show F.N t = F.N (tg (tg t)) by rw [tg_tg]]⟩
+
+/-- **Lemma TQ, frame `04635`** (mirror of `lemmaTQ_04325` under `(2 6)(4 5)`, `b ↔ c`):
+orthocentre view in the region `04635` (front facets exactly `0345`, `346`), `G_ac, G_bc ≤ 0`,
+the 3-rim cells `{346}`, `{235}`, `{046}` empty, and the planes `0345`, `025`, `236` not parallel to a
+common line (special position `f_4350 (T_b) = 0` excluded).  Q4 holds on `0536` or `0234`. -/
+theorem lemmaTQ_04635 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Function.Injective x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
+    (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
+    {u : ℝ³} (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
+    (hR : CellAt F {3, 8} {0, 1, 2, 4, 5, 6, 7} u)
+    (hNo346 : ∀ w, ¬ CellAt F {8} {0, 1, 2, 3, 4, 5, 6, 7} w)
+    (hNo235 : ∀ w, ¬ CellAt F {6} {0, 1, 2, 3, 4, 5, 7, 8} w)
+    (hNo046 : ∀ w, ¬ CellAt F {4} {0, 1, 2, 3, 5, 6, 7, 8} w)
+    (hgen : ∀ w : ℝ³, ⟪F.N 3, w⟫ = 0 → ⟪F.N 2, w⟫ = 0 → ⟪F.N 7, w⟫ = 0 → w = 0) :
+    IsRupert (Finset.univ.image x) := by
+  have himg : Finset.univ.image (x ∘ sg) = Finset.univ.image x := by
+    rw [← Finset.image_image, show Finset.univ.image sg = Finset.univ from
+      Finset.image_univ_of_surjective (Finite.surjective_of_injective sg_inj)]
+  rw [← himg]
+  have hv : ![(x ∘ sg) 0 - (x ∘ sg) 1, (x ∘ sg) 2 - (x ∘ sg) 1, (x ∘ sg) 6 - (x ∘ sg) 1] =
+      ![x 0 - x 1, x 2 - x 1, x 6 - x 1] ∘ Equiv.swap 1 2 := by
+    funext e; fin_cases e <;> rfl
+  refine lemmaTQ_04325 (relab F) (hx.comp sg_inj) (u := u) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · rw [hv]; exact hli.comp _ (Equiv.injective _)
+  · exact hac
+  · rw [real_inner_comm]; exact hbc
+  · intro e; rw [hv]; exact hu _
+  · exact cellAt_relab F hR (by decide) (by decide)
+  · intro w h; exact hNo346 w (cellAt_unrelab F h (by decide) (by decide))
+  · intro w h; exact hNo235 w (cellAt_unrelab F h (by decide) (by decide))
+  · intro w h; exact hNo046 w (cellAt_unrelab F h (by decide) (by decide))
+  · intro w h3 h4 h7; exact hgen w h3 h4 h7
+
+/-- **Lemma TQ** (type 24, obtuse corner 1): the orthocentre view in `04325` or `04635`. -/
+theorem lemmaTQ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Function.Injective x)
+    (hli : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1, x 6 - x 1])
+    (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
+    (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
+    {u : ℝ³} (hu : ∀ e, ⟪![x 0 - x 1, x 2 - x 1, x 6 - x 1] e, u⟫ = 1)
+    (hR : CellAt F {3, 6} {0, 1, 2, 4, 5, 7, 8} u ∨ CellAt F {3, 8} {0, 1, 2, 4, 5, 6, 7} u)
+    (hNo235 : ∀ w, ¬ CellAt F {6} {0, 1, 2, 3, 4, 5, 7, 8} w)
+    (hNo346 : ∀ w, ¬ CellAt F {8} {0, 1, 2, 3, 4, 5, 6, 7} w)
+    (hNo025 : ∀ w, ¬ CellAt F {2} {0, 1, 3, 4, 5, 6, 7, 8} w)
+    (hNo046 : ∀ w, ¬ CellAt F {4} {0, 1, 2, 3, 5, 6, 7, 8} w)
+    (hgen : ∀ w : ℝ³, ⟪F.N 3, w⟫ = 0 → ⟪F.N 4, w⟫ = 0 → ⟪F.N 7, w⟫ = 0 → w = 0)
+    (hgen' : ∀ w : ℝ³, ⟪F.N 3, w⟫ = 0 → ⟪F.N 2, w⟫ = 0 → ⟪F.N 7, w⟫ = 0 → w = 0) :
+    IsRupert (Finset.univ.image x) := by
+  rcases hR with h | h
+  · exact lemmaTQ_04325 F hx hli hab hbc hu h hNo235 hNo346 hNo025 hgen
+  · exact lemmaTQ_04635 F hx hli hac hbc hu h hNo346 hNo235 hNo046 hgen'
+
 end Minimality.T24.TQ
