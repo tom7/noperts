@@ -7,6 +7,7 @@ public import Minimality.RF0345N
 public import Minimality.RH31
 public import Minimality.RF346B
 public import Minimality.RF346C
+public import Minimality.RX16B
 public import Minimality.RX27
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Q45
@@ -406,6 +407,44 @@ def Gen_f346_neg5 (F : S0xFac 9 s0x_S24 x) : Prop :=
 /-- Hypothesis bundle for `Minimality.T24.R012.q012_f346_neg_5w`. -/
 def H_f346_neg5 (F : S0xFac 9 s0x_S24 x) : Prop := Case_f346_neg5 F ∧ Gen_f346_neg5 F
 
+-- 12j. q012_x16_pent
+def Case_x16pent (F : S0xFac 9 s0x_S24 x) : Prop :=
+  -1 < t16 x ∧ t16 x < 0 ∧
+  0 < ⟪F.N 3, u16 x⟫ ∧ ⟪F.N 6, u16 x⟫ < 0 ∧ ⟪F.N 7, u16 x⟫ < 0 ∧ 0 < ⟪F.N 8, u16 x⟫ ∧
+  ∃ t : ZMod 5, LexTop (fun i => x (RX16B.rim5 i)) (u16 x) (x 1 - x 2) t
+
+def Gen_x16pent (F : S0xFac 9 s0x_S24 x) : Prop :=
+  (∀ i j : ZMod 5, i ≠ j →
+    ⟪x (RX16B.rim5 i) - x (RX16B.rim5 j), u16 x⟫ ≠ 0 ∨
+    ⟪x (RX16B.rim5 i) - x (RX16B.rim5 j), x 1 - x 2⟫ ≠ 0) ∧
+  ∃ w : ZMod 5, (w = 1 ∨ w = 2 ∨ w = 3) ∧
+    (∀ m : ZMod 5, m ≠ w → RX16B.rim5 m ∉ s0x_S24 0 →
+      F.f 0 (x (RX16B.rim5 w)) < F.f 0 (x (RX16B.rim5 m))) ∧
+    (⟪F.N 0, cross (x 2 - x 1) (x (RX16B.rim5 w) - x 1)⟫ ≠ 0 ∨
+      ⟪x (RX16B.rim5 w) - x 1, x 2 - x 1⟫ < 0 ∨ ⟪x (RX16B.rim5 w) - x 2, x 1 - x 2⟫ < 0)
+
+/-- Hypothesis bundle for `Minimality.T24.RX16B.q012_x16_pent`. -/
+def H_x16pent (F : S0xFac 9 s0x_S24 x) : Prop := Case_x16pent F ∧ Gen_x16pent F
+
+-- 12k. q012_x16_hex
+def Case_x16hex (F : S0xFac 9 s0x_S24 x) : Prop :=
+  t16 x < -1 ∧
+  0 < ⟪F.N 3, u16 x⟫ ∧ 0 < ⟪F.N 4, u16 x⟫ ∧ ⟪F.N 6, u16 x⟫ < 0 ∧ ⟪F.N 8, u16 x⟫ < 0 ∧
+  ∃ t : ZMod 6, LexTop (fun i => x (RX16B.rim6 i)) (u16 x) (x 2 - x 1) t
+
+def Gen_x16hex (F : S0xFac 9 s0x_S24 x) : Prop :=
+  (∀ i j : ZMod 6, i ≠ j →
+    ⟪x (RX16B.rim6 i) - x (RX16B.rim6 j), u16 x⟫ ≠ 0 ∨
+    ⟪x (RX16B.rim6 i) - x (RX16B.rim6 j), x 2 - x 1⟫ ≠ 0) ∧
+  ∃ w : ZMod 6, (w = 2 ∨ w = 3 ∨ w = 4 ∨ w = 5) ∧
+    (∀ m : ZMod 6, m ≠ w → RX16B.rim6 m ∉ s0x_S24 0 →
+      F.f 0 (x (RX16B.rim6 w)) < F.f 0 (x (RX16B.rim6 m))) ∧
+    (⟪F.N 0, cross (x 0 - x 1) (x (RX16B.rim6 w) - x 1)⟫ ≠ 0 ∨
+      ⟪x (RX16B.rim6 w) - x 1, x 0 - x 1⟫ < 0 ∨ ⟪x (RX16B.rim6 w) - x 0, x 1 - x 0⟫ < 0)
+
+/-- Hypothesis bundle for `Minimality.T24.RX16B.q012_x16_hex`. -/
+def H_x16hex (F : S0xFac 9 s0x_S24 x) : Prop := Case_x16hex F ∧ Gen_x16hex F
+
 -- 13. q046_cross_core
 def Case_crossCore (F : S0xFac 9 s0x_S24 x) : Prop :=
   0 < ⟪F.N 5, x 4 - x 0⟫ ∧ 0 < ⟪F.N 6, u47 F⟫ ∧ ⟪x 6, u47 F⟫ < ⟪x 0, u47 F⟫ ∧
@@ -678,6 +717,16 @@ def Gen_f346_neg5_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_f346_neg5 (sym24 F)
 /-- Mirror hypothesis bundle for `q012_f346_neg_5w` via `Sym.faceChordView_sym`. -/
 def H_f346_neg5_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_f346_neg5_sym F ∧ Gen_f346_neg5_sym F
 
+def Case_x16pent_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_x16pent (sym24 F)
+def Gen_x16pent_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_x16pent (sym24 F)
+/-- Mirror hypothesis bundle for `q012_x16_pent` via `Sym.faceChordView_sym`. -/
+def H_x16pent_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_x16pent_sym F ∧ Gen_x16pent_sym F
+
+def Case_x16hex_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_x16hex (sym24 F)
+def Gen_x16hex_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_x16hex (sym24 F)
+/-- Mirror hypothesis bundle for `q012_x16_hex` via `Sym.faceChordView_sym`. -/
+def H_x16hex_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_x16hex_sym F ∧ Gen_x16hex_sym F
+
 def Case_crossCore_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_crossCore (sym24 F)
 def Gen_crossCore_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_crossCore (sym24 F)
 /-- Mirror hypothesis bundle for `Sym.q025_cross_core` (`q046_cross_core` via `Sym.faceChordView_sym`). -/
@@ -730,32 +779,32 @@ def H_h31_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_h31_sym F ∧ Gen_h31_sym 
 
 /-! ### Disjunctions `HAvail`, `CaseAny`, `Wall24` and `RResidual` -/
 
-/-- Disjunction of all 64 proved R-region leaf hypothesis bundles (32 base + 32 `Sym24` mirrors). -/
+/-- Disjunction of all 68 proved R-region leaf hypothesis bundles (34 base + 34 `Sym24` mirrors). -/
 def HAvail (F : S0xFac 9 s0x_S24 x) : Prop :=
   H_w3p F ∨ H_w3nA F ∨ H_w3nB F ∨ H_w4n F ∨ H_w4p F ∨ H_f346A F ∨ H_f346B F ∨
   H_LCp F ∨ H_LCm F ∨ H_m1 F ∨ H_m6 F ∨ H_m1p5 F ∨ H_m1p6 F ∨
-  H_x16lo F ∨ H_x16hi F ∨ H_f0345 F ∨ H_f0345n F ∨
+  H_x16lo F ∨ H_x16hi F ∨ H_x16pent F ∨ H_x16hex F ∨ H_f0345 F ∨ H_f0345n F ∨
   H_f346_5 F ∨ H_f346_4w F ∨ H_f346_6w F ∨ H_f346_neg5 F ∨
   H_crossCore F ∨ H_crossCbar F ∨ H_crossB F ∨ H_crossN F ∨ H_cop F ∨
   H_J0exp F ∨ H_J0expGt F ∨ H_tie45 F ∨ H_KminusE5 F ∨ H_KminusE34 F ∨ H_h31 F ∨
   H_w3p_sym F ∨ H_w3nA_sym F ∨ H_w3nB_sym F ∨ H_w4n_sym F ∨ H_w4p_sym F ∨ H_f346A_sym F ∨ H_f346B_sym F ∨
   H_LCp_sym F ∨ H_LCm_sym F ∨ H_m1_sym F ∨ H_m6_sym F ∨ H_m1p5_sym F ∨ H_m1p6_sym F ∨
-  H_x16lo_sym F ∨ H_x16hi_sym F ∨ H_f0345_sym F ∨ H_f0345n_sym F ∨
+  H_x16lo_sym F ∨ H_x16hi_sym F ∨ H_x16pent_sym F ∨ H_x16hex_sym F ∨ H_f0345_sym F ∨ H_f0345n_sym F ∨
   H_f346_5_sym F ∨ H_f346_4w_sym F ∨ H_f346_6w_sym F ∨ H_f346_neg5_sym F ∨
   H_crossCore_sym F ∨ H_crossCbar_sym F ∨ H_crossB_sym F ∨ H_crossN_sym F ∨ H_cop_sym F ∨
   H_J0exp_sym F ∨ H_J0expGt_sym F ∨ H_tie45_sym F ∨ H_KminusE5_sym F ∨ H_KminusE34_sym F ∨ H_h31_sym F
 
-/-- Disjunction of all 64 strict case conditions (without genericity `Gen_*`). -/
+/-- Disjunction of all 68 strict case conditions (without genericity `Gen_*`). -/
 def CaseAny (F : S0xFac 9 s0x_S24 x) : Prop :=
   Case_w3p F ∨ Case_w3nA F ∨ Case_w3nB F ∨ Case_w4n F ∨ Case_w4p F ∨ Case_f346A F ∨ Case_f346B F ∨
   Case_LCp F ∨ Case_LCm F ∨ Case_m1 F ∨ Case_m6 F ∨ Case_m1p5 F ∨ Case_m1p6 F ∨
-  Case_x16lo F ∨ Case_x16hi F ∨ Case_f0345 F ∨ Case_f0345n F ∨
+  Case_x16lo F ∨ Case_x16hi F ∨ Case_x16pent F ∨ Case_x16hex F ∨ Case_f0345 F ∨ Case_f0345n F ∨
   Case_f346_5 F ∨ Case_f346_4w F ∨ Case_f346_6w F ∨ Case_f346_neg5 F ∨
   Case_crossCore F ∨ Case_crossCbar F ∨ Case_crossB F ∨ Case_crossN F ∨ Case_cop F ∨
   Case_J0exp F ∨ Case_J0expGt F ∨ Case_tie45 F ∨ Case_KminusE5 F ∨ Case_KminusE34 F ∨ Case_h31 F ∨
   Case_w3p_sym F ∨ Case_w3nA_sym F ∨ Case_w3nB_sym F ∨ Case_w4n_sym F ∨ Case_w4p_sym F ∨ Case_f346A_sym F ∨ Case_f346B_sym F ∨
   Case_LCp_sym F ∨ Case_LCm_sym F ∨ Case_m1_sym F ∨ Case_m6_sym F ∨ Case_m1p5_sym F ∨ Case_m1p6_sym F ∨
-  Case_x16lo_sym F ∨ Case_x16hi_sym F ∨ Case_f0345_sym F ∨ Case_f0345n_sym F ∨
+  Case_x16lo_sym F ∨ Case_x16hi_sym F ∨ Case_x16pent_sym F ∨ Case_x16hex_sym F ∨ Case_f0345_sym F ∨ Case_f0345n_sym F ∨
   Case_f346_5_sym F ∨ Case_f346_4w_sym F ∨ Case_f346_6w_sym F ∨ Case_f346_neg5_sym F ∨
   Case_crossCore_sym F ∨ Case_crossCbar_sym F ∨ Case_crossB_sym F ∨ Case_crossN_sym F ∨ Case_cop_sym F ∨
   Case_J0exp_sym F ∨ Case_J0expGt_sym F ∨ Case_tie45_sym F ∨ Case_KminusE5_sym F ∨ Case_KminusE34_sym F ∨ Case_h31_sym F
@@ -923,6 +972,14 @@ private theorem leaf_f346_neg5 {F : S0xFac 9 s0x_S24 x} (h : H_f346_neg5 F) : Fa
   obtain ⟨⟨hlo, hhi, h3, h6, h7, hU⟩, hgen, w, hw, hfar, hoff⟩ := h
   exact q012_f346_neg_5w F hlo hhi h3 h6 h7 hU hgen w hw hfar hoff
 
+private theorem leaf_x16pent {F : S0xFac 9 s0x_S24 x} (h : H_x16pent F) : FaceChordView F 0 := by
+  obtain ⟨⟨ht1, ht0, h3, h6, h7, h8, hU⟩, hgen, w, hw, hfar, hoff⟩ := h
+  exact RX16B.q012_x16_pent F ht1 ht0 h3 h6 h7 h8 hU hgen w hw hfar hoff
+
+private theorem leaf_x16hex {F : S0xFac 9 s0x_S24 x} (h : H_x16hex F) : FaceChordView F 0 := by
+  obtain ⟨⟨ht, h3, h4, h6, h8, hU⟩, hgen, w, hw, hfar, hoff⟩ := h
+  exact RX16B.q012_x16_hex F ht h3 h4 h6 h8 hU hgen w hw hfar hoff
+
 private theorem leaf_crossCore {F : S0xFac 9 s0x_S24 x} (h : H_crossCore F) : FaceChordView F 4 :=
   q046_cross_core F h.1.1 h.1.2.1 h.1.2.2.1 h.1.2.2.2.1 h.1.2.2.2.2 h.2.1 h.2.2
 
@@ -965,8 +1022,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
     FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 2 ∨
       FaceChordView F 3 ∨ FaceChordView F 4 := by
   rcases h with
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
   · exact Or.inl (leaf_w3p h)
   · exact Or.inl (leaf_w3nA h)
   · exact Or.inl (leaf_w3nB h)
@@ -982,6 +1039,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inl (leaf_m1p6 h)
   · exact Or.inl (leaf_x16lo h)
   · exact Or.inl (leaf_x16hi h)
+  · exact Or.inl (leaf_x16pent h)
+  · exact Or.inl (leaf_x16hex h)
   · exact Or.inl (leaf_f0345 h)
   · exact Or.inl (leaf_f0345n h)
   · exact Or.inl (leaf_f346_5 h)
@@ -1014,6 +1073,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_m1p6 h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_x16lo h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_x16hi h)))
+  · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_x16pent h)))
+  · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_x16hex h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_f0345 h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_f0345n h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_f346_5 h)))
