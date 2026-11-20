@@ -760,9 +760,8 @@ theorem middle_C2_x5 (x : Fin 7 → ℝ³) (s t ε : ℝ)
 theorem eventually_B1_middle_bounds (s t : ℝ) (hs0 : 0 < s) (hs1 : s < 1) (ht : 0 < t) :
     (∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε ∧ ε < 1) ∧
     (∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < s + ε * t ∧ s + ε * t < 1) ∧
-    (∀ᶠ _ in 𝓝[>] (0 : ℝ), (-1 : ℝ) < 0) ∧
     (∀ᶠ _ in 𝓝[>] (0 : ℝ), -t < 0) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_⟩
   · have h_pos : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε := self_mem_nhdsWithin
     have hc : ContinuousAt (fun ε : ℝ => ε) 0 := continuousAt_id
     have h1 : (0 : ℝ) < 1 := by norm_num
@@ -779,7 +778,6 @@ theorem eventually_B1_middle_bounds (s t : ℝ) (hs0 : 0 < s) (hs1 : s < 1) (ht 
     have h_lt : ∀ᶠ ε in 𝓝[>] (0 : ℝ), s + ε * t < 1 :=
       (ContinuousAt.eventually_lt hc (continuousAt_const (x := 0)) hval1).filter_mono nhdsWithin_le_nhds
     exact h_gt.and h_lt
-  · exact eventually_mem_nhdsWithin.mono (fun _ _ => by norm_num)
   · exact eventually_mem_nhdsWithin.mono (fun _ _ => by linarith)
 
 /-- Eventual chord and delta bounds for corner B2 (`1 < s, 0 < t`). -/
@@ -834,9 +832,8 @@ theorem eventually_B2_middle_bounds (s t : ℝ) (hs : 1 < s) (ht : 0 < t) :
 theorem eventually_C1_middle_bounds (s t : ℝ) (hs : 0 < s) (ht0 : 0 < t) (ht1 : t < 1) :
     (∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε ∧ ε < 1) ∧
     (∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < t + ε * s ∧ t + ε * s < 1) ∧
-    (∀ᶠ _ in 𝓝[>] (0 : ℝ), (-1 : ℝ) < 0) ∧
     (∀ᶠ _ in 𝓝[>] (0 : ℝ), -s < 0) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_⟩
   · have h_pos : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε := self_mem_nhdsWithin
     have hc : ContinuousAt (fun ε : ℝ => ε) 0 := continuousAt_id
     have h1 : (0 : ℝ) < 1 := by norm_num
@@ -853,7 +850,6 @@ theorem eventually_C1_middle_bounds (s t : ℝ) (hs : 0 < s) (ht0 : 0 < t) (ht1 
     have h_lt : ∀ᶠ ε in 𝓝[>] (0 : ℝ), t + ε * s < 1 :=
       (ContinuousAt.eventually_lt hc (continuousAt_const (x := 0)) hval1).filter_mono nhdsWithin_le_nhds
     exact h_gt.and h_lt
-  · exact eventually_mem_nhdsWithin.mono (fun _ _ => by norm_num)
   · exact eventually_mem_nhdsWithin.mono (fun _ _ => by linarith)
 
 /-- Eventual chord and delta bounds for corner C2 (`0 < s, 1 < t`). -/
