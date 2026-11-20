@@ -4,6 +4,7 @@ public import Minimality.Type24Face
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Type24
 public import Minimality.Q45
+public import Minimality.RDispatch24
 
 @[expose] public section
 
@@ -29,32 +30,20 @@ Refines the Type-24 branch of `Minimality.lean` by combining:
 Every remaining open sub-region is exposed as a named disjunct of `Hole24`.
 -/
 
-/-- Inside the closed `C̄` region: `ω3, ω4, ω5 > 0` and `Δ24 ≥ 0`
-(complement of `not_type24_outside_Cbar_of_isNopert` / `isRupert_type24_outside_Cbar`, `Type24.lean`). -/
-def CbarIn (x : Fin 7 → ℝ³) : Prop :=
-  0 < Minimality.omega3 x ∧ 0 < Minimality.omega4 x ∧ 0 < Minimality.omega5 x ∧
-    0 ≤ Minimality.Delta24 x
-
 /-- Outside `C̄`, the residual `Σ_B` locus: `RegionB24` with no free side crossing
 (attacked in `Type24.lean` / `FEWER-FACES-PROOFS.md` §15). -/
 def Hole24SigmaB (x : Fin 7 → ℝ³) : Prop :=
   Minimality.RegionB24 x ∧ ¬ (Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x)
-
-/-- The `Q45-Half` sign hypothesis (`hsign` of `q45_half_geom` / `isRupert_q45_half` in `Q45.lean`). -/
-def Q45HalfPred {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
-  ∀ s t : ℝ, 0 < s → 0 < t → 1 < s + t →
-    x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) → Q45.Q45HalfHyp F s t
 
 /-- Special loci of Theorem Q45 inside `C̄ ∩ Resid24` (no `OB1` restriction, since `isRupert_q45_half`
 requires only `F` and `Q45HalfPred F`; attacked in `Q45.lean` / `Q45THEOREM24.md`). -/
 def Hole24Q45Special (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special F
 
-/-- Region `R`: `C̄ ∩ OB1` outside `Q45-Half` (attacked in `R012.lean`, `R046.lean`,
-`CARBON-RESPONSES.md`). Lean leaves already proved for `Hole24R` (not yet wired; the `R`
-dispatcher is future work): `R012.q012_LC_plus`, `R012.q012_LC_minus`, `R046.q046_cross`. -/
-def Hole24R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  CbarIn x ∧ H24K.SAT.OB1 x ∧ ¬ Q45HalfPred F
+/-- Region `R` residual after applying `RDispatch.r_dispatch` (`R24Spec ∨ R24OB1Bd ∨ R24Wall ∨ R24Open`
+inside `Hole24R x F`). -/
+def Hole24RRes {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  RDispatch.RResidual F
 
 /-- Off-`OB1` open classes inside `C̄` outside `Q45-Half`: `mpppz` (`ZRes24`), `mpppp`, `mpppm`
 (attacked in `Wire24Zero.lean` / `Type24SAT/K24`). -/
@@ -70,7 +59,7 @@ def Hole24Flags (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : P
 /-- The single named Type-24 open hole proposition for `Minimality.lean`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Flags x fs ∧
-    (Hole24SigmaB x ∨ Hole24Q45Special x F ∨ Hole24R x F ∨ Hole24OffOB1 x F)
+    (Hole24SigmaB x ∨ Hole24Q45Special x F ∨ Hole24RRes F ∨ Hole24OffOB1 x F)
 
 /-- Main Type-24 reduction using `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`,
 `isRupert_type24_outside_Cbar`, and `isRupert_q45_half` (`mkFac24` constructs `F`). -/
@@ -117,7 +106,14 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
         · exact Or.inl hRup
         · exact Or.inr ⟨hh, hflags, Or.inr (Or.inl ⟨hCbar, hres, hHalf, hSp⟩)⟩
       · by_cases hOB1 : H24K.SAT.OB1 x
-        · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr (Or.inl ⟨hCbar, hOB1, hHalf⟩))⟩
+        · rcases RDispatch.r_dispatch F hCbar hOB1 hHalf with
+            h0 | h1 | h2 | h3 | h4 | hRes
+          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inl h0))
+          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inl h1)))
+          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inl h2))))
+          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inl h3)))))
+          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inr h4)))))
+          · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr (Or.inl hRes))⟩
         · have hOff : ZRes24 x ∨ cls24 x false true true true true ∨
               cls24 x false true true true false := by
             rcases hres with hO | hZ | hP | hM
