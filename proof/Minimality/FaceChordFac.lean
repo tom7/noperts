@@ -234,14 +234,27 @@ end Minimality.FaceChord
 namespace Minimality.T24.FaceChord
 open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT Minimality.T24.Quad05
 
-/-- Type-24 wiring of the three-circle cover {012, 016, 0345} (facet indices 0, 1, 3). -/
+/-- Five-circle cover {012, 016, 025, 0345, 046} (facet indices 0, 1, 2, 3, 4). -/
+theorem isRupert_cover24_S5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (h : FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 2 ∨
+         FaceChordView F 3 ∨ FaceChordView F 4) :
+    IsRupert (univ.image x) := by
+  rcases h with h0 | h1 | h2 | h3 | h4
+  · exact isRupert_of_faceChordView F h0
+  · exact isRupert_of_faceChordView F h1
+  · exact isRupert_of_faceChordView F h2
+  · exact isRupert_of_faceChordView F h3
+  · exact isRupert_of_faceChordView F h4
+
+/-- Type-24 wiring of the three-circle cover {012, 016, 0345} (facet indices 0, 1, 3).
+Deduced as a corollary of `isRupert_cover24_S5`. -/
 theorem isRupert_cover24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (h : FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 3) :
     IsRupert (univ.image x) := by
   rcases h with h0 | h1 | h3
-  · exact isRupert_of_faceChordView F h0
-  · exact isRupert_of_faceChordView F h1
-  · exact isRupert_of_faceChordView F h3
+  · exact isRupert_cover24_S5 F (Or.inl h0)
+  · exact isRupert_cover24_S5 F (Or.inr (Or.inl h1))
+  · exact isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inl h3))))
 
 /-- **The quad-chord leaf as a corollary of `isRupert_faceChord_fac`** (facet `3`, `0 < η`).
 Same statement as `Minimality.T24.Quad05.isRupert_quadChord` except `0 ≤ η` is replaced by `0 < η`
