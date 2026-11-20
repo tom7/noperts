@@ -14,6 +14,7 @@ public import Minimality.RX16
 public import Minimality.RF0345
 public import Minimality.RF0345N
 public import Minimality.RH31
+public import Minimality.RF346B
 
 @[expose] public section
 
@@ -552,6 +553,39 @@ theorem q016_f0345_neg_lo (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     FaceChordView F 1 :=
   faceChordView_sym F (t := 0)
     (q012_f0345_neg_lo (x := x ∘ pi24) (sym24 F) ht hN4 hN8 hbase hfar hoff6 hoff4 hgen)
+
+theorem q016_f346_5 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (hlo : F.f 6 (x 1) < F.f 6 (x 0)) (hhi : F.f 6 (x 0) < F.f 6 (x 6))
+    (h3 : 0 < ⟪F.N 3, rootB (sym24 F)⟫ ∨ (⟪F.N 3, rootB (sym24 F)⟫ = 0 ∧ 0 < ⟪F.N 3, x 6 - x 1⟫))
+    (h6 : ⟪F.N 8, rootB (sym24 F)⟫ < 0 ∨ (⟪F.N 8, rootB (sym24 F)⟫ = 0 ∧ ⟪F.N 8, x 6 - x 1⟫ < 0))
+    (h7 : ⟪F.N 7, rootB (sym24 F)⟫ < 0 ∨ (⟪F.N 7, rootB (sym24 F)⟫ = 0 ∧ ⟪F.N 7, x 6 - x 1⟫ < 0))
+    (hU : (¬ R012.LexAltIncr (fun i => x (pi24 (rimN i))) (rootB (sym24 F)) (x 6 - x 1) 0 ∧
+        ¬ R012.LexAltDecr (fun i => x (pi24 (rimN i))) (rootB (sym24 F)) (x 6 - x 1) 1 ∧
+        ¬ R012.LexAltIncr (fun i => x (pi24 (rimN i))) (rootB (sym24 F)) (x 6 - x 1) 2 ∧
+        ¬ R012.LexAltDecr (fun i => x (pi24 (rimN i))) (rootB (sym24 F)) (x 6 - x 1) 3 ∧
+        ((0 < det3 (x 0 - x 1) (x 6 - x 1) (x 2 - x 1) * det3 (x 3 - x 1) (x 4 - x 2) (x 1 - x 2) ∧
+            ¬ R012.LexAltDecr (fun i => x (pi24 (rimN i))) (rootB (sym24 F)) (x 6 - x 1) 4) ∨
+          (det3 (x 0 - x 1) (x 6 - x 1) (x 2 - x 1) * det3 (x 3 - x 1) (x 4 - x 2) (x 1 - x 2) < 0 ∧
+            ¬ R012.LexAltIncr (fun i => x (pi24 (rimN i))) (rootB (sym24 F)) (x 6 - x 1) 4))) ∨
+      ∃ m : ZMod 5,
+        R012.DSd (fun i => x (pi24 (rimN i))) (-det3 (x 0 - x 1) (x 6 - x 1) (x 2 - x 1))
+          (rootB (sym24 F)) (x 6 - x 1) m ∨
+        R012.DSd (fun i => x (pi24 (rimN i))) (det3 (x 0 - x 1) (x 6 - x 1) (x 2 - x 1))
+          (-rootB (sym24 F)) (-(x 6 - x 1)) m)
+    (hgen : ∀ i j : ZMod 5, i ≠ j →
+      ⟪x (pi24 (rimN i)) - x (pi24 (rimN j)), rootB (sym24 F)⟫ ≠ 0 ∨
+      ⟪x (pi24 (rimN i)) - x (pi24 (rimN j)), x 6 - x 1⟫ ≠ 0)
+    (w : ZMod 5) (hw : w = 1 ∨ w = 2 ∨ w = 3)
+    (hfar : ∀ m : ZMod 5, m ≠ w → pi24 (rimN m) ∉ s0x_S24 1 →
+      F.f 1 (x (pi24 (rimN w))) < F.f 1 (x (pi24 (rimN m))))
+    (hoff : ⟪F.N 1, cross (x 1 - x 6) (x (pi24 (rimN w)) - x 6)⟫ ≠ 0 ∨
+      ⟪x (pi24 (rimN w)) - x 6, x 1 - x 6⟫ < 0 ∨
+      ⟪x (pi24 (rimN w)) - x 1, x 6 - x 1⟫ < 0) :
+    FaceChordView F 1 :=
+  faceChordView_sym F (t := 0)
+    (q012_f346_5 (x := x ∘ pi24) (sym24 F) hlo hhi h3 h6 h7 hU hgen w hw
+      (fun m hm hmS => hfar m hm (fun hmem => hmS ((s24_sym 0 _).2 hmem)))
+      hoff)
 
 theorem q45_h31_sym (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     (hN0 : ⟪F.N 1, u31 (sym24 F)⟫ < 0) (hN2 : ⟪F.N 4, u31 (sym24 F)⟫ < 0)
