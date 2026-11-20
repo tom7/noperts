@@ -197,12 +197,14 @@ theorem lemma_X5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     hPA_η hAB_η hQP_η hQA_η hQB_η hS3 hS4
 
 /-- Strict convexity of rim `quad (x 6) (x 4) (x 0) (x 2)` and vertex 1 strictly inside
-from the silhouette facet signs at view `u`. -/
+from the silhouette facet signs at view `u`.
+Along ridge 26 between facet 7 (`236`) and facet 5 (`126`),
+facet 7 is back (`hN7 < 0`) and facet 5 is front (`0 < hN5`). -/
 theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN4 : 0 < ⟪F.N 4, u⟫) (hN8 : ⟪F.N 8, u⟫ < 0)
     (hN0 : 0 < ⟪F.N 0, u⟫) (hN2 : ⟪F.N 2, u⟫ < 0)
-    (hN7 : 0 < ⟪F.N 7, u⟫) (hN5 : ⟪F.N 5, u⟫ < 0) :
+    (hN7 : ⟪F.N 7, u⟫ < 0) (hN5 : 0 < ⟪F.N 5, u⟫) :
     ∃ ρ : ℝ, ρ ≠ 0 ∧
       (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
         0 < ρ * det3 (quad (x 6) (x 4) (x 0) (x 2) (i + 1) - quad (x 6) (x 4) (x 0) (x 2) i)
@@ -293,7 +295,7 @@ theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
   obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F 8 4 6 4 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN8, hN4⟩ hne_64
   obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F 3 4 0 (by decide) (by decide) u hN3 hne_40
   obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F 2 0 0 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN2, hN0⟩ hne_02
-  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 5 7 2 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN5, hN7⟩ hne_26
+  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 7 5 2 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN7, hN5⟩ hne_26
 
   have hcyc01 : det3 (x 4 - x 6) (x 0 - x 6) u = det3 (x 0 - x 4) (x 6 - x 4) u :=
     det3_cycle_triangle (x 6) (x 4) (x 0) u
@@ -327,7 +329,7 @@ theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
   have h2_1 : 0 < σ₂ * det3 (x 2 - x 0) (x 1 - x 0) u := hσ₂ 1 (Or.inl (by decide))
 
   have h3_4 : 0 < σ₃ * det3 (x 6 - x 2) (x 4 - x 2) u := hσ₃ 4 (Or.inl (by decide))
-  have h3_1 : 0 < σ₃ * det3 (x 6 - x 2) (x 1 - x 2) u := hσ₃ 1 (Or.inr (by decide))
+  have h3_1 : 0 < σ₃ * det3 (x 6 - x 2) (x 1 - x 2) u := hσ₃ 1 (Or.inl (by decide))
 
   refine ⟨σ₀, hσ₀_ne, ?_, ?_⟩
   · intro i j hj1 hj2
@@ -355,10 +357,11 @@ theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
     · exact sign_transfer hσ02 h2_1
     · exact sign_transfer hσ03 h3_1
 
-/-- **Lemma X5' (Q45X24.md / Q45PROOF24.md): Corner Leaf at `e5 - ε e4` with facet-sign hypotheses.**
-For a Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`), when `σ < 1` (where `x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)`
-is the quad decomposition of Lemma M with `s < 1`), `g45 = ⟪x 4 - x 0, x 5 - x 0⟫ > 0`, the special positions
-S1-S4 hold, and the silhouette facet signs at `x 0 - x 5` and slope on facet 2 hold, the solid is Rupert. -/
+/-- **Lemma X5' (Q45X24.md / Q45THEOREM24.md): Corner Leaf at `e5 - ε e4` with genuine satisfiable facet signs.**
+In the corner frame at vertex 1:
+- `hN5 : 0 < ⟪F.N 5, x 0 - x 5⟫` iff `a5 > 1` (the true condition in the `a4, a5 > 1` regime).
+- `hN7 : ⟪F.N 7, x 0 - x 5⟫ < 0` (facet 236 facing back).
+- `hN8 : ⟪F.N 8, x 0 - x 5⟫ < 0` (facet 346 facing back). -/
 theorem lemma_X5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (s t : ℝ) (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hs0 : 0 < s) (hs : s < 1) (ht : 0 < t)
@@ -368,8 +371,8 @@ theorem lemma_X5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS3 : 0 < det3 (x 0 - x 5) (x 4 - x 5) (x 2 - x 6) * det3 (x 0 - x 5) (x 4 - x 5) (x 1 - x 5))
     (hS4 : det3 (x 0 - x 5) (x 4 - x 5) (cross (x 0 - x 4) (x 2 - x 4)) ≠ 0 ∨
       ⟪x 2 - x 4, x 0 - x 4⟫ < 0 ∨ ⟪x 2 - x 0, x 4 - x 0⟫ < 0)
-    (hN5 : ⟪F.N 5, x 0 - x 5⟫ < 0)
-    (hN7 : 0 < ⟪F.N 7, x 0 - x 5⟫)
+    (hN5 : 0 < ⟪F.N 5, x 0 - x 5⟫)
+    (hN7 : ⟪F.N 7, x 0 - x 5⟫ < 0)
     (hN8 : ⟪F.N 8, x 0 - x 5⟫ < 0) :
     IsRupert (univ.image x) := by
   have hN0 : 0 < ⟪F.N 0, x 0 - x 5⟫ := by
@@ -488,8 +491,8 @@ theorem lemma_X5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have ev_N4 := ev_inner_gt (F.N 4) hN4
   have ev_N8 := ev_inner_lt (F.N 8) hN8
   have ev_N0 := ev_inner_gt (F.N 0) hN0
-  have ev_N7 := ev_inner_gt (F.N 7) hN7
-  have ev_N5 := ev_inner_lt (F.N 5) hN5
+  have ev_N7 := ev_inner_lt (F.N 7) hN7
+  have ev_N5 := ev_inner_gt (F.N 5) hN5
 
   have hall := ev_pos.and (ev_hη1.and (ev_s0.and (ev_s1.and (ev_δ.and (ev_PA.and (ev_AB.and (ev_QP.and (ev_QA.and (ev_QB.and (ev_N4.and (ev_N8.and (ev_N0.and (ev_N2.and (ev_N7.and ev_N5))))))))))))))
   obtain ⟨η, h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, hN4_η, hN8_η, hN0_η, hN2_η, hN7_η, hN5_η⟩ := hall.exists
@@ -586,12 +589,14 @@ theorem isRupert_of_X4_witness {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     h3 ht₀ ht₁ hδ hPA hAB hQP hQA hQB hw hS3 hS4
 
 /-- Strict convexity of rim `quad (x 2) (x 5) (x 0) (x 6)` and vertex 1 strictly inside
-from the silhouette facet signs at view `u`. -/
+from the silhouette facet signs at view `u`.
+Along ridge 62 between facet 7 (`236`) and facet 5 (`126`),
+facet 7 is back (`hN7 < 0`) and facet 5 is front (`0 < hN5`). -/
 theorem lemmaX4_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN2 : 0 < ⟪F.N 2, u⟫) (hN6 : ⟪F.N 6, u⟫ < 0)
     (hN1 : 0 < ⟪F.N 1, u⟫) (hN4 : ⟪F.N 4, u⟫ < 0)
-    (hN7 : 0 < ⟪F.N 7, u⟫) (hN5 : ⟪F.N 5, u⟫ < 0) :
+    (hN7 : ⟪F.N 7, u⟫ < 0) (hN5 : 0 < ⟪F.N 5, u⟫) :
     ∃ ρ : ℝ, ρ ≠ 0 ∧
       (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
         0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
@@ -682,7 +687,7 @@ theorem lemmaX4_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
   obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F 6 2 2 5 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN6, hN2⟩ hne_25
   obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F 3 5 0 (by decide) (by decide) u hN3 hne_50
   obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F 4 1 0 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN4, hN1⟩ hne_06
-  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 5 7 6 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN5, hN7⟩ hne_62
+  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 7 5 6 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN7, hN5⟩ hne_62
 
   have hcyc01 : det3 (x 5 - x 2) (x 0 - x 2) u = det3 (x 0 - x 5) (x 2 - x 5) u :=
     det3_cycle_triangle (x 2) (x 5) (x 0) u
@@ -716,7 +721,7 @@ theorem lemmaX4_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
   have h2_1 : 0 < σ₂ * det3 (x 6 - x 0) (x 1 - x 0) u := hσ₂ 1 (Or.inl (by decide))
 
   have h3_5 : 0 < σ₃ * det3 (x 2 - x 6) (x 5 - x 6) u := hσ₃ 5 (Or.inl (by decide))
-  have h3_1 : 0 < σ₃ * det3 (x 2 - x 6) (x 1 - x 6) u := hσ₃ 1 (Or.inr (by decide))
+  have h3_1 : 0 < σ₃ * det3 (x 2 - x 6) (x 1 - x 6) u := hσ₃ 1 (Or.inl (by decide))
 
   refine ⟨σ₀, hσ₀_ne, ?_, ?_⟩
   · intro i j hj1 hj2
@@ -744,11 +749,11 @@ theorem lemmaX4_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
     · exact sign_transfer hσ02 h2_1
     · exact sign_transfer hσ03 h3_1
 
-/-- **Lemma X4' (Q45X24.md / Q45PROOF24.md): Mirror Corner Leaf at `e4 - ε e5` with facet-sign hypotheses.**
-Mirror of Lemma X5' under relabelling `(2 6)(4 5)`. For a Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`),
-when `τ < 1` (where `x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)` is the quad decomposition of Lemma M
-with `t < 1`), `g45 = ⟪x 4 - x 0, x 5 - x 0⟫ > 0`, the mirror special positions S1-S4 hold, and the
-silhouette facet signs of facets 5 (`126`), 7 (`236`), 6 (`235`) at `x 0 - x 4` hold, the solid is Rupert. -/
+/-- **Lemma X4' (Q45X24.md / Q45THEOREM24.md): Mirror Corner Leaf at `e4 - ε e5` with genuine satisfiable facet signs.**
+In the corner frame at vertex 1:
+- `hN5 : 0 < ⟪F.N 5, x 0 - x 4⟫` iff `a4 > 1` (the true condition in the `a4, a5 > 1` regime).
+- `hN7 : ⟪F.N 7, x 0 - x 4⟫ < 0` (facet 236 facing back).
+- `hN6 : ⟪F.N 6, x 0 - x 4⟫ < 0` (facet 235 facing back). -/
 theorem lemma_X4' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (s t : ℝ) (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hs : 0 < s) (ht0 : 0 < t) (ht : t < 1)
@@ -758,8 +763,8 @@ theorem lemma_X4' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS3 : 0 < det3 (x 0 - x 4) (x 5 - x 4) (x 6 - x 2) * det3 (x 0 - x 4) (x 5 - x 4) (x 1 - x 4))
     (hS4 : det3 (x 0 - x 4) (x 5 - x 4) (cross (x 0 - x 5) (x 6 - x 5)) ≠ 0 ∨
       ⟪x 6 - x 5, x 0 - x 5⟫ < 0 ∨ ⟪x 6 - x 0, x 5 - x 0⟫ < 0)
-    (hN5 : ⟪F.N 5, x 0 - x 4⟫ < 0)
-    (hN7 : 0 < ⟪F.N 7, x 0 - x 4⟫)
+    (hN5 : 0 < ⟪F.N 5, x 0 - x 4⟫)
+    (hN7 : ⟪F.N 7, x 0 - x 4⟫ < 0)
     (hN6 : ⟪F.N 6, x 0 - x 4⟫ < 0) :
     IsRupert (univ.image x) := by
   have hN1 : 0 < ⟪F.N 1, x 0 - x 4⟫ := by
@@ -881,8 +886,8 @@ theorem lemma_X4' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have ev_N2 := ev_inner_gt (F.N 2) hN2
   have ev_N6 := ev_inner_lt (F.N 6) hN6
   have ev_N1 := ev_inner_gt (F.N 1) hN1
-  have ev_N7 := ev_inner_gt (F.N 7) hN7
-  have ev_N5 := ev_inner_lt (F.N 5) hN5
+  have ev_N7 := ev_inner_lt (F.N 7) hN7
+  have ev_N5 := ev_inner_gt (F.N 5) hN5
 
   have hall := ev_pos.and (ev_hη1.and (ev_t0.and (ev_t1.and (ev_δ.and (ev_PA.and (ev_AB.and (ev_QP.and (ev_QA.and (ev_QB.and (ev_N2.and (ev_N6.and (ev_N1.and (ev_N4.and (ev_N7.and ev_N5))))))))))))))
   obtain ⟨η, h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, hN2_η, hN6_η, hN1_η, hN4_η, hN7_η, hN5_η⟩ := hall.exists
