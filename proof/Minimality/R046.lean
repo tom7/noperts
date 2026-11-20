@@ -302,11 +302,13 @@ lemma far_cand3 (m : ZMod 4) (hm : m ≠ 3) (hmS : quad (2 : Fin 7) 6 0 5 m ∉ 
 
 lemma w5_notS : quad (2 : Fin 7) 6 0 5 3 ∉ s0x_S24 4 := by decide
 
-/-- Cross-046 core: depth fact `hbase` replaces hiii, hiv, strict obtuseness; far vertex 2 or 5. -/
-theorem q046_cross_core (F : S0xFac 9 s0x_S24 x)
-    (hi : 0 < ⟪F.N 5, x 4 - x 0⟫)
+/-- Generalized Cross-046 core (`ropen_cross_core_beta`): replaces `hi : 0 < ⟪F.N 5, x 4 - x 0⟫`
+by `hβ : 0 < F.f 7 (x 4) - F.f 7 (x 0)` and `hbase : ⟪x 6, u47 F⟫ < ⟪x 0, u47 F⟫` by
+`min ⟪x 6, u47 F⟫ ⟪x 5, u47 F⟫ < max ⟪x 2, u47 F⟫ ⟪x 0, u47 F⟫`. -/
+theorem ropen_cross_core_beta (F : S0xFac 9 s0x_S24 x)
+    (hβ : 0 < F.f 7 (x 4) - F.f 7 (x 0))
     (hii : 0 < ⟪F.N 6, u47 F⟫)
-    (hbase : ⟪x 6, u47 F⟫ < ⟪x 0, u47 F⟫)
+    (hbase : min ⟪x 6, u47 F⟫ ⟪x 5, u47 F⟫ < max ⟪x 2, u47 F⟫ ⟪x 0, u47 F⟫)
     (hC5 : ⟪F.N 5, u47 F⟫ < 0) (hC2 : ⟪F.N 2, u47 F⟫ ≤ 0)
     (hfar : (F.f 4 (x 2) < F.f 4 (x 5) ∧
       (⟪F.N 4, cross (x 0 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨
@@ -318,7 +320,6 @@ theorem q046_cross_core (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, u47 F⟫ ≠ 0 ∨
       ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, x 6 - x 0⟫ ≠ 0) :
     FaceChordView F 4 := by
-  have hβ := beta_pos F hi hC5
   set p : ZMod 4 → ℝ³ := quad (x 2) (x 6) (x 0) (x 5) with hp
   set Ω := det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) with hΩdef
   have hΩ : Ω ≠ 0 := omega_ne_zero F
@@ -371,13 +372,8 @@ theorem q046_cross_core (F : S0xFac 9 s0x_S24 x)
         ρ ^ 2 * (Ω * triD p (u47 F + ε • (x 6 - x 0)) i) := by ring
     rw [e] at hT
     exact pos_of_mul_pos_right hT (sq_nonneg ρ)
-  have hbase' : min ⟪p 1, u47 F⟫ ⟪p 3, u47 F⟫ < max ⟪p 0, u47 F⟫ ⟪p 2, u47 F⟫ := by
-    have h6 : ⟪p 1, u47 F⟫ = ⟪x 6, u47 F⟫ := rfl
-    have h0 : ⟪p 2, u47 F⟫ = ⟪x 0, u47 F⟫ := rfl
-    exact lt_of_le_of_lt (min_le_left _ _)
-      (lt_of_lt_of_le (by rw [h6]; exact hbase) (by rw [h0]; exact le_max_right _ _))
   have hgen' : ∀ i j : ZMod 4, i ≠ j → ⟪p i - p j, u47 F⟫ ≠ 0 ∨ ⟪p i - p j, x 6 - x 0⟫ ≠ 0 := hgen
-  have hU := cornerU p (u47 F) (x 6 - x 0) Ω hcyc_ev hk hbase' hgen'
+  have hU := cornerU p (u47 F) (x 6 - x 0) Ω hcyc_ev hk hbase hgen'
   obtain ⟨ε, h5, h6, hb, hε, hinjU⟩ := (e5.and (e6.and (eβ.and (ev0.and hU)))).exists
   have hε' : 0 < ε := hε
   set u := u47 F + ε • (x 6 - x 0) with hu
@@ -439,6 +435,25 @@ theorem q046_cross_core (F : S0xFac 9 s0x_S24 x)
   · simp_rw [hrx]; exact hinjU.1
   · simp_rw [hrx]; exact Or.inl h_uni
 
+/-- Cross-046 core: depth fact `hbase` replaces hiii, hiv, strict obtuseness; far vertex 2 or 5. -/
+theorem q046_cross_core (F : S0xFac 9 s0x_S24 x)
+    (hi : 0 < ⟪F.N 5, x 4 - x 0⟫)
+    (hii : 0 < ⟪F.N 6, u47 F⟫)
+    (hbase : ⟪x 6, u47 F⟫ < ⟪x 0, u47 F⟫)
+    (hC5 : ⟪F.N 5, u47 F⟫ < 0) (hC2 : ⟪F.N 2, u47 F⟫ ≤ 0)
+    (hfar : (F.f 4 (x 2) < F.f 4 (x 5) ∧
+      (⟪F.N 4, cross (x 0 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨
+        ⟪x 2 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 2 - x 0, x 6 - x 0⟫ < 0)) ∨
+      (F.f 4 (x 5) < F.f 4 (x 2) ∧
+      (⟪F.N 4, cross (x 0 - x 6) (x 5 - x 6)⟫ ≠ 0 ∨
+        ⟪x 5 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 5 - x 0, x 6 - x 0⟫ < 0)))
+    (hgen : ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, u47 F⟫ ≠ 0 ∨
+      ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, x 6 - x 0⟫ ≠ 0) :
+    FaceChordView F 4 :=
+  ropen_cross_core_beta F (beta_pos F hi hC5) hii
+    (lt_of_le_of_lt (min_le_left _ _) (lt_of_lt_of_le hbase (le_max_right _ _)))
+    hC5 hC2 hfar hgen
 
 /-- **Theorem Cross-046**: If `{012, 016}` fail at `ω3` and `a4 < 1`, `<N6, u47> > 0`
 (with strict obtuseness at `1`, C-bar signs at `u47`, `hfar`, `hoff`, `hgen`),

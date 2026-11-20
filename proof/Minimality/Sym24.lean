@@ -486,6 +486,24 @@ theorem q025_coplanar (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
         · simp only [hlt, ite_false] at h ⊢; exact h)
       hgen)
 
+theorem q025_cross_core_beta (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (hβ : 0 < F.f 7 (x 5) - F.f 7 (x 0))
+    (hii : 0 < ⟪F.N 8, u25 F⟫)
+    (hbase : min ⟪x 2, u25 F⟫ ⟪x 4, u25 F⟫ < max ⟪x 6, u25 F⟫ ⟪x 0, u25 F⟫)
+    (hC5 : ⟪F.N 5, u25 F⟫ < 0) (hC2 : ⟪F.N 4, u25 F⟫ ≤ 0)
+    (hfar : (F.f 2 (x 6) < F.f 2 (x 4) ∧
+      (⟪F.N 2, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
+        ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0)) ∨
+      (F.f 2 (x 4) < F.f 2 (x 6) ∧
+      (⟪F.N 2, cross (x 0 - x 2) (x 4 - x 2)⟫ ≠ 0 ∨
+        ⟪x 4 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 4 - x 0, x 2 - x 0⟫ < 0)))
+    (hgen : ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 6) (x 2) (x 0) (x 4) i - quad (x 6) (x 2) (x 0) (x 4) j, u25 F⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 2) (x 0) (x 4) i - quad (x 6) (x 2) (x 0) (x 4) j, x 2 - x 0⟫ ≠ 0) :
+    FaceChordView F 2 :=
+  faceChordView_sym F (t := 4)
+    (ropen_cross_core_beta (x := x ∘ pi24) (sym24 F) hβ hii hbase hC5 hC2 hfar hgen)
+
 theorem q025_cross_core (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     (hi : 0 < ⟪F.N 5, x 5 - x 0⟫)
     (hii : 0 < ⟪F.N 8, u25 F⟫)

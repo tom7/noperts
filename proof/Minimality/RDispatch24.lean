@@ -267,6 +267,17 @@ def Gen_crossCbar (F : S0xFac 9 s0x_S24 x) : Prop := Gen_crossCore F
 /-- Hypothesis bundle for `Minimality.T24.R046.q046_cross_cbar`. -/
 def H_crossCbar (F : S0xFac 9 s0x_S24 x) : Prop := Case_crossCbar F ∧ Gen_crossCbar F
 
+-- 14b. ropen_cross_core_beta
+def Case_crossB (F : S0xFac 9 s0x_S24 x) : Prop :=
+  0 < F.f 7 (x 4) - F.f 7 (x 0) ∧ 0 < ⟪F.N 6, u47 F⟫ ∧
+  min ⟪x 6, u47 F⟫ ⟪x 5, u47 F⟫ < max ⟪x 2, u47 F⟫ ⟪x 0, u47 F⟫ ∧
+  ⟪F.N 5, u47 F⟫ < 0 ∧ ⟪F.N 2, u47 F⟫ ≤ 0
+
+def Gen_crossB (F : S0xFac 9 s0x_S24 x) : Prop := Gen_crossCore F
+
+/-- Hypothesis bundle for `Minimality.T24.R046.ropen_cross_core_beta`. -/
+def H_crossB (F : S0xFac 9 s0x_S24 x) : Prop := Case_crossB F ∧ Gen_crossB F
+
 -- 15. q046_coplanar
 def Case_cop (F : S0xFac 9 s0x_S24 x) : Prop :=
   ⟪F.N 2, x 4 - x 6⟫ < 0 ∧ ⟪F.N 6, x 4 - x 6⟫ < 0
@@ -451,6 +462,11 @@ def Gen_crossCbar_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_crossCbar (sym24 F)
 /-- Mirror hypothesis bundle for `Sym.q025_cross_cbar` (`q046_cross_cbar` via `Sym.faceChordView_sym`). -/
 def H_crossCbar_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_crossCbar_sym F ∧ Gen_crossCbar_sym F
 
+def Case_crossB_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_crossB (sym24 F)
+def Gen_crossB_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_crossB (sym24 F)
+/-- Mirror hypothesis bundle for `Sym.q025_cross_core_beta` (`ropen_cross_core_beta` via `Sym.faceChordView_sym`). -/
+def H_crossB_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_crossB_sym F ∧ Gen_crossB_sym F
+
 def Case_cop_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_cop (sym24 F)
 def Gen_cop_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_cop (sym24 F)
 /-- Mirror hypothesis bundle for `Sym.q025_coplanar` (`q046_coplanar` via `Sym.faceChordView_sym`). -/
@@ -483,26 +499,26 @@ def H_KminusE34_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_KminusE34_sym F ∧ 
 
 /-! ### Disjunctions `HAvail`, `CaseAny`, `Wall24` and `RResidual` -/
 
-/-- Disjunction of all 40 proved R-region leaf hypothesis bundles (20 base + 20 `Sym24` mirrors). -/
+/-- Disjunction of all 42 proved R-region leaf hypothesis bundles (21 base + 21 `Sym24` mirrors). -/
 def HAvail (F : S0xFac 9 s0x_S24 x) : Prop :=
   H_w3p F ∨ H_w3nA F ∨ H_w3nB F ∨ H_w4n F ∨ H_f346A F ∨ H_f346B F ∨
   H_LCp F ∨ H_LCm F ∨ H_m1 F ∨ H_m6 F ∨ H_m1p5 F ∨ H_m1p6 F ∨
-  H_crossCore F ∨ H_crossCbar F ∨ H_cop F ∨
+  H_crossCore F ∨ H_crossCbar F ∨ H_crossB F ∨ H_cop F ∨
   H_J0exp F ∨ H_J0expGt F ∨ H_tie45 F ∨ H_KminusE5 F ∨ H_KminusE34 F ∨
   H_w3p_sym F ∨ H_w3nA_sym F ∨ H_w3nB_sym F ∨ H_w4n_sym F ∨ H_f346A_sym F ∨ H_f346B_sym F ∨
   H_LCp_sym F ∨ H_LCm_sym F ∨ H_m1_sym F ∨ H_m6_sym F ∨ H_m1p5_sym F ∨ H_m1p6_sym F ∨
-  H_crossCore_sym F ∨ H_crossCbar_sym F ∨ H_cop_sym F ∨
+  H_crossCore_sym F ∨ H_crossCbar_sym F ∨ H_crossB_sym F ∨ H_cop_sym F ∨
   H_J0exp_sym F ∨ H_J0expGt_sym F ∨ H_tie45_sym F ∨ H_KminusE5_sym F ∨ H_KminusE34_sym F
 
-/-- Disjunction of all 40 strict case conditions (without genericity `Gen_*`). -/
+/-- Disjunction of all 42 strict case conditions (without genericity `Gen_*`). -/
 def CaseAny (F : S0xFac 9 s0x_S24 x) : Prop :=
   Case_w3p F ∨ Case_w3nA F ∨ Case_w3nB F ∨ Case_w4n F ∨ Case_f346A F ∨ Case_f346B F ∨
   Case_LCp F ∨ Case_LCm F ∨ Case_m1 F ∨ Case_m6 F ∨ Case_m1p5 F ∨ Case_m1p6 F ∨
-  Case_crossCore F ∨ Case_crossCbar F ∨ Case_cop F ∨
+  Case_crossCore F ∨ Case_crossCbar F ∨ Case_crossB F ∨ Case_cop F ∨
   Case_J0exp F ∨ Case_J0expGt F ∨ Case_tie45 F ∨ Case_KminusE5 F ∨ Case_KminusE34 F ∨
   Case_w3p_sym F ∨ Case_w3nA_sym F ∨ Case_w3nB_sym F ∨ Case_w4n_sym F ∨ Case_f346A_sym F ∨ Case_f346B_sym F ∨
   Case_LCp_sym F ∨ Case_LCm_sym F ∨ Case_m1_sym F ∨ Case_m6_sym F ∨ Case_m1p5_sym F ∨ Case_m1p6_sym F ∨
-  Case_crossCore_sym F ∨ Case_crossCbar_sym F ∨ Case_cop_sym F ∨
+  Case_crossCore_sym F ∨ Case_crossCbar_sym F ∨ Case_crossB_sym F ∨ Case_cop_sym F ∨
   Case_J0exp_sym F ∨ Case_J0expGt_sym F ∨ Case_tie45_sym F ∨ Case_KminusE5_sym F ∨ Case_KminusE34_sym F
 
 /-- One-sided codimension-1 walls in facet-sign form (`c3=1`, `c4=1`, `a4=1`, `a5=1`, `s=1`, `P=0`,
@@ -522,8 +538,10 @@ def Wall24_0 (F : S0xFac 9 s0x_S24 x) : Prop :=
   ⟪F.N 8, x 0 - x 2⟫ = 0 ∨
   ⟪F.N 6, u47 F⟫ = 0 ∨
   ⟪F.N 5, x 4 - x 0⟫ = 0 ∨
+  F.f 7 (x 4) = F.f 7 (x 0) ∨
   F.f 4 (x 2) = F.f 4 (x 5) ∨
   ⟪x 6, u47 F⟫ = ⟪x 0, u47 F⟫ ∨
+  min ⟪x 6, u47 F⟫ ⟪x 5, u47 F⟫ = max ⟪x 2, u47 F⟫ ⟪x 0, u47 F⟫ ∨
   ⟪F.N 2, x 4 - x 6⟫ = 0 ∨ ⟪F.N 6, x 4 - x 6⟫ = 0 ∨
   ⟪F.N 5, x 5 - x 0⟫ = 0 ∨ ⟪F.N 5, x 3 - x 4⟫ = 0 ∨
   ⟪F.N 5, u_Pi x (tieAlpha x) (tieBeta x)⟫ = 0 ∨
@@ -605,6 +623,9 @@ private theorem leaf_crossCore {F : S0xFac 9 s0x_S24 x} (h : H_crossCore F) : Fa
 private theorem leaf_crossCbar {F : S0xFac 9 s0x_S24 x} (h : H_crossCbar F) : FaceChordView F 4 :=
   q046_cross_cbar F h.1.1 h.1.2.1 h.1.2.2.1 h.1.2.2.2 h.2.1 h.2.2
 
+private theorem leaf_crossB {F : S0xFac 9 s0x_S24 x} (h : H_crossB F) : FaceChordView F 4 :=
+  ropen_cross_core_beta F h.1.1 h.1.2.1 h.1.2.2.1 h.1.2.2.2.1 h.1.2.2.2.2 h.2.1 h.2.2
+
 private theorem leaf_cop {F : S0xFac 9 s0x_S24 x} (h : H_cop F) : FaceChordView F 4 :=
   q046_coplanar F h.1.1 h.1.2 h.2.1 h.2.2.1 h.2.2.2
 
@@ -634,8 +655,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
     FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 2 ∨
       FaceChordView F 3 ∨ FaceChordView F 4 := by
   rcases h with
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
   · exact Or.inl (leaf_w3p h)
   · exact Or.inl (leaf_w3nA h)
   · exact Or.inl (leaf_w3nB h)
@@ -650,6 +671,7 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inl (leaf_m1p6 h)
   · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_crossCore h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_crossCbar h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_crossB h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_cop h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_J0exp h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_J0expGt h))))
@@ -670,6 +692,7 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_m1p6 h)))
   · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_crossCore h))))
   · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_crossCbar h))))
+  · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_crossB h))))
   · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_cop h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_J0exp h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_J0expGt h)))))
