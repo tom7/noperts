@@ -390,6 +390,109 @@ theorem cross_ne_zero_of_opp_endpoints {N nf : ℕ} {S : Fin nf → Finset (Fin 
     linarith [h_inner2, hu2]
   linarith
 
+/-- Generalized rim convexity and interior positioning from silhouette signs
+for an arbitrary edge-on facet `tc : Fin 9` and any interior vertex `I : Fin 7`
+off all four rim facets. -/
+theorem quadRim_of_signs_gen {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
+    (P A B Q : Fin 7)
+    (t0 t0' tc t2 t2' t3 t3' : Fin 9)
+    (hP0 : P ∈ s0x_S24 t0 ∧ P ∈ s0x_S24 t0')
+    (hA0 : A ∈ s0x_S24 t0 ∧ A ∈ s0x_S24 t0')
+    (hAc : A ∈ s0x_S24 tc)
+    (hBc : B ∈ s0x_S24 tc)
+    (hB2 : B ∈ s0x_S24 t2 ∧ B ∈ s0x_S24 t2')
+    (hQ2 : Q ∈ s0x_S24 t2 ∧ Q ∈ s0x_S24 t2')
+    (hQ3 : Q ∈ s0x_S24 t3 ∧ Q ∈ s0x_S24 t3')
+    (hP3 : P ∈ s0x_S24 t3 ∧ P ∈ s0x_S24 t3')
+    (hB_off0 : B ∉ s0x_S24 t0 ∨ B ∉ s0x_S24 t0')
+    (hQ_off0 : Q ∉ s0x_S24 t0 ∨ Q ∉ s0x_S24 t0')
+    (hP_offc : P ∉ s0x_S24 tc)
+    (hQ_offc : Q ∉ s0x_S24 tc)
+    (hA_off2 : A ∉ s0x_S24 t2 ∨ A ∉ s0x_S24 t2')
+    (hP_off2 : P ∉ s0x_S24 t2 ∨ P ∉ s0x_S24 t2')
+    (hA_off3 : A ∉ s0x_S24 t3 ∨ A ∉ s0x_S24 t3')
+    (hB_off3 : B ∉ s0x_S24 t3 ∨ B ∉ s0x_S24 t3')
+    (hne_PA : cross u (x A - x P) ≠ 0)
+    (hne_AB : cross u (x B - x A) ≠ 0)
+    (hne_BQ : cross u (x Q - x B) ≠ 0)
+    (hne_QP : cross u (x P - x Q) ≠ 0)
+    (h_opp0 : ⟪F.N t0, u⟫ < 0 ∧ 0 < ⟪F.N t0', u⟫)
+    (hNc : ⟪F.N tc, u⟫ = 0)
+    (h_opp2 : ⟪F.N t2, u⟫ < 0 ∧ 0 < ⟪F.N t2', u⟫)
+    (h_opp3 : ⟪F.N t3, u⟫ < 0 ∧ 0 < ⟪F.N t3', u⟫) :
+    ∃ ρ : ℝ, ρ ≠ 0 ∧
+      (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
+        0 < ρ * det3 (quad (x P) (x A) (x B) (x Q) (i + 1) - quad (x P) (x A) (x B) (x Q) i)
+          (quad (x P) (x A) (x B) (x Q) j - quad (x P) (x A) (x B) (x Q) i) u) ∧
+      (∀ I : Fin 7,
+        (I ∉ s0x_S24 t0 ∨ I ∉ s0x_S24 t0') →
+        (I ∉ s0x_S24 tc) →
+        (I ∉ s0x_S24 t2 ∨ I ∉ s0x_S24 t2') →
+        (I ∉ s0x_S24 t3 ∨ I ∉ s0x_S24 t3') →
+        ∀ i : ZMod 4,
+          0 < ρ * det3 (quad (x P) (x A) (x B) (x Q) (i + 1) - quad (x P) (x A) (x B) (x Q) i)
+            (x I - quad (x P) (x A) (x B) (x Q) i) u) := by
+  obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F t0 t0' P A hP0 hA0 u h_opp0 hne_PA
+  obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F tc A B hAc hBc u hNc hne_AB
+  obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F t2 t2' B Q hB2 hQ2 u h_opp2 hne_BQ
+  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F t3 t3' Q P hQ3 hP3 u h_opp3 hne_QP
+  have hcyc01 : det3 (x A - x P) (x B - x P) u = det3 (x B - x A) (x P - x A) u :=
+    det3_cycle_triangle (x P) (x A) (x B) u
+  have hcyc12 : det3 (x B - x A) (x Q - x A) u = det3 (x Q - x B) (x A - x B) u :=
+    det3_cycle_triangle (x A) (x B) (x Q) u
+  have hcyc23 : det3 (x Q - x B) (x P - x B) u = det3 (x P - x Q) (x B - x Q) u :=
+    det3_cycle_triangle (x B) (x Q) (x P) u
+  have h0_B : 0 < σ₀ * det3 (x A - x P) (x B - x P) u := hσ₀ B hB_off0
+  have h1_P : 0 < σ₁ * det3 (x B - x A) (x P - x A) u := hσ₁ P hP_offc
+  have h1_P' : 0 < σ₁ * det3 (x A - x P) (x B - x P) u := by rw [hcyc01]; exact h1_P
+  have hσ01 : 0 < σ₀ * σ₁ := sign_prod h0_B h1_P'
+  have h1_Q : 0 < σ₁ * det3 (x B - x A) (x Q - x A) u := hσ₁ Q hQ_offc
+  have h2_A : 0 < σ₂ * det3 (x Q - x B) (x A - x B) u := hσ₂ A hA_off2
+  have h2_A' : 0 < σ₂ * det3 (x B - x A) (x Q - x A) u := by rw [hcyc12]; exact h2_A
+  have hσ12 : 0 < σ₁ * σ₂ := sign_prod h1_Q h2_A'
+  have hσ02 : 0 < σ₀ * σ₂ := sign_transfer hσ01 hσ12
+  have h2_P : 0 < σ₂ * det3 (x Q - x B) (x P - x B) u := hσ₂ P hP_off2
+  have h3_B : 0 < σ₃ * det3 (x P - x Q) (x B - x Q) u := hσ₃ B hB_off3
+  have h3_B' : 0 < σ₃ * det3 (x Q - x B) (x P - x B) u := by rw [hcyc23]; exact h3_B
+  have hσ23 : 0 < σ₂ * σ₃ := sign_prod h2_P h3_B'
+  have hσ03 : 0 < σ₀ * σ₃ := sign_transfer hσ02 hσ23
+  have h0_Q : 0 < σ₀ * det3 (x A - x P) (x Q - x P) u := hσ₀ Q hQ_off0
+  have h3_A : 0 < σ₃ * det3 (x P - x Q) (x A - x Q) u := hσ₃ A hA_off3
+  refine ⟨σ₀, hσ₀_ne, ?_, ?_⟩
+  · intro i j hj1 hj2
+    fin_cases i <;> fin_cases j
+    · exact False.elim (hj1 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact h0_B
+    · exact h0_Q
+    · exact sign_transfer hσ01 h1_P
+    · exact False.elim (hj1 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact sign_transfer hσ01 h1_Q
+    · exact sign_transfer hσ02 h2_P
+    · exact sign_transfer hσ02 h2_A
+    · exact False.elim (hj1 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact sign_transfer hσ03 h3_A
+    · exact sign_transfer hσ03 h3_B
+    · exact False.elim (hj1 rfl)
+  · intro I hI0 hIc hI2 hI3 i
+    fin_cases i
+    · exact hσ₀ I hI0
+    · exact sign_transfer hσ01 (hσ₁ I hIc)
+    · exact sign_transfer hσ02 (hσ₂ I hI2)
+    · exact sign_transfer hσ03 (hσ₃ I hI3)
+
+/-- Algebraic chord-middle decomposition in `ℝ³`: expresses `a` as a convex combination
+along `b - c` plus a view-plane offset `α • (a - b) + β • (a - c)`. -/
+theorem middle_eq (a b c : ℝ³) (α β : ℝ) (hκ : α + β ≠ 0) :
+    a = c + (α / (α + β)) • (b - c) + (1 / (α + β)) • (α • (a - b) + β • (a - c)) := by
+  ext j
+  simp only [PiLp.add_apply, PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
+  field_simp
+  ring
+
 /-- Generalized rim convexity and vertex 1 interior position from silhouette signs. -/
 theorem quadRim_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (P A B Q : Fin 7)
@@ -429,70 +532,10 @@ theorem quadRim_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
       (∀ i : ZMod 4,
         0 < ρ * det3 (quad (x P) (x A) (x B) (x Q) (i + 1) - quad (x P) (x A) (x B) (x Q) i)
           (x 1 - quad (x P) (x A) (x B) (x Q) i) u) := by
-  obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F t0 t0' P A hP0 hA0 u h_opp0 hne_PA
-  obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F 3 A B hA3 hB3 u hN3 hne_AB
-  obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F t2 t2' B Q hB2 hQ2 u h_opp2 hne_BQ
-  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F t3 t3' Q P hQ3 hP3 u h_opp3 hne_QP
-
-  have hcyc01 : det3 (x A - x P) (x B - x P) u = det3 (x B - x A) (x P - x A) u :=
-    det3_cycle_triangle (x P) (x A) (x B) u
-  have hcyc12 : det3 (x B - x A) (x Q - x A) u = det3 (x Q - x B) (x A - x B) u :=
-    det3_cycle_triangle (x A) (x B) (x Q) u
-  have hcyc23 : det3 (x Q - x B) (x P - x B) u = det3 (x P - x Q) (x B - x Q) u :=
-    det3_cycle_triangle (x B) (x Q) (x P) u
-
-  have h0_B : 0 < σ₀ * det3 (x A - x P) (x B - x P) u := hσ₀ B hB_off0
-  have h1_P : 0 < σ₁ * det3 (x B - x A) (x P - x A) u := hσ₁ P hP_off3
-  have h1_P' : 0 < σ₁ * det3 (x A - x P) (x B - x P) u := by rw [hcyc01]; exact h1_P
-  have hσ01 : 0 < σ₀ * σ₁ := sign_prod h0_B h1_P'
-
-  have h1_Q : 0 < σ₁ * det3 (x B - x A) (x Q - x A) u := hσ₁ Q hQ_off3
-  have h2_A : 0 < σ₂ * det3 (x Q - x B) (x A - x B) u := hσ₂ A hA_off2
-  have h2_A' : 0 < σ₂ * det3 (x B - x A) (x Q - x A) u := by rw [hcyc12]; exact h2_A
-  have hσ12 : 0 < σ₁ * σ₂ := sign_prod h1_Q h2_A'
-  have hσ02 : 0 < σ₀ * σ₂ := sign_transfer hσ01 hσ12
-
-  have h2_P : 0 < σ₂ * det3 (x Q - x B) (x P - x B) u := hσ₂ P hP_off2
-  have h3_B : 0 < σ₃ * det3 (x P - x Q) (x B - x Q) u := hσ₃ B hB_off3
-  have h3_B' : 0 < σ₃ * det3 (x Q - x B) (x P - x B) u := by rw [hcyc23]; exact h3_B
-  have hσ23 : 0 < σ₂ * σ₃ := sign_prod h2_P h3_B'
-  have hσ03 : 0 < σ₀ * σ₃ := sign_transfer hσ02 hσ23
-
-  have h0_Q : 0 < σ₀ * det3 (x A - x P) (x Q - x P) u := hσ₀ Q hQ_off0
-  have h0_1 : 0 < σ₀ * det3 (x A - x P) (x 1 - x P) u := hσ₀ 1 h1_off0
-
-  have h1_1 : 0 < σ₁ * det3 (x B - x A) (x 1 - x A) u := hσ₁ 1 h1_off3
-
-  have h2_1 : 0 < σ₂ * det3 (x Q - x B) (x 1 - x B) u := hσ₂ 1 h1_off2
-
-  have h3_A : 0 < σ₃ * det3 (x P - x Q) (x A - x Q) u := hσ₃ A hA_off3
-  have h3_1 : 0 < σ₃ * det3 (x P - x Q) (x 1 - x Q) u := hσ₃ 1 h1_off3'
-
-  refine ⟨σ₀, hσ₀_ne, ?_, ?_⟩
-  · intro i j hj1 hj2
-    fin_cases i <;> fin_cases j
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact h0_B
-    · exact h0_Q
-    · exact sign_transfer hσ01 h1_P
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact sign_transfer hσ01 h1_Q
-    · exact sign_transfer hσ02 h2_P
-    · exact sign_transfer hσ02 h2_A
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact sign_transfer hσ03 h3_A
-    · exact sign_transfer hσ03 h3_B
-    · exact False.elim (hj1 rfl)
-  · intro i
-    fin_cases i
-    · exact h0_1
-    · exact sign_transfer hσ01 h1_1
-    · exact sign_transfer hσ02 h2_1
-    · exact sign_transfer hσ03 h3_1
+  obtain ⟨ρ, hρ_ne, hcvx, hint⟩ := quadRim_of_signs_gen F P A B Q t0 t0' 3 t2 t2' t3 t3'
+    hP0 hA0 hA3 hB3 hB2 hQ2 hQ3 hP3 hB_off0 hQ_off0 hP_off3 hQ_off3
+    hA_off2 hP_off2 hA_off3 hB_off3 hne_PA hne_AB hne_BQ hne_QP h_opp0 hN3 h_opp2 h_opp3
+  exact ⟨ρ, hρ_ne, hcvx, hint 1 h1_off0 h1_off3 h1_off2 h1_off3'⟩
 
 /-- Rim 6402 convexity and vertex 1 interior position from silhouette signs.
 Satisfiability at intended view (Regime B1, `σ < 1`, view `u = - (e5 - ε e4)`):
