@@ -6,6 +6,7 @@ public import Minimality.RF0345
 public import Minimality.RF0345N
 public import Minimality.RH31
 public import Minimality.RF346B
+public import Minimality.RX27
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Q45
 
@@ -17,7 +18,7 @@ set_option relaxedAutoImplicit false
 open scoped RealInnerProductSpace
 open Finset
 open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT
-open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046 Minimality.T24.RX16 Minimality.T24.H31 Minimality.T24.Sym
+open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046 Minimality.T24.RX16 Minimality.T24.H31 Minimality.T24.RX27 Minimality.T24.Sym
 
 namespace Minimality.T24
 
@@ -657,30 +658,30 @@ def H_h31_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_h31_sym F ∧ Gen_h31_sym 
 
 /-! ### Disjunctions `HAvail`, `CaseAny`, `Wall24` and `RResidual` -/
 
-/-- Disjunction of all 54 proved R-region leaf hypothesis bundles (27 base + 27 `Sym24` mirrors). -/
+/-- Disjunction of all 58 proved R-region leaf hypothesis bundles (29 base + 29 `Sym24` mirrors). -/
 def HAvail (F : S0xFac 9 s0x_S24 x) : Prop :=
-  H_w3p F ∨ H_w3nA F ∨ H_w3nB F ∨ H_w4n F ∨ H_f346A F ∨ H_f346B F ∨
+  H_w3p F ∨ H_w3nA F ∨ H_w3nB F ∨ H_w4n F ∨ H_w4p F ∨ H_f346A F ∨ H_f346B F ∨
   H_LCp F ∨ H_LCm F ∨ H_m1 F ∨ H_m6 F ∨ H_m1p5 F ∨ H_m1p6 F ∨
   H_x16lo F ∨ H_x16hi F ∨ H_f0345 F ∨ H_f0345n F ∨ H_f346_5 F ∨
-  H_crossCore F ∨ H_crossCbar F ∨ H_crossB F ∨ H_cop F ∨
+  H_crossCore F ∨ H_crossCbar F ∨ H_crossB F ∨ H_crossN F ∨ H_cop F ∨
   H_J0exp F ∨ H_J0expGt F ∨ H_tie45 F ∨ H_KminusE5 F ∨ H_KminusE34 F ∨ H_h31 F ∨
-  H_w3p_sym F ∨ H_w3nA_sym F ∨ H_w3nB_sym F ∨ H_w4n_sym F ∨ H_f346A_sym F ∨ H_f346B_sym F ∨
+  H_w3p_sym F ∨ H_w3nA_sym F ∨ H_w3nB_sym F ∨ H_w4n_sym F ∨ H_w4p_sym F ∨ H_f346A_sym F ∨ H_f346B_sym F ∨
   H_LCp_sym F ∨ H_LCm_sym F ∨ H_m1_sym F ∨ H_m6_sym F ∨ H_m1p5_sym F ∨ H_m1p6_sym F ∨
   H_x16lo_sym F ∨ H_x16hi_sym F ∨ H_f0345_sym F ∨ H_f0345n_sym F ∨ H_f346_5_sym F ∨
-  H_crossCore_sym F ∨ H_crossCbar_sym F ∨ H_crossB_sym F ∨ H_cop_sym F ∨
+  H_crossCore_sym F ∨ H_crossCbar_sym F ∨ H_crossB_sym F ∨ H_crossN_sym F ∨ H_cop_sym F ∨
   H_J0exp_sym F ∨ H_J0expGt_sym F ∨ H_tie45_sym F ∨ H_KminusE5_sym F ∨ H_KminusE34_sym F ∨ H_h31_sym F
 
-/-- Disjunction of all 54 strict case conditions (without genericity `Gen_*`). -/
+/-- Disjunction of all 58 strict case conditions (without genericity `Gen_*`). -/
 def CaseAny (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Case_w3p F ∨ Case_w3nA F ∨ Case_w3nB F ∨ Case_w4n F ∨ Case_f346A F ∨ Case_f346B F ∨
+  Case_w3p F ∨ Case_w3nA F ∨ Case_w3nB F ∨ Case_w4n F ∨ Case_w4p F ∨ Case_f346A F ∨ Case_f346B F ∨
   Case_LCp F ∨ Case_LCm F ∨ Case_m1 F ∨ Case_m6 F ∨ Case_m1p5 F ∨ Case_m1p6 F ∨
   Case_x16lo F ∨ Case_x16hi F ∨ Case_f0345 F ∨ Case_f0345n F ∨ Case_f346_5 F ∨
-  Case_crossCore F ∨ Case_crossCbar F ∨ Case_crossB F ∨ Case_cop F ∨
+  Case_crossCore F ∨ Case_crossCbar F ∨ Case_crossB F ∨ Case_crossN F ∨ Case_cop F ∨
   Case_J0exp F ∨ Case_J0expGt F ∨ Case_tie45 F ∨ Case_KminusE5 F ∨ Case_KminusE34 F ∨ Case_h31 F ∨
-  Case_w3p_sym F ∨ Case_w3nA_sym F ∨ Case_w3nB_sym F ∨ Case_w4n_sym F ∨ Case_f346A_sym F ∨ Case_f346B_sym F ∨
+  Case_w3p_sym F ∨ Case_w3nA_sym F ∨ Case_w3nB_sym F ∨ Case_w4n_sym F ∨ Case_w4p_sym F ∨ Case_f346A_sym F ∨ Case_f346B_sym F ∨
   Case_LCp_sym F ∨ Case_LCm_sym F ∨ Case_m1_sym F ∨ Case_m6_sym F ∨ Case_m1p5_sym F ∨ Case_m1p6_sym F ∨
   Case_x16lo_sym F ∨ Case_x16hi_sym F ∨ Case_f0345_sym F ∨ Case_f0345n_sym F ∨ Case_f346_5_sym F ∨
-  Case_crossCore_sym F ∨ Case_crossCbar_sym F ∨ Case_crossB_sym F ∨ Case_cop_sym F ∨
+  Case_crossCore_sym F ∨ Case_crossCbar_sym F ∨ Case_crossB_sym F ∨ Case_crossN_sym F ∨ Case_cop_sym F ∨
   Case_J0exp_sym F ∨ Case_J0expGt_sym F ∨ Case_tie45_sym F ∨ Case_KminusE5_sym F ∨ Case_KminusE34_sym F ∨ Case_h31_sym F
 
 /-- One-sided codimension-1 walls in facet-sign form (`c3=1`, `c4=1`, `a4=1`, `a5=1`, `s=1`, `P=0`,
@@ -728,6 +729,14 @@ def Wall24_0 (F : S0xFac 9 s0x_S24 x) : Prop :=
   (⟪F.N 3, rootB F⟫ = 0 ∧ ⟪F.N 3, x 2 - x 1⟫ = 0) ∨
   (⟪F.N 6, rootB F⟫ = 0 ∧ ⟪F.N 6, x 2 - x 1⟫ = 0) ∨
   (⟪F.N 7, rootB F⟫ = 0 ∧ ⟪F.N 7, x 2 - x 1⟫ = 0) ∨
+  ⟪F.N 5, u47 F⟫ = 0 ∨ ⟪F.N 2, u47 F⟫ = 0 ∨
+  min ⟪x 6, u47 F⟫ ⟪x 5, u47 F⟫ = max ⟪x 3, u47 F⟫ ⟪x 0, u47 F⟫ ∨
+  min ⟪x 3, u47 F⟫ ⟪x 0, u47 F⟫ = max ⟪x 6, u47 F⟫ ⟪x 5, u47 F⟫ ∨
+  inv_omega4_012 F = 0 ∨
+  ⟪F.N 3, u0 x (inv_omega4_012 F)⟫ = 0 ∨ ⟪F.N 8, u0 x (inv_omega4_012 F)⟫ = 0 ∨
+  ⟪F.N 6, u0 x (inv_omega4_012 F)⟫ = 0 ∨ ⟪F.N 7, u0 x (inv_omega4_012 F)⟫ = 0 ∨
+  min ⟪x 0, u0 x (inv_omega4_012 F)⟫ ⟪x 3, u0 x (inv_omega4_012 F)⟫ =
+    max ⟪x 4, u0 x (inv_omega4_012 F)⟫ ⟪x 2, u0 x (inv_omega4_012 F)⟫ ∨
   (∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧
     x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ s = 1)
 
@@ -861,12 +870,13 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
     FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 2 ∨
       FaceChordView F 3 ∨ FaceChordView F 4 := by
   rcases h with
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
   · exact Or.inl (leaf_w3p h)
   · exact Or.inl (leaf_w3nA h)
   · exact Or.inl (leaf_w3nB h)
   · exact Or.inl (leaf_w4n h)
+  · exact Or.inl (leaf_w4p h)
   · exact Or.inl (leaf_f346A h)
   · exact Or.inl (leaf_f346B h)
   · exact Or.inl (leaf_LCp h)
@@ -883,6 +893,7 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_crossCore h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_crossCbar h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_crossB h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_crossN h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (leaf_cop h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_J0exp h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_J0expGt h))))
@@ -894,6 +905,7 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_w3nA h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_w3nB h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_w4n h)))
+  · exact Or.inr (Or.inl (leaf_w4p_sym h))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_f346A h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_f346B h)))
   · exact Or.inr (Or.inl (faceChordView_sym F (t := 0) (leaf_LCp h)))
@@ -910,6 +922,7 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_crossCore h))))
   · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_crossCbar h))))
   · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_crossB h))))
+  · exact Or.inr (Or.inr (Or.inl (leaf_crossN_sym h)))
   · exact Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 4) (leaf_cop h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_J0exp h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_J0expGt h)))))
