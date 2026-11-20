@@ -368,15 +368,24 @@ theorem lemma_X5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS3 : 0 < det3 (x 0 - x 5) (x 4 - x 5) (x 2 - x 6) * det3 (x 0 - x 5) (x 4 - x 5) (x 1 - x 5))
     (hS4 : det3 (x 0 - x 5) (x 4 - x 5) (cross (x 0 - x 4) (x 2 - x 4)) ≠ 0 ∨
       ⟪x 2 - x 4, x 0 - x 4⟫ < 0 ∨ ⟪x 2 - x 0, x 4 - x 0⟫ < 0)
-    (hN0 : 0 < ⟪F.N 0, x 0 - x 5⟫)
-    (_hN1 : 0 < ⟪F.N 1, x 0 - x 5⟫)
-    (hN2_slope : ⟪F.N 2, x 4 - x 5⟫ < 0)
-    (hN4 : 0 < ⟪F.N 4, x 0 - x 5⟫)
     (hN5 : ⟪F.N 5, x 0 - x 5⟫ < 0)
-    (_hN6 : ⟪F.N 6, x 0 - x 5⟫ < 0)
     (hN7 : 0 < ⟪F.N 7, x 0 - x 5⟫)
     (hN8 : ⟪F.N 8, x 0 - x 5⟫ < 0) :
     IsRupert (univ.image x) := by
+  have hN0 : 0 < ⟪F.N 0, x 0 - x 5⟫ := by
+    have := (F.hN 0 (x 0) (x 5)).symm
+    rw [F.zero 0 0 (by decide)] at this
+    linarith [F.neg 0 5 (by decide)]
+
+  have hN4 : 0 < ⟪F.N 4, x 0 - x 5⟫ := by
+    have := (F.hN 4 (x 0) (x 5)).symm
+    rw [F.zero 4 0 (by decide)] at this
+    linarith [F.neg 4 5 (by decide)]
+
+  have hN2_slope : ⟪F.N 2, x 4 - x 5⟫ < 0 := by
+    have := (F.hN 2 (x 4) (x 5)).symm
+    rw [F.zero 2 5 (by decide)] at this
+    linarith [F.neg 2 4 (by decide)]
   have ev_u : ContinuousAt (u_X5 x) 0 := by
     change ContinuousAt (fun η : ℝ => (x 0 - x 5) + η • (x 4 - x 5)) 0
     fun_prop
@@ -508,5 +517,78 @@ theorem lemma_X5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
   exact isRupert_of_X5_witness F s t hdecomp h0 h1 h2 h3 h4 hρ hcyc hI
     hPA_η hAB_η hQP_η hQA_η hQB_η hS3 hS4
+
+/-- The perturbed view direction for Lemma X4 on facet `0345` (facet 3).
+With chord edge `5 -> 0` and middle `4`, `u_X4 x η = (x 0 - x 4) + η • (x 5 - x 4)`. -/
+def u_X4 (x : Fin 7 → ℝ³) (η : ℝ) : ℝ³ :=
+  (x 0 - x 4) + η • (x 5 - x 4)
+
+/-- Algebraic decomposition of vertex 3 as a chord middle over edge `0 -> 5`
+along the perturbed view `u_X4 x η`. -/
+theorem x3_middle_X4 (x : Fin 7 → ℝ³) (s t η : ℝ) (hη1 : 1 + η ≠ 0)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) :
+    x 3 = x 0 + (t + s * η / (1 + η)) • (x 5 - x 0) + (-s / (1 + η)) • u_X4 x η := by
+  sorry
+
+/-- Direct application of `isRupert_quadChord` for Lemma X4 at a specific parameter `η`
+satisfying the open middle and depth inequalities. -/
+theorem isRupert_of_X4_witness {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (s t : ℝ) (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    {η : ℝ} (hη : 0 ≤ η) (hη1 : 1 + η ≠ 0)
+    (ht₀ : 0 < t + s * η / (1 + η)) (ht₁ : t + s * η / (1 + η) < 1)
+    (hδ : -s / (1 + η) ≠ 0)
+    {ρ : ℝ} (hρ : ρ ≠ 0)
+    (hcyc : ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
+      0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
+        (quad (x 2) (x 5) (x 0) (x 6) j - quad (x 2) (x 5) (x 0) (x 6) i) (u_X4 x η))
+    (hI : ∀ i : ZMod 4,
+      0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
+        (x 1 - quad (x 2) (x 5) (x 0) (x 6) i) (u_X4 x η))
+    (hPA : ⟪x 2, u_X4 x η⟫ < ⟪x 5, u_X4 x η⟫)
+    (hAB : ⟪x 5, u_X4 x η⟫ < ⟪x 0, u_X4 x η⟫)
+    (hQP : ⟪x 6, u_X4 x η⟫ ≠ ⟪x 2, u_X4 x η⟫)
+    (hQA : ⟪x 6, u_X4 x η⟫ ≠ ⟪x 5, u_X4 x η⟫)
+    (hQB : ⟪x 6, u_X4 x η⟫ ≠ ⟪x 0, u_X4 x η⟫)
+    (hS3 : 0 < det3 (x 0 - x 4) (x 5 - x 4) (x 6 - x 2) * det3 (x 0 - x 4) (x 5 - x 4) (x 1 - x 4))
+    (hS4 : det3 (x 0 - x 4) (x 5 - x 4) (cross (x 0 - x 5) (x 6 - x 5)) ≠ 0 ∨
+      ⟪x 6 - x 5, x 0 - x 5⟫ < 0 ∨ ⟪x 6 - x 0, x 5 - x 0⟫ < 0) :
+    IsRupert (univ.image x) := by
+  sorry
+
+/-- Strict convexity of rim `quad (x 2) (x 5) (x 0) (x 6)` and vertex 1 strictly inside
+from the silhouette facet signs at view `u`. -/
+theorem lemmaX4_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
+    (hN3 : ⟪F.N 3, u⟫ = 0)
+    (hN2 : 0 < ⟪F.N 2, u⟫) (hN6 : ⟪F.N 6, u⟫ < 0)
+    (hN1 : 0 < ⟪F.N 1, u⟫) (hN4 : ⟪F.N 4, u⟫ < 0)
+    (hN7 : 0 < ⟪F.N 7, u⟫) (hN5 : ⟪F.N 5, u⟫ < 0) :
+    ∃ ρ : ℝ, ρ ≠ 0 ∧
+      (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
+        0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
+          (quad (x 2) (x 5) (x 0) (x 6) j - quad (x 2) (x 5) (x 0) (x 6) i) u) ∧
+      (∀ i : ZMod 4,
+        0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
+          (x 1 - quad (x 2) (x 5) (x 0) (x 6) i) u) := by
+  sorry
+
+/-- **Lemma X4' (Q45X24.md / Q45PROOF24.md): Mirror Corner Leaf at `e4 - ε e5` with facet-sign hypotheses.**
+Mirror of Lemma X5' under relabelling `(2 6)(4 5)`. For a Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`),
+when `τ < 1` (where `x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)` is the quad decomposition of Lemma M
+with `t < 1`), `g45 = ⟪x 4 - x 0, x 5 - x 0⟫ > 0`, the mirror special positions S1-S4 hold, and the
+silhouette facet signs of facets 5 (`126`), 7 (`236`), 6 (`235`) at `x 0 - x 4` hold, the solid is Rupert. -/
+theorem lemma_X4' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (s t : ℝ) (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hs : 0 < s) (ht0 : 0 < t) (ht : t < 1)
+    (hg45 : 0 < ⟪x 4 - x 0, x 5 - x 0⟫)
+    (hS1 : ⟪x 6 - x 0, x 0 - x 4⟫ ≠ 0 ∧ ⟪x 6 - x 5, x 0 - x 4⟫ ≠ 0 ∧ ⟪x 6 - x 2, x 0 - x 4⟫ ≠ 0)
+    (hS2 : ⟪x 2 - x 5, x 0 - x 4⟫ < 0)
+    (hS3 : 0 < det3 (x 0 - x 4) (x 5 - x 4) (x 6 - x 2) * det3 (x 0 - x 4) (x 5 - x 4) (x 1 - x 4))
+    (hS4 : det3 (x 0 - x 4) (x 5 - x 4) (cross (x 0 - x 5) (x 6 - x 5)) ≠ 0 ∨
+      ⟪x 6 - x 5, x 0 - x 5⟫ < 0 ∨ ⟪x 6 - x 0, x 5 - x 0⟫ < 0)
+    (hN5 : ⟪F.N 5, x 0 - x 4⟫ < 0)
+    (hN7 : 0 < ⟪F.N 7, x 0 - x 4⟫)
+    (hN6 : ⟪F.N 6, x 0 - x 4⟫ < 0) :
+    IsRupert (univ.image x) := by
+  sorry
 
 end Minimality.T24.X5
