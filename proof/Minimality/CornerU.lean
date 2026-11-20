@@ -56,6 +56,14 @@ Consequently:
     At base $-e_5$, $\{0, 2\}$ high fails strictly (`min z0 z2 < max z1 z3`).
     Thus $B_1$ in our frame uses `cornerU_mirror`.
 - Both `cornerU` and `cornerU_mirror` are stated frame-free with explicit $\rho, \kappa, b, d$.
+
+## Carbon's Theorem Ch4 (4-Rim Chamber Propagation, A22 Rank 1)
+
+On any open 4-rim chamber `(t_L, t_R)` with fixed strictly convex 4-rim `p` and `ρ * κ ≠ 0`,
+failing cyclic unimodality across the chamber is equivalent to failing at both endpoints:
+- At the left endpoint `t_L`: apply `cornerU` (or `cornerU_mirror`) with base `b = u(t_L)` and direction `d = u'(t_L)` into the chamber.
+- At the right endpoint `t_R`: apply `cornerU` (or `cornerU_mirror`) with base `b = u(t_R)` and direction `d = -u'(t_R)` into the chamber.
+No new propagation lemma is needed.
 -/
 
 /-- Order helper: when `min {z0, z2} < max {z1, z3}`, at least one `zk < zl` holds
