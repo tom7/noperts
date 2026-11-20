@@ -738,9 +738,7 @@ Orientation & kappa: Ω κ < 0 (omega_mul_kappa_rim6302_neg), so 0 < ρ κ; uses
 theorem q45_Bs1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0)
     (s t : ℝ)
-    (_hs0 : 0 < s)
     (ht : 0 < t)
-    (_hst : 1 < s + t)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hs1 : s = 1)
     (h6hi : max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ ≤ ⟪x 6, x 5 - x 0⟫)
@@ -1078,9 +1076,7 @@ Orientation & kappa: Ω κ < 0 (omega_mul_kappa_rim6352_neg), so 0 < ρ κ; uses
 theorem q45_B2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha34 : ⟪F.N 5, x 3 - x 4⟫ < 0)
     (s t : ℝ)
-    (_hs0 : 0 < s)
     (ht : 0 < t)
-    (_hst : 1 < s + t)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hs1 : 1 < s)
     (h6hi : max ⟪x 4, x 3 - x 4⟫ ⟪x 2, x 3 - x 4⟫ ≤ min ⟪x 6, x 3 - x 4⟫ ⟪x 5, x 3 - x 4⟫)
@@ -1242,21 +1238,19 @@ theorem q45_B2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 -- =========================================================================
 
 lemma hbase_of_h2hi_htie_C1 {x : Fin 7 → ℝ³}
-    (h2hi : max ⟪x 5, x 4 - x 0⟫ ⟪x 6, x 4 - x 0⟫ ≤ min ⟪x 2, x 4 - x 0⟫ ⟪x 0, x 4 - x 0⟫)
+    (h2hi : max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫)
     (htie : ¬ (⟪x 2, x 4 - x 0⟫ = ⟪x 5, x 4 - x 0⟫ ∧ ⟪x 5, x 4 - x 0⟫ = ⟪x 6, x 4 - x 0⟫)) :
     min ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ < max ⟪x 0, x 4 - x 0⟫ ⟪x 2, x 4 - x 0⟫ := by
   set e4 := x 4 - x 0
-  have h5_le : ⟪x 5, e4⟫ ≤ min ⟪x 2, e4⟫ ⟪x 0, e4⟫ := (le_max_left _ _).trans h2hi
-  have h6_le : ⟪x 6, e4⟫ ≤ min ⟪x 2, e4⟫ ⟪x 0, e4⟫ := (le_max_right _ _).trans h2hi
-  have h52 : ⟪x 5, e4⟫ ≤ ⟪x 2, e4⟫ := h5_le.trans (min_le_left _ _)
-  have h62 : ⟪x 6, e4⟫ ≤ ⟪x 2, e4⟫ := h6_le.trans (min_le_left _ _)
+  have h6_le : ⟪x 6, e4⟫ ≤ ⟪x 2, e4⟫ := (le_max_left _ _).trans h2hi
+  have h5_le : ⟪x 5, e4⟫ ≤ ⟪x 2, e4⟫ := (le_max_right _ _).trans h2hi
   by_contra h_ge
   have h_le : max ⟪x 0, e4⟫ ⟪x 2, e4⟫ ≤ min ⟪x 6, e4⟫ ⟪x 5, e4⟫ := not_lt.mp h_ge
   have hz2 : ⟪x 2, e4⟫ ≤ min ⟪x 6, e4⟫ ⟪x 5, e4⟫ := (le_max_right _ _).trans h_le
   have hz26 : ⟪x 2, e4⟫ ≤ ⟪x 6, e4⟫ := hz2.trans (min_le_left _ _)
   have hz25 : ⟪x 2, e4⟫ ≤ ⟪x 5, e4⟫ := hz2.trans (min_le_right _ _)
-  have heq5 : ⟪x 2, e4⟫ = ⟪x 5, e4⟫ := le_antisymm hz25 h52
-  have heq6 : ⟪x 2, e4⟫ = ⟪x 6, e4⟫ := le_antisymm hz26 h62
+  have heq5 : ⟪x 2, e4⟫ = ⟪x 5, e4⟫ := le_antisymm hz25 h5_le
+  have heq6 : ⟪x 2, e4⟫ = ⟪x 6, e4⟫ := le_antisymm hz26 h6_le
   apply htie
   exact ⟨heq5, heq5.symm.trans heq6⟩
 
@@ -1408,7 +1402,7 @@ theorem q45_C1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hst : 1 < s + t)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (ht1 : t < 1)
-    (h2hi : max ⟪x 5, x 4 - x 0⟫ ⟪x 6, x 4 - x 0⟫ ≤ min ⟪x 2, x 4 - x 0⟫ ⟪x 0, x 4 - x 0⟫)
+    (h2hi : max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫)
     (htie : ¬ (⟪x 2, x 4 - x 0⟫ = ⟪x 5, x 4 - x 0⟫ ∧ ⟪x 5, x 4 - x 0⟫ = ⟪x 6, x 4 - x 0⟫))
     (hS2 : ∀ i j : ZMod 4, i ≠ j →
       ⟪quad (x 6) (x 0) (x 5) (x 2) i - quad (x 6) (x 0) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
@@ -1558,11 +1552,11 @@ theorem q45_C1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 -- =========================================================================
 
 lemma hbase_of_h2hi_htie_Ct1 {x : Fin 7 → ℝ³}
-    (h2hi : max ⟪x 4, x 4 - x 0⟫ ⟪x 6, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫)
+    (h2hi : max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫)
     (htie : ⟪x 2, x 4 - x 0⟫ ≠ ⟪x 6, x 4 - x 0⟫) :
     min ⟪x 6, x 4 - x 0⟫ ⟪x 3, x 4 - x 0⟫ < max ⟪x 0, x 4 - x 0⟫ ⟪x 2, x 4 - x 0⟫ := by
   set e4 := x 4 - x 0
-  have h62 : ⟪x 6, e4⟫ ≤ ⟪x 2, e4⟫ := (le_max_right _ _).trans h2hi
+  have h62 : ⟪x 6, e4⟫ ≤ ⟪x 2, e4⟫ := (le_max_left _ _).trans h2hi
   have h62_lt : ⟪x 6, e4⟫ < ⟪x 2, e4⟫ := lt_of_le_of_ne h62 htie.symm
   have h_min : min ⟪x 6, e4⟫ ⟪x 3, e4⟫ ≤ ⟪x 6, e4⟫ := min_le_left _ _
   have h_max : ⟪x 2, e4⟫ ≤ max ⟪x 0, e4⟫ ⟪x 2, e4⟫ := le_max_right _ _
@@ -1732,11 +1726,9 @@ theorem q45_Ct1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha4 : ⟪F.N 5, x 4 - x 0⟫ < 0)
     (s t : ℝ)
     (hs0 : 0 < s)
-    (_ht : 0 < t)
-    (_hst : 1 < s + t)
-    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + (1 : ℝ) • (x 5 - x 0))
-    (_ht1 : t = 1)
-    (h2hi : max ⟪x 4, x 4 - x 0⟫ ⟪x 6, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (ht1 : t = 1)
+    (h2hi : max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫)
     (htie : ⟪x 2, x 4 - x 0⟫ ≠ ⟪x 6, x 4 - x 0⟫)
     (hS2 : ∀ i j : ZMod 4, i ≠ j →
       ⟪quad (x 6) (x 0) (x 3) (x 2) i - quad (x 6) (x 0) (x 3) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
@@ -1752,9 +1744,10 @@ theorem q45_Ct1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     intro i; fin_cases i <;> rfl
   set b := -(x 4 - x 0)
   set d := x 5 - x 0
+  have hdecomp1 : x 3 - x 0 = s • (x 4 - x 0) + (1 : ℝ) • (x 5 - x 0) := by rw [ht1] at hdecomp; exact hdecomp
   have hbase_doc := hbase_of_h2hi_htie_Ct1 h2hi htie
   have hbase_b := hbase_mirror_Ct1 hbase_doc
-  have ev_signs := eventually_signs_Ct1 F ha4 s hs0 hdecomp
+  have ev_signs := eventually_signs_Ct1 F ha4 s hs0 hdecomp1
   have ev_bounds := eventually_Ct1_middle_bounds s hs0
   have ev_base := eventually_min13_lt_max02 p_quad b d hbase_b
   have hgen : ∀ i j : ZMod 4, i ≠ j → ⟪p_quad i - p_quad j, b⟫ ≠ 0 ∨ ⟪p_quad i - p_quad j, d⟫ ≠ 0 := by
@@ -1844,10 +1837,10 @@ theorem q45_Ct1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     rcases hq54 with rfl | rfl
     · refine ⟨1 / (1 + ε * s), s / (1 + ε * s),
               hs5_bnd.1, hs5_bnd.2, hdel5_pos, ?_⟩
-      exact middle_Ct1_x5 x s ε hden hdecomp
+      exact middle_Ct1_x5 x s ε hden hdecomp1
     · refine ⟨ε / (1 + ε * s), -1 / (1 + ε * s),
               hs4_bnd.1, hs4_bnd.2, hdel4_pos, ?_⟩
-      exact middle_Ct1_x4 x s ε hden hdecomp
+      exact middle_Ct1_x4 x s ε hden hdecomp1
   · simp_rw [hr]
     exact hinj_u
   · simp_rw [hr]
@@ -2054,8 +2047,6 @@ theorem q45_C2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha35 : ⟪F.N 5, x 3 - x 5⟫ < 0)
     (s t : ℝ)
     (hs0 : 0 < s)
-    (_ht : 0 < t)
-    (_hst : 1 < s + t)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (ht1 : 1 < t)
     (h2hi : max ⟪x 6, x 3 - x 5⟫ ⟪x 5, x 3 - x 5⟫ ≤ min ⟪x 2, x 3 - x 5⟫ ⟪x 4, x 3 - x 5⟫)
