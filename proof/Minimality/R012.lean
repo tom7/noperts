@@ -4,6 +4,9 @@ public import Minimality.FaceChordFac
 public import Minimality.SplitTie
 public import Minimality.FiveRim
 public import Minimality.Q45Signs
+public import Minimality.Q45Orient
+public import Minimality.CornerU
+public import Minimality.RimCell
 public import Minimality.RimFromSigns
 public import Minimality.Type24
 public import Minimality.Type24SAT.Facets24
@@ -609,6 +612,154 @@ lemma exists_faceChordView_012 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     · exact h_c3
     · exfalso; apply hmr; decide
 
+private lemma cramer_facet_eq {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (t : Fin 9) (o a b c d : Fin 7)
+    (ho : o ∈ s0x_S24 t) (ha : a ∈ s0x_S24 t) (hb : b ∈ s0x_S24 t) :
+    det3 (x a - x o) (x b - x o) (x c - x o) * F.f t (x d) =
+    det3 (x a - x o) (x b - x o) (x d - x o) * F.f t (x c) := by
+  have zo : F.f t (x o) = 0 := F.zero t o ho
+  have za : F.f t (x a) = 0 := F.zero t a ha
+  have zb : F.f t (x b) = 0 := F.zero t b hb
+  have ha' : ⟪F.N t, x a - x o⟫ = 0 := by rw [F.inner_sub t a o, za, zo, sub_self]
+  have hb' : ⟪F.N t, x b - x o⟫ = 0 := by rw [F.inner_sub t b o, zb, zo, sub_self]
+  have hc' : ⟪F.N t, x c - x o⟫ = F.f t (x c) := by rw [F.inner_sub t c o, zo, sub_zero]
+  have hd' : ⟪F.N t, x d - x o⟫ = F.f t (x d) := by rw [F.inner_sub t d o, zo, sub_zero]
+  have hc := vol3_smul_cramer (x a - x o) (x b - x o) (x c - x o) (x d - x o)
+  have h_inner := congr_arg (fun v => ⟪F.N t, v⟫) hc
+  rw [real_inner_smul_right, inner_add_right, inner_add_right,
+      real_inner_smul_right, real_inner_smul_right, real_inner_smul_right,
+      ha', hb', mul_zero, mul_zero, zero_add, zero_add] at h_inner
+  have hv1 : vol3 (x a - x o) (x b - x o) (x c - x o) = det3 (x a - x o) (x b - x o) (x c - x o) := by
+    simp only [det3_expand, vol3, PiLp.sub_apply]; ring
+  have hv2 : vol3 (x a - x o) (x b - x o) (x d - x o) = det3 (x a - x o) (x b - x o) (x d - x o) := by
+    simp only [det3_expand, vol3, PiLp.sub_apply]; ring
+  rw [hv1, hv2, hc', hd'] at h_inner
+  exact h_inner
+
+/-- For the 5-rim `(0, 4, 6, 3, 2)` at `u0 x t` (`t > 0`), deleting corner `4` (`2`) gives
+sub-quad `(0, 4, 6, 3)` with `ρ * κ < 0` (Carbon's A21 Rank 2 / A24 Lemma D3). -/
+lemma kappa_sign_product_0463 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t ρ : ℝ) (ht : 0 < t)
+    (hin5_chord : 0 < ρ * det3 (x 0 - x 2) (x 5 - x 2) (u0 x t)) :
+    ρ * quadKappa (subquad (fun i => x (rim012 i)) 4) < 0 := by
+  have h_cross : det3 (x 0 - x 2) (x 5 - x 2) (u0 x t) =
+      - (1 + t) * det3 (x 0 - x 1) (x 2 - x 1) (x 5 - x 1) := by
+    dsimp [u0]; simp only [det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
+  have hid_om : det3 (x 1 - x 0) (x 6 - x 0) (x 2 - x 0) = det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) := by
+    simp only [det3_expand, PiLp.sub_apply]; ring
+  have hid_461 : det3 (x 4 - x 0) (x 6 - x 0) (x 1 - x 0) = - det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0) := by
+    simp only [det3_expand, PiLp.sub_apply]; ring
+  have hid_kap : det3 (x 6 - x 0) (x 3 - x 4) (x 0 - x 4) = - det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0) := by
+    simp only [det3_expand, PiLp.sub_apply]; ring
+  have hcr0 := cramer_facet_eq F 0 1 0 2 6 5 (by decide) (by decide) (by decide)
+  have hcr1 := cramer_facet_eq F 1 0 1 6 2 4 (by decide) (by decide) (by decide)
+  have hcr4 := cramer_facet_eq F 4 0 4 6 1 3 (by decide) (by decide) (by decide)
+  have hq_kap : quadKappa (subquad (fun i => x (rim012 i)) 4) =
+      det3 (x 6 - x 0) (x 3 - x 4) (x 0 - x 4) := rfl
+  rw [hq_kap, hid_kap]
+  set Ω := det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1)
+  have h_om_ne := omega_ne_zero F
+  have h_om_sq : 0 < Ω ^ 2 := sq_pos_of_ne_zero h_om_ne
+  have nf05 : F.f 0 (x 5) < 0 := F.neg 0 5 (by decide)
+  have nf06 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
+  have nf12 : F.f 1 (x 2) < 0 := F.neg 1 2 (by decide)
+  have nf14 : F.f 1 (x 4) < 0 := F.neg 1 4 (by decide)
+  have nf41 : F.f 4 (x 1) < 0 := F.neg 4 1 (by decide)
+  have nf43 : F.f 4 (x 3) < 0 := F.neg 4 3 (by decide)
+  have h_in_prod : 0 < ρ * (- (1 + t) * det3 (x 0 - x 1) (x 2 - x 1) (x 5 - x 1)) := by
+    rwa [h_cross] at hin5_chord
+  have h_prod1 : (ρ * (- (1 + t) * det3 (x 0 - x 1) (x 2 - x 1) (x 5 - x 1))) * F.f 0 (x 6) < 0 :=
+    mul_neg_of_pos_of_neg h_in_prod nf06
+  have hcr0' : det3 (x 0 - x 1) (x 2 - x 1) (x 5 - x 1) * F.f 0 (x 6) = Ω * F.f 0 (x 5) := by
+    have hdet_eq : det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) = det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) := rfl
+    exact hcr0.symm
+  have h_id_c0 : (ρ * (- (1 + t) * det3 (x 0 - x 1) (x 2 - x 1) (x 5 - x 1))) * F.f 0 (x 6) =
+      (- (1 + t) * F.f 0 (x 5)) * (ρ * Ω) := by
+    calc
+      _ = - (1 + t) * ρ * (det3 (x 0 - x 1) (x 2 - x 1) (x 5 - x 1) * F.f 0 (x 6)) := by ring
+      _ = - (1 + t) * ρ * (Ω * F.f 0 (x 5)) := by rw [hcr0']
+      _ = (- (1 + t) * F.f 0 (x 5)) * (ρ * Ω) := by ring
+  rw [h_id_c0] at h_prod1
+  have h_coeff_pos : 0 < - (1 + t) * F.f 0 (x 5) := by
+    have : 0 < 1 + t := by linarith
+    have : 0 < - F.f 0 (x 5) := by linarith
+    nlinarith
+  have h_rho_om : ρ * Ω < 0 := neg_of_mul_neg_right h_prod1 h_coeff_pos.le
+  have h_k_c4 : det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0) * F.f 4 (x 1) * F.f 1 (x 2) =
+      - (Ω * F.f 1 (x 4) * F.f 4 (x 3)) := by
+    calc
+      det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0) * F.f 4 (x 1) * F.f 1 (x 2) =
+        (det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0) * F.f 4 (x 1)) * F.f 1 (x 2) := by ring
+      _ = (det3 (x 4 - x 0) (x 6 - x 0) (x 1 - x 0) * F.f 4 (x 3)) * F.f 1 (x 2) := by rw [← hcr4]
+      _ = F.f 4 (x 3) * (det3 (x 4 - x 0) (x 6 - x 0) (x 1 - x 0) * F.f 1 (x 2)) := by ring
+      _ = F.f 4 (x 3) * (- det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0) * F.f 1 (x 2)) := by rw [hid_461]
+      _ = - F.f 4 (x 3) * (det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0) * F.f 1 (x 2)) := by ring
+      _ = - F.f 4 (x 3) * (det3 (x 1 - x 0) (x 6 - x 0) (x 2 - x 0) * F.f 1 (x 4)) := by rw [← hcr1]
+      _ = - (Ω * F.f 1 (x 4) * F.f 4 (x 3)) := by rw [hid_om]; ring
+  have h_om_k : 0 < (Ω * - det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0)) * (F.f 4 (x 1) * F.f 1 (x 2)) := by
+    calc
+      (Ω * - det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0)) * (F.f 4 (x 1) * F.f 1 (x 2)) =
+        - Ω * (det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0) * F.f 4 (x 1) * F.f 1 (x 2)) := by ring
+      _ = - Ω * (- (Ω * F.f 1 (x 4) * F.f 4 (x 3))) := by rw [h_k_c4]
+      _ = Ω ^ 2 * (F.f 1 (x 4) * F.f 4 (x 3)) := by ring
+      _ > 0 := mul_pos h_om_sq (mul_pos_of_neg_of_neg nf14 nf43)
+  have h_om_k_pos : 0 < Ω * - det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0) :=
+    pos_of_mul_pos_left h_om_k (mul_pos_of_neg_of_neg nf41 nf12).le
+  have h_prod : (ρ * Ω) * (Ω * - det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0)) < 0 :=
+    mul_neg_of_neg_of_pos h_rho_om h_om_k_pos
+  have h_sq_kap : (ρ * Ω) * (Ω * - det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0)) =
+      Ω ^ 2 * (ρ * - det3 (x 4 - x 0) (x 6 - x 0) (x 3 - x 0)) := by ring
+  rw [h_sq_kap] at h_prod
+  exact neg_of_mul_neg_right h_prod h_om_sq.le
+
+lemma merged_inj_of_singleAdjacentTie {k : ℕ} [NeZero k] (p : ZMod (k + 1) → ℝ³) (b : ℝ³)
+    (a : ZMod (k + 1)) (htie : SingleAdjacentTie p b a) :
+    Function.Injective (mergedDepths (fun i => ⟪p i, b⟫) a) := by
+  have hphi_ne : ∀ m : ZMod k, phi a m ≠ a := by
+    intro m h
+    have h1 : ((m.val + 1 : ℕ) : ZMod (k + 1)) = 0 := by
+      push_cast
+      calc (m.val : ZMod (k + 1)) + 1 = phi a m - a := by dsimp [phi]; ring
+        _ = a - a := by rw [h]
+        _ = 0 := sub_self a
+    have hm_lt := m.val_lt
+    have hval := congrArg ZMod.val h1
+    rw [ZMod.val_cast_of_lt (by omega), ZMod.val_zero] at hval
+    omega
+  intro i j hij
+  rcases htie.2 (phi a i) (phi a j) hij with h_same | ⟨h1, _⟩ | ⟨_, h2⟩
+  · exact phi_inj a h_same
+  · exact False.elim (hphi_ne i h1)
+  · exact False.elim (hphi_ne j h2)
+
+lemma unimodal_merged_LC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (ρ : ℝ)
+    (ht_pos : 0 < t_LC x)
+    (hcvx : StrictConvex5 (fun i => x (rim012 i)) (u_LC x) ρ)
+    (hin5_chord : 0 < ρ * det3 (x 0 - x 2) (x 5 - x 2) (u_LC x))
+    (hgen_LC : SingleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4)
+    (hp : let w := mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4
+      w 1 < w 0 ∨ w 3 < w 0 ∨ w 1 < w 2 ∨ w 3 < w 2) :
+    IsCyclicUnimodal (mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4) := by
+  have hk_neg : ρ * quadKappa (subquad (fun i => x (rim012 i)) 4) < 0 :=
+    kappa_sign_product_0463 F (t_LC x) ρ ht_pos hin5_chord
+  set q := subquad (fun i => x (rim012 i)) 4
+  have hcvx4 : ∀ i, 0 < ρ * triD q (u_LC x) i :=
+    subquad_strictConvex (fun i => x (rim012 i)) (u_LC x) ρ hcvx 4
+  have hnh : ¬ (max ⟪q 1, u_LC x⟫ ⟪q 3, u_LC x⟫ ≤ min ⟪q 0, u_LC x⟫ ⟪q 2, u_LC x⟫) :=
+    diagCross_not_high q (u_LC x) hcvx4 hk_neg
+  have hmin_lt : min ⟪q 0, u_LC x⟫ ⟪q 2, u_LC x⟫ < max ⟪q 1, u_LC x⟫ ⟪q 3, u_LC x⟫ :=
+    min_lt_max_of_not_le hnh
+  set w := mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4
+  have hw0 : w 0 = ⟪q 0, u_LC x⟫ := rfl
+  have hw1 : w 1 = ⟪q 1, u_LC x⟫ := rfl
+  have hw2 : w 2 = ⟪q 2, u_LC x⟫ := rfl
+  have hw3 : w 3 = ⟪q 3, u_LC x⟫ := rfl
+  have h_hn_min : min (w 0) (w 2) < max (w 1) (w 3) := by
+    rw [hw0, hw1, hw2, hw3]; exact hmin_lt
+  have hn := hn_of_min_lt_max (z := w) h_hn_min
+  have hinj : Function.Injective w :=
+    merged_inj_of_singleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4 hgen_LC
+  exact Minimality.RimCell.isCyclicUnimodal_four w hinj hn hp
+
 /-- **Theorem LC-K5 (Plus): Level-chord leaf with `u_LC + ε • d`.**
 Under the window condition `t_LC ∈ (max(1/ω4, t6), ω3)`, frame-free `c3, c4 < 1`
 (vertex 6 farthest below facet 0), depth condition `⟪x 4, u_LC⟫ < ⟪x 0, u_LC⟫`,
@@ -632,13 +783,20 @@ theorem q012_LC_plus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     (h_depth : ⟪x 4, u_LC x⟫ < ⟪x 0, u_LC x⟫)
     -- Genericity off R012Special (single adjacent tie at a = 4, where rim012 4 = 2 and rim012 0 = 0):
     (hgen_LC : SingleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4)
-    -- Merged cycle unimodality (from forced kappa signs):
-    (huni : IsCyclicUnimodal (mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4))
     -- Strict obtuseness at vertex 1:
     (hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0)
     (hoff : ⟪F.N 0, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
       ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0) :
     FaceChordView F 0 := by
+  obtain ⟨ρ0, _, hcvx0, hin5_0⟩ := fiveRim_04632_of_window F ht_pos hN4 hN7 hN6 hN3 hN8
+  have huni : IsCyclicUnimodal (mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4) := by
+    refine unimodal_merged_LC F ρ0 ht_pos hcvx0 (hin5_0 4) hgen_LC (Or.inl ?_)
+    have hw0_0 : mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4 0 = ⟪x 0, u_LC x⟫ :=
+      mergedDepths_zero' _ 4
+    have hw0_1 : mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4 1 = ⟪x 4, u_LC x⟫ :=
+      mergedDepths_one (by omega) _ 4
+    rw [hw0_0, hw0_1]
+    exact h_depth
   have hdir : 0 < ⟪x 2 - x 0, x 2 - x 1⟫ := by
     have : x 2 - x 0 = - (x 0 - x 2) := by abel
     rw [this, inner_neg_left]
@@ -758,13 +916,21 @@ theorem q012_LC_minus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     (h_depth : ⟪x 3, u_LC x⟫ < ⟪x 0, u_LC x⟫)
     -- Genericity off R012Special (single adjacent tie at a = 4, where rim012 4 = 2 and rim012 0 = 0):
     (hgen_LC : SingleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4)
-    -- Merged cycle unimodality (from forced kappa signs):
-    (huni : IsCyclicUnimodal (mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4))
     -- Strict obtuseness at vertex 1:
     (hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0)
     (hoff : ⟪F.N 0, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
       ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0) :
     FaceChordView F 0 := by
+  obtain ⟨ρ0, _, hcvx0, hin5_0⟩ := fiveRim_04632_of_window F ht_pos hN4 hN7 hN6 hN3 hN8
+  have huni : IsCyclicUnimodal (mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4) := by
+    refine unimodal_merged_LC F ρ0 ht_pos hcvx0 (hin5_0 4) hgen_LC (Or.inr (Or.inl ?_))
+    have hw0_0 : mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4 0 = ⟪x 0, u_LC x⟫ :=
+      mergedDepths_zero' _ 4
+    have hw0_m1 : mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4 (-1) = ⟪x 3, u_LC x⟫ :=
+      mergedDepths_neg_one _ 4
+    have hm1_eq : (-1 : ZMod 4) = 3 := by decide
+    rw [← hm1_eq, hw0_m1, hw0_0]
+    exact h_depth
   have hdir : 0 < ⟪x 2 - x 0, x 2 - x 1⟫ := by
     have : x 2 - x 0 = - (x 0 - x 2) := by abel
     rw [this, inner_neg_left]
