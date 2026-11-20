@@ -468,4 +468,27 @@ theorem q45 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       linarith
   exact q45_half F s t hs0 ht hst hdecomp hsign
 
+/-- **Theorem AI1: Rupert Wiring from Q45-Half (Plan Item 10)**.
+Wires the local Q45-Half dispatcher into the three-circle cover `isRupert_cover24`
+on facet 3 (`0345`), establishing that every Type-24 solid satisfying the Q45-Half
+hypothesis is Rupert unless it lies on the special locus `Q45Special F`. -/
+theorem isRupert_q45_half {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hsign : ∀ s t : ℝ, 0 < s → 0 < t → 1 < s + t →
+      x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) → Q45HalfHyp F s t) :
+    IsRupert (univ.image x) ∨ Q45Special F := by
+  rcases q45_half_geom F hsign with hfc | hsp
+  · exact Or.inl (isRupert_of_faceChordView F hfc)
+  · exact Or.inr hsp
+
+/-- **Corollary AI1: Rupert Wiring from Q45 ($a_4, a_5 > 1$ form)**.
+For every Type-24 solid with `a_4 > 1` and `a_5 > 1` (`ha4, ha5`),
+the solid is Rupert unless it lies on `Q45Special F`. -/
+theorem isRupert_q45 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha4 : ⟪F.N 5, x 4 - x 0⟫ < 0)
+    (ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0) :
+    IsRupert (univ.image x) ∨ Q45Special F := by
+  rcases q45 F ha4 ha5 with hfc | hsp
+  · exact Or.inl (isRupert_of_faceChordView F hfc)
+  · exact Or.inr hsp
+
 end Minimality.T24.Q45
