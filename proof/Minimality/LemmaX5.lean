@@ -9,7 +9,7 @@ public import Minimality.Type24SAT.K24.Par2546
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
-open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.Quad05
+open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.Quad05 Minimality.RimFromSigns
 
 namespace Minimality.T24.X5
 
@@ -210,7 +210,150 @@ theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
       (∀ i : ZMod 4,
         0 < ρ * det3 (quad (x 6) (x 4) (x 0) (x 2) (i + 1) - quad (x 6) (x 4) (x 0) (x 2) i)
           (x 1 - quad (x 6) (x 4) (x 0) (x 2) i) u) := by
-  sorry
+  have hne_64 : cross u (x 4 - x 6) ≠ 0 := by
+    intro hcr
+    have he : x 4 - x 6 ≠ 0 := by
+      intro h
+      have h1 : F.f 1 (x 6) = 0 := F.zero 1 6 (by decide)
+      have h2 : F.f 1 (x 4) < 0 := F.neg 1 4 (by decide)
+      have : x 4 = x 6 := sub_eq_zero.mp h
+      rw [this, h1] at h2
+      exact lt_irrefl 0 h2
+    have hcr' : cross (x 4 - x 6) u = 0 := by
+      rw [show cross (x 4 - x 6) u = - cross u (x 4 - x 6) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
+    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 4 - x 6) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
+    have hz : ⟪F.N 4, x 4 - x 6⟫ = 0 := by
+      have := (F.hN 4 (x 4) (x 6)).symm
+      rw [F.zero 4 4 (by decide), F.zero 4 6 (by decide), sub_self] at this
+      exact this
+    have h0 : ⟪F.N 4, u⟫ = 0 := by
+      rw [hk, real_inner_smul_right, hz, mul_zero]
+    linarith [hN4]
+
+  have hne_40 : cross u (x 0 - x 4) ≠ 0 := by
+    intro hcr
+    have he : x 0 - x 4 ≠ 0 := by
+      intro h
+      have h1 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
+      have h2 : F.f 2 (x 4) < 0 := F.neg 2 4 (by decide)
+      have : x 0 = x 4 := sub_eq_zero.mp h
+      rw [← this, h1] at h2
+      exact lt_irrefl 0 h2
+    have hcr' : cross (x 0 - x 4) u = 0 := by
+      rw [show cross (x 0 - x 4) u = - cross u (x 0 - x 4) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
+    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 0 - x 4) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
+    have hz : ⟪F.N 4, x 0 - x 4⟫ = 0 := by
+      have := (F.hN 4 (x 0) (x 4)).symm
+      rw [F.zero 4 0 (by decide), F.zero 4 4 (by decide), sub_self] at this
+      exact this
+    have h0 : ⟪F.N 4, u⟫ = 0 := by
+      rw [hk, real_inner_smul_right, hz, mul_zero]
+    linarith [hN4]
+
+  have hne_02 : cross u (x 2 - x 0) ≠ 0 := by
+    intro hcr
+    have he : x 2 - x 0 ≠ 0 := by
+      intro h
+      have h1 : F.f 4 (x 0) = 0 := F.zero 4 0 (by decide)
+      have h2 : F.f 4 (x 2) < 0 := F.neg 4 2 (by decide)
+      have : x 2 = x 0 := sub_eq_zero.mp h
+      rw [this, h1] at h2
+      exact lt_irrefl 0 h2
+    have hcr' : cross (x 2 - x 0) u = 0 := by
+      rw [show cross (x 2 - x 0) u = - cross u (x 2 - x 0) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
+    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 2 - x 0) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
+    have hz : ⟪F.N 0, x 2 - x 0⟫ = 0 := by
+      have := (F.hN 0 (x 2) (x 0)).symm
+      rw [F.zero 0 2 (by decide), F.zero 0 0 (by decide), sub_self] at this
+      exact this
+    have h0 : ⟪F.N 0, u⟫ = 0 := by
+      rw [hk, real_inner_smul_right, hz, mul_zero]
+    linarith [hN0]
+
+  have hne_26 : cross u (x 6 - x 2) ≠ 0 := by
+    intro hcr
+    have he : x 6 - x 2 ≠ 0 := by
+      intro h
+      have h1 : F.f 0 (x 2) = 0 := F.zero 0 2 (by decide)
+      have h2 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
+      have : x 6 = x 2 := sub_eq_zero.mp h
+      rw [this, h1] at h2
+      exact lt_irrefl 0 h2
+    have hcr' : cross (x 6 - x 2) u = 0 := by
+      rw [show cross (x 6 - x 2) u = - cross u (x 6 - x 2) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
+    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 6 - x 2) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
+    have hz : ⟪F.N 5, x 6 - x 2⟫ = 0 := by
+      have := (F.hN 5 (x 6) (x 2)).symm
+      rw [F.zero 5 6 (by decide), F.zero 5 2 (by decide), sub_self] at this
+      exact this
+    have h0 : ⟪F.N 5, u⟫ = 0 := by
+      rw [hk, real_inner_smul_right, hz, mul_zero]
+    linarith [hN5]
+
+  obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F 8 4 6 4 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN8, hN4⟩ hne_64
+  obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F 3 4 0 (by decide) (by decide) u hN3 hne_40
+  obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F 2 0 0 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN2, hN0⟩ hne_02
+  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 5 7 2 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN5, hN7⟩ hne_26
+
+  have hcyc01 : det3 (x 4 - x 6) (x 0 - x 6) u = det3 (x 0 - x 4) (x 6 - x 4) u :=
+    det3_cycle_triangle (x 6) (x 4) (x 0) u
+  have hcyc12 : det3 (x 0 - x 4) (x 2 - x 4) u = det3 (x 2 - x 0) (x 4 - x 0) u :=
+    det3_cycle_triangle (x 4) (x 0) (x 2) u
+  have hcyc23 : det3 (x 2 - x 0) (x 6 - x 0) u = det3 (x 6 - x 2) (x 0 - x 2) u :=
+    det3_cycle_triangle (x 0) (x 2) (x 6) u
+
+  have h0_0 : 0 < σ₀ * det3 (x 4 - x 6) (x 0 - x 6) u := hσ₀ 0 (Or.inl (by decide))
+  have h1_6 : 0 < σ₁ * det3 (x 0 - x 4) (x 6 - x 4) u := hσ₁ 6 (by decide)
+  have h1_6' : 0 < σ₁ * det3 (x 4 - x 6) (x 0 - x 6) u := by rw [hcyc01]; exact h1_6
+  have hσ01 : 0 < σ₀ * σ₁ := sign_prod h0_0 h1_6'
+
+  have h1_2 : 0 < σ₁ * det3 (x 0 - x 4) (x 2 - x 4) u := hσ₁ 2 (by decide)
+  have h2_4 : 0 < σ₂ * det3 (x 2 - x 0) (x 4 - x 0) u := hσ₂ 4 (Or.inl (by decide))
+  have h2_4' : 0 < σ₂ * det3 (x 0 - x 4) (x 2 - x 4) u := by rw [hcyc12]; exact h2_4
+  have hσ12 : 0 < σ₁ * σ₂ := sign_prod h1_2 h2_4'
+  have hσ02 : 0 < σ₀ * σ₂ := sign_transfer hσ01 hσ12
+
+  have h2_6 : 0 < σ₂ * det3 (x 2 - x 0) (x 6 - x 0) u := hσ₂ 6 (Or.inl (by decide))
+  have h3_0 : 0 < σ₃ * det3 (x 6 - x 2) (x 0 - x 2) u := hσ₃ 0 (Or.inl (by decide))
+  have h3_0' : 0 < σ₃ * det3 (x 2 - x 0) (x 6 - x 0) u := by rw [hcyc23]; exact h3_0
+  have hσ23 : 0 < σ₂ * σ₃ := sign_prod h2_6 h3_0'
+  have hσ03 : 0 < σ₀ * σ₃ := sign_transfer hσ02 hσ23
+
+  have h0_2 : 0 < σ₀ * det3 (x 4 - x 6) (x 2 - x 6) u := hσ₀ 2 (Or.inl (by decide))
+  have h0_1 : 0 < σ₀ * det3 (x 4 - x 6) (x 1 - x 6) u := hσ₀ 1 (Or.inl (by decide))
+
+  have h1_1 : 0 < σ₁ * det3 (x 0 - x 4) (x 1 - x 4) u := hσ₁ 1 (by decide)
+
+  have h2_1 : 0 < σ₂ * det3 (x 2 - x 0) (x 1 - x 0) u := hσ₂ 1 (Or.inl (by decide))
+
+  have h3_4 : 0 < σ₃ * det3 (x 6 - x 2) (x 4 - x 2) u := hσ₃ 4 (Or.inl (by decide))
+  have h3_1 : 0 < σ₃ * det3 (x 6 - x 2) (x 1 - x 2) u := hσ₃ 1 (Or.inr (by decide))
+
+  refine ⟨σ₀, hσ₀_ne, ?_, ?_⟩
+  · intro i j hj1 hj2
+    fin_cases i <;> fin_cases j
+    · exact False.elim (hj1 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact h0_0
+    · exact h0_2
+    · exact sign_transfer hσ01 h1_6
+    · exact False.elim (hj1 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact sign_transfer hσ01 h1_2
+    · exact sign_transfer hσ02 h2_6
+    · exact sign_transfer hσ02 h2_4
+    · exact False.elim (hj1 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact False.elim (hj2 rfl)
+    · exact sign_transfer hσ03 h3_4
+    · exact sign_transfer hσ03 h3_0
+    · exact False.elim (hj1 rfl)
+  · intro i
+    fin_cases i
+    · exact h0_1
+    · exact sign_transfer hσ01 h1_1
+    · exact sign_transfer hσ02 h2_1
+    · exact sign_transfer hσ03 h3_1
 
 /-- **Lemma X5' (Q45X24.md / Q45PROOF24.md): Corner Leaf at `e5 - ε e4` with facet-sign hypotheses.**
 For a Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`), when `σ < 1` (where `x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)`
@@ -226,14 +369,144 @@ theorem lemma_X5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS4 : det3 (x 0 - x 5) (x 4 - x 5) (cross (x 0 - x 4) (x 2 - x 4)) ≠ 0 ∨
       ⟪x 2 - x 4, x 0 - x 4⟫ < 0 ∨ ⟪x 2 - x 0, x 4 - x 0⟫ < 0)
     (hN0 : 0 < ⟪F.N 0, x 0 - x 5⟫)
-    (hN1 : 0 < ⟪F.N 1, x 0 - x 5⟫)
+    (_hN1 : 0 < ⟪F.N 1, x 0 - x 5⟫)
     (hN2_slope : ⟪F.N 2, x 4 - x 5⟫ < 0)
     (hN4 : 0 < ⟪F.N 4, x 0 - x 5⟫)
     (hN5 : ⟪F.N 5, x 0 - x 5⟫ < 0)
-    (hN6 : ⟪F.N 6, x 0 - x 5⟫ < 0)
+    (_hN6 : ⟪F.N 6, x 0 - x 5⟫ < 0)
     (hN7 : 0 < ⟪F.N 7, x 0 - x 5⟫)
     (hN8 : ⟪F.N 8, x 0 - x 5⟫ < 0) :
     IsRupert (univ.image x) := by
-  sorry
+  have ev_u : ContinuousAt (u_X5 x) 0 := by
+    change ContinuousAt (fun η : ℝ => (x 0 - x 5) + η • (x 4 - x 5)) 0
+    fun_prop
+  have ev_pos : ∀ᶠ η in 𝓝[>] (0 : ℝ), 0 ≤ η :=
+    eventually_mem_nhdsWithin.mono fun _ h => le_of_lt h
+  have ev_hη1 : ∀ᶠ η in 𝓝[>] (0 : ℝ), 1 + η ≠ 0 := by
+    have hc : ContinuousAt (fun η : ℝ => 1 + η) 0 := by fun_prop
+    have hne : (1 : ℝ) + 0 ≠ 0 := by norm_num
+    exact (ContinuousAt.eventually_ne hc hne).filter_mono nhdsWithin_le_nhds
+  have ev_s0 : ∀ᶠ η in 𝓝[>] (0 : ℝ), 0 < s + t * η / (1 + η) := by
+    have hc : ContinuousAt (fun η : ℝ => s + t * η / (1 + η)) 0 :=
+      ContinuousAt.add continuousAt_const (ContinuousAt.div (by fun_prop) (by fun_prop) (by norm_num : (1 : ℝ) + 0 ≠ 0))
+    have hval : 0 < s + t * (0 : ℝ) / (1 + 0) := by
+      rw [mul_zero, zero_div, add_zero]
+      exact hs0
+    exact (ContinuousAt.eventually_lt (continuousAt_const (x := 0)) hc hval).filter_mono nhdsWithin_le_nhds
+  have ev_s1 : ∀ᶠ η in 𝓝[>] (0 : ℝ), s + t * η / (1 + η) < 1 := by
+    have hc : ContinuousAt (fun η : ℝ => s + t * η / (1 + η)) 0 :=
+      ContinuousAt.add continuousAt_const (ContinuousAt.div (by fun_prop) (by fun_prop) (by norm_num : (1 : ℝ) + 0 ≠ 0))
+    have hval : s + t * (0 : ℝ) / (1 + 0) < 1 := by
+      rw [mul_zero, zero_div, add_zero]
+      exact hs
+    exact (ContinuousAt.eventually_lt hc (continuousAt_const (x := 0)) hval).filter_mono nhdsWithin_le_nhds
+  have ev_δ : ∀ᶠ η in 𝓝[>] (0 : ℝ), -t / (1 + η) ≠ 0 := by
+    have hc : ContinuousAt (fun η : ℝ => -t / (1 + η)) 0 :=
+      ContinuousAt.div (by fun_prop) (by fun_prop) (by norm_num : (1 : ℝ) + 0 ≠ 0)
+    have hval : -t / ((1 : ℝ) + 0) ≠ 0 := by
+      rw [add_zero, div_one]
+      linarith [ht]
+    exact (ContinuousAt.eventually_ne hc hval).filter_mono nhdsWithin_le_nhds
+  have ev_inner_lt (v : ℝ³) (hv : ⟪v, x 0 - x 5⟫ < 0) : ∀ᶠ η in 𝓝[>] (0 : ℝ), ⟪v, u_X5 x η⟫ < 0 := by
+    have hc : ContinuousAt (fun η : ℝ => ⟪v, u_X5 x η⟫) 0 :=
+      ContinuousAt.inner continuousAt_const ev_u
+    have hval : ⟪v, u_X5 x (0 : ℝ)⟫ < 0 := by
+      have : u_X5 x 0 = x 0 - x 5 := by
+        dsimp [u_X5]
+        rw [zero_smul, add_zero]
+      rw [this]
+      exact hv
+    exact (ContinuousAt.eventually_lt hc (continuousAt_const (x := 0)) hval).filter_mono nhdsWithin_le_nhds
+  have ev_inner_gt (v : ℝ³) (hv : 0 < ⟪v, x 0 - x 5⟫) : ∀ᶠ η in 𝓝[>] (0 : ℝ), 0 < ⟪v, u_X5 x η⟫ := by
+    have hc : ContinuousAt (fun η : ℝ => ⟪v, u_X5 x η⟫) 0 :=
+      ContinuousAt.inner continuousAt_const ev_u
+    have hval : 0 < ⟪v, u_X5 x (0 : ℝ)⟫ := by
+      have : u_X5 x 0 = x 0 - x 5 := by
+        dsimp [u_X5]
+        rw [zero_smul, add_zero]
+      rw [this]
+      exact hv
+    exact (ContinuousAt.eventually_lt (continuousAt_const (x := 0)) hc hval).filter_mono nhdsWithin_le_nhds
+  have ev_inner_ne (v : ℝ³) (hv : ⟪v, x 0 - x 5⟫ ≠ 0) : ∀ᶠ η in 𝓝[>] (0 : ℝ), ⟪v, u_X5 x η⟫ ≠ 0 := by
+    have hc : ContinuousAt (fun η : ℝ => ⟪v, u_X5 x η⟫) 0 :=
+      ContinuousAt.inner continuousAt_const ev_u
+    have hval : ⟪v, u_X5 x (0 : ℝ)⟫ ≠ 0 := by
+      have : u_X5 x 0 = x 0 - x 5 := by
+        dsimp [u_X5]
+        rw [zero_smul, add_zero]
+      rw [this]
+      exact hv
+    exact (ContinuousAt.eventually_ne hc hval).filter_mono nhdsWithin_le_nhds
+  have h405 : ⟪x 4 - x 0, x 0 - x 5⟫ < 0 := by
+    have : x 0 - x 5 = - (x 5 - x 0) := by
+      ext j
+      simp only [PiLp.sub_apply, PiLp.neg_apply]
+      ring
+    rw [this, inner_neg_right]
+    linarith [hg45]
+
+  have hN3_η (η : ℝ) : ⟪F.N 3, u_X5 x η⟫ = 0 := by
+    dsimp [u_X5]
+    rw [inner_add_right, real_inner_smul_right]
+    have hz0 : ⟪F.N 3, x 0 - x 5⟫ = 0 := by
+      have := (F.hN 3 (x 0) (x 5)).symm
+      rw [F.zero 3 0 (by decide), F.zero 3 5 (by decide), sub_self] at this
+      exact this
+    have hz4 : ⟪F.N 3, x 4 - x 5⟫ = 0 := by
+      have := (F.hN 3 (x 4) (x 5)).symm
+      rw [F.zero 3 4 (by decide), F.zero 3 5 (by decide), sub_self] at this
+      exact this
+    rw [hz0, hz4, mul_zero, add_zero]
+
+  have ev_N2 : ∀ᶠ η in 𝓝[>] (0 : ℝ), ⟪F.N 2, u_X5 x η⟫ < 0 := by
+    filter_upwards [self_mem_nhdsWithin] with η hη
+    dsimp [u_X5]
+    rw [inner_add_right, real_inner_smul_right]
+    have hz0 : ⟪F.N 2, x 0 - x 5⟫ = 0 := by
+      have := (F.hN 2 (x 0) (x 5)).symm
+      rw [F.zero 2 0 (by decide), F.zero 2 5 (by decide), sub_self] at this
+      exact this
+    rw [hz0, zero_add]
+    have : η * ⟪F.N 2, x 4 - x 5⟫ < 0 := mul_neg_of_pos_of_neg hη hN2_slope
+    exact this
+
+  have ev_PA := ev_inner_lt (x 6 - x 4) hS2
+  have ev_AB := ev_inner_lt (x 4 - x 0) h405
+  have ev_QP := ev_inner_ne (x 2 - x 6) hS1.2.2
+  have ev_QA := ev_inner_ne (x 2 - x 4) hS1.2.1
+  have ev_QB := ev_inner_ne (x 2 - x 0) hS1.1
+
+  have ev_N4 := ev_inner_gt (F.N 4) hN4
+  have ev_N8 := ev_inner_lt (F.N 8) hN8
+  have ev_N0 := ev_inner_gt (F.N 0) hN0
+  have ev_N7 := ev_inner_gt (F.N 7) hN7
+  have ev_N5 := ev_inner_lt (F.N 5) hN5
+
+  have hall := ev_pos.and (ev_hη1.and (ev_s0.and (ev_s1.and (ev_δ.and (ev_PA.and (ev_AB.and (ev_QP.and (ev_QA.and (ev_QB.and (ev_N4.and (ev_N8.and (ev_N0.and (ev_N2.and (ev_N7.and ev_N5))))))))))))))
+  obtain ⟨η, h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, hN4_η, hN8_η, hN0_η, hN2_η, hN7_η, hN5_η⟩ := hall.exists
+
+  have hPA_η : ⟪x 6, u_X5 x η⟫ < ⟪x 4, u_X5 x η⟫ := by
+    have := inner_sub_left (𝕜 := ℝ) (x 6) (x 4) (u_X5 x η)
+    linarith
+  have hAB_η : ⟪x 4, u_X5 x η⟫ < ⟪x 0, u_X5 x η⟫ := by
+    have := inner_sub_left (𝕜 := ℝ) (x 4) (x 0) (u_X5 x η)
+    linarith
+  have hQP_η : ⟪x 2, u_X5 x η⟫ ≠ ⟪x 6, u_X5 x η⟫ := by
+    intro h
+    apply h7
+    rw [inner_sub_left (𝕜 := ℝ), h, sub_self]
+  have hQA_η : ⟪x 2, u_X5 x η⟫ ≠ ⟪x 4, u_X5 x η⟫ := by
+    intro h
+    apply h8
+    rw [inner_sub_left (𝕜 := ℝ), h, sub_self]
+  have hQB_η : ⟪x 2, u_X5 x η⟫ ≠ ⟪x 0, u_X5 x η⟫ := by
+    intro h
+    apply h9
+    rw [inner_sub_left (𝕜 := ℝ), h, sub_self]
+
+  obtain ⟨ρ, hρ, hcyc, hI⟩ := lemmaX5_quad_signs F (hN3_η η) hN4_η hN8_η hN0_η hN2_η hN7_η hN5_η
+
+  exact isRupert_of_X5_witness F s t hdecomp h0 h1 h2 h3 h4 hρ hcyc hI
+    hPA_η hAB_η hQP_η hQA_η hQB_η hS3 hS4
 
 end Minimality.T24.X5
