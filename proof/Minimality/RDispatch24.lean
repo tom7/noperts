@@ -32,6 +32,10 @@ def Q45HalfPred {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
 def Hole24R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ H24K.SAT.OB1 x ∧ ¬ Q45HalfPred F
 
+/-- Closed `C̄` outside `Q45HalfPred` (with or without `OB1`). -/
+def Hole24NoQ45 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  CbarIn x ∧ ¬ Q45HalfPred F
+
 namespace RDispatch
 
 variable {x : Fin 7 → ℝ³}
@@ -533,23 +537,19 @@ def Wall24 (F : S0xFac 9 s0x_S24 x) : Prop := Wall24_0 F ∨ Wall24_0 (sym24 F)
 /-- Special-position residual (codim ≥ 1): a strict leaf case condition holds, but its genericity
 condition fails (`¬ HAvail F`). -/
 def R24Spec (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R x F ∧ ¬ HAvail F ∧ CaseAny F
+  Hole24NoQ45 x F ∧ ¬ HAvail F ∧ CaseAny F
 
-/-- OB1 boundary residual (codim 1): some `G_ij = 0` (`¬ OB1strict x`). -/
-def R24OB1Bd (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R x F ∧ ¬ HAvail F ∧ ¬ CaseAny F ∧ ¬ OB1strict x
-
-/-- Codimension-1 wall residual: inside `Wall24 F`, off `CaseAny` and `OB1` boundary. -/
+/-- Codimension-1 wall residual: inside `Wall24 F`, off `CaseAny`. -/
 def R24Wall (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R x F ∧ ¬ HAvail F ∧ ¬ CaseAny F ∧ OB1strict x ∧ Wall24 F
+  Hole24NoQ45 x F ∧ ¬ HAvail F ∧ ¬ CaseAny F ∧ Wall24 F
 
-/-- Full-dimensional open residual in `R`: all leaf case conditions fail off `OB1` boundary and walls. -/
+/-- Full-dimensional open residual in `C̄ \ Q45HalfPred`: all leaf case conditions fail off walls. -/
 def R24Open (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R x F ∧ ¬ HAvail F ∧ ¬ CaseAny F ∧ OB1strict x ∧ ¬ Wall24 F
+  Hole24NoQ45 x F ∧ ¬ HAvail F ∧ ¬ CaseAny F ∧ ¬ Wall24 F
 
-/-- Residual of the region-R dispatcher `r_dispatch`. -/
-def RResidual (F : S0xFac 9 s0x_S24 x) : Prop :=
-  R24Spec F ∨ R24OB1Bd F ∨ R24Wall F ∨ R24Open F
+/-- Residual of the OB1-free dispatcher `r_dispatch`. -/
+def RResidual' (F : S0xFac 9 s0x_S24 x) : Prop :=
+  R24Spec F ∨ R24Wall F ∨ R24Open F
 
 /-! ### Wrappers for the 20 base leaves -/
 
@@ -677,14 +677,14 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_KminusE5 h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_KminusE34 h)))))
 
-/-- **Region-R Dispatcher (`r_dispatch`)**: inside `Hole24R x F`, either one of the 40 proved
-face-chord leaves closes `F`, or `F` falls into `RResidual F` (special locus, OB1 boundary,
-codim-1 wall, or the open residual `R24Open F`). -/
+/-- **Region-R Dispatcher (`r_dispatch`)**: inside `Hole24NoQ45 x F` (`CbarIn x ∧ ¬ Q45HalfPred F`,
+without `OB1`), either one of the 40 proved face-chord leaves closes `F`, or `F` falls into
+`RResidual' F` (`R24Spec ∨ R24Wall ∨ R24Open`). -/
 theorem r_dispatch (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (hO : H24K.SAT.OB1 x) (hQ : ¬ Q45HalfPred F) :
+    (hC : CbarIn x) (hQ : ¬ Q45HalfPred F) :
     FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 2 ∨ FaceChordView F 3 ∨
-      FaceChordView F 4 ∨ RResidual F := by
-  have hR : Hole24R x F := ⟨hC, hO, hQ⟩
+      FaceChordView F 4 ∨ RResidual' F := by
+  have hR : Hole24NoQ45 x F := ⟨hC, hQ⟩
   by_cases hA : HAvail F
   · rcases avail_closes hA with h0 | h1 | h2 | h3 | h4
     · exact Or.inl h0
@@ -694,11 +694,9 @@ theorem r_dispatch (F : S0xFac 9 s0x_S24 x)
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h4))))
   · by_cases hCase : CaseAny F
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, hA, hCase⟩)))))
-    · by_cases hOB : OB1strict x
-      · by_cases hW : Wall24 F
-        · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, hA, hCase, hOB, hW⟩)))))))
-        · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hR, hA, hCase, hOB, hW⟩)))))))
-      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, hA, hCase, hOB⟩))))))
+    · by_cases hW : Wall24 F
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, hA, hCase, hW⟩))))))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hR, hA, hCase, hW⟩))))))
 
 end RDispatch
 

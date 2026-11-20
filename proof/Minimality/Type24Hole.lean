@@ -40,17 +40,10 @@ requires only `F` and `Q45HalfPred F`; attacked in `Q45.lean` / `Q45THEOREM24.md
 def Hole24Q45Special (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special F
 
-/-- Region `R` residual after applying `RDispatch.r_dispatch` (`R24Spec ∨ R24OB1Bd ∨ R24Wall ∨ R24Open`
-inside `Hole24R x F`). -/
+/-- Region `R` + off-`OB1` residual inside `C̄ ∩ Resid24 \ Q45HalfPred` after applying
+`RDispatch.r_dispatch` (`R24Spec ∨ R24Wall ∨ R24Open`). -/
 def Hole24RRes {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
-  RDispatch.RResidual F
-
-/-- Off-`OB1` open classes inside `C̄` outside `Q45-Half`: `mpppz` (`ZRes24`), `mpppp`, `mpppm`
-(attacked in `Wire24Zero.lean` / `Type24SAT/K24`). -/
-def Hole24OffOB1 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  CbarIn x ∧ ¬ H24K.SAT.OB1 x ∧
-    (ZRes24 x ∨ cls24 x false true true true true ∨ cls24 x false true true true false) ∧
-    ¬ Q45HalfPred F
+  Resid24 x ∧ RDispatch.RResidual' F
 
 /-- Existing non-closure flags from `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`. -/
 def Hole24Flags (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
@@ -59,7 +52,7 @@ def Hole24Flags (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : P
 /-- The single named Type-24 open hole proposition for `Minimality.lean`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Flags x fs ∧
-    (Hole24SigmaB x ∨ Hole24Q45Special x F ∨ Hole24RRes F ∨ Hole24OffOB1 x F)
+    (Hole24SigmaB x ∨ Hole24Q45Special x F ∨ Hole24RRes F)
 
 /-- Main Type-24 reduction using `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`,
 `isRupert_type24_outside_Cbar`, and `isRupert_q45_half` (`mkFac24` constructs `F`). -/
@@ -105,23 +98,14 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
       · rcases Q45.isRupert_q45_half F hHalf with hRup | hSp
         · exact Or.inl hRup
         · exact Or.inr ⟨hh, hflags, Or.inr (Or.inl ⟨hCbar, hres, hHalf, hSp⟩)⟩
-      · by_cases hOB1 : H24K.SAT.OB1 x
-        · rcases RDispatch.r_dispatch F hCbar hOB1 hHalf with
-            h0 | h1 | h2 | h3 | h4 | hRes
-          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inl h0))
-          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inl h1)))
-          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inl h2))))
-          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inl h3)))))
-          · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inr h4)))))
-          · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr (Or.inl hRes))⟩
-        · have hOff : ZRes24 x ∨ cls24 x false true true true true ∨
-              cls24 x false true true true false := by
-            rcases hres with hO | hZ | hP | hM
-            · exact False.elim (hOB1 hO)
-            · exact Or.inl hZ
-            · exact Or.inr (Or.inl hP)
-            · exact Or.inr (Or.inr hM)
-          exact Or.inr ⟨hh, hflags, Or.inr (Or.inr (Or.inr ⟨hCbar, hOB1, hOff, hHalf⟩))⟩
+      · rcases RDispatch.r_dispatch F hCbar hHalf with
+          h0 | h1 | h2 | h3 | h4 | hRes
+        · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inl h0))
+        · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inl h1)))
+        · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inl h2))))
+        · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inl h3)))))
+        · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inr h4)))))
+        · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr ⟨hres, hRes⟩)⟩
     · by_cases hSig : Minimality.RegionB24 x →
           Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x
       · exact Or.inl (Minimality.isRupert_type24_outside_Cbar
