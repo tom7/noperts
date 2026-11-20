@@ -104,26 +104,49 @@ every vertex `y` not on both facets has the exact same strict orientation sign. 
 theorem det3_sign_ridge {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {x : Fin N → ℝ³}
     (F : S0xFac nf S x) (t t' : Fin nf) (P Q : Fin N) (hP : P ∈ S t ∧ P ∈ S t')
     (hQ : Q ∈ S t ∧ Q ∈ S t') (u : ℝ³) (h_opp : ⟪F.N t, u⟫ < 0 ∧ 0 < ⟪F.N t', u⟫)
-    (hu_cross : cross u (x Q - x P) ≠ 0)
-    (hl : ⟪F.N t', u⟫ • F.N t - ⟪F.N t, u⟫ • F.N t' ≠ 0) :
+    (hu_cross : cross u (x Q - x P) ≠ 0) :
     ∃ σ : ℝ, σ ≠ 0 ∧ ∀ y : Fin N, (y ∉ S t ∨ y ∉ S t') →
       0 < σ * det3 (x Q - x P) (x y - x P) u := by
-  obtain ⟨κ, hκ_ne, hκ_eq⟩ := det3_ridge_facets F t t' P Q hP hQ u hu_cross hl
-  refine ⟨-κ, neg_ne_zero.mpr hκ_ne, fun y hy => ?_⟩
-  rw [hκ_eq (x y)]
-  have hterm : ⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y) < 0 := by
-    rcases hy with hy | hy'
-    · have hf : F.f t (x y) < 0 := F.neg t y hy
-      have hf' : F.f t' (x y) ≤ 0 := F.le t' y
-      nlinarith [h_opp.1, h_opp.2]
-    · have hf : F.f t (x y) ≤ 0 := F.le t y
-      have hf' : F.f t' (x y) < 0 := F.neg t' y hy'
-      nlinarith [h_opp.1, h_opp.2]
-  have : (-κ) * (κ * (⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y))) =
-      - (κ ^ 2) * (⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y)) := by ring
-  rw [this]
-  have hsq : 0 < κ ^ 2 := sq_pos_of_ne_zero hκ_ne
-  nlinarith
+  set l := ⟪F.N t', u⟫ • F.N t - ⟪F.N t, u⟫ • F.N t'
+  by_cases hl : l = 0
+  · refine ⟨1, one_ne_zero, fun y hy => ?_⟩
+    have h1 : ⟪F.N t, x y - x P⟫ = F.f t (x y) := by
+      have := F.hN t (x y) (x P)
+      rw [F.zero t P hP.1, sub_zero] at this
+      exact this.symm
+    have h2 : ⟪F.N t', x y - x P⟫ = F.f t' (x y) := by
+      have := F.hN t' (x y) (x P)
+      rw [F.zero t' P hP.2, sub_zero] at this
+      exact this.symm
+    have h_inner : ⟪l, x y - x P⟫ = 0 := by rw [hl, inner_zero_left]
+    have h_expand : ⟪l, x y - x P⟫ = ⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y) := by
+      dsimp [l]
+      rw [inner_sub_left, real_inner_smul_left, real_inner_smul_left, h1, h2]
+    have hterm : ⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y) < 0 := by
+      rcases hy with hy | hy'
+      · have hf : F.f t (x y) < 0 := F.neg t y hy
+        have hf' : F.f t' (x y) ≤ 0 := F.le t' y
+        nlinarith [h_opp.1, h_opp.2]
+      · have hf : F.f t (x y) ≤ 0 := F.le t y
+        have hf' : F.f t' (x y) < 0 := F.neg t' y hy'
+        nlinarith [h_opp.1, h_opp.2]
+    linarith [h_inner, h_expand]
+  · obtain ⟨κ, hκ_ne, hκ_eq⟩ := det3_ridge_facets F t t' P Q hP hQ u hu_cross hl
+    refine ⟨-κ, neg_ne_zero.mpr hκ_ne, fun y hy => ?_⟩
+    rw [hκ_eq (x y)]
+    have hterm : ⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y) < 0 := by
+      rcases hy with hy | hy'
+      · have hf : F.f t (x y) < 0 := F.neg t y hy
+        have hf' : F.f t' (x y) ≤ 0 := F.le t' y
+        nlinarith [h_opp.1, h_opp.2]
+      · have hf : F.f t (x y) ≤ 0 := F.le t y
+        have hf' : F.f t' (x y) < 0 := F.neg t' y hy'
+        nlinarith [h_opp.1, h_opp.2]
+    have : (-κ) * (κ * (⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y))) =
+        - (κ ^ 2) * (⟪F.N t', u⟫ * F.f t (x y) - ⟪F.N t, u⟫ * F.f t' (x y)) := by ring
+    rw [this]
+    have hsq : 0 < κ ^ 2 := sq_pos_of_ne_zero hκ_ne
+    nlinarith
 
 /-- **V1 edge-on sign corollary: uniform strict sign off an edge-on facet.** -/
 theorem det3_sign_edgeOn {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {x : Fin N → ℝ³}
@@ -183,7 +206,7 @@ At view `u` with facet 3 (`0345`) edge-on (`⟪F.N 3, u⟫ = 0`) and the sign pa
 is strictly convex (`hcyc`) and vertex 1 projects strictly inside (`h1`) for some `ρ ≠ 0`. -/
 theorem lemmaR_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
-    (_hN0 : ⟪F.N 0, u⟫ < 0) (_hN1 : ⟪F.N 1, u⟫ < 0) (hN2 : ⟪F.N 2, u⟫ < 0)
+    (hN2 : ⟪F.N 2, u⟫ < 0)
     (hN4 : ⟪F.N 4, u⟫ < 0) (hN5 : ⟪F.N 5, u⟫ < 0)
     (hN6 : 0 < ⟪F.N 6, u⟫) (hN7 : 0 < ⟪F.N 7, u⟫) (hN8 : 0 < ⟪F.N 8, u⟫) :
     ∃ ρ : ℝ, ρ ≠ 0 ∧
@@ -291,61 +314,10 @@ theorem lemmaR_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
       nlinarith
     linarith
 
-  have hl_64 : ⟪F.N 8, u⟫ • F.N 4 - ⟪F.N 4, u⟫ • F.N 8 ≠ 0 := by
-    intro h
-    have hinner := congrArg (fun v : ℝ³ => ⟪v, x 0 - x 6⟫) h
-    rw [inner_zero_left] at hinner
-    have hz4 : ⟪F.N 4, x 0 - x 6⟫ = 0 := by
-      have := (F.hN 4 (x 0) (x 6)).symm
-      rw [F.zero 4 0 (by decide), F.zero 4 6 (by decide), sub_self] at this
-      exact this
-    have hz8 : ⟪F.N 8, x 0 - x 6⟫ = F.f 8 (x 0) := by
-      have := (F.hN 8 (x 0) (x 6)).symm
-      rw [F.zero 8 6 (by decide), sub_zero] at this
-      exact this
-    have hf8 : F.f 8 (x 0) < 0 := F.neg 8 0 (by decide)
-    rw [inner_sub_left, real_inner_smul_left, real_inner_smul_left, hz4, hz8, mul_zero, zero_sub] at hinner
-    have : - (⟪F.N 4, u⟫ * F.f 8 (x 0)) < 0 := by nlinarith [hN4, hf8]
-    linarith
-
-  have hl_52 : ⟪F.N 6, u⟫ • F.N 2 - ⟪F.N 2, u⟫ • F.N 6 ≠ 0 := by
-    intro h
-    have hinner := congrArg (fun v : ℝ³ => ⟪v, x 0 - x 2⟫) h
-    rw [inner_zero_left] at hinner
-    have hz2 : ⟪F.N 2, x 0 - x 2⟫ = 0 := by
-      have := (F.hN 2 (x 0) (x 2)).symm
-      rw [F.zero 2 0 (by decide), F.zero 2 2 (by decide), sub_self] at this
-      exact this
-    have hz6 : ⟪F.N 6, x 0 - x 2⟫ = F.f 6 (x 0) := by
-      have := (F.hN 6 (x 0) (x 2)).symm
-      rw [F.zero 6 2 (by decide), sub_zero] at this
-      exact this
-    have hf6 : F.f 6 (x 0) < 0 := F.neg 6 0 (by decide)
-    rw [inner_sub_left, real_inner_smul_left, real_inner_smul_left, hz2, hz6, mul_zero, zero_sub] at hinner
-    have : - (⟪F.N 2, u⟫ * F.f 6 (x 0)) < 0 := by nlinarith [hN2, hf6]
-    linarith
-
-  have hl_26 : ⟪F.N 7, u⟫ • F.N 5 - ⟪F.N 5, u⟫ • F.N 7 ≠ 0 := by
-    intro h
-    have hinner := congrArg (fun v : ℝ³ => ⟪v, x 1 - x 2⟫) h
-    rw [inner_zero_left] at hinner
-    have hz5 : ⟪F.N 5, x 1 - x 2⟫ = 0 := by
-      have := (F.hN 5 (x 1) (x 2)).symm
-      rw [F.zero 5 1 (by decide), F.zero 5 2 (by decide), sub_self] at this
-      exact this
-    have hz7 : ⟪F.N 7, x 1 - x 2⟫ = F.f 7 (x 1) := by
-      have := (F.hN 7 (x 1) (x 2)).symm
-      rw [F.zero 7 2 (by decide), sub_zero] at this
-      exact this
-    have hf7 : F.f 7 (x 1) < 0 := F.neg 7 1 (by decide)
-    rw [inner_sub_left, real_inner_smul_left, real_inner_smul_left, hz5, hz7, mul_zero, zero_sub] at hinner
-    have : - (⟪F.N 5, u⟫ * F.f 7 (x 1)) < 0 := by nlinarith [hN5, hf7]
-    linarith
-
-  obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F 4 8 6 4 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN4, hN8⟩ hne_64 hl_64
+  obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F 4 8 6 4 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN4, hN8⟩ hne_64
   obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F 3 4 5 (by decide) (by decide) u hN3 hne_45
-  obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F 2 6 5 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN2, hN6⟩ hne_52 hl_52
-  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 5 7 2 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN5, hN7⟩ hne_26 hl_26
+  obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F 2 6 5 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN2, hN6⟩ hne_52
+  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 5 7 2 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN5, hN7⟩ hne_26
 
   have hcyc01 : det3 (x 4 - x 6) (x 5 - x 6) u = det3 (x 5 - x 4) (x 6 - x 4) u :=
     det3_cycle_triangle (x 6) (x 4) (x 5) u
