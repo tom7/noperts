@@ -1,6 +1,7 @@
 module
 
 public import Minimality.FaceChordLeaf
+public import Minimality.Quad05Leaf
 
 @[expose] public section
 
@@ -231,7 +232,7 @@ theorem isRupert_of_faceChordView {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {
 end Minimality.FaceChord
 
 namespace Minimality.T24.FaceChord
-open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT
+open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT Minimality.T24.Quad05
 
 /-- Type-24 wiring of the three-circle cover {012, 016, 0345} (facet indices 0, 1, 3). -/
 theorem isRupert_cover24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
@@ -241,5 +242,195 @@ theorem isRupert_cover24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   · exact isRupert_of_faceChordView F h0
   · exact isRupert_of_faceChordView F h1
   · exact isRupert_of_faceChordView F h3
+
+/-- **The quad-chord leaf as a corollary of `isRupert_faceChord_fac`** (facet `3`, `0 < η`).
+Same statement as `Minimality.T24.Quad05.isRupert_quadChord` except `0 ≤ η` is replaced by `0 < η`
+so that vertex `o` is strictly inside the chord interval (middle with `s = 1 / (1 + η)`). -/
+theorem isRupert_quadChord' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {o t A B P Q I : Fin 7}
+    (hcov : ∀ j : Fin 7, j = o ∨ j = t ∨ j = A ∨ j = B ∨ j = P ∨ j = Q ∨ j = I)
+    (hlab : [o, t, A, B, P, Q].Nodup)
+    (hoS : o ∈ s0x_S24 3) (hAS : A ∈ s0x_S24 3) (hBS : B ∈ s0x_S24 3)
+    (hPS : P ∉ s0x_S24 3) (hQS : Q ∉ s0x_S24 3) (hIS : I ∉ s0x_S24 3)
+    {η : ℝ} (hη : 0 < η) {u : ℝ³} (hu : u = (x B - x o) + η • (x A - x o)) {ρ : ℝ} (hρ : ρ ≠ 0)
+    (hcyc : ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
+      0 < ρ * det3 (quad (x P) (x A) (x B) (x Q) (i + 1) - quad (x P) (x A) (x B) (x Q) i)
+        (quad (x P) (x A) (x B) (x Q) j - quad (x P) (x A) (x B) (x Q) i) u)
+    (hI : ∀ i : ZMod 4,
+      0 < ρ * det3 (quad (x P) (x A) (x B) (x Q) (i + 1) - quad (x P) (x A) (x B) (x Q) i)
+        (x I - quad (x P) (x A) (x B) (x Q) i) u)
+    {s₃ δ₃ : ℝ} (h3 : x t = x B + s₃ • (x A - x B) + δ₃ • u) (hs₀ : 0 < s₃) (hs₁ : s₃ < 1)
+    (hδ : δ₃ ≠ 0)
+    (hPA : ⟪x P, u⟫ < ⟪x A, u⟫) (hAB : ⟪x A, u⟫ < ⟪x B, u⟫)
+    (hQP : ⟪x Q, u⟫ ≠ ⟪x P, u⟫) (hQA : ⟪x Q, u⟫ ≠ ⟪x A, u⟫) (hQB : ⟪x Q, u⟫ ≠ ⟪x B, u⟫)
+    {w w' : Fin 7} (hw : (w = Q ∧ w' = P) ∨ (w = P ∧ w' = Q))
+    (hfar : 0 < det3 (x B - x o) (x A - x o) (x w - x w') *
+      det3 (x B - x o) (x A - x o) (x I - x o))
+    (hoff : det3 (x B - x o) (x A - x o) (cross (x B - x A) (x w - x A)) ≠ 0 ∨
+      ⟪x w - x A, x B - x A⟫ < 0 ∨ ⟪x w - x B, x A - x B⟫ < 0) :
+    IsRupert (univ.image x) := by
+  classical
+  have _ := hlab
+  set e : ℝ³ := x A - x o with he
+  have fo := F.zero 3 o hoS
+  have fA := F.zero 3 A hAS
+  have fB := F.zero 3 B hBS
+  have fP := F.neg 3 P hPS
+  have fQ := F.neg 3 Q hQS
+  have fI := F.neg 3 I hIS
+  have Nsub : ∀ a b : Fin 7, ⟪F.N 3, x a - x b⟫ = F.f 3 (x a) - F.f 3 (x b) := F.inner_sub 3
+  have hNu : ⟪F.N 3, u⟫ = 0 := by
+    rw [hu, inner_add_right, real_inner_smul_right, Nsub, Nsub, fB, fo, fA]; ring
+  have hNe : ⟪F.N 3, e⟫ = 0 := by rw [he, Nsub, fA, fo]; ring
+  have hN0 : F.N 3 ≠ 0 := by
+    intro h0
+    have := Nsub I o
+    rw [h0, inner_zero_left, fo] at this
+    linarith
+  have key : ∀ Y : ℝ³, det3 (x B - x A) Y u = -(1 + η) * ⟪cross u e, Y⟫ := by
+    intro Y
+    rw [hu, he]
+    simp only [det3_expand, q5ip, cross_apply_zero, cross_apply_one, cross_apply_two,
+      PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
+    ring
+  have hc2 : ∀ Z : ℝ³, det3 (x B - x o) (x A - x o) Z = ⟪cross u e, Z⟫ := by
+    intro Z
+    rw [hu, he]
+    simp only [det3_expand, q5ip, cross_apply_zero, cross_apply_one, cross_apply_two,
+      PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
+    ring
+  have hcross : cross u e ≠ 0 := by
+    intro h0
+    have := hcyc 1 3 (by decide) (by decide)
+    rw [show (1 : ZMod 4) + 1 = 2 by decide] at this
+    change 0 < ρ * det3 (x B - x A) (x Q - x A) u at this
+    rw [key, h0, inner_zero_left, mul_zero, mul_zero] at this
+    exact lt_irrefl _ this
+  obtain ⟨r_scale, hr⟩ : ∃ r : ℝ, cross u e = r • F.N 3 :=
+    ⟨_, eq_smul_of_cross_eq_zero hN0 (cross_eq_zero_of_perp2 hNu hNe (inner_cross_left u e)
+      (inner_cross_right u e) hcross)⟩
+  have hfarN : F.f 3 (x w) < F.f 3 (x w') := by
+    rw [hc2, hc2, hr, real_inner_smul_left, real_inner_smul_left, Nsub, Nsub, fo] at hfar
+    by_contra hcon
+    push Not at hcon
+    have h1 : 0 ≤ r_scale ^ 2 * (F.f 3 (x w) - F.f 3 (x w')) :=
+      mul_nonneg (sq_nonneg r_scale) (by linarith)
+    have h2 : r_scale * (F.f 3 (x w) - F.f 3 (x w')) * (r_scale * (F.f 3 (x I) - 0)) =
+        r_scale ^ 2 * (F.f 3 (x w) - F.f 3 (x w')) * F.f 3 (x I) := by ring
+    rw [h2] at hfar
+    linarith [mul_nonpos_of_nonneg_of_nonpos h1 fI.le]
+  have htS : t ∈ s0x_S24 3 := by
+    by_contra ht
+    have hsub : s0x_S24 3 ⊆ {o, A, B} := by
+      intro j hj
+      rcases hcov j with hj_o | hj_t | hj_A | hj_B | hj_P | hj_Q | hj_I
+      · rw [hj_o]; exact Finset.mem_insert_self o _
+      · rw [hj_t] at hj; exact False.elim (ht hj)
+      · rw [hj_A]; exact Finset.mem_insert_of_mem (Finset.mem_insert_self A _)
+      · rw [hj_B]; exact Finset.mem_insert_of_mem (Finset.mem_insert_of_mem (Finset.mem_singleton_self B))
+      · rw [hj_P] at hj; exact False.elim (hPS hj)
+      · rw [hj_Q] at hj; exact False.elim (hQS hj)
+      · rw [hj_I] at hj; exact False.elim (hIS hj)
+    have hcard : (s0x_S24 3).card ≤ ({o, A, B} : Finset (Fin 7)).card := Finset.card_le_card hsub
+    have h3card : (s0x_S24 3).card = 4 := by decide
+    have h3le : ({o, A, B} : Finset (Fin 7)).card ≤ 3 :=
+      (Finset.card_insert_le o _).trans (by
+        have := Finset.card_insert_le A {B}
+        linarith [Finset.card_singleton B])
+    linarith
+  set r_rim : ZMod 4 → Fin 7 := quad P A B Q
+  have hr_x : ∀ i : ZMod 4, x (r_rim i) = quad (x P) (x A) (x B) (x Q) i := by
+    intro i
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl
+  have hz4 : (fun i => ⟪x (r_rim i), u⟫) = quad ⟪x P, u⟫ ⟪x A, u⟫ ⟪x B, u⟫ ⟪x Q, u⟫ := by
+    funext i
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl
+  have hinj0 : Function.Injective (fun i => ⟪x (r_rim i), u⟫) := by
+    rw [hz4]
+    exact quad_injective (ne_of_lt hPA) (ne_of_lt (hPA.trans hAB)) (Ne.symm hQP) (ne_of_lt hAB)
+      (Ne.symm hQA) (Ne.symm hQB)
+  have hz : UniOrSep (fun i => x (r_rim i)) u :=
+    Or.inl (strictUnimodal_of_cyclic (by norm_num)
+      (isCyclicUnimodal_four (z := fun i => ⟪x (r_rim i), u⟫) hinj0
+        ⟨Or.inl hPA, Or.inr (Or.inr (Or.inl hAB)), ne_of_lt (hPA.trans hAB), Ne.symm hQA⟩))
+  obtain ⟨w_zmod, hw_zmod, hw'_zmod⟩ : ∃ (w_zmod : ZMod 4),
+      r_rim w_zmod = w ∧ (∀ m : ZMod 4, m ≠ w_zmod → r_rim m ∉ s0x_S24 3 → r_rim m = w') := by
+    rcases hw with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · refine ⟨3, rfl, ?_⟩
+      intro m hm hmS
+      rcases zmod4_cases m with rfl | rfl | rfl | rfl
+      · rfl
+      · exact False.elim (hmS hAS)
+      · exact False.elim (hmS hBS)
+      · exact False.elim (hm rfl)
+    · refine ⟨0, rfl, ?_⟩
+      intro m hm hmS
+      rcases zmod4_cases m with rfl | rfl | rfl | rfl
+      · exact False.elim (hm rfl)
+      · exact False.elim (hmS hAS)
+      · exact False.elim (hmS hBS)
+      · rfl
+  have hfar_f : ∀ m : ZMod 4, m ≠ w_zmod → r_rim m ∉ s0x_S24 3 → F.f 3 (x (r_rim w_zmod)) < F.f 3 (x (r_rim m)) := by
+    intro m hm hmS
+    rw [hw_zmod, hw'_zmod m hm hmS]
+    exact hfarN
+  have hoff' : ⟪F.N 3, cross (x (r_rim (1 + 1)) - x (r_rim 1)) (x (r_rim w_zmod) - x (r_rim 1))⟫ ≠ 0 ∨
+      ⟪x (r_rim w_zmod) - x (r_rim 1), x (r_rim (1 + 1)) - x (r_rim 1)⟫ < 0 ∨
+      ⟪x (r_rim w_zmod) - x (r_rim (1 + 1)), x (r_rim 1) - x (r_rim (1 + 1))⟫ < 0 := by
+    rw [show (1 : ZMod 4) + 1 = 2 by decide]
+    change ⟪F.N 3, cross (x B - x A) (x (r_rim w_zmod) - x A)⟫ ≠ 0 ∨
+      ⟪x (r_rim w_zmod) - x A, x B - x A⟫ < 0 ∨
+      ⟪x (r_rim w_zmod) - x B, x A - x B⟫ < 0
+    rw [hw_zmod]
+    rcases hoff with h | h | h
+    · left
+      intro h0
+      apply h
+      rw [hc2, hr, real_inner_smul_left, h0, mul_zero]
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr h)
+  have hwS : r_rim w_zmod ∉ s0x_S24 3 := by
+    rw [hw_zmod]
+    rcases hw with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
+  refine isRupert_faceChord_fac F (3 : Fin 9) hNu (k := 4) (by decide) r_rim (a := 1)
+    (hA := hAS) (hB := hBS) (hρ := hρ) ?_ ?_ ?_ hinj0 hz (w := w_zmod) hwS hfar_f hoff'
+  · intro i j hj1 hj2
+    have h := hcyc i j hj1 hj2
+    rw [← hr_x (i + 1), ← hr_x i, ← hr_x j] at h
+    exact h
+  · intro q hqS hqr i
+    rcases hcov q with hq_o | hq_t | hq_A | hq_B | hq_P | hq_Q | hq_I
+    · rw [hq_o] at hqS; exact False.elim (hqS hoS)
+    · rw [hq_t] at hqS; exact False.elim (hqS htS)
+    · exact False.elim (hqr 1 hq_A)
+    · exact False.elim (hqr 2 hq_B)
+    · exact False.elim (hqr 0 hq_P)
+    · exact False.elim (hqr 3 hq_Q)
+    · rw [hq_I]
+      have h := hI i
+      rw [← hr_x (i + 1), ← hr_x i] at h
+      exact h
+  · intro q hqS hqr
+    rcases hcov q with hq_o | hq_t | hq_A | hq_B | hq_P | hq_Q | hq_I
+    · refine ⟨1 / (1 + η), -1 / (1 + η), by positivity, ?_, ?_, ?_⟩
+      · rw [div_lt_one (by linarith)]; linarith
+      · exact div_ne_zero (by norm_num) (by linarith)
+      · change x q = x A + (1 / (1 + η)) • (x B - x A) + (-1 / (1 + η)) • u
+        rw [hq_o, hu, he]
+        ext j
+        simp only [PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
+        have : 1 + η ≠ 0 := by linarith
+        field_simp
+        ring
+    · refine ⟨1 - s₃, δ₃, by linarith, by linarith, hδ, ?_⟩
+      change x q = x A + (1 - s₃) • (x B - x A) + δ₃ • u
+      rw [hq_t, h3]
+      ext j
+      simp only [PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
+      ring
+    · exact False.elim (hqr 1 hq_A)
+    · exact False.elim (hqr 2 hq_B)
+    · exact False.elim (hqr 0 hq_P)
+    · exact False.elim (hqr 3 hq_Q)
+    · rw [hq_I] at hqS; exact False.elim (hIS hqS)
 
 end Minimality.T24.FaceChord
