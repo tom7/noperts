@@ -1175,4 +1175,352 @@ theorem q45_Kminus {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       linarith
     exact q45_Kminus_t_gt_one F ha35 s t hs0 ht hst hdecomp hk ht1 h2lo hS2_e35 hS3 hS4
 
+/-- **Leaf K- (companion) (Subcase s ≤ 1, E5 = e5)**:
+When `ρ0 * kJ < 0` and weak 6-high fails strictly at base `e5 = x 5 - x 0`.
+- Views: `u_ε = e5 + ε • e4` in `J0` for small `ε > 0`.
+- Rim: 6 4 5 2, chord 4 -> 5, middles 0, 3, farther w ∈ {2, 6}.
+- Lemma K (other sense) rules out 6-high everywhere on `J0`.
+- Open condition `h2lo` rules out 2-high near `e5`. -/
+theorem rj0h_Kminus_e5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0)
+    (s t : ℝ)
+    (hs0 : 0 < s)
+    (ht : 0 < t)
+    (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hk : 0 < det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1))
+    (hs : s ≤ 1)
+    (h2lo : min ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ < max ⟪x 6, x 5 - x 0⟫ ⟪x 5, x 5 - x 0⟫)
+    (hS2 : ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0)
+    (hS3 : F.f 3 (x 2) ≠ F.f 3 (x 6))
+    (hS4 : ⟪F.N 3, cross (x 5 - x 4) (x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 4)⟫ ≠ 0 ∨
+           ⟪x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 4, x 5 - x 4⟫ < 0 ∨
+           ⟪x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 5, x 4 - x 5⟫ < 0) :
+    FaceChordView F 3 := by
+  set p_quad := quad (x 6) (x 4) (x 5) (x 2)
+  set r : ZMod 4 → Fin 7 := quad 6 4 5 2
+  have hr : ∀ i : ZMod 4, x (r i) = p_quad i := by
+    intro i; fin_cases i <;> rfl
+  set b := x 5 - x 0
+  set d := x 4 - x 0
+  have hu_Pi : ∀ ε : ℝ, b + ε • d = u_Pi x 1 ε := by
+    intro ε; ext j; simp [b, d, u_Pi, e4, e5]
+  have ev_eps : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε := self_mem_nhdsWithin
+  have ev_6 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < 1 * s + ε * (1 - t) := by
+    have : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < s + ε * (1 - t) :=
+      eventually_pos_affine (A := s) (B := 1 - t) (Or.inl hs0)
+    filter_upwards [this] with ε hε
+    linarith
+  have ev_N5 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪F.N 5, b + ε • d⟫ < 0 := by
+    have hlin : ∀ ε : ℝ, ⟪F.N 5, b + ε • d⟫ = ⟪F.N 5, b⟫ + ε * ⟪F.N 5, d⟫ := by
+      intro ε; rw [inner_add_right, real_inner_smul_right]
+    have hpos : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < - ⟪F.N 5, b⟫ + ε * (- ⟪F.N 5, d⟫) :=
+      eventually_pos_affine (A := - ⟪F.N 5, b⟫) (B := - ⟪F.N 5, d⟫) (Or.inl (by linarith [ha5]))
+    filter_upwards [hpos] with ε hε
+    rw [hlin]; linarith
+  have ev_2lo : ∀ᶠ ε in 𝓝[>] (0 : ℝ), min ⟪p_quad 1, b + ε • d⟫ ⟪p_quad 3, b + ε • d⟫ < max ⟪p_quad 0, b + ε • d⟫ ⟪p_quad 2, b + ε • d⟫ :=
+    eventually_min13_lt_max02 p_quad b d h2lo
+  have ev_inj : ∀ᶠ ε in 𝓝[>] (0 : ℝ), Function.Injective (fun i => ⟪p_quad i, b + ε • d⟫) :=
+    eventually_injective_quad p_quad b d hS2
+  have ev_all := ev_eps.and (ev_6.and (ev_N5.and (ev_2lo.and ev_inj)))
+  obtain ⟨ε, hε, h6, hN5_u, h2lo_u, hinj_u⟩ := ev_all.exists
+  set u := b + ε • d
+  have hu_Pi_eq : u = u_Pi x 1 ε := hu_Pi ε
+  have h8 : 0 < 1 * (1 - s) + ε * t := by nlinarith [hs, ht, hε]
+  have hN5_Pi : ⟪F.N 5, u_Pi x 1 ε⟫ < 0 := by rw [← hu_Pi_eq]; exact hN5_u
+  have hsigns := lemma_signs_J0 F s t 1 ε hs0 ht hst hdecomp one_pos hε h8 h6 hN5_Pi
+  rw [← hu_Pi_eq] at hsigns
+  have hN3 : ⟪F.N 3, u⟫ = 0 := hsigns.1
+  have hN2 : ⟪F.N 2, u⟫ < 0 := hsigns.2.1
+  have hN4 : ⟪F.N 4, u⟫ < 0 := hsigns.2.2.1
+  have hN5 : ⟪F.N 5, u⟫ < 0 := hsigns.2.2.2.1
+  have hN6 : 0 < ⟪F.N 6, u⟫ := hsigns.2.2.2.2.1
+  have hN7 : 0 < ⟪F.N 7, u⟫ := hsigns.2.2.2.2.2.1
+  have hN8 : 0 < ⟪F.N 8, u⟫ := hsigns.2.2.2.2.2.2
+  obtain ⟨ρ, hρ_ne, hcyc, hin⟩ := lemmaR_quad_signs F hN3 hN2 hN4 hN5 hN6 hN7 hN8
+  have hin3 := hin 3
+  have h3_eq : quad (x 6) (x 4) (x 5) (x 2) (3 + 1) - quad (x 6) (x 4) (x 5) (x 2) 3 = x 6 - x 2 := by
+    show quad (x 6) (x 4) (x 5) (x 2) 0 - quad (x 6) (x 4) (x 5) (x 2) 3 = x 6 - x 2
+    rfl
+  have h3_1 : x 1 - quad (x 6) (x 4) (x 5) (x 2) 3 = x 1 - x 2 := by
+    show x 1 - quad (x 6) (x 4) (x 5) (x 2) 3 = x 1 - x 2
+    rfl
+  rw [h3_eq, h3_1] at hin3
+  have h_rho_om := rho_mul_omega_pos_of_inner_neg F u ρ hin3 hN5
+  set Ω := det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1)
+  have h_om_ne := omega_ne_zero F
+  have h_om_sq : 0 < Ω ^ 2 := sq_pos_of_ne_zero h_om_ne
+  have hkap := kappa_rim6452 x
+  have h_om_kap : Ω * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1) < 0 := by
+    dsimp [p_quad]
+    rw [hkap]
+    linarith [hk]
+  have hk_neg : ρ * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1) < 0 := by
+    have hprod : (ρ * Ω) * (Ω * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1)) < 0 :=
+      mul_neg_of_pos_of_neg h_rho_om h_om_kap
+    have : (ρ * Ω) * (Ω * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1)) =
+        Ω ^ 2 * (ρ * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1)) := by ring
+    rw [this] at hprod
+    exact neg_of_mul_neg_right hprod h_om_sq.le
+  have h_triD (i : ZMod 4) : 0 < ρ * triD p_quad u i := by
+    have hneq1 : (i + 2 : ZMod 4) ≠ i := by
+      intro h
+      have : (2 : ZMod 4) = 0 := by
+        calc (2 : ZMod 4) = (i + 2) - i := by ring
+        _ = i - i := by rw [h]
+        _ = 0 := sub_self i
+      revert this; decide
+    have hneq2 : (i + 2 : ZMod 4) ≠ i + 1 := by
+      intro h
+      have : (1 : ZMod 4) = 0 := by
+        calc (1 : ZMod 4) = (i + 2) - (i + 1) := by ring
+        _ = (i + 1) - (i + 1) := by rw [h]
+        _ = 0 := sub_self _
+      revert this; decide
+    exact hcyc i (i + 2) hneq1 hneq2
+  have h_uni := unimodal_quad_Kminus p_quad u ρ hinj_u h_triD hk_neg h2lo_u
+  have h_mb := middle_bounds_J0 s t 1 ε hst one_pos hε h8 h6
+  set a : ZMod 4 := 1
+  set w : ZMod 4 := if F.f 3 (x 2) < F.f 3 (x 6) then 3 else 0
+  refine ⟨u, 4, inferInstance, r, a, w, ρ, hN3, by decide, ?_, ?_, hρ_ne, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · show r 1 ∈ s0x_S24 3
+    decide
+  · show r (1 + 1) ∈ s0x_S24 3
+    decide
+  · intro i j hj1 hj2
+    simp_rw [hr]
+    exact hcyc i j hj1 hj2
+  · intro q hqS hqr i
+    have hq1 := exterior_vertices_J0 q hqS hqr
+    subst hq1
+    simp_rw [hr]
+    exact hin i
+  · intro q hqS hqr
+    have hq03 := middle_vertices_J0 q hqS hqr
+    have hra : x (r a) = x 4 := rfl
+    have hra1 : x (r (a + 1)) = x 5 := rfl
+    rw [hra, hra1]
+    rcases hq03 with rfl | rfl
+    · refine ⟨1 / (1 + ε), - (1 / (1 + ε)), h_mb.1.1, h_mb.1.2.1, h_mb.1.2.2, ?_⟩
+      rw [hu_Pi_eq]
+      exact middle_quad_x0 x 1 ε (by linarith [hε])
+    · refine ⟨((1 - s) * 1 + t * ε) / (1 + ε), (s + t - 1) / (1 + ε), h_mb.2.1, h_mb.2.2.1, h_mb.2.2.2, ?_⟩
+      rw [hu_Pi_eq]
+      exact middle_quad_x3 x s t 1 ε hdecomp (by linarith [hε])
+  · simp_rw [hr]
+    exact hinj_u
+  · simp_rw [hr]
+    exact Or.inl h_uni
+  · dsimp [w, r, quad]
+    split_ifs <;> decide
+  · intro m hmw hmS
+    dsimp [w] at hmw ⊢
+    split_ifs at hmw ⊢ with h26
+    · have hcand := w_candidates_J0 m hmS
+      rcases hcand with rfl | rfl
+      · show F.f 3 (x 2) < F.f 3 (x 6); exact h26
+      · exact False.elim (hmw rfl)
+    · have hcand := w_candidates_J0 m hmS
+      rcases hcand with rfl | rfl
+      · exact False.elim (hmw rfl)
+      · show F.f 3 (x 6) < F.f 3 (x 2)
+        have : F.f 3 (x 2) ≠ F.f 3 (x 6) := hS3
+        exact lt_of_le_of_ne (not_lt.mp h26) this.symm
+  · have hra : x (r a) = x 4 := rfl
+    have hra1 : x (r (a + 1)) = x 5 := rfl
+    rw [hra, hra1]
+    dsimp [w]
+    split_ifs with h26
+    · have hrw : r 3 = 2 := rfl
+      rw [hrw]
+      have hs4' := hS4
+      split_ifs at hs4'
+      exact hs4'
+    · have hrw : r 0 = 6 := rfl
+      rw [hrw]
+      have hs4' := hS4
+      split_ifs at hs4'
+      exact hs4'
+
+/-- **Leaf K- (companion) (Subcase 1 < s, E5 = e34)**:
+When `ρ0 * kJ < 0` and weak 6-high fails strictly at base `e34 = x 3 - x 4`.
+- Views: `u_ε = (x 3 - x 4) + ε • (x 4 - x 0)` in `J0` for small `ε > 0`.
+- Rim: 6 4 5 2, chord 4 -> 5, middles 0, 3, farther w ∈ {2, 6}.
+- Lemma K (other sense) rules out 6-high everywhere on `J0`.
+- Open condition `h2lo` rules out 2-high near `e34`. -/
+theorem rj0h_Kminus_e34 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha34 : ⟪F.N 5, x 3 - x 4⟫ < 0)
+    (s t : ℝ)
+    (hs0 : 0 < s)
+    (ht : 0 < t)
+    (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hk : 0 < det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1))
+    (hs : 1 < s)
+    (h2lo : min ⟪x 4, x 3 - x 4⟫ ⟪x 2, x 3 - x 4⟫ < max ⟪x 6, x 3 - x 4⟫ ⟪x 5, x 3 - x 4⟫)
+    (hS2 : ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 4⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0)
+    (hS3 : F.f 3 (x 2) ≠ F.f 3 (x 6))
+    (hS4 : ⟪F.N 3, cross (x 5 - x 4) (x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 4)⟫ ≠ 0 ∨
+           ⟪x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 4, x 5 - x 4⟫ < 0 ∨
+           ⟪x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 5, x 4 - x 5⟫ < 0) :
+    FaceChordView F 3 := by
+  set p_quad := quad (x 6) (x 4) (x 5) (x 2)
+  set r : ZMod 4 → Fin 7 := quad 6 4 5 2
+  have hr : ∀ i : ZMod 4, x (r i) = p_quad i := by
+    intro i; fin_cases i <;> rfl
+  set b := x 3 - x 4
+  set d := x 4 - x 0
+  have hu_Pi : ∀ ε : ℝ, b + ε • d = u_Pi x t (s - 1 + ε) := by
+    intro ε; ext j
+    have hdj := congr_arg (fun (v : ℝ³) => v j) hdecomp
+    dsimp [b, d, u_Pi, e4, e5, e34] at hdj ⊢
+    linear_combination hdj
+  have ev_eps : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε := self_mem_nhdsWithin
+  have ev_beta : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < s - 1 + ε := by
+    have := eventually_pos_affine (A := s - 1) (B := 1) (Or.inl (by linarith [hs]))
+    filter_upwards [this] with ε hε; linarith
+  have ev_6 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < t * s + (s - 1 + ε) * (1 - t) := by
+    have hA : 0 < t * s + (s - 1) * (1 - t) := by linarith [hst]
+    have := eventually_pos_affine (A := t * s + (s - 1) * (1 - t)) (B := 1 - t) (Or.inl hA)
+    filter_upwards [this] with ε hε
+    have : t * s + (s - 1 + ε) * (1 - t) = t * s + (s - 1) * (1 - t) + ε * (1 - t) := by ring
+    rw [this]; exact hε
+  have ev_N5 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪F.N 5, b + ε • d⟫ < 0 := by
+    have hlin : ∀ ε : ℝ, ⟪F.N 5, b + ε • d⟫ = ⟪F.N 5, b⟫ + ε * ⟪F.N 5, d⟫ := by
+      intro ε; rw [inner_add_right, real_inner_smul_right]
+    have hpos : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < - ⟪F.N 5, b⟫ + ε * (- ⟪F.N 5, d⟫) :=
+      eventually_pos_affine (A := - ⟪F.N 5, b⟫) (B := - ⟪F.N 5, d⟫) (Or.inl (by linarith [ha34]))
+    filter_upwards [hpos] with ε hε
+    rw [hlin]; linarith
+  have ev_2lo : ∀ᶠ ε in 𝓝[>] (0 : ℝ), min ⟪p_quad 1, b + ε • d⟫ ⟪p_quad 3, b + ε • d⟫ < max ⟪p_quad 0, b + ε • d⟫ ⟪p_quad 2, b + ε • d⟫ :=
+    eventually_min13_lt_max02 p_quad b d h2lo
+  have ev_inj : ∀ᶠ ε in 𝓝[>] (0 : ℝ), Function.Injective (fun i => ⟪p_quad i, b + ε • d⟫) :=
+    eventually_injective_quad p_quad b d hS2
+  have ev_all := ev_eps.and (ev_beta.and (ev_6.and (ev_N5.and (ev_2lo.and ev_inj))))
+  obtain ⟨ε, hε, hβ, h6, hN5_u, h2lo_u, hinj_u⟩ := ev_all.exists
+  set u := b + ε • d
+  have hu_Pi_eq : u = u_Pi x t (s - 1 + ε) := hu_Pi ε
+  have h8 : 0 < t * (1 - s) + (s - 1 + ε) * t := by
+    have : t * (1 - s) + (s - 1 + ε) * t = ε * t := by ring
+    rw [this]; exact mul_pos hε ht
+  have hN5_Pi : ⟪F.N 5, u_Pi x t (s - 1 + ε)⟫ < 0 := by rw [← hu_Pi_eq]; exact hN5_u
+  have hsigns := lemma_signs_J0 F s t t (s - 1 + ε) hs0 ht hst hdecomp ht hβ h8 h6 hN5_Pi
+  rw [← hu_Pi_eq] at hsigns
+  have hN3 : ⟪F.N 3, u⟫ = 0 := hsigns.1
+  have hN2 : ⟪F.N 2, u⟫ < 0 := hsigns.2.1
+  have hN4 : ⟪F.N 4, u⟫ < 0 := hsigns.2.2.1
+  have hN5 : ⟪F.N 5, u⟫ < 0 := hsigns.2.2.2.1
+  have hN6 : 0 < ⟪F.N 6, u⟫ := hsigns.2.2.2.2.1
+  have hN7 : 0 < ⟪F.N 7, u⟫ := hsigns.2.2.2.2.2.1
+  have hN8 : 0 < ⟪F.N 8, u⟫ := hsigns.2.2.2.2.2.2
+  obtain ⟨ρ, hρ_ne, hcyc, hin⟩ := lemmaR_quad_signs F hN3 hN2 hN4 hN5 hN6 hN7 hN8
+  have hin3 := hin 3
+  have h3_eq : quad (x 6) (x 4) (x 5) (x 2) (3 + 1) - quad (x 6) (x 4) (x 5) (x 2) 3 = x 6 - x 2 := by
+    show quad (x 6) (x 4) (x 5) (x 2) 0 - quad (x 6) (x 4) (x 5) (x 2) 3 = x 6 - x 2
+    rfl
+  have h3_1 : x 1 - quad (x 6) (x 4) (x 5) (x 2) 3 = x 1 - x 2 := by
+    show x 1 - quad (x 6) (x 4) (x 5) (x 2) 3 = x 1 - x 2
+    rfl
+  rw [h3_eq, h3_1] at hin3
+  have h_rho_om := rho_mul_omega_pos_of_inner_neg F u ρ hin3 hN5
+  set Ω := det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1)
+  have h_om_ne := omega_ne_zero F
+  have h_om_sq : 0 < Ω ^ 2 := sq_pos_of_ne_zero h_om_ne
+  have hkap := kappa_rim6452 x
+  have h_om_kap : Ω * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1) < 0 := by
+    dsimp [p_quad]
+    rw [hkap]
+    linarith [hk]
+  have hk_neg : ρ * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1) < 0 := by
+    have hprod : (ρ * Ω) * (Ω * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1)) < 0 :=
+      mul_neg_of_pos_of_neg h_rho_om h_om_kap
+    have : (ρ * Ω) * (Ω * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1)) =
+        Ω ^ 2 * (ρ * det3 (p_quad 2 - p_quad 0) (p_quad 3 - p_quad 1) (p_quad 0 - p_quad 1)) := by ring
+    rw [this] at hprod
+    exact neg_of_mul_neg_right hprod h_om_sq.le
+  have h_triD (i : ZMod 4) : 0 < ρ * triD p_quad u i := by
+    have hneq1 : (i + 2 : ZMod 4) ≠ i := by
+      intro h
+      have : (2 : ZMod 4) = 0 := by
+        calc (2 : ZMod 4) = (i + 2) - i := by ring
+        _ = i - i := by rw [h]
+        _ = 0 := sub_self i
+      revert this; decide
+    have hneq2 : (i + 2 : ZMod 4) ≠ i + 1 := by
+      intro h
+      have : (1 : ZMod 4) = 0 := by
+        calc (1 : ZMod 4) = (i + 2) - (i + 1) := by ring
+        _ = (i + 1) - (i + 1) := by rw [h]
+        _ = 0 := sub_self _
+      revert this; decide
+    exact hcyc i (i + 2) hneq1 hneq2
+  have h_uni := unimodal_quad_Kminus p_quad u ρ hinj_u h_triD hk_neg h2lo_u
+  have h_mb := middle_bounds_J0 s t t (s - 1 + ε) hst ht hβ h8 h6
+  set a : ZMod 4 := 1
+  set w : ZMod 4 := if F.f 3 (x 2) < F.f 3 (x 6) then 3 else 0
+  refine ⟨u, 4, inferInstance, r, a, w, ρ, hN3, by decide, ?_, ?_, hρ_ne, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · show r 1 ∈ s0x_S24 3
+    decide
+  · show r (1 + 1) ∈ s0x_S24 3
+    decide
+  · intro i j hj1 hj2
+    simp_rw [hr]
+    exact hcyc i j hj1 hj2
+  · intro q hqS hqr i
+    have hq1 := exterior_vertices_J0 q hqS hqr
+    subst hq1
+    simp_rw [hr]
+    exact hin i
+  · intro q hqS hqr
+    have hq03 := middle_vertices_J0 q hqS hqr
+    have hra : x (r a) = x 4 := rfl
+    have hra1 : x (r (a + 1)) = x 5 := rfl
+    rw [hra, hra1]
+    rcases hq03 with rfl | rfl
+    · refine ⟨t / (t + (s - 1 + ε)), - (1 / (t + (s - 1 + ε))), h_mb.1.1, h_mb.1.2.1, h_mb.1.2.2, ?_⟩
+      rw [hu_Pi_eq]
+      exact middle_quad_x0 x t (s - 1 + ε) (by linarith [ht, hβ])
+    · refine ⟨((1 - s) * t + t * (s - 1 + ε)) / (t + (s - 1 + ε)), (s + t - 1) / (t + (s - 1 + ε)), h_mb.2.1, h_mb.2.2.1, h_mb.2.2.2, ?_⟩
+      rw [hu_Pi_eq]
+      exact middle_quad_x3 x s t t (s - 1 + ε) hdecomp (by linarith [ht, hβ])
+  · simp_rw [hr]
+    exact hinj_u
+  · simp_rw [hr]
+    exact Or.inl h_uni
+  · dsimp [w, r, quad]
+    split_ifs <;> decide
+  · intro m hmw hmS
+    dsimp [w] at hmw ⊢
+    split_ifs at hmw ⊢ with h26
+    · have hcand := w_candidates_J0 m hmS
+      rcases hcand with rfl | rfl
+      · show F.f 3 (x 2) < F.f 3 (x 6); exact h26
+      · exact False.elim (hmw rfl)
+    · have hcand := w_candidates_J0 m hmS
+      rcases hcand with rfl | rfl
+      · exact False.elim (hmw rfl)
+      · show F.f 3 (x 6) < F.f 3 (x 2)
+        have : F.f 3 (x 2) ≠ F.f 3 (x 6) := hS3
+        exact lt_of_le_of_ne (not_lt.mp h26) this.symm
+  · have hra : x (r a) = x 4 := rfl
+    have hra1 : x (r (a + 1)) = x 5 := rfl
+    rw [hra, hra1]
+    dsimp [w]
+    split_ifs with h26
+    · have hrw : r 3 = 2 := rfl
+      rw [hrw]
+      have hs4' := hS4
+      split_ifs at hs4'
+      exact hs4'
+    · have hrw : r 0 = 6 := rfl
+      rw [hrw]
+      have hs4' := hS4
+      split_ifs at hs4'
+      exact hs4'
+
+
 end Minimality.T24.Q45

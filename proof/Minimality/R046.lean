@@ -5,6 +5,8 @@ public import Minimality.Q45Leaf
 public import Minimality.CornerU
 public import Minimality.DiagCross
 public import Minimality.FaceChordFac
+public import Minimality.Type24Corner
+public import Minimality.Type24Cap
 
 @[expose] public section
 
@@ -295,26 +297,28 @@ lemma mid_vertices (q : Fin 7) (hqS : q ∈ s0x_S24 4) (hqr : ∀ j : ZMod 4, q 
 lemma far_cand (m : ZMod 4) (hm : m ≠ 0) (hmS : quad (2 : Fin 7) 6 0 5 m ∉ s0x_S24 4) : m = 3 := by
   revert m; decide
 
-/-- **Theorem Cross-046**: If `{012, 016}` fail at `ω3` and `a4 < 1`, `<N6, u47> > 0`
-(with strict obtuseness at `1`, C-bar signs at `u47`, `hfar`, `hoff`, `hgen`),
-then `FaceChordView F 4` holds at `u47 + ε • (x 6 - x 0)`. -/
-theorem q046_cross (F : S0xFac 9 s0x_S24 x)
+lemma far_cand3 (m : ZMod 4) (hm : m ≠ 3) (hmS : quad (2 : Fin 7) 6 0 5 m ∉ s0x_S24 4) : m = 0 := by
+  revert m; decide
+
+lemma w5_notS : quad (2 : Fin 7) 6 0 5 3 ∉ s0x_S24 4 := by decide
+
+/-- Cross-046 core: depth fact `hbase` replaces hiii, hiv, strict obtuseness; far vertex 2 or 5. -/
+theorem q046_cross_core (F : S0xFac 9 s0x_S24 x)
     (hi : 0 < ⟪F.N 5, x 4 - x 0⟫)
     (hii : 0 < ⟪F.N 6, u47 F⟫)
-    (hiii : ⟪x 2, u0 x (omega3_012 F)⟫ ≤ ⟪x 0, u0 x (omega3_012 F)⟫)
-    (hiv : ⟪x 6, u1 x (omega3_012 F)⟫ ≤ ⟪x 0, u1 x (omega3_012 F)⟫)
-    (hob01 : ⟪x 0 - x 1, x 2 - x 1⟫ < 0) (hob02 : ⟪x 0 - x 1, x 6 - x 1⟫ < 0)
-    (hob12 : ⟪x 2 - x 1, x 6 - x 1⟫ < 0)
-    (hC5 : ⟪F.N 5, u47 F⟫ < 0) (hC2 : ⟪F.N 2, u47 F⟫ ≤ 0) (hC0 : ⟪F.N 0, u47 F⟫ ≤ 0)
-    (hfar : F.f 4 (x 2) < F.f 4 (x 5))
-    (hoff : ⟪F.N 4, cross (x 0 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨
-      ⟪x 2 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 2 - x 0, x 6 - x 0⟫ < 0)
+    (hbase : ⟪x 6, u47 F⟫ < ⟪x 0, u47 F⟫)
+    (hC5 : ⟪F.N 5, u47 F⟫ < 0) (hC2 : ⟪F.N 2, u47 F⟫ ≤ 0)
+    (hfar : (F.f 4 (x 2) < F.f 4 (x 5) ∧
+      (⟪F.N 4, cross (x 0 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨
+        ⟪x 2 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 2 - x 0, x 6 - x 0⟫ < 0)) ∨
+      (F.f 4 (x 5) < F.f 4 (x 2) ∧
+      (⟪F.N 4, cross (x 0 - x 6) (x 5 - x 6)⟫ ≠ 0 ∨
+        ⟪x 5 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 5 - x 0, x 6 - x 0⟫ < 0)))
     (hgen : ∀ i j : ZMod 4, i ≠ j →
       ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, u47 F⟫ ≠ 0 ∨
       ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, x 6 - x 0⟫ ≠ 0) :
     FaceChordView F 4 := by
   have hβ := beta_pos F hi hC5
-  have hbase := base_gt F hiii hiv hob01 hob02 hob12 hC5 hC0
   set p : ZMod 4 → ℝ³ := quad (x 2) (x 6) (x 0) (x 5) with hp
   set Ω := det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) with hΩdef
   have hΩ : Ω ≠ 0 := omega_ne_zero F
@@ -385,7 +389,23 @@ theorem q046_cross (F : S0xFac 9 s0x_S24 x)
   set κ := (-F.f 7 (x 4)) + (F.f 7 (x 4) - F.f 7 (x 0)) with hκdef
   have hα : 0 < -F.f 7 (x 4) := by linarith [F.neg 7 4 (by decide : (4 : Fin 7) ∉ s0x_S24 7)]
   have hκ : 0 < κ := by linarith
-  refine ⟨u, 4, inferInstance, r, 1, 0, ρ, h4, by decide, ?_, ?_, hρ, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  obtain ⟨w, hwS, hfarw, hoffw⟩ : ∃ w : ZMod 4, r w ∉ s0x_S24 4 ∧
+      (∀ m, m ≠ w → r m ∉ s0x_S24 4 → F.f 4 (x (r w)) < F.f 4 (x (r m))) ∧
+      (⟪F.N 4, cross (x (r (1 + 1)) - x (r 1)) (x (r w) - x (r 1))⟫ ≠ 0 ∨
+        ⟪x (r w) - x (r 1), x (r (1 + 1)) - x (r 1)⟫ < 0 ∨
+        ⟪x (r w) - x (r (1 + 1)), x (r 1) - x (r (1 + 1))⟫ < 0) := by
+    rcases hfar with ⟨hf, ho⟩ | ⟨hf, ho⟩
+    · refine ⟨0, by decide, ?_, ho⟩
+      intro m hm hmS
+      have := far_cand m hm hmS
+      subst this
+      exact hf
+    · refine ⟨3, w5_notS, ?_, ho⟩
+      intro m hm hmS
+      have := far_cand3 m hm hmS
+      subst this
+      exact hf
+  refine ⟨u, 4, inferInstance, r, 1, w, ρ, h4, by decide, ?_, ?_, hρ, ?_, ?_, ?_, ?_, ?_, hwS, hfarw, hoffw⟩
   · show quad (2 : Fin 7) 6 0 5 1 ∈ s0x_S24 4; decide
   · show quad (2 : Fin 7) 6 0 5 (1 + 1) ∈ s0x_S24 4; decide
   · intro i j hj1 hj2
@@ -418,11 +438,129 @@ theorem q046_cross (F : S0xFac 9 s0x_S24 x)
     · rw [hV]; rw [hsum] at hme; exact hme
   · simp_rw [hrx]; exact hinjU.1
   · simp_rw [hrx]; exact Or.inl h_uni
-  · show quad (2 : Fin 7) 6 0 5 0 ∉ s0x_S24 4; decide
-  · intro m hm hmS
-    have := far_cand m hm hmS
-    subst this
-    exact hfar
-  · exact hoff
+
+
+/-- **Theorem Cross-046**: If `{012, 016}` fail at `ω3` and `a4 < 1`, `<N6, u47> > 0`
+(with strict obtuseness at `1`, C-bar signs at `u47`, `hfar`, `hoff`, `hgen`),
+then `FaceChordView F 4` holds at `u47 + ε • (x 6 - x 0)`. -/
+theorem q046_cross (F : S0xFac 9 s0x_S24 x)
+    (hi : 0 < ⟪F.N 5, x 4 - x 0⟫)
+    (hii : 0 < ⟪F.N 6, u47 F⟫)
+    (hiii : ⟪x 2, u0 x (omega3_012 F)⟫ ≤ ⟪x 0, u0 x (omega3_012 F)⟫)
+    (hiv : ⟪x 6, u1 x (omega3_012 F)⟫ ≤ ⟪x 0, u1 x (omega3_012 F)⟫)
+    (hob01 : ⟪x 0 - x 1, x 2 - x 1⟫ < 0) (hob02 : ⟪x 0 - x 1, x 6 - x 1⟫ < 0)
+    (hob12 : ⟪x 2 - x 1, x 6 - x 1⟫ < 0)
+    (hC5 : ⟪F.N 5, u47 F⟫ < 0) (hC2 : ⟪F.N 2, u47 F⟫ ≤ 0) (hC0 : ⟪F.N 0, u47 F⟫ ≤ 0)
+    (hfar : F.f 4 (x 2) < F.f 4 (x 5))
+    (hoff : ⟪F.N 4, cross (x 0 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨
+      ⟪x 2 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 2 - x 0, x 6 - x 0⟫ < 0)
+    (hgen : ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, u47 F⟫ ≠ 0 ∨
+      ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, x 6 - x 0⟫ ≠ 0) :
+    FaceChordView F 4 :=
+  q046_cross_core F hi hii (base_gt F hiii hiv hob01 hob02 hob12 hC5 hC0) hC5 hC2
+    (Or.inl ⟨hfar, hoff⟩) hgen
+
+/-- The Type24 structure of an S0xFac on the 24-facet family. -/
+noncomputable def mkT (F : S0xFac 9 s0x_S24 x) : Type24 x where
+  t012 := ⟨F.f 0, F.N 0, F.hN 0, fun i hi => F.zero 0 i (by simpa [s0x_S24] using hi),
+    fun i hi => F.neg 0 i (by simpa [s0x_S24] using hi)⟩
+  t016 := ⟨F.f 1, F.N 1, F.hN 1, fun i hi => F.zero 1 i (by simpa [s0x_S24] using hi),
+    fun i hi => F.neg 1 i (by simpa [s0x_S24] using hi)⟩
+  t126 := ⟨F.f 5, F.N 5, F.hN 5, fun i hi => F.zero 5 i (by simpa [s0x_S24] using hi),
+    fun i hi => F.neg 5 i (by simpa [s0x_S24] using hi)⟩
+  t236 := ⟨F.f 7, F.N 7, F.hN 7, fun i hi => F.zero 7 i (by simpa [s0x_S24] using hi),
+    fun i hi => F.neg 7 i (by simpa [s0x_S24] using hi)⟩
+  t046 := ⟨F.f 4, F.N 4, F.hN 4, fun i hi => F.zero 4 i (by simpa [s0x_S24] using hi),
+    fun i hi => F.neg 4 i (by simpa [s0x_S24] using hi)⟩
+  t025 := ⟨F.f 2, F.N 2, F.hN 2, fun i hi => F.zero 2 i (by simpa [s0x_S24] using hi),
+    fun i hi => F.neg 2 i (by simpa [s0x_S24] using hi)⟩
+
+theorem cbar_core (F : S0xFac 9 s0x_S24 x) :
+    ⟪F.N 5, u47 F⟫ = - F.f 5 (x 0) * F.f 7 (x 1) * (1 + omega4 x) * oblX2 x 4 ∧
+    ⟪F.N 2, u47 F⟫ = - F.f 2 (x 1) * F.f 7 (x 1) * oblX2 x 4 * Delta24 x := by
+  have T := mkT F
+  have s7 : ∀ v, F.f 7 (x v) = F.f 7 (x 1) *
+      (1 - (oblX2 x v + oblX6 x v - omega3 x * oblX0 x v)) := fun v => (mkT F).side236 v
+  have s2 : ∀ v, F.f 2 (x v) = F.f 2 (x 1) *
+      (1 - (oblX0 x v + oblX2 x v - omega5 x * oblX6 x v)) := fun v => (mkT F).side025 v
+  have e5 : ∀ v, F.f 5 (x v) = F.f 5 (x 1) + oblX0 x v * (F.f 5 (x 0) - F.f 5 (x 1)) +
+      oblX2 x v * (F.f 5 (x 2) - F.f 5 (x 1)) + oblX6 x v * (F.f 5 (x 6) - F.f 5 (x 1)) :=
+    fun v => (mkT F).eval (mkT F).t126 v
+  have eq4 : oblX0 x 4 + oblX6 x 4 - omega4 x * oblX2 x 4 = 1 := (mkT F).eq4
+  have hc : oblX6 x 4 = 1 - oblX0 x 4 + omega4 x * oblX2 x 4 := by linarith
+  have o0 := (mkT F).oblX0_zero'; have o2 := Type24.oblX2_zero' (x := x)
+  have o6 := Type24.oblX6_zero (x := x)
+  have p6 := Type24.oblX0_six (x := x)
+  have q2 := Type24.oblX2_six (x := x)
+  have r6 := (mkT F).oblX6_six
+  have z1 : F.f 5 (x 1) = 0 := F.zero 5 1 (by decide)
+  have z2 : F.f 5 (x 2) = 0 := F.zero 5 2 (by decide)
+  have z6 : F.f 5 (x 6) = 0 := F.zero 5 6 (by decide)
+  have w4 := e5 4
+  rw [z1, z2, z6] at w4
+  have y2 := s7 4; have y0 := s7 0
+  have g0 := s2 4; have g6 := s2 6
+  have g00 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
+  have f7_6 : F.f 7 (x 6) = 0 := F.zero 7 6 (by decide)
+  have f5_6 : F.f 5 (x 6) = 0 := z6
+  have h6 : F.f 6 (x 6) = F.f 6 (x 6) := rfl
+  constructor
+  · rw [inner_u47, F.zero 5 6 (by decide)]
+    rw [w4, y2, y0, hc, o0, o2, o6]
+    ring
+  · rw [inner_u47]
+    rw [g00, g6, g0, y2, y0, hc, o0, o2, o6, p6, q2, r6]
+    unfold Delta24
+    ring
+
+
+
+theorem cbar_hC5 (F : S0xFac 9 s0x_S24 x)
+    (hCbar : 0 < omega3 x ∧ 0 < omega4 x ∧ 0 < omega5 x ∧ 0 ≤ Delta24 x) :
+    ⟪F.N 5, u47 F⟫ < 0 := by
+  rw [(cbar_core F).1]
+  have a := F.neg 5 0 (by decide)
+  have b := F.neg 7 1 (by decide)
+  have c := (mkT F).X2_pos (v := 4) (by decide)
+  have d := hCbar.2.1
+  have : 0 < F.f 5 (x 0) * F.f 7 (x 1) := mul_pos_of_neg_of_neg a b
+  have : 0 < F.f 5 (x 0) * F.f 7 (x 1) * (1 + omega4 x) * oblX2 x 4 := by positivity
+  linarith
+
+theorem cbar_hC2 (F : S0xFac 9 s0x_S24 x)
+    (hCbar : 0 < omega3 x ∧ 0 < omega4 x ∧ 0 < omega5 x ∧ 0 ≤ Delta24 x) :
+    ⟪F.N 2, u47 F⟫ ≤ 0 := by
+  rw [(cbar_core F).2]
+  have a := F.neg 2 1 (by decide)
+  have b := F.neg 7 1 (by decide)
+  have c := (mkT F).X2_pos (v := 4) (by decide)
+  have d := hCbar.2.2.2
+  have : 0 < F.f 2 (x 1) * F.f 7 (x 1) := mul_pos_of_neg_of_neg a b
+  have : 0 ≤ F.f 2 (x 1) * F.f 7 (x 1) * oblX2 x 4 * Delta24 x := by positivity
+  linarith
+
+theorem cbar_hC (F : S0xFac 9 s0x_S24 x)
+    (hCbar : 0 < omega3 x ∧ 0 < omega4 x ∧ 0 < omega5 x ∧ 0 ≤ Delta24 x) :
+    ⟪F.N 5, u47 F⟫ < 0 ∧ ⟪F.N 2, u47 F⟫ ≤ 0 := ⟨cbar_hC5 F hCbar, cbar_hC2 F hCbar⟩
+
+theorem q046_cross_cbar (F : S0xFac 9 s0x_S24 x)
+    (hi : 0 < ⟪F.N 5, x 4 - x 0⟫)
+    (hii : 0 < ⟪F.N 6, u47 F⟫)
+    (hbase : ⟪x 6, u47 F⟫ < ⟪x 0, u47 F⟫)
+    (hCbar : 0 < omega3 x ∧ 0 < omega4 x ∧ 0 < omega5 x ∧ 0 ≤ Delta24 x)
+    (hfar : (F.f 4 (x 2) < F.f 4 (x 5) ∧
+      (⟪F.N 4, cross (x 0 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨
+        ⟪x 2 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 2 - x 0, x 6 - x 0⟫ < 0)) ∨
+      (F.f 4 (x 5) < F.f 4 (x 2) ∧
+      (⟪F.N 4, cross (x 0 - x 6) (x 5 - x 6)⟫ ≠ 0 ∨
+        ⟪x 5 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 5 - x 0, x 6 - x 0⟫ < 0)))
+    (hgen : ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, u47 F⟫ ≠ 0 ∨
+      ⟪quad (x 2) (x 6) (x 0) (x 5) i - quad (x 2) (x 6) (x 0) (x 5) j, x 6 - x 0⟫ ≠ 0) :
+    FaceChordView F 4 := by
+  obtain ⟨hC5, hC2⟩ := cbar_hC F hCbar
+  exact q046_cross_core F hi hii hbase hC5 hC2 hfar hgen
+
 
 end Minimality.T24.R046

@@ -557,6 +557,85 @@ lemma u0_t_LC_add (x : Fin 7 → ℝ³) (σ ε : ℝ) :
     u0 x (t_LC x + σ * ε) = u_LC x + (σ * ε) • d_chord x := by
   exact u0_add x (t_LC x) (σ * ε)
 
+/-- Farthest-vertex choice for facet 0: a unique minimiser `w` of `F.f 0` among the rim vertices
+`3, 4, 6` off facet 0, with the matching `hoff` for the chord `0 - 2`. -/
+def FarOff012 (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : Fin 7, (w = 3 ∨ w = 4 ∨ w = 6) ∧
+    (∀ m : Fin 7, (m = 3 ∨ m = 4 ∨ m = 6) → m ≠ w → F.f 0 (x w) < F.f 0 (x m)) ∧
+    (⟪F.N 0, cross (x 0 - x 2) (x w - x 2)⟫ ≠ 0 ∨
+      ⟪x w - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x w - x 0, x 2 - x 0⟫ < 0)
+
+lemma farOff012_six (F : S0xFac 9 s0x_S24 x)
+    (h_c3 : F.f 0 (x 6) < F.f 0 (x 3)) (h_c4 : F.f 0 (x 6) < F.f 0 (x 4))
+    (hoff : ⟪F.N 0, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
+      ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0) : FarOff012 F := by
+  refine ⟨6, Or.inr (Or.inr rfl), ?_, hoff⟩
+  intro m hm hne
+  rcases hm with rfl | rfl | rfl
+  · exact h_c3
+  · exact h_c4
+  · exact absurd rfl hne
+
+theorem exists_faceChordView_012_gen (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (hfar : FarOff012 F)
+    (h_view : ∃ t : ℝ, 0 < t ∧
+      (∃ ρ : ℝ, ρ ≠ 0 ∧ StrictConvex5 (fun i => x (rim012 i)) (u0 x t) ρ ∧
+        (∀ i : ZMod 5, 0 < ρ * det3 (x (rim012 (i + 1)) - x (rim012 i)) (x 5 - x (rim012 i)) (u0 x t))) ∧
+      Function.Injective (fun i => ⟪x (rim012 i), u0 x t⟫) ∧
+      IsCyclicUnimodal (fun i => ⟪x (rim012 i), u0 x t⟫)) :
+    FaceChordView F 0 := by
+  obtain ⟨w, hw, hmin, hoff⟩ := hfar
+  obtain ⟨t, ht_pos, ⟨ρ, hρ_ne, hcyc, hin5⟩, hinj, huni⟩ := h_view
+  set u := u0 x t
+  obtain ⟨wi, hwi, hwr⟩ : ∃ wi : ZMod 5, (wi = 1 ∨ wi = 2 ∨ wi = 3) ∧ rim012 wi = w := by
+    rcases hw with rfl | rfl | rfl
+    · exact ⟨3, by decide, rfl⟩
+    · exact ⟨1, by decide, rfl⟩
+    · exact ⟨2, by decide, rfl⟩
+  subst hwr
+  refine ⟨u, 5, by infer_instance, rim012, 4, wi, ρ, ?_, by decide, by decide, by decide, hρ_ne,
+    hcyc, ?_, ?_, hinj, Or.inl (strictUnimodal_of_cyclic (by omega) huni), (by rcases hwi with rfl | rfl | rfl <;> decide), ?_, hoff⟩
+  · exact inner_N0_u0 F t
+  · intro q hq0 hqr i
+    have hq5 : q = 5 := by
+      fin_cases q
+      · revert hq0; decide
+      · revert hq0; decide
+      · revert hq0; decide
+      · exfalso; exact hqr 3 rfl
+      · exfalso; exact hqr 1 rfl
+      · rfl
+      · exfalso; exact hqr 2 rfl
+    subst hq5
+    exact hin5 i
+  · intro q hq0 hqr
+    have hq1 : q = 1 := by
+      fin_cases q
+      · exfalso; exact hqr 0 rfl
+      · rfl
+      · exfalso; exact hqr 4 rfl
+      · revert hq0; decide
+      · revert hq0; decide
+      · revert hq0; decide
+      · revert hq0; decide
+    subst hq1
+    obtain ⟨s, δ, hs0, hs1, hδ, heq⟩ := chord_middle_012 (x := x) ht_pos
+    refine ⟨s, δ, hs0, hs1, hδ, ?_⟩
+    show x 1 = x (rim012 4) + s • (x (rim012 (4 + 1)) - x (rim012 4)) + δ • u
+    change x 1 = x 2 + s • (x 0 - x 2) + δ • u
+    exact heq
+  · intro m hm hmr
+    have hm' : rim012 m = 3 ∨ rim012 m = 4 ∨ rim012 m = 6 := by
+      rcases zmod5_cases m with rfl | rfl | rfl | rfl | rfl
+      · exfalso; apply hmr; decide
+      · right; left; rfl
+      · right; right; rfl
+      · left; rfl
+      · exfalso; apply hmr; decide
+    exact hmin _ hm' (fun h => hm (rim012_injective h))
+
+
+
 /-- **Universal Wiring Lemma for Facet 0 (`012`)**.
 Any parameter `t > 0` on the facet line `u0(t)` where the 5-rim is strictly convex,
 vertex 5 is interior, and the rim depths are injective and cyclically unimodal,
@@ -760,15 +839,7 @@ lemma unimodal_merged_LC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (ρ : �
     merged_inj_of_singleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4 hgen_LC
   exact Minimality.RimCell.isCyclicUnimodal_four w hinj hn hp
 
-/-- **Theorem LC-K5 (Plus): Level-chord leaf with `u_LC + ε • d`.**
-Under the window condition `t_LC ∈ (max(1/ω4, t6), ω3)`, frame-free `c3, c4 < 1`
-(vertex 6 farthest below facet 0), depth condition `⟪x 4, u_LC⟫ < ⟪x 0, u_LC⟫`,
-and the single adjacent tie condition `hgen_LC` off the `R012Special` locus,
-the perturbed view `u_LC + ε • d` yields `FaceChordView F 0`.
-
-Note: `hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0` follows from strict obtuseness at vertex 1:
-`⟪x 0 - x 2, x 2 - x 1⟫ = ⟪x 0 - x 1, x 2 - x 1⟫ - ‖x 2 - x 1‖² < 0`. -/
-theorem q012_LC_plus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+theorem q012_LC_plus_gen (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     -- Window condition & facet signs at u_LC:
     (ht_pos : 0 < t_LC x)
     (hN4 : ⟪F.N 4, u_LC x⟫ < 0)
@@ -776,17 +847,15 @@ theorem q012_LC_plus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     (hN6 : 0 < ⟪F.N 6, u_LC x⟫)
     (hN3 : 0 < ⟪F.N 3, u_LC x⟫)
     (hN8 : 0 < ⟪F.N 8, u_LC x⟫)
-    -- Frame-free c3, c4 < 1: vertex 6 strictly minimizes F.f 0 among off-facet rim vertices:
-    (h_c3 : F.f 0 (x 6) < F.f 0 (x 3))
-    (h_c4 : F.f 0 (x 6) < F.f 0 (x 4))
+    -- Farthest vertex w in {3,4,6}:
+    (hfar : FarOff012 F)
     -- Depth condition:
     (h_depth : ⟪x 4, u_LC x⟫ < ⟪x 0, u_LC x⟫)
     -- Genericity off R012Special (single adjacent tie at a = 4, where rim012 4 = 2 and rim012 0 = 0):
     (hgen_LC : SingleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4)
     -- Strict obtuseness at vertex 1:
     (hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0)
-    (hoff : ⟪F.N 0, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
-      ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0) :
+    :
     FaceChordView F 0 := by
   obtain ⟨ρ0, _, hcvx0, hin5_0⟩ := fiveRim_04632_of_window F ht_pos hN4 hN7 hN6 hN3 hN8
   have huni : IsCyclicUnimodal (mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4) := by
@@ -891,7 +960,7 @@ theorem q012_LC_plus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
   have hev_all := hev_uni'.and (hev_t.and (hev_N4.and (hev_N7.and (hev_N6.and (hev_N3.and hev_N8)))))
   obtain ⟨ε, ⟨hinj, hcyc_uni⟩, ht_pos, hN4, hN7, hN6, hN3, hN8⟩ := hev_all.exists
   obtain ⟨ρ, hρ_ne, hcvx, hin5⟩ := fiveRim_04632_of_window F ht_pos hN4 hN7 hN6 hN3 hN8
-  refine exists_faceChordView_012 x F h_c3 h_c4 hoff ⟨t_LC x + ε, ht_pos, ⟨ρ, hρ_ne, hcvx, hin5⟩, hinj, hcyc_uni⟩
+  refine exists_faceChordView_012_gen x F hfar ⟨t_LC x + ε, ht_pos, ⟨ρ, hρ_ne, hcvx, hin5⟩, hinj, hcyc_uni⟩
 
 /-- **Theorem LC-K5 (Minus): Level-chord leaf with `u_LC - ε • d`.**
 Under the window condition `t_LC ∈ (max(1/ω4, t6), ω3)`, frame-free `c3, c4 < 1`
@@ -901,7 +970,7 @@ the perturbed view `u_LC - ε • d` yields `FaceChordView F 0`.
 
 Note: `hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0` follows from strict obtuseness at vertex 1:
 `⟪x 0 - x 2, x 2 - x 1⟫ = ⟪x 0 - x 1, x 2 - x 1⟫ - ‖x 2 - x 1‖² < 0`. -/
-theorem q012_LC_minus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+theorem q012_LC_minus_gen (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     -- Window condition & facet signs at u_LC:
     (ht_pos : 0 < t_LC x)
     (hN4 : ⟪F.N 4, u_LC x⟫ < 0)
@@ -909,17 +978,15 @@ theorem q012_LC_minus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     (hN6 : 0 < ⟪F.N 6, u_LC x⟫)
     (hN3 : 0 < ⟪F.N 3, u_LC x⟫)
     (hN8 : 0 < ⟪F.N 8, u_LC x⟫)
-    -- Frame-free c3, c4 < 1: vertex 6 strictly minimizes F.f 0 among off-facet rim vertices:
-    (h_c3 : F.f 0 (x 6) < F.f 0 (x 3))
-    (h_c4 : F.f 0 (x 6) < F.f 0 (x 4))
+    -- Farthest vertex w in {3,4,6}:
+    (hfar : FarOff012 F)
     -- Depth condition:
     (h_depth : ⟪x 3, u_LC x⟫ < ⟪x 0, u_LC x⟫)
     -- Genericity off R012Special (single adjacent tie at a = 4, where rim012 4 = 2 and rim012 0 = 0):
     (hgen_LC : SingleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4)
     -- Strict obtuseness at vertex 1:
     (hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0)
-    (hoff : ⟪F.N 0, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
-      ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0) :
+    :
     FaceChordView F 0 := by
   obtain ⟨ρ0, _, hcvx0, hin5_0⟩ := fiveRim_04632_of_window F ht_pos hN4 hN7 hN6 hN3 hN8
   have huni : IsCyclicUnimodal (mergedDepths (fun i => ⟪x (rim012 i), u_LC x⟫) 4) := by
@@ -1024,6 +1091,40 @@ theorem q012_LC_minus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
   have hev_all := hev_uni'.and (hev_t.and (hev_N4.and (hev_N7.and (hev_N6.and (hev_N3.and hev_N8)))))
   obtain ⟨ε, ⟨hinj, hcyc_uni⟩, ht_pos, hN4, hN7, hN6, hN3, hN8⟩ := hev_all.exists
   obtain ⟨ρ, hρ_ne, hcvx, hin5⟩ := fiveRim_04632_of_window F ht_pos hN4 hN7 hN6 hN3 hN8
-  refine exists_faceChordView_012 x F h_c3 h_c4 hoff ⟨t_LC x - ε, ht_pos, ⟨ρ, hρ_ne, hcvx, hin5⟩, hinj, hcyc_uni⟩
+  refine exists_faceChordView_012_gen x F hfar ⟨t_LC x - ε, ht_pos, ⟨ρ, hρ_ne, hcvx, hin5⟩, hinj, hcyc_uni⟩
+
+theorem q012_LC_plus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (ht_pos : 0 < t_LC x)
+    (hN4 : ⟪F.N 4, u_LC x⟫ < 0)
+    (hN7 : ⟪F.N 7, u_LC x⟫ < 0)
+    (hN6 : 0 < ⟪F.N 6, u_LC x⟫)
+    (hN3 : 0 < ⟪F.N 3, u_LC x⟫)
+    (hN8 : 0 < ⟪F.N 8, u_LC x⟫)
+    (h_c3 : F.f 0 (x 6) < F.f 0 (x 3))
+    (h_c4 : F.f 0 (x 6) < F.f 0 (x 4))
+    (h_depth : ⟪x 4, u_LC x⟫ < ⟪x 0, u_LC x⟫)
+    (hgen_LC : SingleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4)
+    (hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0)
+    (hoff : ⟪F.N 0, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
+      ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0) :
+    FaceChordView F 0 :=
+  q012_LC_plus_gen x F ht_pos hN4 hN7 hN6 hN3 hN8 (farOff012_six F h_c3 h_c4 hoff) h_depth hgen_LC hdenom
+
+theorem q012_LC_minus (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (ht_pos : 0 < t_LC x)
+    (hN4 : ⟪F.N 4, u_LC x⟫ < 0)
+    (hN7 : ⟪F.N 7, u_LC x⟫ < 0)
+    (hN6 : 0 < ⟪F.N 6, u_LC x⟫)
+    (hN3 : 0 < ⟪F.N 3, u_LC x⟫)
+    (hN8 : 0 < ⟪F.N 8, u_LC x⟫)
+    (h_c3 : F.f 0 (x 6) < F.f 0 (x 3))
+    (h_c4 : F.f 0 (x 6) < F.f 0 (x 4))
+    (h_depth : ⟪x 3, u_LC x⟫ < ⟪x 0, u_LC x⟫)
+    (hgen_LC : SingleAdjacentTie (fun i => x (rim012 i)) (u_LC x) 4)
+    (hdenom : ⟪x 0 - x 2, x 2 - x 1⟫ < 0)
+    (hoff : ⟪F.N 0, cross (x 0 - x 2) (x 6 - x 2)⟫ ≠ 0 ∨
+      ⟪x 6 - x 2, x 0 - x 2⟫ < 0 ∨ ⟪x 6 - x 0, x 2 - x 0⟫ < 0) :
+    FaceChordView F 0 :=
+  q012_LC_minus_gen x F ht_pos hN4 hN7 hN6 hN3 hN8 (farOff012_six F h_c3 h_c4 hoff) h_depth hgen_LC hdenom
 
 end Minimality.T24.R012
