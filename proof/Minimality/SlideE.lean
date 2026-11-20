@@ -151,13 +151,10 @@ def NoPersistHDN {k : ℕ} (x : ZMod k → ℝ³) (u₀ e : ℝ³) : Prop :=
     Y' ≠ Y → ⟪Y' - Y, u₀⟫ = 0 → ⟪Y' - Y, e⟫ = 0 →
       ¬ ∀ m, ⟪Y' - Y, x m - Y'⟫ ≤ 0 ∧ ⟪Y - Y', x m - Y⟫ ≤ 0
 
-/-- **The slide with the persistent double normal only** (Lemmas 22.3, 22.4, 22.6 (a)).  Along
-the views `u₀ + t e` (`t → 0⁺`): the cycle's own tests and every other point's tests hold
-strictly at `u₀` or vanish there with a positive derivative along `e` (`SlideTest`), the
-middles `M` lie over edges for small `t`, the depths at `u₀` are distinct, and the rim is
-strictly unimodal or has a depth-separated pair at `u₀`.  If no double normal of the cycle in
-space is perpendicular to the circle's plane (`NoPersistHDN`), `V` is Rupert. -/
-theorem isRupert_of_slideP (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ} [NeZero k]
+/-- **The slide with the persistent double normal only** (Lemmas 22.3, 22.4, 22.6 (a)).
+Variant `isRupert_of_slideP_uos'` with injectivity required only in the unimodal branch;
+the depth-separated branch (`DepthSepAt`) does not require injective rim depths at `u₀`. -/
+theorem isRupert_of_slideP_uos' (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ} [NeZero k]
     (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
     (hk : 3 ≤ k) (ρ : ℝ) (hρ : ρ ≠ 0)
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → SlideTest ρ (x (i + 1) - x i) (x j - x i) u₀ e)
@@ -165,8 +162,9 @@ theorem isRupert_of_slideP (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ �
       SlideTest ρ (x (i + 1) - x i) (y - x i) u₀ e)
     (hM : ∀ m ∈ M, ∀ᶠ t in 𝓝[>] (0 : ℝ), ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       m = x i + s • (x (i + 1) - x i) + δ • (u₀ + t • e))
-    (hinj0 : Function.Injective (fun i => ⟪x i, u₀⟫))
-    (hz : UniOrSep x u₀) (hbad : NoPersistHDN x u₀ e) : IsRupert V := by
+    (hz : (StrictUnimodal (fun i => ⟪x i, u₀⟫) ∧ Function.Injective (fun i => ⟪x i, u₀⟫)) ∨
+          ∃ a c : ZMod k, DepthSepAt x u₀ a c)
+    (hbad : NoPersistHDN x u₀ e) : IsRupert V := by
   classical
   have hlin : ∀ l : ℝ³, ∀ t : ℝ, ⟪l, u₀ + t • e⟫ = ⟪l, u₀⟫ + t * ⟪l, e⟫ := by
     intro l t; rw [inner_add_right, real_inner_smul_right]
@@ -191,17 +189,6 @@ theorem isRupert_of_slideP (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ �
     have hc : Continuous fun t : ℝ => u₀ + t • e := by fun_prop
     exact (hc.continuousAt.eventually (isOpen_ne.mem_nhds
       (show u₀ + (0 : ℝ) • e ≠ 0 by simpa using hu₀))).filter_mono nhdsWithin_le_nhds
-  have hinj : ∀ᶠ t in 𝓝[>] (0 : ℝ), Function.Injective (fun i => ⟪x i, u₀ + t • e⟫) := by
-    have : ∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ i j : ZMod k, i ≠ j → ⟪x i - x j, u₀ + t • e⟫ ≠ 0 := by
-      refine eventually_all.mpr fun i => eventually_all.mpr fun j => ?_
-      by_cases hij : i = j
-      · filter_upwards with t h using absurd hij h
-      · have h0 : ⟪x i - x j, u₀⟫ ≠ 0 := by
-          rw [inner_sub_left, sub_ne_zero]; exact fun h => hij (hinj0 h)
-        filter_upwards [hev1 _ (Or.inl h0)] with t ht _ using ht
-    filter_upwards [this] with t ht i j hij
-    by_contra hne'
-    exact ht i j hne' (by rw [inner_sub_left]; exact sub_eq_zero.mpr hij)
   have h1 := eventually_forall_cycle fun i j hi hj => eventually_det3_slide (hcyc i j hi hj)
   have h2 : ∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ y ∈ V, ∀ i : ZMod k, y ∉ M → (∀ j, y ≠ x j) →
       0 < ρ * det3 (x (i + 1) - x i) (y - x i) (u₀ + t • e) := by
@@ -213,14 +200,27 @@ theorem isRupert_of_slideP (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ �
     · filter_upwards with t h using absurd h hyM
   have h3 := (eventually_all_finset M).mpr hM
   have h4 : ∀ᶠ t in 𝓝[>] (0 : ℝ),
-      (Function.Injective (fun i => ⟪x i, u₀ + t • e⟫) →
+      ((Function.Injective (fun i => ⟪x i, u₀ + t • e⟫) ∧
           IsCyclicUnimodal (fun i => ⟪x i, u₀ + t • e⟫)) ∨
-        ∃ a c : ZMod k, DepthSepAt x (u₀ + t • e) a c := by
-    rcases hz with hz | ⟨a, c, hds⟩
-    · filter_upwards [eventually_unimodal_of_strict x u₀ e hz] with t ht using Or.inl ht
-    · filter_upwards [eventually_depthSepAt (e := e) hds] with t ht using Or.inr ⟨a, c, ht⟩
-  obtain ⟨t, ⟨⟨⟨⟨hcyc', hrest'⟩, hM'⟩, hz'⟩, hu⟩, hdi, hnd⟩ :=
-    ((((h1.and h2).and h3).and h4).and hne).and (hinj.and hpair) |>.exists
+        ∃ a c : ZMod k, DepthSepAt x (u₀ + t • e) a c) := by
+    rcases hz with ⟨hz, hinj0⟩ | ⟨a, c, hds⟩
+    · have hinj : ∀ᶠ t in 𝓝[>] (0 : ℝ), Function.Injective (fun i => ⟪x i, u₀ + t • e⟫) := by
+        have : ∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ i j : ZMod k, i ≠ j → ⟪x i - x j, u₀ + t • e⟫ ≠ 0 := by
+          refine eventually_all.mpr fun i => eventually_all.mpr fun j => ?_
+          by_cases hij : i = j
+          · filter_upwards with t h using absurd hij h
+          · have h0 : ⟪x i - x j, u₀⟫ ≠ 0 := by
+              rw [inner_sub_left, sub_ne_zero]; exact fun h => hij (hinj0 h)
+            filter_upwards [hev1 _ (Or.inl h0)] with t ht _ using ht
+        filter_upwards [this] with t ht i j hij
+        by_contra hne'
+        exact ht i j hne' (by rw [inner_sub_left]; exact sub_eq_zero.mpr hij)
+      filter_upwards [hinj, eventually_unimodal_of_strict x u₀ e hz] with t ht_inj ht_uni
+      exact Or.inl ⟨ht_inj, ht_uni ht_inj⟩
+    · filter_upwards [eventually_depthSepAt (e := e) hds] with t ht
+      exact Or.inr ⟨a, c, ht⟩
+  obtain ⟨t, ⟨⟨⟨⟨hcyc', hrest'⟩, hM'⟩, hz'⟩, hu⟩, hnd⟩ :=
+    ((((h1.and h2).and h3).and h4).and hne).and hpair |>.exists
   -- the view `u = u₀ + t e`, in either orientation
   set u := u₀ + t • e with hu_def
   have key : ∀ (σ : ℝ), (σ = 1 ∨ σ = -1) → 0 < σ * ρ → IsRupert V := by
@@ -276,9 +276,8 @@ theorem isRupert_of_slideP (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ �
       refine ⟨i, s, δ * σ, hs0, hs1, mul_ne_zero hδ hσ0, ?_⟩
       rw [hmeq, smul_smul, mul_assoc]
       rcases hσ with rfl | rfl <;> norm_num
-    rcases hz' with hz' | ⟨a, c, hds'⟩
+    rcases hz' with ⟨hdi, hu'⟩ | ⟨a, c, hds'⟩
     · refine isRupert_of_chords_unimodal V M R hR hr hRu x hxV hxM hp hin ?_ hhdn hM''
-      have hu' := hz' hdi
       simp only [hdepth, real_inner_smul_right]
       rcases hσ with rfl | rfl
       · simp only [one_mul]; exact hu'.smul (inv_pos.mpr hr)
@@ -295,6 +294,29 @@ theorem isRupert_of_slideP (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ �
   rcases lt_or_gt_of_ne hρ with hn | hp
   · exact key (-1) (Or.inr rfl) (by nlinarith)
   · exact key 1 (Or.inl rfl) (by linarith)
+
+/-- **The slide with the persistent double normal only** (Lemmas 22.3, 22.4, 22.6 (a)).  Along
+the views `u₀ + t e` (`t → 0⁺`): the cycle's own tests and every other point's tests hold
+strictly at `u₀` or vanish there with a positive derivative along `e` (`SlideTest`), the
+middles `M` lie over edges for small `t`, the depths at `u₀` are distinct, and the rim is
+strictly unimodal or has a depth-separated pair at `u₀`.  If no double normal of the cycle in
+space is perpendicular to the circle's plane (`NoPersistHDN`), `V` is Rupert. -/
+theorem isRupert_of_slideP (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ} [NeZero k]
+    (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
+    (hk : 3 ≤ k) (ρ : ℝ) (hρ : ρ ≠ 0)
+    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → SlideTest ρ (x (i + 1) - x i) (x j - x i) u₀ e)
+    (hrest : ∀ y ∈ V, y ∉ M → (∀ j, y ≠ x j) → ∀ i,
+      SlideTest ρ (x (i + 1) - x i) (y - x i) u₀ e)
+    (hM : ∀ m ∈ M, ∀ᶠ t in 𝓝[>] (0 : ℝ), ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      m = x i + s • (x (i + 1) - x i) + δ • (u₀ + t • e))
+    (hinj0 : Function.Injective (fun i => ⟪x i, u₀⟫))
+    (hz : UniOrSep x u₀) (hbad : NoPersistHDN x u₀ e) : IsRupert V := by
+  have hz' : (StrictUnimodal (fun i => ⟪x i, u₀⟫) ∧ Function.Injective (fun i => ⟪x i, u₀⟫)) ∨
+      ∃ a c : ZMod k, DepthSepAt x u₀ a c := by
+    rcases hz with hu | hs
+    · exact Or.inl ⟨hu, hinj0⟩
+    · exact Or.inr hs
+  exact isRupert_of_slideP_uos' V M u₀ e hu₀ x hxV hxM hk ρ hρ hcyc hrest hM hz' hbad
 
 end Minimality
 
