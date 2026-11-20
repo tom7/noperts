@@ -3,6 +3,7 @@ module
 public import Minimality.FaceChordLeaf
 public import Minimality.Quad05Leaf
 public import Minimality.Type21Ridge
+public import Minimality.Type24SAT.K24.Par2546
 
 @[expose] public section
 
@@ -378,5 +379,15 @@ theorem lemmaR_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
     · exact sign_transfer hσ01 h1_1
     · exact sign_transfer hσ02 h2_1
     · exact sign_transfer hσ03 h3_1
+
+/-- **Lemma M (Q45PROOF24.md section 2): Decomposition of `x 3 - x 0` over quad facet `0345`.**
+For every type-24 solid, vertex 3 is an affine combination `s • (x 4 - x 0) + t • (x 5 - x 0)`
+with strictly positive weights `0 < s`, `0 < t` and `1 < s + t`. -/
+theorem lemmaM_quad_decomp {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧
+      x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) := by
+  obtain ⟨al, be, hal, hbe, hab, hq⟩ := Minimality.T24.Par.par2546_quad F
+  refine ⟨be, al, hbe, hal, by linarith, ?_⟩
+  rw [hq, add_comm]
 
 end Minimality.T24.RimFromSigns
