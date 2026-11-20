@@ -13,6 +13,7 @@ public import Minimality.Q45J0
 public import Minimality.RX16
 public import Minimality.RF0345
 public import Minimality.RF0345N
+public import Minimality.RH31
 
 @[expose] public section
 
@@ -22,7 +23,7 @@ set_option relaxedAutoImplicit false
 open scoped RealInnerProductSpace Topology
 open Filter Finset
 open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT Minimality.RimFromSigns
-open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046 Minimality.T24.RX16
+open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046 Minimality.T24.RX16 Minimality.T24.H31
 
 namespace Minimality.T24.Sym
 
@@ -551,6 +552,35 @@ theorem q016_f0345_neg_lo (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     FaceChordView F 1 :=
   faceChordView_sym F (t := 0)
     (q012_f0345_neg_lo (x := x ∘ pi24) (sym24 F) ht hN4 hN8 hbase hfar hoff6 hoff4 hgen)
+
+theorem q45_h31_sym (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (hN0 : ⟪F.N 1, u31 (sym24 F)⟫ < 0) (hN2 : ⟪F.N 4, u31 (sym24 F)⟫ < 0)
+    (hN5 : 0 < ⟪F.N 5, u31 (sym24 F)⟫) (hN6 : 0 < ⟪F.N 8, u31 (sym24 F)⟫)
+    (hbase : min ⟪x 1, u31 (sym24 F)⟫ ⟪x 4, u31 (sym24 F)⟫ < max ⟪x 0, u31 (sym24 F)⟫ ⟪x 6, u31 (sym24 F)⟫)
+    (hgen : ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 0) (x 1) (x 6) (x 4) i - quad (x 0) (x 1) (x 6) (x 4) j, u31 (sym24 F)⟫ ≠ 0 ∨
+      ⟪quad (x 0) (x 1) (x 6) (x 4) i - quad (x 0) (x 1) (x 6) (x 4) j, x 0 - x 4⟫ ≠ 0)
+    (w : ZMod 4) (hw : w = 1 ∨ w = 2)
+    (hfar : ∀ m : ZMod 4, m ≠ w → quad (0 : Fin 7) 1 6 4 m ∉ s0x_S24 3 →
+      F.f 3 (x (quad (0 : Fin 7) 1 6 4 w)) < F.f 3 (x (quad (0 : Fin 7) 1 6 4 m)))
+    (hoff : ⟪F.N 3, cross (x 0 - x 4) (x (quad (0 : Fin 7) 1 6 4 w) - x 4)⟫ ≠ 0 ∨
+      ⟪x (quad (0 : Fin 7) 1 6 4 w) - x 4, x 0 - x 4⟫ < 0 ∨
+      ⟪x (quad (0 : Fin 7) 1 6 4 w) - x 0, x 4 - x 0⟫ < 0) :
+    FaceChordView F 3 :=
+  faceChordView_sym F (t := 3)
+    (q45_h31 (x := x ∘ pi24) (sym24 F) hN0 hN2 hN5 hN6 hbase hgen w hw
+      (fun m hm hmS => by
+        have hm' : quad (0 : Fin 7) 1 6 4 m = pi24 (quad (0 : Fin 7) 1 2 5 m) := by
+          fin_cases m <;> rfl
+        have hw' : quad (0 : Fin 7) 1 6 4 w = pi24 (quad (0 : Fin 7) 1 2 5 w) := by
+          rcases hw with rfl | rfl <;> rfl
+        simpa [sym24, sig24, hw', hm'] using hfar m hm (by
+          rw [hm']
+          exact fun hmem => hmS ((s24_sym 3 _).2 hmem)))
+      (by
+        have hw' : quad (0 : Fin 7) 1 6 4 w = pi24 (quad (0 : Fin 7) 1 2 5 w) := by
+          rcases hw with rfl | rfl <;> rfl
+        simpa [sym24, pi24, sig24, hw'] using hoff))
 
 /-! ### Mirrors on `025` (`sig24 4 = 2`) -/
 
