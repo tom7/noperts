@@ -10,6 +10,7 @@ public import Minimality.R046Cop
 public import Minimality.Q45Tie
 public import Minimality.RJ0E
 public import Minimality.Q45J0
+public import Minimality.RX16
 
 @[expose] public section
 
@@ -19,7 +20,7 @@ set_option relaxedAutoImplicit false
 open scoped RealInnerProductSpace Topology
 open Filter Finset
 open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT Minimality.RimFromSigns
-open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046
+open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046 Minimality.T24.RX16
 
 namespace Minimality.T24.Sym
 
@@ -463,6 +464,44 @@ theorem q016_LC_minus_gen (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
         exact hmin (pi24 m) (by rcases hm with rfl | rfl | rfl <;> decide)
           (fun h => hne (by rw [← h, pi24_pi24])))
       h_depth hgen_LC hdenom)
+
+theorem q016_x16_lo (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (hΔ : ⟪x 1 - x 2, x 6 - x 1⟫ ≠ 0) (ht : t16 (x ∘ pi24) < -1)
+    (hN3 : ⟪F.N 3, u16 (x ∘ pi24)⟫ < 0) (hN4 : 0 < ⟪F.N 2, u16 (x ∘ pi24)⟫)
+    (hN8 : ⟪F.N 6, u16 (x ∘ pi24)⟫ < 0)
+    (hbr : 0 < (⟪x 1, u16 (x ∘ pi24)⟫ - ⟪x 0, u16 (x ∘ pi24)⟫) *
+        (⟪x 1, u16 (x ∘ pi24)⟫ - ⟪x 5, u16 (x ∘ pi24)⟫) ∨
+      0 < ⟪x 1 - x 2, x 6 - x 1⟫ * (⟪x 0, u16 (x ∘ pi24)⟫ - ⟪x 5, u16 (x ∘ pi24)⟫))
+    (hgen : ∀ i j : ZMod 4, i ≠ j → (i = 2 ∧ j = 3) ∨ (i = 3 ∧ j = 2) ∨
+      ⟪quad (x 5) (x 0) (x 1) (x 2) i - quad (x 5) (x 0) (x 1) (x 2) j, u16 (x ∘ pi24)⟫ ≠ 0)
+    (hfar : (F.f 1 (x 2) < F.f 1 (x 5) ∧
+        (⟪F.N 1, cross (x 1 - x 0) (x 2 - x 0)⟫ ≠ 0 ∨
+          ⟪x 2 - x 0, x 1 - x 0⟫ < 0 ∨ ⟪x 2 - x 1, x 0 - x 1⟫ < 0)) ∨
+      (F.f 1 (x 5) < F.f 1 (x 2) ∧
+        (⟪F.N 1, cross (x 1 - x 0) (x 5 - x 0)⟫ ≠ 0 ∨
+          ⟪x 5 - x 0, x 1 - x 0⟫ < 0 ∨ ⟪x 5 - x 1, x 0 - x 1⟫ < 0))) :
+    FaceChordView F 1 :=
+  faceChordView_sym F (t := 0)
+    (q012_x16_lo (x := x ∘ pi24) (sym24 F) hΔ ht hN3 hN4 hN8 hbr hgen hfar)
+
+theorem q016_x16_hi (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (hΔ : ⟪x 1 - x 2, x 6 - x 1⟫ ≠ 0) (ht1 : -1 < t16 (x ∘ pi24)) (ht0 : t16 (x ∘ pi24) < 0)
+    (hN6 : 0 < ⟪F.N 8, u16 (x ∘ pi24)⟫) (hN7 : ⟪F.N 7, u16 (x ∘ pi24)⟫ < 0)
+    (hN8 : 0 < ⟪F.N 6, u16 (x ∘ pi24)⟫)
+    (hbr : 0 < (⟪x 1, u16 (x ∘ pi24)⟫ - ⟪x 6, u16 (x ∘ pi24)⟫) *
+        (⟪x 1, u16 (x ∘ pi24)⟫ - ⟪x 3, u16 (x ∘ pi24)⟫) ∨
+      0 < -⟪x 1 - x 2, x 6 - x 1⟫ * (⟪x 6, u16 (x ∘ pi24)⟫ - ⟪x 3, u16 (x ∘ pi24)⟫))
+    (hgen : ∀ i j : ZMod 4, i ≠ j → (i = 2 ∧ j = 3) ∨ (i = 3 ∧ j = 2) ∨
+      ⟪quad (x 3) (x 6) (x 1) (x 2) i - quad (x 3) (x 6) (x 1) (x 2) j, u16 (x ∘ pi24)⟫ ≠ 0)
+    (hfar : (F.f 1 (x 2) < F.f 1 (x 3) ∧
+        (⟪F.N 1, cross (x 1 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨
+          ⟪x 2 - x 6, x 1 - x 6⟫ < 0 ∨ ⟪x 2 - x 1, x 6 - x 1⟫ < 0)) ∨
+      (F.f 1 (x 3) < F.f 1 (x 2) ∧
+        (⟪F.N 1, cross (x 1 - x 6) (x 3 - x 6)⟫ ≠ 0 ∨
+          ⟪x 3 - x 6, x 1 - x 6⟫ < 0 ∨ ⟪x 3 - x 1, x 6 - x 1⟫ < 0))) :
+    FaceChordView F 1 :=
+  faceChordView_sym F (t := 0)
+    (q012_x16_hi (x := x ∘ pi24) (sym24 F) hΔ ht1 ht0 hN6 hN7 hN8 hbr hgen hfar)
 
 /-! ### Mirrors on `025` (`sig24 4 = 2`) -/
 
