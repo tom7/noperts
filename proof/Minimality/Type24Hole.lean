@@ -35,10 +35,10 @@ Every remaining open sub-region is exposed as a named disjunct of `Hole24`.
 def Hole24SigmaB (x : Fin 7 → ℝ³) : Prop :=
   Minimality.RegionB24 x ∧ ¬ (Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x)
 
-/-- Special loci of Theorem Q45 inside `C̄ ∩ Resid24` (no `OB1` restriction, since `isRupert_q45_half`
-requires only `F` and `Q45HalfPred F`; attacked in `Q45.lean` / `Q45THEOREM24.md`). -/
+/-- Special loci of Theorem Q45 inside `C̄ ∩ Resid24` (no `OB1` restriction, since `q45_half_cell`
+requires only `F` and `Q45HalfPred F`; refined to `Q45Special' F` after trying `q45_B1_cell`..`q45_C2_cell`). -/
 def Hole24Q45Special (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special F
+  CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special' F
 
 /-- Region `R` + off-`OB1` residual inside `C̄ ∩ Resid24 \ Q45HalfPred` after applying
 `RDispatch.r_dispatch` (`R24Spec ∨ R24Wall ∨ R24Open`). -/
@@ -95,7 +95,7 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     set F := mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] hh
     by_cases hCbar : CbarIn x
     · by_cases hHalf : Q45HalfPred F
-      · rcases Q45.isRupert_q45_half F hHalf with hRup | hSp
+      · rcases Q45.q45_half_cell F hHalf with hRup | hSp
         · exact Or.inl hRup
         · exact Or.inr ⟨hh, hflags, Or.inr (Or.inl ⟨hCbar, hres, hHalf, hSp⟩)⟩
       · rcases RDispatch.r_dispatch F hCbar hHalf with
