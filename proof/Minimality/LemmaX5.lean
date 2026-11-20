@@ -196,4 +196,44 @@ theorem lemma_X5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   exact isRupert_of_X5_witness F s t hdecomp h0 h1 h2 h3 h4 hρ hcyc hI
     hPA_η hAB_η hQP_η hQA_η hQB_η hS3 hS4
 
+/-- Strict convexity of rim `quad (x 6) (x 4) (x 0) (x 2)` and vertex 1 strictly inside
+from the silhouette facet signs at view `u`. -/
+theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
+    (hN3 : ⟪F.N 3, u⟫ = 0)
+    (hN4 : 0 < ⟪F.N 4, u⟫) (hN8 : ⟪F.N 8, u⟫ < 0)
+    (hN0 : 0 < ⟪F.N 0, u⟫) (hN2 : ⟪F.N 2, u⟫ < 0)
+    (hN7 : 0 < ⟪F.N 7, u⟫) (hN5 : ⟪F.N 5, u⟫ < 0) :
+    ∃ ρ : ℝ, ρ ≠ 0 ∧
+      (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
+        0 < ρ * det3 (quad (x 6) (x 4) (x 0) (x 2) (i + 1) - quad (x 6) (x 4) (x 0) (x 2) i)
+          (quad (x 6) (x 4) (x 0) (x 2) j - quad (x 6) (x 4) (x 0) (x 2) i) u) ∧
+      (∀ i : ZMod 4,
+        0 < ρ * det3 (quad (x 6) (x 4) (x 0) (x 2) (i + 1) - quad (x 6) (x 4) (x 0) (x 2) i)
+          (x 1 - quad (x 6) (x 4) (x 0) (x 2) i) u) := by
+  sorry
+
+/-- **Lemma X5' (Q45X24.md / Q45PROOF24.md): Corner Leaf at `e5 - ε e4` with facet-sign hypotheses.**
+For a Type 24 OB1 solid (`F : S0xFac 9 s0x_S24 x`), when `σ < 1` (where `x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)`
+is the quad decomposition of Lemma M with `s < 1`), `g45 = ⟪x 4 - x 0, x 5 - x 0⟫ > 0`, the special positions
+S1-S4 hold, and the silhouette facet signs at `x 0 - x 5` and slope on facet 2 hold, the solid is Rupert. -/
+theorem lemma_X5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (s t : ℝ) (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hs0 : 0 < s) (hs : s < 1) (ht : 0 < t)
+    (hg45 : 0 < ⟪x 4 - x 0, x 5 - x 0⟫)
+    (hS1 : ⟪x 2 - x 0, x 0 - x 5⟫ ≠ 0 ∧ ⟪x 2 - x 4, x 0 - x 5⟫ ≠ 0 ∧ ⟪x 2 - x 6, x 0 - x 5⟫ ≠ 0)
+    (hS2 : ⟪x 6 - x 4, x 0 - x 5⟫ < 0)
+    (hS3 : 0 < det3 (x 0 - x 5) (x 4 - x 5) (x 2 - x 6) * det3 (x 0 - x 5) (x 4 - x 5) (x 1 - x 5))
+    (hS4 : det3 (x 0 - x 5) (x 4 - x 5) (cross (x 0 - x 4) (x 2 - x 4)) ≠ 0 ∨
+      ⟪x 2 - x 4, x 0 - x 4⟫ < 0 ∨ ⟪x 2 - x 0, x 4 - x 0⟫ < 0)
+    (hN0 : 0 < ⟪F.N 0, x 0 - x 5⟫)
+    (hN1 : 0 < ⟪F.N 1, x 0 - x 5⟫)
+    (hN2_slope : ⟪F.N 2, x 4 - x 5⟫ < 0)
+    (hN4 : 0 < ⟪F.N 4, x 0 - x 5⟫)
+    (hN5 : ⟪F.N 5, x 0 - x 5⟫ < 0)
+    (hN6 : ⟪F.N 6, x 0 - x 5⟫ < 0)
+    (hN7 : 0 < ⟪F.N 7, x 0 - x 5⟫)
+    (hN8 : ⟪F.N 8, x 0 - x 5⟫ < 0) :
+    IsRupert (univ.image x) := by
+  sorry
+
 end Minimality.T24.X5
