@@ -26,7 +26,9 @@ This module formalizes:
    Every injective non-unimodal 5-cycle has a unique monotone corner `M` whose deletion
    leaves a strictly alternating 4-sub-quad. DiagCross (`Lemma K`) refutes non-unimodality
    when each sub-quad forbids the alternation that would occur at `m`.
-4. `Theorem K5-DS` (`depthClause_k5_iff`, `depthSepAt_k5_iff`):
+4. `ruleOut_incr_of_kappa_neg`, `ruleOut_decr_of_kappa_pos`: Bridge lemmas connecting
+   DiagCross invariant `κ` signs directly to `SubquadRulesOut`.
+5. `Theorem K5-DS` (`depthClause_k5_iff`, `depthSepAt_k5_iff`):
    Characterization of `DepthSepAt` on the two-peaked 5-cycle `(P1, V1, P2, M, V2)`:
    corner `M` satisfies the depth clause of `DepthSepAt` iff `z M < z V1` (edge `[V2, P1]`)
    or `z P1 < z M` (edge `[V1, P2]`).
@@ -199,7 +201,7 @@ theorem subquad_strictConvex (p : ZMod 5 → ℝ³) (u : ℝ³) (ρ : ℝ)
       revert this; decide
     exact hcvx (m + 1) (m + 4) hj_ne1 hj_ne2
 
-/-! ### DiagCross Refutation Lemmas for Sub-Quads -/
+/-! ### DiagCross Refutation Lemmas and Bridges -/
 
 /-- Refutation of odd-below-even alternation from negative `ρ * κ`. -/
 theorem not_quadOddBelowEven_of_kappa_neg (p : ZMod 5 → ℝ³) (u : ℝ³) (ρ : ℝ)
@@ -221,7 +223,157 @@ theorem not_quadEvenBelowOdd_of_kappa_pos (p : ZMod 5 → ℝ³) (u : ℝ³) (ρ
   have hnl := diagCross_not_low (subquad p m) u hcvx4 hk
   exact hnl (le_of_lt hlt)
 
+/-- **Bridge from Lemma K (Increasing)**: negative `ρ * κ` rules out the odd-below-even alternation. -/
+theorem ruleOut_incr_of_kappa_neg (p : ZMod 5 → ℝ³) (u : ℝ³) (ρ : ℝ)
+    (hcvx : StrictConvex5 p u ρ) (m : ZMod 5)
+    (hk : ρ * quadKappa (subquad p m) < 0) :
+    ⟪p (m - 1), u⟫ < ⟪p m, u⟫ ∧ ⟪p m, u⟫ < ⟪p (m + 1), u⟫ →
+    ¬ QuadOddBelowEven (subquad p m) u :=
+  fun _ => not_quadOddBelowEven_of_kappa_neg p u ρ hcvx m hk
+
+/-- **Bridge from Lemma K (Decreasing)**: positive `ρ * κ` rules out the even-below-odd alternation. -/
+theorem ruleOut_decr_of_kappa_pos (p : ZMod 5 → ℝ³) (u : ℝ³) (ρ : ℝ)
+    (hcvx : StrictConvex5 p u ρ) (m : ZMod 5)
+    (hk : 0 < ρ * quadKappa (subquad p m)) :
+    ⟪p (m + 1), u⟫ < ⟪p m, u⟫ ∧ ⟪p m, u⟫ < ⟪p (m - 1), u⟫ →
+    ¬ QuadEvenBelowOdd (subquad p m) u :=
+  fun _ => not_quadEvenBelowOdd_of_kappa_pos p u ρ hcvx m hk
+
+/-- Construct `SubquadRulesOut p u m` from directional sign or exclusion hypotheses. -/
+theorem subquadRulesOut_of_bridges (p : ZMod 5 → ℝ³) (u : ℝ³) (m : ZMod 5)
+    (hincr : ⟪p (m - 1), u⟫ < ⟪p m, u⟫ ∧ ⟪p m, u⟫ < ⟪p (m + 1), u⟫ →
+      ¬ QuadOddBelowEven (subquad p m) u)
+    (hdecr : ⟪p (m + 1), u⟫ < ⟪p m, u⟫ ∧ ⟪p m, u⟫ < ⟪p (m - 1), u⟫ →
+      ¬ QuadEvenBelowOdd (subquad p m) u) :
+    SubquadRulesOut p u m := ⟨hincr, hdecr⟩
+
 /-! ### Theorem K5: 5-Rim Structure and Unimodality -/
+
+lemma not_monotone_of_peak (z : ZMod 5 → ℝ) (i : ZMod 5)
+    (h1 : z (i - 1) < z i) (h2 : z (i + 1) < z i) :
+    ¬ IsMonotoneCorner z i := by
+  rintro (⟨-, h⟩ | ⟨-, h⟩) <;> linarith
+
+lemma not_monotone_of_valley (z : ZMod 5 → ℝ) (i : ZMod 5)
+    (h1 : z i < z (i - 1)) (h2 : z i < z (i + 1)) :
+    ¬ IsMonotoneCorner z i := by
+  rintro (⟨h, -⟩ | ⟨h, -⟩) <;> linarith
+
+lemma exists_peak (z : ZMod 5 → ℝ) (hinj : Function.Injective z) :
+    ∃ i : ZMod 5, z (i - 1) < z i ∧ z (i + 1) < z i := by
+  obtain ⟨i, -, hmax⟩ := Finset.univ.exists_max_image z (Finset.univ_nonempty)
+  refine ⟨i, ?_, ?_⟩
+  · have hle := hmax (i - 1) (Finset.mem_univ _)
+    refine lt_of_le_of_ne hle ?_
+    intro heq
+    have := hinj heq
+    have hne : i - 1 ≠ i := by
+      intro h
+      have : (1 : ZMod 5) = 0 := by
+        calc (1 : ZMod 5) = i - (i - 1) := by ring
+        _ = i - i := by rw [h]
+        _ = 0 := sub_self _
+      revert this; decide
+    exact hne this
+  · have hle := hmax (i + 1) (Finset.mem_univ _)
+    refine lt_of_le_of_ne hle ?_
+    intro heq
+    have := hinj heq
+    have hne : i + 1 ≠ i := by
+      intro h
+      have : (1 : ZMod 5) = 0 := by
+        calc (1 : ZMod 5) = (i + 1) - i := by ring
+        _ = i - i := by rw [h]
+        _ = 0 := sub_self _
+      revert this; decide
+    exact hne this
+
+lemma zmod5_cases_add (y P : ZMod 5) :
+    y = P ∨ y = P + 1 ∨ y = P + 2 ∨ y = P + 3 ∨ y = P + 4 := by
+  have h_lt : (y - P).val < 5 := ZMod.val_lt (y - P)
+  have h_cast : ((y - P).val : ZMod 5) = y - P := ZMod.cast_id 5 (y - P)
+  interval_cases (y - P).val
+  · left; calc y = P + (y - P) := by ring
+    _ = P + 0 := by rw [← h_cast]; rfl
+    _ = P := by ring
+  · right; left; calc y = P + (y - P) := by ring
+    _ = P + 1 := by rw [← h_cast]; rfl
+  · right; right; left; calc y = P + (y - P) := by ring
+    _ = P + 2 := by rw [← h_cast]; rfl
+  · right; right; right; left; calc y = P + (y - P) := by ring
+    _ = P + 3 := by rw [← h_cast]; rfl
+  · right; right; right; right; calc y = P + (y - P) := by ring
+    _ = P + 4 := by rw [← h_cast]; rfl
+
+lemma exists_two_peaks_diff_two (z : ZMod 5 → ℝ) (hinj : Function.Injective z)
+    (hnu : ¬ IsCyclicUnimodal z) :
+    ∃ P : ZMod 5,
+      (z (P - 1) < z P ∧ z (P + 1) < z P) ∧
+      (z ((P + 2) - 1) < z (P + 2) ∧ z ((P + 2) + 1) < z (P + 2)) := by
+  have h_not_1 : (Finset.univ.filter (fun i : ZMod 5 => z (i - 1) < z i ∧ z (i + 1) < z i)).card ≠ 1 := by
+    intro hcard
+    exact hnu ⟨hinj, hcard⟩
+  obtain ⟨p0, hp0_1, hp0_2⟩ := exists_peak z hinj
+  have hp0_mem : p0 ∈ Finset.univ.filter (fun i : ZMod 5 => z (i - 1) < z i ∧ z (i + 1) < z i) := by
+    simp [hp0_1, hp0_2]
+  have h_gt1 : 1 < (Finset.univ.filter (fun i : ZMod 5 => z (i - 1) < z i ∧ z (i + 1) < z i)).card := by
+    have h_nonempty : (Finset.univ.filter (fun i : ZMod 5 => z (i - 1) < z i ∧ z (i + 1) < z i)).Nonempty := ⟨p0, hp0_mem⟩
+    have h_pos := Finset.Nonempty.card_pos h_nonempty
+    omega
+  obtain ⟨p1, hp1_mem, p2, hp2_mem, hp12⟩ := Finset.one_lt_card.mp h_gt1
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hp1_mem hp2_mem
+  obtain ⟨hp1_l, hp1_r⟩ := hp1_mem
+  obtain ⟨hp2_l, hp2_r⟩ := hp2_mem
+  have h_diff_ne1 : p2 - p1 ≠ 1 := by
+    intro h
+    have heq : p2 = p1 + 1 := by
+      calc p2 = p1 + (p2 - p1) := by ring
+      _ = p1 + 1 := by rw [h]
+    rw [heq] at hp2_l
+    have hc : (p1 + 1 : ZMod 5) - 1 = p1 := by ring
+    rw [hc] at hp2_l
+    linarith
+  have h_diff_ne4 : p2 - p1 ≠ 4 := by
+    intro h
+    have heq : p1 = p2 + 1 := by
+      calc p1 = p2 - (p2 - p1) := by ring
+      _ = p2 - 4 := by rw [h]
+      _ = p2 - (-1) := by rw [show (4 : ZMod 5) = -1 by decide]
+      _ = p2 + 1 := by ring
+    rw [heq] at hp1_l
+    have hc : (p2 + 1 : ZMod 5) - 1 = p2 := by ring
+    rw [hc] at hp1_l
+    linarith
+  have h_diff_ne0 : p2 - p1 ≠ 0 := by
+    intro h
+    apply hp12
+    calc p1 = p2 - (p2 - p1) := by ring
+      _ = p2 - 0 := by rw [h]
+      _ = p2 := by ring
+  have h_cases : p2 - p1 = 2 ∨ p2 - p1 = 3 := by
+    have h_lt : (p2 - p1).val < 5 := ZMod.val_lt (p2 - p1)
+    have h_cast : ((p2 - p1).val : ZMod 5) = p2 - p1 := ZMod.cast_id 5 (p2 - p1)
+    interval_cases (p2 - p1).val
+    · exfalso; apply h_diff_ne0; rw [← h_cast]; rfl
+    · exfalso; apply h_diff_ne1; rw [← h_cast]; rfl
+    · left; rw [← h_cast]; rfl
+    · right; rw [← h_cast]; rfl
+    · exfalso; apply h_diff_ne4; rw [← h_cast]; rfl
+  rcases h_cases with h2 | h3
+  · refine ⟨p1, ⟨hp1_l, hp1_r⟩, ?_⟩
+    have heq : p1 + 2 = p2 := by
+      calc p1 + 2 = p1 + (p2 - p1) := by rw [h2]
+      _ = p2 := by ring
+    rw [heq]
+    exact ⟨hp2_l, hp2_r⟩
+  · refine ⟨p2, ⟨hp2_l, hp2_r⟩, ?_⟩
+    have heq : p2 + 2 = p1 := by
+      calc p2 + 2 = p2 - (-2) := by ring
+      _ = p2 - 3 := by rw [show (3 : ZMod 5) = -2 by decide]
+      _ = p2 - (p2 - p1) := by rw [h3]
+      _ = p1 := by ring
+    rw [heq]
+    exact ⟨hp1_l, hp1_r⟩
 
 /-- **Theorem K5 (Two-peaked 5-Rim Structure / Carbon A21 Rank 2)**.
 For a strictly convex 5-cycle `p` with injective depths `z = ⟪p ·, u⟫` that is not
@@ -230,12 +382,151 @@ cyclically unimodal:
 2. The sub-quad `subquad p M` inherits strict convexity with the same `ρ`.
 3. The depths of `subquad p M` strictly alternate in the sense matching `M`'s slope. -/
 theorem fiveRim_structure (p : ZMod 5 → ℝ³) (u : ℝ³) (ρ : ℝ)
-    (hcvx : StrictConvex5 p u ρ)
+    (_hcvx : StrictConvex5 p u ρ)
     (hinj : Function.Injective (fun i => ⟪p i, u⟫))
     (hnu : ¬ IsCyclicUnimodal (fun i => ⟪p i, u⟫)) :
     ∃! M : ZMod 5, IsMonotoneCorner (fun i => ⟪p i, u⟫) M ∧
       MonotoneAlternation p u M := by
-  sorry
+  set z := fun i : ZMod 5 => ⟪p i, u⟫
+  obtain ⟨P, ⟨hP_l, hP_r⟩, ⟨hP2_l, hP2_r⟩⟩ := exists_two_peaks_diff_two z hinj hnu
+  have hP1_val : (P : ZMod 5) + 1 - 1 = P := by ring
+  have hP1_var : (P : ZMod 5) + 2 - 1 = P + 1 := by ring
+  have hP2_r' : (P : ZMod 5) + 2 + 1 = P + 3 := by ring
+  have hP_l' : (P : ZMod 5) - 1 = P + 4 := by
+    have h : (-1 : ZMod 5) = 4 := by decide
+    rw [sub_eq_add_neg, h]
+  rw [hP1_var] at hP2_l
+  rw [hP2_r'] at hP2_r
+  rw [hP_l'] at hP_l
+  have h5 : (5 : ZMod 5) = 0 := rfl
+  have h_ne34 : z (P + 4) ≠ z (P + 3) := by
+    intro heq
+    have := hinj heq
+    have : (1 : ZMod 5) = 0 := by
+      calc (1 : ZMod 5) = (P + 4) - (P + 3) := by ring
+      _ = (P + 3) - (P + 3) := by rw [this]
+      _ = 0 := sub_self _
+    revert this; decide
+  have h_cases : z (P + 4) < z (P + 3) ∨ z (P + 3) < z (P + 4) := lt_or_gt_of_ne h_ne34
+  rcases h_cases with h_dec | h_inc
+  · set M := P + 3
+    have hM_minus : M - 1 = P + 2 := by ring
+    have hM_plus : M + 1 = P + 4 := by ring
+    have hM_mono : z (M + 1) < z M ∧ z M < z (M - 1) := by
+      dsimp [M] at hM_minus hM_plus ⊢
+      rw [hM_plus, hM_minus]
+      exact ⟨h_dec, hP2_r⟩
+    have hM_is_mono : IsMonotoneCorner z M := Or.inr hM_mono
+    have hM_alt : QuadEvenBelowOdd (subquad p M) u := by
+      dsimp [QuadEvenBelowOdd, subquad]
+      have h0 : M + 1 + ((0 : ZMod 4).val : ZMod 5) = P + 4 := by
+        dsimp [M]; change P + 3 + 1 + 0 = P + 4; ring
+      have h1 : M + 1 + ((1 : ZMod 4).val : ZMod 5) = P := by
+        dsimp [M]; change P + 3 + 1 + 1 = P
+        calc P + 3 + 1 + 1 = P + 5 := by ring
+        _ = P + 0 := by rw [h5]
+        _ = P := by ring
+      have h2 : M + 1 + ((2 : ZMod 4).val : ZMod 5) = P + 1 := by
+        dsimp [M]; change P + 3 + 1 + 2 = P + 1
+        calc P + 3 + 1 + 2 = P + 5 + 1 := by ring
+        _ = P + 0 + 1 := by rw [h5]
+        _ = P + 1 := by ring
+      have h3 : M + 1 + ((3 : ZMod 4).val : ZMod 5) = P + 2 := by
+        dsimp [M]; change P + 3 + 1 + 3 = P + 2
+        calc P + 3 + 1 + 3 = P + 5 + 2 := by ring
+        _ = P + 0 + 2 := by rw [h5]
+        _ = P + 2 := by ring
+      rw [h0, h1, h2, h3]
+      change max (z (P + 4)) (z (P + 1)) < min (z P) (z (P + 2))
+      rw [max_lt_iff, lt_min_iff, lt_min_iff]
+      refine ⟨⟨hP_l, by linarith [h_dec, hP2_r]⟩, ⟨hP_r, hP2_l⟩⟩
+    have hM_malt : MonotoneAlternation p u M := Or.inr ⟨hM_mono.1, hM_mono.2, hM_alt⟩
+    refine ⟨M, ⟨hM_is_mono, hM_malt⟩, ?_⟩
+    intro y ⟨hy_mono, _⟩
+    have h_notP : ¬ IsMonotoneCorner z P := not_monotone_of_peak z P (by rwa [hP_l']) hP_r
+    have h_notP2 : ¬ IsMonotoneCorner z (P + 2) := not_monotone_of_peak z (P + 2) (by rwa [hP1_var]) (by rwa [hP2_r'])
+    have h_notP1 : ¬ IsMonotoneCorner z (P + 1) := by
+      apply not_monotone_of_valley z (P + 1)
+      · have hc : (P : ZMod 5) + 1 - 1 = P := by ring
+        rw [hc]; exact hP_r
+      · have hc : (P : ZMod 5) + 1 + 1 = P + 2 := by ring
+        rw [hc]; exact hP2_l
+    have h_notP4 : ¬ IsMonotoneCorner z (P + 4) := by
+      apply not_monotone_of_valley z (P + 4)
+      · have hc : (P : ZMod 5) + 4 - 1 = P + 3 := by ring
+        rw [hc]; exact h_dec
+      · have hc : (P : ZMod 5) + 4 + 1 = P := by
+          calc (P : ZMod 5) + 4 + 1 = P + 5 := by ring
+          _ = P + 0 := by rw [h5]
+          _ = P := by ring
+        rw [hc]; exact hP_l
+    rcases zmod5_cases_add y P with rfl | rfl | rfl | rfl | rfl
+    · exact False.elim (h_notP hy_mono)
+    · exact False.elim (h_notP1 hy_mono)
+    · exact False.elim (h_notP2 hy_mono)
+    · rfl
+    · exact False.elim (h_notP4 hy_mono)
+  · set M := P + 4
+    have hM_minus : M - 1 = P + 3 := by ring
+    have hM_plus : M + 1 = P := by
+      dsimp [M]
+      calc (P : ZMod 5) + 4 + 1 = P + 5 := by ring
+      _ = P + 0 := by rw [h5]
+      _ = P := by ring
+    have hM_mono : z (M - 1) < z M ∧ z M < z (M + 1) := by
+      dsimp [M] at hM_minus hM_plus ⊢
+      rw [hM_minus, hM_plus]
+      exact ⟨h_inc, hP_l⟩
+    have hM_is_mono : IsMonotoneCorner z M := Or.inl hM_mono
+    have hM_alt : QuadOddBelowEven (subquad p M) u := by
+      dsimp [QuadOddBelowEven, subquad]
+      have h0 : M + 1 + ((0 : ZMod 4).val : ZMod 5) = P := by
+        dsimp [M]; change P + 4 + 1 + 0 = P
+        calc P + 4 + 1 + 0 = P + 5 := by ring
+        _ = P + 0 := by rw [h5]
+        _ = P := by ring
+      have h1 : M + 1 + ((1 : ZMod 4).val : ZMod 5) = P + 1 := by
+        dsimp [M]; change P + 4 + 1 + 1 = P + 1
+        calc P + 4 + 1 + 1 = P + 5 + 1 := by ring
+        _ = P + 0 + 1 := by rw [h5]
+        _ = P + 1 := by ring
+      have h2 : M + 1 + ((2 : ZMod 4).val : ZMod 5) = P + 2 := by
+        dsimp [M]; change P + 4 + 1 + 2 = P + 2
+        calc P + 4 + 1 + 2 = P + 5 + 2 := by ring
+        _ = P + 0 + 2 := by rw [h5]
+        _ = P + 2 := by ring
+      have h3 : M + 1 + ((3 : ZMod 4).val : ZMod 5) = P + 3 := by
+        dsimp [M]; change P + 4 + 1 + 3 = P + 3
+        calc P + 4 + 1 + 3 = P + 5 + 3 := by ring
+        _ = P + 0 + 3 := by rw [h5]
+        _ = P + 3 := by ring
+      rw [h0, h1, h2, h3]
+      change max (z (P + 1)) (z (P + 3)) < min (z P) (z (P + 2))
+      rw [max_lt_iff, lt_min_iff, lt_min_iff]
+      refine ⟨⟨hP_r, hP2_l⟩, ⟨by linarith [h_inc, hP_l], hP2_r⟩⟩
+    have hM_malt : MonotoneAlternation p u M := Or.inl ⟨hM_mono.1, hM_mono.2, hM_alt⟩
+    refine ⟨M, ⟨hM_is_mono, hM_malt⟩, ?_⟩
+    intro y ⟨hy_mono, _⟩
+    have h_notP : ¬ IsMonotoneCorner z P := not_monotone_of_peak z P (by rwa [hP_l']) hP_r
+    have h_notP2 : ¬ IsMonotoneCorner z (P + 2) := not_monotone_of_peak z (P + 2) (by rwa [hP1_var]) (by rwa [hP2_r'])
+    have h_notP1 : ¬ IsMonotoneCorner z (P + 1) := by
+      apply not_monotone_of_valley z (P + 1)
+      · have hc : (P : ZMod 5) + 1 - 1 = P := by ring
+        rw [hc]; exact hP_r
+      · have hc : (P : ZMod 5) + 1 + 1 = P + 2 := by ring
+        rw [hc]; exact hP2_l
+    have h_notP3 : ¬ IsMonotoneCorner z (P + 3) := by
+      apply not_monotone_of_valley z (P + 3)
+      · have hc : (P : ZMod 5) + 3 - 1 = P + 2 := by ring
+        rw [hc]; exact hP2_r
+      · have hc : (P : ZMod 5) + 3 + 1 = P + 4 := by ring
+        rw [hc]; exact h_inc
+    rcases zmod5_cases_add y P with rfl | rfl | rfl | rfl | rfl
+    · exact False.elim (h_notP hy_mono)
+    · exact False.elim (h_notP1 hy_mono)
+    · exact False.elim (h_notP2 hy_mono)
+    · exact False.elim (h_notP3 hy_mono)
+    · rfl
 
 /-- **Theorem K5 Corollary: 5-Rim Unimodality via Sub-quad Alternation Refutation**.
 If every sub-quad `subquad p m` of a strictly convex 5-cycle `p` rules out the
@@ -246,7 +537,11 @@ theorem fiveRim_unimodal_of_subquads (p : ZMod 5 → ℝ³) (u : ℝ³) (ρ : �
     (hinj : Function.Injective (fun i => ⟪p i, u⟫))
     (hrules : ∀ m : ZMod 5, SubquadRulesOut p u m) :
     IsCyclicUnimodal (fun i => ⟪p i, u⟫) := by
-  sorry
+  by_contra hnu
+  obtain ⟨M, ⟨_, halt⟩, -⟩ := fiveRim_structure p u ρ hcvx hinj hnu
+  rcases halt with ⟨hincr1, hincr2, halt⟩ | ⟨hdecr1, hdecr2, halt⟩
+  · exact (hrules M).1 ⟨hincr1, hincr2⟩ halt
+  · exact (hrules M).2 ⟨hdecr1, hdecr2⟩ halt
 
 /-! ### Theorem K5-DS: Characterization of DepthSepAt on a Two-Peaked 5-Rim -/
 
@@ -403,7 +698,7 @@ theorem depthClause_k5_iff (x : ZMod 5 → ℝ³) (u : ℝ³)
       (⟪x 3, u⟫ < ⟪x 1, u⟫ ∨ ⟪x 0, u⟫ < ⟪x 3, u⟫) := by
   constructor
   · rintro ⟨a, hdc⟩
-    fin_cases a
+    rcases zmod5_cases a with rfl | rfl | rfl | rfl | rfl
     · exact False.elim (not_depthClause_k5_edge0 x u hV2M hV1P1 hdc)
     · have h := (depthClause_k5_edge1 x u hV2M hMP2 hV1P1).mp hdc
       exact Or.inr h
@@ -434,16 +729,26 @@ theorem depthSepAt_k5_iff (x : ZMod 5 → ℝ³) (u : ℝ³)
   · rintro ⟨a, hds⟩
     have hdet := hds.1
     have hdc : DepthClause x u a 3 := hds.2
-    fin_cases a
+    rcases zmod5_cases a with rfl | rfl | rfl | rfl | rfl
     · exact False.elim (not_depthClause_k5_edge0 x u hV2M hV1P1 hdc)
     · have h1 := (depthClause_k5_edge1 x u hV2M hMP2 hV1P1).mp hdc
+      have h12 : (1 : ZMod 5) + 1 = 2 := rfl
+      rw [h12] at hdet
       exact Or.inr ⟨h1, hdet⟩
     · exact False.elim (not_depthClause_k5_edge2 x u hV2M hMP2 hdc)
     · exact False.elim (not_depthClause_k5_edge3 x u hV2M hMP2 hdc)
     · have h4 := (depthClause_k5_edge4 x u hV2M hMP2 hV1P1).mp hdc
+      have h40 : (4 : ZMod 5) + 1 = 0 := rfl
+      rw [h40] at hdet
       exact Or.inl ⟨h4, hdet⟩
   · rintro (⟨hM1, hdet⟩ | ⟨h0M, hdet⟩)
-    · exact ⟨4, hdet, (depthClause_k5_edge4 x u hV2M hMP2 hV1P1).mpr hM1⟩
-    · exact ⟨1, hdet, (depthClause_k5_edge1 x u hV2M hMP2 hV1P1).mpr h0M⟩
+    · refine ⟨4, ?_, (depthClause_k5_edge4 x u hV2M hMP2 hV1P1).mpr hM1⟩
+      have h40 : (4 : ZMod 5) + 1 = 0 := rfl
+      rw [h40]
+      exact hdet
+    · refine ⟨1, ?_, (depthClause_k5_edge1 x u hV2M hMP2 hV1P1).mpr h0M⟩
+      have h12 : (1 : ZMod 5) + 1 = 2 := rfl
+      rw [h12]
+      exact hdet
 
 end Minimality
