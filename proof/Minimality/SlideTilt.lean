@@ -64,7 +64,7 @@ with rim edge `r a → r (a + 1)` in facet `t`:
 
 Conclusion: `x` is Rupert (`IsRupert (univ.image x)`).
 
-### Application to the Forced-Depth-Tie Stratum (`TIELEAF24`)
+### Intended Use (Forced-Depth-Tie Stratum `TIELEAF24`)
 On the tie stratum of S5 (segment 35 G-orthogonal to 025, or 25 G-orthogonal to 0345),
 every on-circle view has a depth tie `z_p = z_q` with `x p - x q ∥ F.N t`, defeating standard
 face-chord leaves that require injective rim depths.
@@ -74,10 +74,11 @@ Tilting `u₀ + t e` with `e = σ • F.N t`:
 3. Preserves `DepthSepAt` at small `t > 0` since the farthest vertex `c` lies outside the tied pair.
 4. Leaves no persistent HDN since the tied pair is not perpendicular to `e`.
 
-For example, at `tie/t1`:
-- Facet `0345` (facet 3): rim `6 4 0 5 2`, chord `4 0 5` (edge `4-0-5`), middle `3` on chord `0-5`.
-- Facet `025` (facet 1): rim `1 6 4 3 5 2`, chord `2 5` (or `0` middle on edge `2-5`).
-Both satisfy all hypotheses with `M := ∅` in the tilt slide. -/
+Status on tie points (e.g. tie/t1):
+- Facet `025` (facet index 2): rim `1 6 4 3 5 2`, chord `2-5` with one middle `0`.
+  The theorem applies directly with `M := ∅` in the tilt slide.
+- Facet `0345` (facet index 3): with multiple middles of opposite `δ` signs,
+  the theorem does not apply directly without opposite-sign middle handling. -/
 theorem isRupert_faceChord_tilt {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {x : Fin N → ℝ³}
     (F : S0xFac nf S x) (t : Fin nf) {u₀ : ℝ³} (hnu : ⟪F.N t, u₀⟫ = 0)
     (hn : F.N t ≠ 0)

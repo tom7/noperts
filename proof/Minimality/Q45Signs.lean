@@ -494,7 +494,15 @@ theorem quadRim_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
     · exact sign_transfer hσ02 h2_1
     · exact sign_transfer hσ03 h3_1
 
-/-- Rim 6402 convexity and vertex 1 interior position from silhouette signs. -/
+/-- Rim 6402 convexity and vertex 1 interior position from silhouette signs.
+Satisfiability at intended view (Regime B1, `σ < 1`, view `u = - (e5 - ε e4)`):
+In the vertex 1 corner frame, `α = 1 > 0` and `β = -ε < 0`.
+`⟪F.N 4, u⟫ = - α ⟪F.N 4, e5⟫ > 0` (`0 < N4`).
+`τ ⟪F.N 8, u_doc⟫ = (1 - σ) - ε τ > 0` since `σ < 1`, so `⟪F.N 8, u⟫ < 0` (`N8 < 0`).
+`β < 0` gives `0 < N0` and `N2 < 0`.
+`σ < 1 < σ + τ` gives `λ, μ > 0` at `e5`, so `N7 < 0`.
+`a5 > 1` gives `0 < N5`.
+All hypotheses strictly hold. -/
 theorem rim6402_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN4 : 0 < ⟪F.N 4, u⟫) (hN8 : ⟪F.N 8, u⟫ < 0)
@@ -521,22 +529,12 @@ theorem rim6402_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
     hne_64 hne_40 hne_02 hne_26
     ⟨hN8, hN4⟩ hN3 ⟨hN2, hN0⟩ ⟨hN7, hN5⟩
 
-/-- `lemmaX5_quad_signs` re-derived as an instance of `rim6402_of_signs`. -/
-theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
-    (hN3 : ⟪F.N 3, u⟫ = 0)
-    (hN4 : 0 < ⟪F.N 4, u⟫) (hN8 : ⟪F.N 8, u⟫ < 0)
-    (hN0 : 0 < ⟪F.N 0, u⟫) (hN2 : ⟪F.N 2, u⟫ < 0)
-    (hN7 : ⟪F.N 7, u⟫ < 0) (hN5 : 0 < ⟪F.N 5, u⟫) :
-    ∃ ρ : ℝ, ρ ≠ 0 ∧
-      (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
-        0 < ρ * det3 (quad (x 6) (x 4) (x 0) (x 2) (i + 1) - quad (x 6) (x 4) (x 0) (x 2) i)
-          (quad (x 6) (x 4) (x 0) (x 2) j - quad (x 6) (x 4) (x 0) (x 2) i) u) ∧
-      (∀ i : ZMod 4,
-        0 < ρ * det3 (quad (x 6) (x 4) (x 0) (x 2) (i + 1) - quad (x 6) (x 4) (x 0) (x 2) i)
-          (x 1 - quad (x 6) (x 4) (x 0) (x 2) i) u) :=
-  rim6402_of_signs F hN3 hN4 hN8 hN0 hN2 hN7 hN5
-
-/-- Rim 6302 convexity and vertex 1 interior position from silhouette signs. -/
+/-- Rim 6302 convexity and vertex 1 interior position from silhouette signs.
+Satisfiability at intended view (Regime Bs1, `σ = 1`, view `u = - (e5 - ε e4)`):
+In the vertex 1 corner frame, `α = 1 > 0` and `β = -ε < 0`.
+`σ = 1` gives `τ ⟪F.N 8, u_doc⟫ = - ε τ < 0`, so `0 < N8`.
+`N7 < 0, N2 < 0, 0 < N0, 0 < N5` hold as in B1.
+All hypotheses strictly hold. -/
 theorem rim6302_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN7 : ⟪F.N 7, u⟫ < 0) (hN8 : 0 < ⟪F.N 8, u⟫)
@@ -563,11 +561,19 @@ theorem rim6302_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
     hne_63 hne_30 hne_02 hne_26
     ⟨hN7, hN8⟩ hN3 ⟨hN2, hN0⟩ ⟨hN7, hN5⟩
 
-/-- Rim 6352 convexity and vertex 1 interior position from silhouette signs. -/
+/-- Rim 6352 convexity and vertex 1 interior position from silhouette signs.
+Satisfiability at intended view (Regime B2, `σ > 1`, view `u = - (e34 + ε e5)`):
+In the vertex 1 corner frame, `e34 = (σ - 1) e4 + τ e5`. Since `σ > 1`, `β = σ - 1 > 0`.
+`⟪F.N 2, u⟫ = - β ⟪F.N 2, e4⟫ > 0` (facet 2 front, `0 < N2`).
+Along `e34`, `L(3) = L(4) > L(5)` so `⟪F.N 6, u_doc⟫ > 0`, hence `⟪F.N 6, u⟫ < 0` (facet 6 back, `N6 < 0`).
+Ridge 5-2 between facet 6 and facet 2 has `(t2, t2') = (6, 2)`.
+Along `e34`, `⟪F.N 8, e34⟫ = 0`; `+ ε e5` gives `τ ⟪F.N 8, u_doc⟫ = - ε (σ - 1) c8 < 0`, so `0 < N8`.
+`⟪F.N 7, e34⟫ = -f7(x4) > 0`, so `N7 < 0`. `e34` in positive orthant gives `0 < N5`.
+All hypotheses strictly hold. -/
 theorem rim6352_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN7 : ⟪F.N 7, u⟫ < 0) (hN8 : 0 < ⟪F.N 8, u⟫)
-    (hN2 : ⟪F.N 2, u⟫ < 0) (hN6 : 0 < ⟪F.N 6, u⟫)
+    (hN6 : ⟪F.N 6, u⟫ < 0) (hN2 : 0 < ⟪F.N 2, u⟫)
     (hN5 : 0 < ⟪F.N 5, u⟫) :
     ∃ ρ : ℝ, ρ ≠ 0 ∧
       (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
@@ -577,24 +583,61 @@ theorem rim6352_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
         0 < ρ * det3 (quad (x 6) (x 3) (x 5) (x 2) (i + 1) - quad (x 6) (x 3) (x 5) (x 2) i)
           (x 1 - quad (x 6) (x 3) (x 5) (x 2) i) u) := by
   have hne_63 := cross_ne_zero_of_facet_sign F 8 6 3 (by decide) (by decide) hN8.ne' 4 (by decide) (by decide)
-  have hne_35 := cross_ne_zero_of_facet_sign F 6 3 5 (by decide) (by decide) hN6.ne' 7 (by decide) (by decide)
-  have hne_52 := cross_ne_zero_of_facet_sign F 6 5 2 (by decide) (by decide) hN6.ne' 3 (by decide) (by decide)
+  have hne_35 := cross_ne_zero_of_facet_sign F 6 3 5 (by decide) (by decide) hN6.ne 8 (by decide) (by decide)
+  have hne_52 := cross_ne_zero_of_facet_sign F 6 5 2 (by decide) (by decide) hN6.ne 3 (by decide) (by decide)
   have hne_26 := cross_ne_zero_of_facet_sign F 5 2 6 (by decide) (by decide) hN5.ne' 0 (by decide) (by decide)
-  exact quadRim_of_signs F 6 3 5 2 7 8 2 6 7 5
+  exact quadRim_of_signs F 6 3 5 2 7 8 6 2 7 5
     ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) (by decide)
     ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩
     (Or.inl (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
     (by decide) (by decide) (by decide)
-    (Or.inl (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
+    (Or.inr (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
     (Or.inr (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
     hne_63 hne_35 hne_52 hne_26
-    ⟨hN7, hN8⟩ hN3 ⟨hN2, hN6⟩ ⟨hN7, hN5⟩
+    ⟨hN7, hN8⟩ hN3 ⟨hN6, hN2⟩ ⟨hN7, hN5⟩
 
-/-- Rim 6052 convexity and vertex 1 interior position from silhouette signs. -/
+/-- Rim 6052 convexity and vertex 1 interior position from silhouette signs.
+Matches the rim quad `quad (x 2) (x 5) (x 0) (x 6)` of Lemma X4.
+Satisfiability at intended view (Regime C1, `τ < 1`, view `u = - (e4 - ε e5)`):
+In the vertex 1 corner frame, `β = 1 > 0` and `α = -ε < 0`.
+`⟪F.N 4, u⟫ = - α ⟪F.N 4, e5⟫ < 0` (`N4 < 0`) and `0 < N1`.
+`⟪F.N 2, u⟫ = - β ⟪F.N 2, e4⟫ > 0` (`0 < N2`).
+`σ ⟪F.N 6, u_doc⟫ = c6 (1 - τ) > 0` since `τ < 1`, so `⟪F.N 6, u⟫ < 0` (`N6 < 0`).
+Ridge 5-2 between facet 6 and facet 2 has `(t0, t0') = (6, 2)`.
+`⟪F.N 7, u⟫ < 0` from `τ < 1 < σ + τ`, and `a4 > 1` gives `0 < N5`.
+All hypotheses strictly hold. -/
 theorem rim6052_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
+    (hN2 : 0 < ⟪F.N 2, u⟫) (hN6 : ⟪F.N 6, u⟫ < 0)
+    (hN1 : 0 < ⟪F.N 1, u⟫) (hN4 : ⟪F.N 4, u⟫ < 0)
+    (hN7 : ⟪F.N 7, u⟫ < 0) (hN5 : 0 < ⟪F.N 5, u⟫) :
+    ∃ ρ : ℝ, ρ ≠ 0 ∧
+      (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
+        0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
+          (quad (x 2) (x 5) (x 0) (x 6) j - quad (x 2) (x 5) (x 0) (x 6) i) u) ∧
+      (∀ i : ZMod 4,
+        0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
+          (x 1 - quad (x 2) (x 5) (x 0) (x 6) i) u) := by
+  have hne_25 := cross_ne_zero_of_facet_sign F 2 2 5 (by decide) (by decide) hN2.ne' 0 (by decide) (by decide)
+  have hne_50 := cross_ne_zero_of_facet_sign F 2 5 0 (by decide) (by decide) hN2.ne' 6 (by decide) (by decide)
+  have hne_06 := cross_ne_zero_of_facet_sign F 1 0 6 (by decide) (by decide) hN1.ne' 0 (by decide) (by decide)
+  have hne_62 := cross_ne_zero_of_facet_sign F 5 6 2 (by decide) (by decide) hN5.ne' 1 (by decide) (by decide)
+  exact quadRim_of_signs F 2 5 0 6 6 2 4 1 7 5
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) (by decide)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩
+    (Or.inl (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
+    (by decide) (by decide) (by decide)
+    (Or.inl (by decide)) (Or.inl (by decide)) (Or.inl (by decide))
+    (Or.inl (by decide)) (Or.inl (by decide)) (Or.inl (by decide))
+    hne_25 hne_50 hne_06 hne_62
+    ⟨hN6, hN2⟩ hN3 ⟨hN4, hN1⟩ ⟨hN7, hN5⟩
+
+/-- Canonical rim 6052 starting at apex 6: quad `(x 6) (x 0) (x 5) (x 2)`.
+Instantiates `quadRim_of_signs` with `(t2, t2') = (6, 2)`. -/
+theorem rim6052_canonical_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
+    (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN4 : ⟪F.N 4, u⟫ < 0) (hN1 : 0 < ⟪F.N 1, u⟫)
-    (hN2 : ⟪F.N 2, u⟫ < 0) (hN6 : 0 < ⟪F.N 6, u⟫)
+    (hN6 : ⟪F.N 6, u⟫ < 0) (hN2 : 0 < ⟪F.N 2, u⟫)
     (hN7 : ⟪F.N 7, u⟫ < 0) (hN5 : 0 < ⟪F.N 5, u⟫) :
     ∃ ρ : ℝ, ρ ≠ 0 ∧
       (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
@@ -604,35 +647,25 @@ theorem rim6052_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
         0 < ρ * det3 (quad (x 6) (x 0) (x 5) (x 2) (i + 1) - quad (x 6) (x 0) (x 5) (x 2) i)
           (x 1 - quad (x 6) (x 0) (x 5) (x 2) i) u) := by
   have hne_60 := cross_ne_zero_of_facet_sign F 1 6 0 (by decide) (by decide) hN1.ne' 8 (by decide) (by decide)
-  have hne_05 := cross_ne_zero_of_facet_sign F 2 0 5 (by decide) (by decide) hN2.ne 0 (by decide) (by decide)
-  have hne_52 := cross_ne_zero_of_facet_sign F 6 5 2 (by decide) (by decide) hN6.ne' 3 (by decide) (by decide)
+  have hne_05 := cross_ne_zero_of_facet_sign F 2 0 5 (by decide) (by decide) hN2.ne' 0 (by decide) (by decide)
+  have hne_52 := cross_ne_zero_of_facet_sign F 6 5 2 (by decide) (by decide) hN6.ne 3 (by decide) (by decide)
   have hne_26 := cross_ne_zero_of_facet_sign F 5 2 6 (by decide) (by decide) hN5.ne' 0 (by decide) (by decide)
-  exact quadRim_of_signs F 6 0 5 2 4 1 2 6 7 5
+  exact quadRim_of_signs F 6 0 5 2 4 1 6 2 7 5
     ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) (by decide)
     ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩
     (Or.inl (by decide)) (Or.inl (by decide)) (Or.inl (by decide))
     (by decide) (by decide) (by decide)
-    (Or.inr (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
-    (Or.inr (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
+    (Or.inl (by decide)) (Or.inl (by decide)) (Or.inl (by decide))
+    (Or.inl (by decide)) (Or.inl (by decide)) (Or.inl (by decide))
     hne_60 hne_05 hne_52 hne_26
-    ⟨hN4, hN1⟩ hN3 ⟨hN2, hN6⟩ ⟨hN7, hN5⟩
+    ⟨hN4, hN1⟩ hN3 ⟨hN6, hN2⟩ ⟨hN7, hN5⟩
 
-/-- `lemmaX4_quad_signs` re-derived as an instance of `rim6052_of_signs`. -/
-theorem lemmaX4_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
-    (hN3 : ⟪F.N 3, u⟫ = 0)
-    (hN4 : ⟪F.N 4, u⟫ < 0) (hN1 : 0 < ⟪F.N 1, u⟫)
-    (hN2 : ⟪F.N 2, u⟫ < 0) (hN6 : 0 < ⟪F.N 6, u⟫)
-    (hN7 : ⟪F.N 7, u⟫ < 0) (hN5 : 0 < ⟪F.N 5, u⟫) :
-    ∃ ρ : ℝ, ρ ≠ 0 ∧
-      (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
-        0 < ρ * det3 (quad (x 6) (x 0) (x 5) (x 2) (i + 1) - quad (x 6) (x 0) (x 5) (x 2) i)
-          (quad (x 6) (x 0) (x 5) (x 2) j - quad (x 6) (x 0) (x 5) (x 2) i) u) ∧
-      (∀ i : ZMod 4,
-        0 < ρ * det3 (quad (x 6) (x 0) (x 5) (x 2) (i + 1) - quad (x 6) (x 0) (x 5) (x 2) i)
-          (x 1 - quad (x 6) (x 0) (x 5) (x 2) i) u) :=
-  rim6052_of_signs F hN3 hN4 hN1 hN2 hN6 hN7 hN5
-
-/-- Rim 6032 convexity and vertex 1 interior position from silhouette signs. -/
+/-- Rim 6032 convexity and vertex 1 interior position from silhouette signs.
+Satisfiability at intended view (Regime Ct1, `τ = 1`, view `u = - (e4 - ε e5)`):
+In the vertex 1 corner frame, `β = 1 > 0` and `α = -ε < 0`.
+`τ = 1` gives `σ ⟪F.N 6, u_doc⟫ = - ε σ c6 < 0`, so `0 < N6`.
+`N4 < 0, 0 < N1, N7 < 0, 0 < N5` hold as in C1.
+All hypotheses strictly hold. -/
 theorem rim6032_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN4 : ⟪F.N 4, u⟫ < 0) (hN1 : 0 < ⟪F.N 1, u⟫)
@@ -659,7 +692,14 @@ theorem rim6032_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
     hne_60 hne_03 hne_32 hne_26
     ⟨hN4, hN1⟩ hN3 ⟨hN7, hN6⟩ ⟨hN7, hN5⟩
 
-/-- Rim 6432 convexity and vertex 1 interior position from silhouette signs. -/
+/-- Rim 6432 convexity and vertex 1 interior position from silhouette signs.
+Satisfiability at intended view (Regime C2, `τ > 1`, view `u = - (e35 + ε e4)`):
+In the vertex 1 corner frame, `e35 = σ e4 + (τ - 1) e5`. Since `τ > 1`, `α = τ - 1 > 0`.
+`⟪F.N 4, u⟫ = - α ⟪F.N 4, e5⟫ > 0` (`0 < N4`).
+Along `e35`, `L(3) = L(5) > L(4)` so `⟪F.N 8, u_doc⟫ > 0`, hence `⟪F.N 8, u⟫ < 0` (`N8 < 0`).
+Along `e35`, `⟪F.N 6, e35⟫ = 0`; `+ ε e4` gives `σ ⟪F.N 6, u_doc⟫ = - ε (τ - 1) c6 < 0`, so `0 < N6`.
+`⟪F.N 7, e35⟫ = -f7(x5) > 0`, so `N7 < 0`. `e35` in positive orthant gives `0 < N5`.
+All hypotheses strictly hold. -/
 theorem rim6432_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
     (hN3 : ⟪F.N 3, u⟫ = 0)
     (hN8 : ⟪F.N 8, u⟫ < 0) (hN4 : 0 < ⟪F.N 4, u⟫)

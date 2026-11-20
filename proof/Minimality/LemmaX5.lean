@@ -3,13 +3,14 @@ module
 public import Minimality.Quad05Leaf
 public import Minimality.FaceChordFac
 public import Minimality.RimFromSigns
+public import Minimality.Q45Signs
 public import Minimality.Type24SAT.K24.Par2546
 
 @[expose] public section
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
-open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.Quad05 Minimality.RimFromSigns
+open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.Quad05 Minimality.RimFromSigns Minimality.T24.Q45
 
 namespace Minimality.T24.X5
 
@@ -211,151 +212,8 @@ theorem lemmaX5_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
           (quad (x 6) (x 4) (x 0) (x 2) j - quad (x 6) (x 4) (x 0) (x 2) i) u) ∧
       (∀ i : ZMod 4,
         0 < ρ * det3 (quad (x 6) (x 4) (x 0) (x 2) (i + 1) - quad (x 6) (x 4) (x 0) (x 2) i)
-          (x 1 - quad (x 6) (x 4) (x 0) (x 2) i) u) := by
-  have hne_64 : cross u (x 4 - x 6) ≠ 0 := by
-    intro hcr
-    have he : x 4 - x 6 ≠ 0 := by
-      intro h
-      have h1 : F.f 1 (x 6) = 0 := F.zero 1 6 (by decide)
-      have h2 : F.f 1 (x 4) < 0 := F.neg 1 4 (by decide)
-      have : x 4 = x 6 := sub_eq_zero.mp h
-      rw [this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 4 - x 6) u = 0 := by
-      rw [show cross (x 4 - x 6) u = - cross u (x 4 - x 6) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 4 - x 6) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 4, x 4 - x 6⟫ = 0 := by
-      have := (F.hN 4 (x 4) (x 6)).symm
-      rw [F.zero 4 4 (by decide), F.zero 4 6 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 4, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN4]
-
-  have hne_40 : cross u (x 0 - x 4) ≠ 0 := by
-    intro hcr
-    have he : x 0 - x 4 ≠ 0 := by
-      intro h
-      have h1 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
-      have h2 : F.f 2 (x 4) < 0 := F.neg 2 4 (by decide)
-      have : x 0 = x 4 := sub_eq_zero.mp h
-      rw [← this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 0 - x 4) u = 0 := by
-      rw [show cross (x 0 - x 4) u = - cross u (x 0 - x 4) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 0 - x 4) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 4, x 0 - x 4⟫ = 0 := by
-      have := (F.hN 4 (x 0) (x 4)).symm
-      rw [F.zero 4 0 (by decide), F.zero 4 4 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 4, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN4]
-
-  have hne_02 : cross u (x 2 - x 0) ≠ 0 := by
-    intro hcr
-    have he : x 2 - x 0 ≠ 0 := by
-      intro h
-      have h1 : F.f 4 (x 0) = 0 := F.zero 4 0 (by decide)
-      have h2 : F.f 4 (x 2) < 0 := F.neg 4 2 (by decide)
-      have : x 2 = x 0 := sub_eq_zero.mp h
-      rw [this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 2 - x 0) u = 0 := by
-      rw [show cross (x 2 - x 0) u = - cross u (x 2 - x 0) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 2 - x 0) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 0, x 2 - x 0⟫ = 0 := by
-      have := (F.hN 0 (x 2) (x 0)).symm
-      rw [F.zero 0 2 (by decide), F.zero 0 0 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 0, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN0]
-
-  have hne_26 : cross u (x 6 - x 2) ≠ 0 := by
-    intro hcr
-    have he : x 6 - x 2 ≠ 0 := by
-      intro h
-      have h1 : F.f 0 (x 2) = 0 := F.zero 0 2 (by decide)
-      have h2 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
-      have : x 6 = x 2 := sub_eq_zero.mp h
-      rw [this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 6 - x 2) u = 0 := by
-      rw [show cross (x 6 - x 2) u = - cross u (x 6 - x 2) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 6 - x 2) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 5, x 6 - x 2⟫ = 0 := by
-      have := (F.hN 5 (x 6) (x 2)).symm
-      rw [F.zero 5 6 (by decide), F.zero 5 2 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 5, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN5]
-
-  obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F 8 4 6 4 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN8, hN4⟩ hne_64
-  obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F 3 4 0 (by decide) (by decide) u hN3 hne_40
-  obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F 2 0 0 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN2, hN0⟩ hne_02
-  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 7 5 2 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN7, hN5⟩ hne_26
-
-  have hcyc01 : det3 (x 4 - x 6) (x 0 - x 6) u = det3 (x 0 - x 4) (x 6 - x 4) u :=
-    det3_cycle_triangle (x 6) (x 4) (x 0) u
-  have hcyc12 : det3 (x 0 - x 4) (x 2 - x 4) u = det3 (x 2 - x 0) (x 4 - x 0) u :=
-    det3_cycle_triangle (x 4) (x 0) (x 2) u
-  have hcyc23 : det3 (x 2 - x 0) (x 6 - x 0) u = det3 (x 6 - x 2) (x 0 - x 2) u :=
-    det3_cycle_triangle (x 0) (x 2) (x 6) u
-
-  have h0_0 : 0 < σ₀ * det3 (x 4 - x 6) (x 0 - x 6) u := hσ₀ 0 (Or.inl (by decide))
-  have h1_6 : 0 < σ₁ * det3 (x 0 - x 4) (x 6 - x 4) u := hσ₁ 6 (by decide)
-  have h1_6' : 0 < σ₁ * det3 (x 4 - x 6) (x 0 - x 6) u := by rw [hcyc01]; exact h1_6
-  have hσ01 : 0 < σ₀ * σ₁ := sign_prod h0_0 h1_6'
-
-  have h1_2 : 0 < σ₁ * det3 (x 0 - x 4) (x 2 - x 4) u := hσ₁ 2 (by decide)
-  have h2_4 : 0 < σ₂ * det3 (x 2 - x 0) (x 4 - x 0) u := hσ₂ 4 (Or.inl (by decide))
-  have h2_4' : 0 < σ₂ * det3 (x 0 - x 4) (x 2 - x 4) u := by rw [hcyc12]; exact h2_4
-  have hσ12 : 0 < σ₁ * σ₂ := sign_prod h1_2 h2_4'
-  have hσ02 : 0 < σ₀ * σ₂ := sign_transfer hσ01 hσ12
-
-  have h2_6 : 0 < σ₂ * det3 (x 2 - x 0) (x 6 - x 0) u := hσ₂ 6 (Or.inl (by decide))
-  have h3_0 : 0 < σ₃ * det3 (x 6 - x 2) (x 0 - x 2) u := hσ₃ 0 (Or.inl (by decide))
-  have h3_0' : 0 < σ₃ * det3 (x 2 - x 0) (x 6 - x 0) u := by rw [hcyc23]; exact h3_0
-  have hσ23 : 0 < σ₂ * σ₃ := sign_prod h2_6 h3_0'
-  have hσ03 : 0 < σ₀ * σ₃ := sign_transfer hσ02 hσ23
-
-  have h0_2 : 0 < σ₀ * det3 (x 4 - x 6) (x 2 - x 6) u := hσ₀ 2 (Or.inl (by decide))
-  have h0_1 : 0 < σ₀ * det3 (x 4 - x 6) (x 1 - x 6) u := hσ₀ 1 (Or.inl (by decide))
-
-  have h1_1 : 0 < σ₁ * det3 (x 0 - x 4) (x 1 - x 4) u := hσ₁ 1 (by decide)
-
-  have h2_1 : 0 < σ₂ * det3 (x 2 - x 0) (x 1 - x 0) u := hσ₂ 1 (Or.inl (by decide))
-
-  have h3_4 : 0 < σ₃ * det3 (x 6 - x 2) (x 4 - x 2) u := hσ₃ 4 (Or.inl (by decide))
-  have h3_1 : 0 < σ₃ * det3 (x 6 - x 2) (x 1 - x 2) u := hσ₃ 1 (Or.inl (by decide))
-
-  refine ⟨σ₀, hσ₀_ne, ?_, ?_⟩
-  · intro i j hj1 hj2
-    fin_cases i <;> fin_cases j
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact h0_0
-    · exact h0_2
-    · exact sign_transfer hσ01 h1_6
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact sign_transfer hσ01 h1_2
-    · exact sign_transfer hσ02 h2_6
-    · exact sign_transfer hσ02 h2_4
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact sign_transfer hσ03 h3_4
-    · exact sign_transfer hσ03 h3_0
-    · exact False.elim (hj1 rfl)
-  · intro i
-    fin_cases i
-    · exact h0_1
-    · exact sign_transfer hσ01 h1_1
-    · exact sign_transfer hσ02 h2_1
-    · exact sign_transfer hσ03 h3_1
+          (x 1 - quad (x 6) (x 4) (x 0) (x 2) i) u) :=
+  rim6402_of_signs F hN3 hN4 hN8 hN0 hN2 hN7 hN5
 
 /-- **Lemma X5' (Q45X24.md / Q45THEOREM24.md): Corner Leaf at `e5 - ε e4` with genuine satisfiable facet signs.**
 In the corner frame at vertex 1:
@@ -603,151 +461,8 @@ theorem lemmaX4_quad_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : �
           (quad (x 2) (x 5) (x 0) (x 6) j - quad (x 2) (x 5) (x 0) (x 6) i) u) ∧
       (∀ i : ZMod 4,
         0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
-          (x 1 - quad (x 2) (x 5) (x 0) (x 6) i) u) := by
-  have hne_25 : cross u (x 5 - x 2) ≠ 0 := by
-    intro hcr
-    have he : x 5 - x 2 ≠ 0 := by
-      intro h
-      have h1 : F.f 0 (x 2) = 0 := F.zero 0 2 (by decide)
-      have h2 : F.f 0 (x 5) < 0 := F.neg 0 5 (by decide)
-      have : x 5 = x 2 := sub_eq_zero.mp h
-      rw [this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 5 - x 2) u = 0 := by
-      rw [show cross (x 5 - x 2) u = - cross u (x 5 - x 2) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 5 - x 2) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 2, x 5 - x 2⟫ = 0 := by
-      have := (F.hN 2 (x 5) (x 2)).symm
-      rw [F.zero 2 5 (by decide), F.zero 2 2 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 2, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN2]
-
-  have hne_50 : cross u (x 0 - x 5) ≠ 0 := by
-    intro hcr
-    have he : x 0 - x 5 ≠ 0 := by
-      intro h
-      have h1 : F.f 0 (x 0) = 0 := F.zero 0 0 (by decide)
-      have h2 : F.f 0 (x 5) < 0 := F.neg 0 5 (by decide)
-      have : x 0 = x 5 := sub_eq_zero.mp h
-      rw [← this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 0 - x 5) u = 0 := by
-      rw [show cross (x 0 - x 5) u = - cross u (x 0 - x 5) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 0 - x 5) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 2, x 0 - x 5⟫ = 0 := by
-      have := (F.hN 2 (x 0) (x 5)).symm
-      rw [F.zero 2 0 (by decide), F.zero 2 5 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 2, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN2]
-
-  have hne_06 : cross u (x 6 - x 0) ≠ 0 := by
-    intro hcr
-    have he : x 6 - x 0 ≠ 0 := by
-      intro h
-      have h1 : F.f 0 (x 0) = 0 := F.zero 0 0 (by decide)
-      have h2 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
-      have : x 6 = x 0 := sub_eq_zero.mp h
-      rw [this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 6 - x 0) u = 0 := by
-      rw [show cross (x 6 - x 0) u = - cross u (x 6 - x 0) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 6 - x 0) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 1, x 6 - x 0⟫ = 0 := by
-      have := (F.hN 1 (x 6) (x 0)).symm
-      rw [F.zero 1 6 (by decide), F.zero 1 0 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 1, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN1]
-
-  have hne_62 : cross u (x 2 - x 6) ≠ 0 := by
-    intro hcr
-    have he : x 2 - x 6 ≠ 0 := by
-      intro h
-      have h1 : F.f 0 (x 2) = 0 := F.zero 0 2 (by decide)
-      have h2 : F.f 0 (x 6) < 0 := F.neg 0 6 (by decide)
-      have : x 2 = x 6 := sub_eq_zero.mp h
-      rw [← this, h1] at h2
-      exact lt_irrefl 0 h2
-    have hcr' : cross (x 2 - x 6) u = 0 := by
-      rw [show cross (x 2 - x 6) u = - cross u (x 2 - x 6) by ext j; fin_cases j <;> simp [cross] <;> ring, hcr, neg_zero]
-    obtain ⟨k, hk⟩ : ∃ k : ℝ, u = k • (x 2 - x 6) := ⟨_, eq_smul_of_cross_eq_zero he hcr'⟩
-    have hz : ⟪F.N 5, x 2 - x 6⟫ = 0 := by
-      have := (F.hN 5 (x 2) (x 6)).symm
-      rw [F.zero 5 2 (by decide), F.zero 5 6 (by decide), sub_self] at this
-      exact this
-    have h0 : ⟪F.N 5, u⟫ = 0 := by
-      rw [hk, real_inner_smul_right, hz, mul_zero]
-    linarith [hN5]
-
-  obtain ⟨σ₀, hσ₀_ne, hσ₀⟩ := det3_sign_ridge F 6 2 2 5 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN6, hN2⟩ hne_25
-  obtain ⟨σ₁, hσ₁_ne, hσ₁⟩ := det3_sign_edgeOn F 3 5 0 (by decide) (by decide) u hN3 hne_50
-  obtain ⟨σ₂, hσ₂_ne, hσ₂⟩ := det3_sign_ridge F 4 1 0 6 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN4, hN1⟩ hne_06
-  obtain ⟨σ₃, hσ₃_ne, hσ₃⟩ := det3_sign_ridge F 7 5 6 2 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ u ⟨hN7, hN5⟩ hne_62
-
-  have hcyc01 : det3 (x 5 - x 2) (x 0 - x 2) u = det3 (x 0 - x 5) (x 2 - x 5) u :=
-    det3_cycle_triangle (x 2) (x 5) (x 0) u
-  have hcyc12 : det3 (x 0 - x 5) (x 6 - x 5) u = det3 (x 6 - x 0) (x 5 - x 0) u :=
-    det3_cycle_triangle (x 5) (x 0) (x 6) u
-  have hcyc23 : det3 (x 6 - x 0) (x 2 - x 0) u = det3 (x 2 - x 6) (x 0 - x 6) u :=
-    det3_cycle_triangle (x 0) (x 6) (x 2) u
-
-  have h0_0 : 0 < σ₀ * det3 (x 5 - x 2) (x 0 - x 2) u := hσ₀ 0 (Or.inl (by decide))
-  have h1_2 : 0 < σ₁ * det3 (x 0 - x 5) (x 2 - x 5) u := hσ₁ 2 (by decide)
-  have h1_2' : 0 < σ₁ * det3 (x 5 - x 2) (x 0 - x 2) u := by rw [hcyc01]; exact h1_2
-  have hσ01 : 0 < σ₀ * σ₁ := sign_prod h0_0 h1_2'
-
-  have h1_6 : 0 < σ₁ * det3 (x 0 - x 5) (x 6 - x 5) u := hσ₁ 6 (by decide)
-  have h2_5 : 0 < σ₂ * det3 (x 6 - x 0) (x 5 - x 0) u := hσ₂ 5 (Or.inl (by decide))
-  have h2_5' : 0 < σ₂ * det3 (x 0 - x 5) (x 6 - x 5) u := by rw [hcyc12]; exact h2_5
-  have hσ12 : 0 < σ₁ * σ₂ := sign_prod h1_6 h2_5'
-  have hσ02 : 0 < σ₀ * σ₂ := sign_transfer hσ01 hσ12
-
-  have h2_2 : 0 < σ₂ * det3 (x 6 - x 0) (x 2 - x 0) u := hσ₂ 2 (Or.inl (by decide))
-  have h3_0 : 0 < σ₃ * det3 (x 2 - x 6) (x 0 - x 6) u := hσ₃ 0 (Or.inl (by decide))
-  have h3_0' : 0 < σ₃ * det3 (x 6 - x 0) (x 2 - x 0) u := by rw [hcyc23]; exact h3_0
-  have hσ23 : 0 < σ₂ * σ₃ := sign_prod h2_2 h3_0'
-  have hσ03 : 0 < σ₀ * σ₃ := sign_transfer hσ02 hσ23
-
-  have h0_6 : 0 < σ₀ * det3 (x 5 - x 2) (x 6 - x 2) u := hσ₀ 6 (Or.inl (by decide))
-  have h0_1 : 0 < σ₀ * det3 (x 5 - x 2) (x 1 - x 2) u := hσ₀ 1 (Or.inl (by decide))
-
-  have h1_1 : 0 < σ₁ * det3 (x 0 - x 5) (x 1 - x 5) u := hσ₁ 1 (by decide)
-
-  have h2_1 : 0 < σ₂ * det3 (x 6 - x 0) (x 1 - x 0) u := hσ₂ 1 (Or.inl (by decide))
-
-  have h3_5 : 0 < σ₃ * det3 (x 2 - x 6) (x 5 - x 6) u := hσ₃ 5 (Or.inl (by decide))
-  have h3_1 : 0 < σ₃ * det3 (x 2 - x 6) (x 1 - x 6) u := hσ₃ 1 (Or.inl (by decide))
-
-  refine ⟨σ₀, hσ₀_ne, ?_, ?_⟩
-  · intro i j hj1 hj2
-    fin_cases i <;> fin_cases j
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact h0_0
-    · exact h0_6
-    · exact sign_transfer hσ01 h1_2
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact sign_transfer hσ01 h1_6
-    · exact sign_transfer hσ02 h2_2
-    · exact sign_transfer hσ02 h2_5
-    · exact False.elim (hj1 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact False.elim (hj2 rfl)
-    · exact sign_transfer hσ03 h3_5
-    · exact sign_transfer hσ03 h3_0
-    · exact False.elim (hj1 rfl)
-  · intro i
-    fin_cases i
-    · exact h0_1
-    · exact sign_transfer hσ01 h1_1
-    · exact sign_transfer hσ02 h2_1
-    · exact sign_transfer hσ03 h3_1
+          (x 1 - quad (x 2) (x 5) (x 0) (x 6) i) u) :=
+  rim6052_of_signs F hN3 hN2 hN6 hN1 hN4 hN7 hN5
 
 /-- **Lemma X4' (Q45X24.md / Q45THEOREM24.md): Mirror Corner Leaf at `e4 - ε e5` with genuine satisfiable facet signs.**
 In the corner frame at vertex 1:
