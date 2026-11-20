@@ -11,6 +11,7 @@ public import Minimality.Q45Tie
 public import Minimality.RJ0E
 public import Minimality.Q45J0
 public import Minimality.RX16
+public import Minimality.RF0345
 
 @[expose] public section
 
@@ -502,6 +503,35 @@ theorem q016_x16_hi (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
     FaceChordView F 1 :=
   faceChordView_sym F (t := 0)
     (q012_x16_hi (x := x ∘ pi24) (sym24 F) hΔ ht1 ht0 hN6 hN7 hN8 hbr hgen hfar)
+
+theorem q016_f0345 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (ht : 0 < t3_f0345 (sym24 F))
+    (hN4 : ⟪F.N 2, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫ < 0)
+    (hN7 : ⟪F.N 7, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫ < 0)
+    (hN6 : 0 < ⟪F.N 8, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫)
+    (hN8 : ⟪F.N 6, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫ < 0)
+    (htie : ¬ (⟪x 0, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫ = ⟪x 6, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫ ∧
+      ⟪x 6, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫ = ⟪x 3, u0 (x ∘ pi24) (t3_f0345 (sym24 F))⟫))
+    (hfar43 : F.f 1 (x 5) ≠ F.f 1 (x 3))
+    (hoff4 : F.f 1 (x 5) < F.f 1 (x 3) →
+      ⟪F.N 1, cross (x 0 - x 6) (x 5 - x 6)⟫ ≠ 0 ∨
+        ⟪x 5 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 5 - x 0, x 6 - x 0⟫ < 0)
+    (hoff3 : F.f 1 (x 3) < F.f 1 (x 5) →
+      ⟪F.N 1, cross (x 0 - x 6) (x 3 - x 6)⟫ ≠ 0 ∨
+        ⟪x 3 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 3 - x 0, x 6 - x 0⟫ < 0)
+    (hgenLo : Gen4 (quad (x 0) (x 5) (x 3) (x 6)) (u0 (x ∘ pi24) (t3_f0345 (sym24 F))) (x 6 - x 1))
+    (hfar53 : F.f 1 (x 4) ≠ F.f 1 (x 3))
+    (hoff5 : F.f 1 (x 4) < F.f 1 (x 3) →
+      ⟪F.N 1, cross (x 0 - x 6) (x 4 - x 6)⟫ ≠ 0 ∨
+        ⟪x 4 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 4 - x 0, x 6 - x 0⟫ < 0)
+    (hoff3' : F.f 1 (x 3) < F.f 1 (x 4) →
+      ⟪F.N 1, cross (x 0 - x 6) (x 3 - x 6)⟫ ≠ 0 ∨
+        ⟪x 3 - x 6, x 0 - x 6⟫ < 0 ∨ ⟪x 3 - x 0, x 6 - x 0⟫ < 0)
+    (hgenHi : Gen4 (quad (x 0) (x 4) (x 3) (x 6)) (u0 (x ∘ pi24) (t3_f0345 (sym24 F))) (x 6 - x 1)) :
+    FaceChordView F 1 :=
+  faceChordView_sym F (t := 0)
+    (q012_f0345 (x := x ∘ pi24) (sym24 F) ht hN4 hN7 hN6 hN8 htie hfar43 hoff4 hoff3 hgenLo
+      hfar53 hoff5 hoff3' hgenHi)
 
 /-! ### Mirrors on `025` (`sig24 4 = 2`) -/
 
