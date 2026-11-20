@@ -39,6 +39,7 @@ public import Minimality.Type24Z0
 public import Minimality.Type24NC
 public import Minimality.Type24Adj
 public import Minimality.Type24Face
+public import Minimality.Type24Hole
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -390,10 +391,11 @@ point inside the hull of the others (`isRupert_of_mem_convexHull_erase`), faces 
 vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional extreme face is
 a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
-sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
-`C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`) and in `Minimality.T24.Resid24`:
-on the obtuse corner `OB1`, in the class `mpppz` (a zero class bracket), or in the classes `mpppp`, `mpppm` (off it the sign-matrix
-SAT route closes it, `Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); for type 29 (split by
+sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside `Minimality.T24.Hole24`
+(`Hole24SigmaB` in `Σ_B`, `Hole24Q45Special` on `Q45Special`, `Hole24R` in `C̄ ∩ OB1 \ Q45-Half`, and `Hole24OffOB1`
+in `C̄ \ OB1 \ Q45-Half` for `mpppz`/`mpppp`/`mpppm`; outside `C̄ ∪ Σ_B` is closed by `isRupert_type24_outside_Cbar`
+and `Q45-Half` off `Q45Special` by `isRupert_q45_half`, while off-`OB1` outside `mpppz`/`mpppp`/`mpppm` is closed by
+`Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the class K1
 (K2 is closed, on the strata `Z1 ∪ σ(Z1)` by a metric case split and the Slide Lemma at a right
 dihedral, `NF29.isRupert_K2a_Z1_caseB`); type 16 is closed (every bracket sign vector,
@@ -1107,10 +1109,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
       (fun _ => (Minimality.triGenPar_or_farP_idx hx hgen {0, 3, 4, 5} {1, 2, 5} 5
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
-  · -- type 24: `not_type24_outside_Cbar_of_isNopert`; proved outside C̄ ∪ Σ_B. The sign-matrix SAT route
-    -- (Type24SAT/K24) closes it off the obtuse corner `OB1` (all face angles at vertex 1 non-acute) in ten of
-    -- the twelve classes of the class bracket signs, and every nonzero sign vector is a class
-    -- (`Minimality.T24.rupert_or_resid24`, `Minimality.T24.cls12_of_ne`); `Minimality.T24.Resid24` is the rest
+  · -- type 24: `Minimality.T24.type24_rupert_or_hole` combines `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`
+    -- (SAT + no facet cell, Root T0, Lemma NC, Adjacency, Lemma E2), `isRupert_type24_outside_Cbar` (closes outside
+    -- `C̄ ∪ Σ_B`), and `Q45.isRupert_q45_half` (closes `Q45-Half` off `Q45Special`), leaving `Minimality.T24.Hole24`:
+    -- `Hole24Flags` together with `Hole24SigmaB ∨ Hole24Q45Special ∨ Hole24R ∨ Hole24OffOB1`.
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {1, 2, 6} (by decide)
@@ -1120,16 +1122,12 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fG, hfG⟩ := hR {0, 3, 4, 5} (by decide)
     obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
     obtain ⟨fI, hfI⟩ := hR {3, 4, 6} (by decide)
-    rcases Minimality.T24.Face.rupert_or_resid24_noFacetCell_noNC_noAdj_noFace fA fB fC fD fE fF fG fH fI hfA hfB hfC hfD hfE hfF hfG hfH hfI with
-      hRup | ⟨hres, hz, hT0, hNC, hAdj, hFace⟩
+    rcases Minimality.T24.type24_rupert_or_hole fA fB fC fD fE fF fG fH fI hfA hfB hfC hfD hfE hfF hfG hfH hfI with
+      hRup | ⟨_, hHole⟩
     · exact hnR hRup
-    -- `hz`: no facet cell; `hT0`: no 3-rim cell of the six other vertices over the apex cone (Root T0); `hNC`: Lemma NC fails (`Minimality.T24.NC.T024`, `NC24`); `hAdj`: no Kernel-Lemma adjacency star 2 | edge 24 or star 0 | edge 05 (`Minimality.T24.Adj.Adj24`); `hFace`: no Lemma E2 face pair (`Minimality.T24.Face.Face24`)
-    -- the sorry: type 24 inside C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0} (open), or in Σ_B without a free side
-    -- crossing, and in `Resid24` (`hres`): on the obtuse corner `OB1`, or the class `mpppz` (`ZRes24`, the zero-bracket classes being wired in `Wire24Zero`),
-    -- or the class is `mpppp` or `mpppm`
-    exact byGen2
-      (not_type24_outside_Cbar_of_isNopert x hN fA fB fC fD fE fF hfA hfB hfC hfD hfE hfF)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    · exact byGen1
+        (fun (_ : Minimality.T24.Hole24 _ _ _) => byThm5Faces hx hN _ h3 (fun _ => sorry))
+        (fun hnot => hnot hHole)
   · -- type 25: `not_type25_of_isNopert`; its general position (3 hypotheses) holds always: the
     -- edge view `13` has two triangles (`edgePar_or_farP_idx`), the vertex views a triangle
     -- (`triGenPar_or_farP_idx`): closed, no special position is left
