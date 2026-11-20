@@ -5,6 +5,7 @@ public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Type24
 public import Minimality.Q45
 public import Minimality.RDispatch24
+public import Minimality.RSpec24
 
 @[expose] public section
 
@@ -41,9 +42,9 @@ def Hole24Q45Special (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special' F
 
 /-- Region `R` + off-`OB1` residual inside `C̄ ∩ Resid24 \ Q45HalfPred` after applying
-`RDispatch.r_dispatch` (`R24Spec ∨ R24Wall ∨ R24Open`). -/
+`RDispatch.r_dispatch` (`R24Spec ∨ R24Wall ∨ R24Open`) and excluding the `RSpec` closed-cell leaves. -/
 def Hole24RRes {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Resid24 x ∧ RDispatch.RResidual' F
+  Resid24 x ∧ RDispatch.RResidual' F ∧ ¬ RSpec.HSpecAny F
 
 /-- Existing non-closure flags from `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`. -/
 def Hole24Flags (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
@@ -105,7 +106,9 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inl h2))))
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inl h3)))))
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inr h4)))))
-        · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr ⟨hres, hRes⟩)⟩
+        · by_cases hSpec : RSpec.HSpecAny F
+          · exact Or.inl (RSpec.rspec_closes F hSpec)
+          · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr ⟨hres, hRes, hSpec⟩)⟩
     · by_cases hSig : Minimality.RegionB24 x →
           Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x
       · exact Or.inl (Minimality.isRupert_type24_outside_Cbar
