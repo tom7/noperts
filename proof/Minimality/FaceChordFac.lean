@@ -204,4 +204,42 @@ theorem isRupert_faceChord_tri' {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {x 
   intro q hqS hqr i
   exact hin q (fun h => hqS (h ▸ hP)) hqr i
 
+/-- The hypotheses of `isRupert_faceChord_fac` for facet `t`, packaged as one existential. -/
+def FaceChordView {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {x : Fin N → ℝ³}
+    (F : S0xFac nf S x) (t : Fin nf) : Prop :=
+  ∃ (u : ℝ³) (k : ℕ) (_ : NeZero k) (r : ZMod k → Fin N) (a w : ZMod k) (ρ : ℝ),
+    ⟪F.N t, u⟫ = 0 ∧ 3 ≤ k ∧ r a ∈ S t ∧ r (a + 1) ∈ S t ∧ ρ ≠ 0 ∧
+    (∀ i j, j ≠ i → j ≠ i + 1 →
+      0 < ρ * det3 (x (r (i + 1)) - x (r i)) (x (r j) - x (r i)) u) ∧
+    (∀ q, q ∉ S t → (∀ j, q ≠ r j) → ∀ i,
+      0 < ρ * det3 (x (r (i + 1)) - x (r i)) (x q - x (r i)) u) ∧
+    (∀ q ∈ S t, (∀ j, q ≠ r j) → ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      x q = x (r a) + s • (x (r (a + 1)) - x (r a)) + δ • u) ∧
+    Function.Injective (fun i => ⟪x (r i), u⟫) ∧ UniOrSep (fun i => x (r i)) u ∧
+    r w ∉ S t ∧
+    (∀ m, m ≠ w → r m ∉ S t → F.f t (x (r w)) < F.f t (x (r m))) ∧
+    (⟪F.N t, cross (x (r (a + 1)) - x (r a)) (x (r w) - x (r a))⟫ ≠ 0 ∨
+      ⟪x (r w) - x (r a), x (r (a + 1)) - x (r a)⟫ < 0 ∨
+      ⟪x (r w) - x (r (a + 1)), x (r a) - x (r (a + 1))⟫ < 0)
+
+theorem isRupert_of_faceChordView {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {x : Fin N → ℝ³}
+    (F : S0xFac nf S x) {t : Fin nf} (h : FaceChordView F t) : IsRupert (univ.image x) := by
+  rcases h with ⟨u, k, hne, r, a, w, ρ, hnu, hk, hA, hB, hρ, hcyc, hin, hmid, hinj, hz, hwS, hfar, hoff⟩
+  have : NeZero k := hne
+  exact isRupert_faceChord_fac F t hnu hk r hA hB hρ hcyc hin hmid hinj hz hwS hfar hoff
+
 end Minimality.FaceChord
+
+namespace Minimality.T24.FaceChord
+open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT
+
+/-- Type-24 wiring of the three-circle cover {012, 016, 0345} (facet indices 0, 1, 3). -/
+theorem isRupert_cover24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (h : FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 3) :
+    IsRupert (univ.image x) := by
+  rcases h with h0 | h1 | h3
+  · exact isRupert_of_faceChordView F h0
+  · exact isRupert_of_faceChordView F h1
+  · exact isRupert_of_faceChordView F h3
+
+end Minimality.T24.FaceChord
