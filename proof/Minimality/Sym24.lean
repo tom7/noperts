@@ -12,6 +12,7 @@ public import Minimality.RJ0E
 public import Minimality.Q45J0
 public import Minimality.RX16
 public import Minimality.RF0345
+public import Minimality.RF0345N
 
 @[expose] public section
 
@@ -532,6 +533,24 @@ theorem q016_f0345 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
   faceChordView_sym F (t := 0)
     (q012_f0345 (x := x ∘ pi24) (sym24 F) ht hN4 hN7 hN6 hN8 htie hfar43 hoff4 hoff3 hgenLo
       hfar53 hoff5 hoff3' hgenHi)
+
+theorem q016_f0345_neg_lo (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x)
+    (ht : t3n (sym24 F) < -1)
+    (hN4 : 0 < ⟪F.N 2, u0 (x ∘ pi24) (t3n (sym24 F))⟫)
+    (hN8 : ⟪F.N 6, u0 (x ∘ pi24) (t3n (sym24 F))⟫ < 0)
+    (hbase : min ⟪x 0, u0 (x ∘ pi24) (t3n (sym24 F))⟫ ⟪x 2, u0 (x ∘ pi24) (t3n (sym24 F))⟫ <
+      max ⟪x 1, u0 (x ∘ pi24) (t3n (sym24 F))⟫ ⟪x 5, u0 (x ∘ pi24) (t3n (sym24 F))⟫)
+    (hfar : F.f 1 (x 2) ≠ F.f 1 (x 5))
+    (hoff6 : F.f 1 (x 2) < F.f 1 (x 5) →
+      ⟪F.N 1, cross (x 1 - x 0) (x 2 - x 0)⟫ ≠ 0 ∨
+        ⟪x 2 - x 0, x 1 - x 0⟫ < 0 ∨ ⟪x 2 - x 1, x 0 - x 1⟫ < 0)
+    (hoff4 : F.f 1 (x 5) < F.f 1 (x 2) →
+      ⟪F.N 1, cross (x 1 - x 0) (x 5 - x 0)⟫ ≠ 0 ∨
+        ⟪x 5 - x 0, x 1 - x 0⟫ < 0 ∨ ⟪x 5 - x 1, x 0 - x 1⟫ < 0)
+    (hgen : Gen4 (quad (x 0) (x 1) (x 2) (x 5)) (u0 (x ∘ pi24) (t3n (sym24 F))) (x 6 - x 1)) :
+    FaceChordView F 1 :=
+  faceChordView_sym F (t := 0)
+    (q012_f0345_neg_lo (x := x ∘ pi24) (sym24 F) ht hN4 hN8 hbase hfar hoff6 hoff4 hgen)
 
 /-! ### Mirrors on `025` (`sig24 4 = 2`) -/
 
