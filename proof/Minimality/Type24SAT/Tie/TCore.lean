@@ -154,12 +154,7 @@ theorem SgW_zero {ρ : W → Bool} (hP : ProperW ρ) : SgW ρ zeroSW 0 := by
   have e : ρ (W.base V.tru) = true := hP
   simp [SgW, zeroSW, lfalseW, evalW, e]
 
-/-- Zero as the sign of a real that vanishes. -/
-theorem SgW_zero_of {ρ : W → Bool} (hP : ProperW ρ) {r : ℝ} (h : r = 0) : SgW ρ zeroSW r := by
-  subst h; exact SgW_zero hP
 
-/-- The sign of a nonzero integer constant (or zero). -/
-def cSW (c : Int) : S3W := if 0 < c then (ltrueW, lfalseW) else if c < 0 then (lfalseW, ltrueW) else zeroSW
 
 /-- The three valued product, from gates. -/
 def mul3W (a b : S3W) : S3W :=
@@ -265,11 +260,6 @@ theorem and_rowsW {ρ : W → Bool} (y a b : LitW) (h : evalW ρ y = (evalW ρ a
   unfold HoldsW
   cases ha : evalW ρ a <;> cases hb : evalW ρ b <;> simp [h, n1, n2, n3, ha, hb]
 
-/-- Family 20 over `W`: the three clauses of `y = andW a b`. -/
-theorem gate_rowsW {ρ : W → Bool} (hP : ProperW ρ) (hG : GateOKW ρ) (a b : LitW) :
-    HoldsW ρ [(andW a b).neg, a] ∧ HoldsW ρ [(andW a b).neg, b] ∧
-    HoldsW ρ [andW a b, a.neg, b.neg] :=
-  and_rowsW _ a b (evalW_andW hP hG a b)
 
 /-- The defining rows of a `wgate` variable itself, from the equation `ρ (wgate ..) = AND`. -/
 theorem wgate_rowsW {ρ : W → Bool} (sa : Bool) (a : W) (sb : Bool) (b : W)
@@ -287,17 +277,9 @@ def liftS (t : S3) : S3W := (liftL t.1, liftL t.2)
 /-- Embed a menu clause. -/
 def liftCl (c : List Lit) : List LitW := c.map liftL
 
-theorem liftL_inj {a b : Lit} : liftL a = liftL b ↔ a = b := by
-  obtain ⟨a1, a2⟩ := a; obtain ⟨b1, b2⟩ := b
-  simp [liftL]
 
-theorem liftL_neg (l : Lit) : liftL l.neg = (liftL l).neg := rfl
 
-theorem liftL_true : liftL ltrue = ltrueW := rfl
-theorem liftL_false : liftL lfalse = lfalseW := rfl
 
-/-- **`evalW_lift`**: a lifted literal has the value of the menu literal under `ρ ∘ base`. -/
-theorem evalW_lift (ρ : W → Bool) (l : Lit) : evalW ρ (liftL l) = evalL (fun v => ρ (W.base v)) l := rfl
 
 /-- **`holds_lift`**: a lifted clause holds under `ρ` iff the menu clause holds under `ρ ∘ base`. -/
 theorem holds_lift (ρ : W → Bool) (c : List Lit) :
@@ -310,52 +292,15 @@ theorem holds_lift (ρ : W → Bool) (c : List Lit) :
   · rintro ⟨l, hl, he⟩
     exact ⟨liftL l, List.mem_map.mpr ⟨l, hl, rfl⟩, he⟩
 
-theorem proper_base {ρ : W → Bool} (h : ProperW ρ) : Proper (fun v => ρ (W.base v)) := h
 
-theorem gateOK_base {ρ : W → Bool} (h : GateOKW ρ) : GateOK (fun v => ρ (W.base v)) :=
-  fun sa a sb b => h sa (W.base a) sb (W.base b)
 
-theorem sgW_lift (ρ : W → Bool) (t : S3) (r : ℝ) :
-    SgW ρ (liftS t) r ↔ Sg3 (fun v => ρ (W.base v)) t r := Iff.rfl
 
-theorem liftS_neg (t : S3) : liftS (negS t) = negSW (liftS t) := rfl
-theorem liftS_zero : liftS zeroS = zeroSW := rfl
-theorem liftS_atom (v : V) : liftS (atomS v) = ((true, W.base v), (true, W.base (V.ng v))) := rfl
 
-theorem cmpKey_zero_cons (x y : List Nat) : cmpKey (0 :: x) (0 :: y) = cmpKey x y := by
-  simp [cmpKey]
 
-theorem andW_lift (a b : Lit) : andW (liftL a) (liftL b) = liftL (andL a b) := by
-  unfold andW andL
-  have hk : (liftL a).2.key = 0 :: a.2.key := rfl
-  have hk' : (liftL b).2.key = 0 :: b.2.key := rfl
-  have l1 : (liftL a).1 = a.1 := rfl
-  have l2 : (liftL b).1 = b.1 := rfl
-  simp only [← liftL_true, ← liftL_false, liftL_inj, ← liftL_neg, hk, hk', cmpKey_zero_cons, l1, l2]
-  split_ifs <;> first | rfl
 
-theorem orW_lift (a b : Lit) : orW (liftL a) (liftL b) = liftL (orL a b) := by
-  unfold orW orL
-  rw [← liftL_neg, ← liftL_neg, andW_lift]; rfl
 
-theorem mul3W_lift (a b : S3) : mul3W (liftS a) (liftS b) = liftS (mul3 a b) := by
-  unfold mul3W mul3 liftS
-  simp only [andW_lift, orW_lift]
 
-theorem z4W_lift (a b c d : S3) : z4W (liftS a) (liftS b) (liftS c) (liftS d) = (z4 a b c d).map liftCl := rfl
 
-theorem liftL_injective : Function.Injective liftL := fun _ _ h => liftL_inj.mp h
 
-theorem coversW_lift (cl s : List Lit) : coversW (liftCl cl) (liftCl s) = covers cl s := by
-  unfold coversW covers
-  have h1 : ∀ l, (liftL l == lfalseW) = (l == lfalse) := by
-    intro l; rw [← liftL_false, Bool.eq_iff_iff]; simp [liftL_inj]
-  have h2 : ∀ l, (cl.map liftL).contains (liftL l) = cl.contains l := by
-    intro l; simp [ List.mem_map_of_injective liftL_injective]
-  unfold liftCl
-  rw [List.all_map]
-  congr 1
-  funext l
-  simp only [Function.comp, h1, h2]
 
 end Minimality.H24T.SAT

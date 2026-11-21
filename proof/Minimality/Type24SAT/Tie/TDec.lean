@@ -3,6 +3,7 @@ module
 public import Minimality.Type24SAT.Tie.TLink
 public import Minimality.Type24SAT.Tie.TRule
 public import Minimality.Type24SAT.Geo.Top
+public import Minimality.Type24SAT.Geo.RuleA
 
 @[expose] public section
 
@@ -115,11 +116,6 @@ def tfailVarOf (cl : List LitW) (t f sd : Nat) : List Nat :=
     | (_, .tfail t' f' sd' c) => if t' == t && f' == f && sd' == sd then some c else none
     | _ => none).getD []
 
-/-- The cycle of the flag `sf kind view f sd _` of a family 41 row (its literal there is negative: `-sf`). -/
-def sfCycOf (cl : List LitW) (kind view f sd : Nat) : List Nat :=
-  (cl.findSome? fun l => match l with
-    | (_, .sf k' v' f' sd' c) => if k' == kind && v' == view && f' == f && sd' == sd then some c else none
-    | _ => none).getD []
 
 /-- **The check of a decoded row** (family, the eight parameters, the clause over `W`); `U` is the class unit list. -/
 def rowWc (U : List LitW) (fam : Nat) (p : List Nat) (cl : List LitW) : Bool :=
@@ -149,9 +145,6 @@ def rowWc (U : List LitW) (fam : Nat) (p : List Nat) (cl : List LitW) : Bool :=
   (fam == 39 && chk39 (p.getD 1 0) (p.getD 2 0) (p.getD 3 0) (tfailVarOf cl (p.getD 1 0) (p.getD 2 0) (p.getD 3 0)) cl)
   )))))))))))))))
 
-/-- The check of a packed row. -/
-def rowW (U : List LitW) (chunks : List (List W)) (n : Nat) : Bool :=
-  rowWc U (decRow n).1 (decRow n).2.1 ((decRow n).2.2.map (litOfCW chunks))
 
 variable {x : Fin 7 → ℝ³}
 

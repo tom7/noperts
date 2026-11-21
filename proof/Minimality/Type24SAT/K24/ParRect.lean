@@ -204,28 +204,4 @@ theorem isRupert_eg_rect (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
     · exact Or.inl fun i hY => h i (Ypos i hY)
     · exact Or.inr fun i hY => h i (Ypos i hY)
 
-open Minimality.H24K.SAT in
-/-- **The rectangle piece of the `C ∥ I` wall** (the image of `isRupert_eg_rect` under `σ = (2 6)(4 5)`):
-`04 ⊥ 36`, `04 ⊥ 02`, front vertices all beyond the plane through `0` orthogonal to `05` or all short of the
-plane through `5`. -/
-theorem isRupert_ci_rect (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
-    (hC : ⟪F.N 2, x 6 - x 3⟫ = 0) (hw : ⟪x 4 - x 0, x 6 - x 3⟫ = 0)
-    (hs : ⟪x 4 - x 0, x 2 - x 0⟫ = 0)
-    (hSl : (∀ i, i ∉ s0x_S24 3 → 0 < ⟪x i - x 0, x 5 - x 0⟫) ∨
-      (∀ i, i ∉ s0x_S24 3 → ⟪x i - x 0, x 5 - x 0⟫ < ⟪x 5 - x 0, x 5 - x 0⟫)) :
-    IsRupert (univ.image x) := by
-  have hmem : ∀ i, i ∉ s0x_S24 3 ↔ wallSig i ∉ s0x_S24 3 := by decide
-  have h := isRupert_eg_rect (facSig F) (x := x ∘ wallSig)
-    (by show x 3 = x 5 + x 4 - x 0; rw [hP]; abel) hC hw hs (by
-      rcases hSl with h | h
-      · exact Or.inl fun i hi => h (wallSig i) ((hmem i).1 hi)
-      · exact Or.inr fun i hi => h (wallSig i) ((hmem i).1 hi))
-  have e : Finset.univ.image (x ∘ wallSig) = Finset.univ.image x := by
-    ext y
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, Function.comp]
-    constructor
-    · rintro ⟨i, rfl⟩; exact ⟨_, rfl⟩
-    · rintro ⟨i, rfl⟩; exact ⟨wallSig i, by rw [wallSig_invol]⟩
-  rwa [e] at h
-
 end Minimality.T24.Par

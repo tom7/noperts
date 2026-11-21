@@ -152,11 +152,6 @@ theorem m3_not_both6 {x : Fin 7 → ℝ³} (q : Fin 7) (h4 : 0 < 1 + omega4 x) (
   have e := circle_depth6 x
   nlinarith [mul_nonneg h4.le (sub_nonneg.mpr hT'), mul_pos h3 hiii]
 
-/-- The Cramer identity of M3 at the corner (17.7):
-`(1 + ω5)(g_a − ω3 g_b) + ((ω3 ω5 − 1) g_b − (1 + ω5) g_a) = −(1 + ω3) g_b`. -/
-theorem m3_link (w3 w5 ga gb : ℝ) :
-    (1 + w5) * (ga - w3 * gb) + ((w3 * w5 - 1) * gb - (1 + w5) * ga) = -((1 + w3) * gb) := by
-  ring
 
 /-! ### The exact corner -/
 
@@ -230,9 +225,6 @@ theorem viewT62_eq : viewT62 x = (1 : ℝ) • (x 0 - x 1) + (0 : ℝ) • (x 2 
   simp only [viewT62]; module
 
 omit T in
-theorem viewT06_eq : viewT06 x = omega4 x • (x 0 - x 1) + (1 : ℝ) • (x 2 - x 1) +
-    (0 : ℝ) • (x 6 - x 1) := by
-  simp only [viewT06]; module
 
 omit T in
 theorem view2_eq : view2 x = (1 + omega5 x) • (x 0 - x 1) +
@@ -492,15 +484,8 @@ theorem s0_fails_corner (hE : ExactCorner x) (h3 : 0 < omega3 x) (h4 : 0 < omega
   · linarith [h.1.1]
 
 omit T in
-/-- The Cramer identities of M1 (17.8): `T′(2,6)` against WP_2 below, and WP_2 above against
-`S_0` (with `r4 = (1 − a4)/b4`). -/
-theorem m1_link_a (w3 a4 b4 ga gb : ℝ) :
-    b4 * (ga - w3 * gb) + ((a4 - 1) * ga + w3 * b4 * gb) = (a4 + b4 - 1) * ga := by ring
 
 omit T in
-theorem m1_link_b (w4 w5 lo r4 ga gb : ℝ) :
-    (1 + w5) * (lo * gb - r4 * ga) + lo * ((w4 * w5 - 1) * ga - (1 + w5) * gb) =
-      (lo * (w4 * w5 - 1) - r4 * (1 + w5)) * ga := by ring
 
 /-- **WP_2's depth chain** at the view `e_a + t e_b` (the window-edge pattern on arc 2,
 15.13 (b)): `z6 < z4 < z0 < z2`. -/
@@ -586,12 +571,6 @@ theorem m1_corner (hE : ExactCorner x) (h3 : 0 < omega3 x) (h4 : 0 < omega4 x)
 /-! ### The T′ pair (Corollary 17.17 (d), the pair rule) -/
 
 omit T in
-/-- The Cramer identity of the T′ pair (17.17): at the views `(1, t, 0)`,
-`t2 B (z3 − z4)_{t1} + t1 (b3 − b4)(z_p − z_q)_{t2} = g_a [t1 (b3 − b4) A − t2 B (a4 − a3)]`
-with `(z_p − z_q)_{t2} = g_a A − t2 g_b B`. -/
-theorem tpair_link (t1 t2 a3 a4 b3 b4 A B ga gb : ℝ) :
-    t2 * B * (ga * (a3 - a4) + t1 * gb * (b3 - b4)) + t1 * (b3 - b4) * (ga * A - t2 * gb * B) =
-      ga * (t1 * (b3 - b4) * A - t2 * B * (a4 - a3)) := by ring
 
 omit T in
 /-- The pair rule for the rim `(0, 2, 3, 4)` in the pencil, real form: `ζ0 = 1`, `ζ2 = ν`,

@@ -289,16 +289,6 @@ namespace Type24
 
 variable {x : Fin 7 → ℝ³}
 
-/-- Oblique coordinates of a point of the plane of `x 0, x a, x b` (affine in the point). -/
-theorem oblX0_comb {v a b : Fin 7} {s t : ℝ} (h : x v = x 0 + s • (x a - x 0) + t • (x b - x 0)) :
-    oblX0 x v = (1 - s - t) * oblX0 x 0 + s * oblX0 x a + t * oblX0 x b := by
-  simp only [oblX0, h]
-  have e : vol3 (x 0 + s • (x a - x 0) + t • (x b - x 0) - x 1) (x 2 - x 1) (x 6 - x 1) =
-      (1 - s - t) * vol3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) +
-        s * vol3 (x a - x 1) (x 2 - x 1) (x 6 - x 1) +
-        t * vol3 (x b - x 1) (x 2 - x 1) (x 6 - x 1) := by
-    simp only [vol3, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
-  rw [e]; ring
 
 theorem oblX2_comb {v a b : Fin 7} {s t : ℝ} (h : x v = x 0 + s • (x a - x 0) + t • (x b - x 0)) :
     oblX2 x v = (1 - s - t) * oblX2 x 0 + s * oblX2 x a + t * oblX2 x b := by

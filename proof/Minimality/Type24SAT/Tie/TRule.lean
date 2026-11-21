@@ -116,6 +116,7 @@ def tieParOK (t f sd pp zs1 : Nat) : Prop :=
 
 instance (t f sd pp zs1 : Nat) : Decidable (tieParOK t f sd pp zs1) := by unfold tieParOK; infer_instance
 
+
 /-- **The check of a tie rule row** (tag `23 t f sd pp mask zs fv`, here `zs1 = zs + 1`; `mask` and `fv` are not
 needed: the failure variable is read off the clause). -/
 def tieOK (t f sd pp zs1 : Nat) (cl : List LitW) : Bool :=
@@ -388,6 +389,7 @@ def altOK (p1 p2 q1 q2 : Nat) : Prop :=
   p1 < 7 ∧ p2 < 7 ∧ q1 < 7 ∧ q2 < 7 ∧ p1 ≠ q1 ∧ p1 ≠ q2 ∧ p2 ≠ q1 ∧ p2 ≠ q2
 
 instance (p1 p2 q1 q2 : Nat) : Decidable (altOK p1 p2 q1 q2) := by unfold altOK; infer_instance
+
 
 /-- **The check of a family 38 row** (tag `38 y t f sd p1 p2 q1 q2`; `y` must be the variable `ty t f sd p1 p2 q1 q2`,
 which the coverage checks). -/

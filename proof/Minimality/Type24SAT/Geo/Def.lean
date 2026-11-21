@@ -95,80 +95,9 @@ theorem failbig (g : Geo) (e : Nat) (c : List Nat) :
 
 /-! ### The lex families (23, 24, 27), used by the lex rules of core B -/
 
-/-- Three valued sign of `eps * (depth of p minus depth of q)` at view `d`. -/
-def ordE (d ep p q : Nat) : S3 := if ep = 1 then ordS d p q else negS (ordS d p q)
 
-/-- `ordE` tells the truth. -/
-theorem Sg3_ordE (g : Geo) (d ep p q : Nat) (hv : d < 21 → g.vv d ≠ 0) (hab : p ≠ q) (hp : p < 7) (hq : q < 7)
-    (hd : ∀ a b, a < b → b < 7 → g.vv (EI a b) = g.x a - g.x b) :
-    Sg3 (rho g) (ordE d ep p q) (epR ep * g.z d p q) := by
-  have s := Sg3_ordS g d p q hv hab hp hq hd
-  unfold ordE epR
-  by_cases h : ep = 1
-  · simp only [h, ite_true, one_mul]; exact s
-  · simp only [h, ite_false]
-    have := s.neg
-    simpa using this
 
-/-- Family 23: the two clauses that force `ltl` when the depth of `p` is lex less than that of `q`. -/
-theorem ltl_rows (g : Geo) (e d ep p q : Nat) (hv : e < 21 → g.vv e ≠ 0) (hvd : d < 21 → g.vv d ≠ 0)
-    (hd : ∀ a b, a < b → b < 7 → g.vv (EI a b) = g.x a - g.x b)
-    (hp : p < 7) (hq : q < 7) (hpq : p ≠ q) :
-    Holds (rho g) [(ordS e p q).2.neg, (true, V.ltl e d ep p q)] ∧
-    Holds (rho g) [(ordS e p q).1, (ordS e p q).2, (ordE d ep p q).2.neg, (true, V.ltl e d ep p q)] := by
-  have sa := Sg3_ordS g e p q hv hpq hp hq hd
-  have sb := Sg3_ordE g d ep p q hvd hpq hp hq hd
-  have hl : ∀ h : g.lexLt e d ep p q, evalL (rho g) (true, V.ltl e d ep p q) = true := fun h => by
-    simp [evalL, rho, h]
-  constructor
-  · by_cases h : g.z e p q < 0
-    · exact ⟨_, by simp, hl (Or.inl h)⟩
-    · refine ⟨(ordS e p q).2.neg, by simp, ?_⟩
-      rw [evalL_neg]
-      have : evalL (rho g) (ordS e p q).2 = false := by
-        rw [← Bool.not_eq_true]; intro c; exact h (sa.2.mp c)
-      simp [this]
-  · by_cases h1 : 0 < g.z e p q
-    · exact ⟨(ordS e p q).1, by simp, sa.1.mpr h1⟩
-    · by_cases h2 : g.z e p q < 0
-      · exact ⟨_, by simp, hl (Or.inl h2)⟩
-      · have h0 : g.z e p q = 0 := le_antisymm (not_lt.mp h1) (not_lt.mp h2)
-        by_cases h3 : epR ep * g.z d p q < 0
-        · exact ⟨_, by simp, hl (Or.inr ⟨h0, h3⟩)⟩
-        · refine ⟨(ordE d ep p q).2.neg, by simp, ?_⟩
-          rw [evalL_neg]
-          have : evalL (rho g) (ordE d ep p q).2 = false := by
-            rw [← Bool.not_eq_true]; intro c; exact h3 (sb.2.mp c)
-          simp [this]
 
-/-- Family 24: `yl` implies that none of its four pairs is lex less-than. -/
-theorem yl_rows (g : Geo) (e d ep : Nat) (c : List Nat) (p1 p2 q1 q2 p q : Nat)
-    (h : (p = p1 ∨ p = p2) ∧ (q = q1 ∨ q = q2)) :
-    Holds (rho g) [(false, V.yl e d ep c p1 p2 q1 q2), (false, V.ltl e d ep p q)] := by
-  by_cases hy : rho g (V.yl e d ep c p1 p2 q1 q2) = true
-  · have hy' : g.yL e d ep p1 p2 q1 q2 = true := hy
-    simp only [Geo.yL, decide_eq_true_eq] at hy'
-    obtain ⟨y1, y2, y3, y4⟩ := hy'
-    refine ⟨(false, V.ltl e d ep p q), by simp, ?_⟩
-    have : ¬ g.lexLt e d ep p q := by
-      obtain ⟨hp, hq⟩ := h
-      rcases hp with rfl | rfl <;> rcases hq with rfl | rfl <;> assumption
-    simp [evalL, rho, this]
-  · refine ⟨(false, V.yl e d ep c p1 p2 q1 q2), by simp, ?_⟩
-    simp only [evalL, Bool.not_eq_true] at hy ⊢
-    simp [hy]
 
-/-- Family 27: `faill` implies one of its `yl` variables. -/
-theorem faill_rows (g : Geo) (e d ep : Nat) (c : List Nat) :
-    Holds (rho g) ((false, V.faill e d ep c) ::
-      (alts c).map fun t => (true, V.yl e d ep c t.1 t.2.1 t.2.2.1 t.2.2.2)) := by
-  by_cases h : rho g (V.faill e d ep c) = true
-  · have h' : ((alts c).any fun t => g.yL e d ep t.1 t.2.1 t.2.2.1 t.2.2.2) = true := h
-    obtain ⟨t, ht, hy⟩ := List.any_eq_true.mp h'
-    exact ⟨(true, V.yl e d ep c t.1 t.2.1 t.2.2.1 t.2.2.2), List.mem_cons_of_mem _ (List.mem_map.mpr ⟨t, ht, rfl⟩),
-      by simp [evalL, rho, hy]⟩
-  · refine ⟨(false, V.faill e d ep c), by simp, ?_⟩
-    simp only [Bool.not_eq_true] at h
-    simp [evalL, h]
 
 end Minimality.H24.SAT

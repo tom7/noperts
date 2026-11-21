@@ -31,19 +31,7 @@ def lget {α : Type} : List α → Nat → α → α
   | [], _, d => d
   | a :: as, n, d => match n with | 0 => a | m + 1 => lget as m d
 
-/-- The name of variable number `i` (`i = 0` is the constant true) from name chunks of 200. -/
-def nmOf (chunks : List (List V)) (i : Nat) : Lit :=
-  match i with
-  | 0 => ltrue
-  | j + 1 => (true, lget (lget chunks (j / 200) []) (j % 200) V.tru)
 
-/-- The literal of a code. -/
-def litOfC (chunks : List (List V)) (c : Nat) : Lit :=
-  if c % 2 == 0 then nmOf chunks (c / 2) else (nmOf chunks (c / 2)).neg
 
-/-- A row passes the check, or is a rule (17), witness (19), `T(L,L)` (22), quad relation (23) or unit (26) row. -/
-def rowD (chunks : List (List V)) (n : Nat) : Bool :=
-  let r := decRow n
-  r.1 == 17 || r.1 == 19 || r.1 == 22 || r.1 == 26 || r.1 == 23 || rowOK3 r.1 r.2.1 (r.2.2.map (litOfC chunks))
 
 end Minimality.H24.SAT

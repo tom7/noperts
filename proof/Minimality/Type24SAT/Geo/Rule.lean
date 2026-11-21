@@ -46,8 +46,6 @@ noncomputable def geo0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Geo :=
 noncomputable def geoF {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Geo :=
   { geo0 F with tpv := fun e m s => decide (TpSem F ((geo0 F).vv e) (bits m) (bits s)) }
 
-/-- The views of `geoF` are those of `geo0`. -/
-theorem geoF_vv {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (e : Nat) : (geoF F).vv e = (geo0 F).vv e := rfl
 
 /-- The tope variable of `geoF` is `TpSem`. -/
 theorem rho_tpv {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (e m s : Nat) :

@@ -41,8 +41,7 @@ namespace LeafB24
 /-- The rim `0 4 6 2 5`. -/
 def rimB : ZMod 5 → Fin 7 := ![0, 4, 6, 2, 5]
 
-theorem exists_rimB (m : Fin 7) (h1 : m ≠ 1) (h3 : m ≠ 3) : ∃ j, m = rimB j := by
-  revert m; decide
+
 
 theorem foot_above {L s zc zi zj : ℝ} (h0 : 0 < s) (h1 : s < L) (hi : zi < zc) (hj : zj < zc) :
     L * zc ≠ (L - s) * zi + s * zj := by
@@ -54,12 +53,6 @@ theorem foot_below {L s zc zi zj : ℝ} (h0 : 0 < s) (h1 : s < L) (hi : zc < zi)
   intro h
   nlinarith [mul_pos (sub_pos.mpr h1) (sub_pos.mpr hi), mul_pos h0 (sub_pos.mpr hj)]
 
-theorem ds_B {z : ZMod 5 → ℝ} (r1 : z 3 < z 4) (r2 : z 3 < z 0) (r3 : z 3 < z 1) (r4 : z 2 < z 3) :
-    DepthSepZ z 1 3 := by
-  have hv : ((1 : ZMod 5) - 3).val = 3 := by decide
-  unfold DepthSepZ; left; rw [hv]
-  refine ⟨fun s hs1 hs2 => ?_, fun s hs1 hs2 => ?_⟩ <;> interval_cases s <;>
-    first | exact r1 | exact r2 | exact r3 | exact r4
 
 end LeafB24
 end Minimality

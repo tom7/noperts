@@ -57,10 +57,6 @@ macro "vec_ring" : tactic =>
 theorem P_eq (g : Geo) (t f q : Nat) : Pp g t f q = ⟪wf g t f, g.dv q⟫ := by
   unfold Pp wf; vec_ring
 
-/-- `dplus = - N x wf`, in the form `<dplus, x> = - det(N, wf, x)` (for every vector `x`). -/
-theorem inner_dplus_neg (g : Geo) (t f : Nat) (x : ℝ³) :
-    ⟪dplus g t f, x⟫ = -det3 (g.N t) (wf g t f) x := by
-  unfold dplus wf; vec_ring
 
 /-- `<dplus, x> = <wf, N x x>` for every vector. -/
 theorem inner_dplus (g : Geo) (t f : Nat) (x : ℝ³) : ⟪dplus g t f, x⟫ = ⟪wf g t f, cross (g.N t) x⟫ := by
@@ -70,10 +66,6 @@ theorem inner_dplus (g : Geo) (t f : Nat) (x : ℝ³) : ⟪dplus g t f, x⟫ = �
 theorem R_eq (g : Geo) (t f q : Nat) : Rr g t f q = ⟪wf g t f, cross (g.N t) (g.dv q)⟫ :=
   inner_dplus g t f _
 
-/-- `R(f,q) = |N|^2 <D_f, D_q> - <N, D_f> <N, D_q>`. -/
-theorem R_expand (g : Geo) (t f q : Nat) :
-    Rr g t f q = ⟪g.N t, g.N t⟫ * ⟪g.dv f, g.dv q⟫ - ⟪g.N t, g.dv f⟫ * ⟪g.N t, g.dv q⟫ := by
-  unfold Rr dplus; vec_ring
 
 /-- `K(s) = |N|^2 <D_f, N_s> - <N, D_f> <N, N_s>`. -/
 theorem K_expand (g : Geo) (t f s : Nat) :
@@ -92,8 +84,6 @@ theorem R_self (g : Geo) (t f : Nat) : Rr g t f f = ⟪wf g t f, wf g t f⟫ := 
 /-- `P` is antisymmetric. -/
 theorem P_swap (g : Geo) (t f q : Nat) : Pp g t q f = -Pp g t f q := by unfold Pp; vec_ring
 
-/-- `P(f,q)` as the shape atom `kv t f q` (no hypotheses). -/
-theorem atom_kv (g : Geo) (t f q : Nat) : g.atom (V.kv t f q) = Pp g t f q := rfl
 
 /-- The facing of `s` at `wf` (zero order term): `<N_s, wf> = - L(s,f)`. -/
 theorem facing_wf (g : Geo) (t s f : Nat) : ⟪g.N s, wf g t f⟫ = -Ls g t s f := by
@@ -102,11 +92,6 @@ theorem facing_wf (g : Geo) (t s f : Nat) : ⟪g.N s, wf g t f⟫ = -Ls g t s f 
 /-- `t` is edge-on at every `eps`: `<N_t, wf> = 0` and `<N_t, dplus> = 0`. -/
 theorem inner_N_wf (g : Geo) (t f : Nat) : ⟪g.N t, wf g t f⟫ = 0 := by unfold wf; vec_ring
 theorem inner_N_dplus (g : Geo) (t f : Nat) : ⟪g.N t, dplus g t f⟫ = 0 := by unfold dplus; vec_ring
-/-- `wf` and `dplus` are orthogonal. -/
-theorem inner_wf_dplus (g : Geo) (t f : Nat) : ⟪wf g t f, dplus g t f⟫ = 0 := by unfold wf dplus; vec_ring
-/-- `det(N_t, - wf, D_f) = |wf|^2`: the side `sigma` of `y_+ = - wf`. -/
-theorem det3_N_negwf_D (g : Geo) (t f : Nat) :
-    det3 (g.N t) (-wf g t f) (g.dv f) = ⟪wf g t f, wf g t f⟫ := by unfold wf; vec_ring
 
 /-- **The master identity**, for all vectors:
 `det(N,x,y) |N x D|^2 = det(N,x,D) R(y) + R(x) det(N,D,y)`, `R(z) = <N x D, N x z>`. -/
@@ -145,10 +130,6 @@ theorem master_K (g : Geo) (t f s b : Nat) :
 theorem P_of_Z0 {g : Geo} {t f : Nat} (h : Z0 g t f) (q : Nat) : Pp g t f q = 0 := by
   rw [P_eq, h]; simp
 
-/-- `Z0` kills `L(s,f)`. -/
-theorem Ls_of_Z0 {g : Geo} {t f : Nat} (h : Z0 g t f) (s : Nat) : Ls g t s f = 0 := by
-  have := facing_wf g t s f
-  rw [h] at this; simpa using this.symm
 
 /-- Off `Z0` the norm of `wf` is positive. -/
 theorem wf_pos {g : Geo} {t f : Nat} (h : ¬ Z0 g t f) : 0 < ⟪wf g t f, wf g t f⟫ :=
@@ -210,19 +191,9 @@ noncomputable def rhoW (g : Geo) : W → Bool
 theorem rhoW_base (g : Geo) (v : V) : rhoW g (W.base v) = rho g v := rfl
 theorem rhoW_wgate (g : Geo) (sa : Bool) (a : W) (sb : Bool) (b : W) :
     rhoW g (W.wgate sa a sb b) = (evalW (rhoW g) (sa, a) && evalW (rhoW g) (sb, b)) := rfl
-theorem rhoW_z0 (g : Geo) (t f : Nat) : rhoW g (W.z0 t f) = decide (Z0 g t f) := rfl
 
-theorem rhoW_qv (g : Geo) (kind key e1 e2 : Nat) (pos : Bool) :
-    rhoW g (W.qv kind key e1 e2 pos) =
-      (if pos then decide (0 < Qv g kind key e1 e2) else decide (Qv g kind key e1 e2 < 0)) := rfl
-theorem rhoW_sf (g : Geo) (kind view f sd : Nat) (cyc : List Nat) :
-    rhoW g (W.sf kind view f sd cyc) = decide (¬ SplitCert g kind view f sd cyc) := rfl
 
-/-- The signs of `Q`: a three valued sign built from the two `qv` variables. -/
-def QS (kind key e1 e2 : Nat) : S3W := ((true, W.qv kind key e1 e2 true), (true, W.qv kind key e1 e2 false))
 
-theorem SgW_Q (g : Geo) (kind key e1 e2 : Nat) : SgW (rhoW g) (QS kind key e1 e2) (Qv g kind key e1 e2) := by
-  simp [SgW, QS, evalW, rhoW]
 
 theorem rhoW_proper (g : Geo) : ProperW (rhoW g) := by simp [ProperW, rhoW, rho]
 
@@ -230,8 +201,6 @@ theorem rhoW_gateOK (g : Geo) : GateOKW (rhoW g) := by
   intro sa a sb b
   cases a <;> cases b <;> simp [gateW, rhoW, rho, evalW]
 
-/-- Un-lifting: `rhoW g` restricted to `base` is `rho g`. -/
-theorem rhoW_comp_base (g : Geo) : (fun v => rhoW g (W.base v)) = rho g := rfl
 
 /-- **A lifted menu clause holds under `rhoW g` iff it holds under `rho g`.** -/
 theorem holdsW_rho_lift (g : Geo) (c : List Lit) : HoldsW (rhoW g) (liftCl c) ↔ Holds (rho g) c :=

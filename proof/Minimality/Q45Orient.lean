@@ -105,13 +105,6 @@ theorem rimOrient {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (ρ
   rw [h_prod]
   exact mul_neg_of_pos_of_neg hin h0_neg
 
-/-- In our negated frame `u = -u_doc` where `⟪F.N 5, u⟫ > 0`, `ρ * Ω < 0`. -/
-theorem rho_mul_omega_neg_of_inner_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (ρ : ℝ)
-    (hin : 0 < ρ * det3 (x 6 - x 2) (x 1 - x 2) u)
-    (hN5 : 0 < ⟪F.N 5, u⟫) :
-    ρ * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) < 0 := by
-  have h := rimOrient F u ρ hin
-  nlinarith
 
 /-- In the doc's frame `u_doc` where `⟪F.N 5, u_doc⟫ < 0`, `0 < ρ * Ω`. -/
 theorem rho_mul_omega_pos_of_inner_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (ρ : ℝ)
@@ -394,76 +387,11 @@ theorem kappa_rim6432 (x : Fin 7 → ℝ³) :
 -- Signed Products Ω * κ
 -- -------------------------------------------------------------------------
 
-theorem omega_mul_kappa_rim6402_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
-    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
-    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
-    det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) *
-      det3 (quad (x 6) (x 4) (x 0) (x 2) 2 - quad (x 6) (x 4) (x 0) (x 2) 0)
-           (quad (x 6) (x 4) (x 0) (x 2) 3 - quad (x 6) (x 4) (x 0) (x 2) 1)
-           (quad (x 6) (x 4) (x 0) (x 2) 0 - quad (x 6) (x 4) (x 0) (x 2) 1) < 0 := by
-  rw [kappa_rim6402]
-  have h := omega_mul_det3_0246_pos F p v y hxy hp hv0 hv1 hv2
-  linarith
 
-theorem omega_mul_kappa_rim6302_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
-    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
-    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
-    det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) *
-      det3 (quad (x 6) (x 3) (x 0) (x 2) 2 - quad (x 6) (x 3) (x 0) (x 2) 0)
-           (quad (x 6) (x 3) (x 0) (x 2) 3 - quad (x 6) (x 3) (x 0) (x 2) 1)
-           (quad (x 6) (x 3) (x 0) (x 2) 0 - quad (x 6) (x 3) (x 0) (x 2) 1) < 0 := by
-  rw [kappa_rim6302]
-  have h := omega_mul_det3_0236_pos F p v y hxy hp hv0 hv1 hv2
-  linarith
 
-theorem omega_mul_kappa_rim6352_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
-    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
-    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
-    (ha3 : 0 < y 3 0) :
-    det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) *
-      det3 (quad (x 6) (x 3) (x 5) (x 2) 2 - quad (x 6) (x 3) (x 5) (x 2) 0)
-           (quad (x 6) (x 3) (x 5) (x 2) 3 - quad (x 6) (x 3) (x 5) (x 2) 1)
-           (quad (x 6) (x 3) (x 5) (x 2) 0 - quad (x 6) (x 3) (x 5) (x 2) 1) < 0 := by
-  rw [kappa_rim6352]
-  have h := omega_mul_det3_2356_pos F p v y hxy hp hv0 hv1 hv2 ha3
-  linarith
 
-theorem omega_mul_kappa_rim6052_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
-    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
-    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
-    0 < det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) *
-      det3 (quad (x 6) (x 0) (x 5) (x 2) 2 - quad (x 6) (x 0) (x 5) (x 2) 0)
-           (quad (x 6) (x 0) (x 5) (x 2) 3 - quad (x 6) (x 0) (x 5) (x 2) 1)
-           (quad (x 6) (x 0) (x 5) (x 2) 0 - quad (x 6) (x 0) (x 5) (x 2) 1) := by
-  rw [kappa_rim6052_canonical]
-  exact omega_mul_det3_0256_pos F p v y hxy hp hv0 hv1 hv2
 
-theorem omega_mul_kappa_rim6032_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
-    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
-    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1) :
-    0 < det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) *
-      det3 (quad (x 6) (x 0) (x 3) (x 2) 2 - quad (x 6) (x 0) (x 3) (x 2) 0)
-           (quad (x 6) (x 0) (x 3) (x 2) 3 - quad (x 6) (x 0) (x 3) (x 2) 1)
-           (quad (x 6) (x 0) (x 3) (x 2) 0 - quad (x 6) (x 0) (x 3) (x 2) 1) := by
-  rw [kappa_rim6032]
-  exact omega_mul_det3_0236_pos F p v y hxy hp hv0 hv1 hv2
 
-theorem omega_mul_kappa_rim6432_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (p : ℝ³) (v : Fin 3 → ℝ³) (y : Fin 7 → Fin 3 → ℝ)
-    (hxy : ∀ i, x i = p + ∑ e, y i e • v e) (hp : p = x 1)
-    (hv0 : v 0 = x 0 - x 1) (hv1 : v 1 = x 2 - x 1) (hv2 : v 2 = x 6 - x 1)
-    (ha3 : 0 < y 3 0) :
-    0 < det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) *
-      det3 (quad (x 6) (x 4) (x 3) (x 2) 2 - quad (x 6) (x 4) (x 3) (x 2) 0)
-           (quad (x 6) (x 4) (x 3) (x 2) 3 - quad (x 6) (x 4) (x 3) (x 2) 1)
-           (quad (x 6) (x 4) (x 3) (x 2) 0 - quad (x 6) (x 4) (x 3) (x 2) 1) := by
-  rw [kappa_rim6432]
-  exact omega_mul_det3_2346_pos F p v y hxy hp hv0 hv1 hv2 ha3
 
 -- =========================================================================
 -- AC3: Middles at the Corners (Item 4)

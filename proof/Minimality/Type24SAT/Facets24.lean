@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type24SAT.FrameInst24
+public import Minimality.Type24SAT.Sem24
 public import Minimality.SilS0XC
 
 @[expose] public section
@@ -33,7 +33,6 @@ def s0x_S24 : Fin 9 → Finset (Fin 7) :=
 /-- The `ℕ`-indexed configuration of Sem24. -/
 def ext (y : Fin 7 → ℝ³) (i : Nat) : ℝ³ := y (Fin.ofNat 7 i)
 
-theorem s24_mem : ∀ (t : Fin 9) (v : Fin 7), v ∈ s0x_S24 t ↔ v.val ∈ faces.getD t.val [] := by decide
 theorem s24_off : ∀ t : Fin 9, ∃ j i : Fin 7, j ∈ s0x_S24 t ∧ i ∉ s0x_S24 t := by decide +kernel
 
 /-- First, second, third vertex of facet `t` as elements of `Fin 7`. -/
@@ -223,35 +222,10 @@ theorem cv_pos24 (F : S0xFac 9 s0x_S24 y) (h : det3 (y 1 - y 0) (y 2 - y 0) (y 6
     rw [e]; exact mul_pos o f
   exact pos_of_mul_pos_right this n.le
 
-/-- **`Convex24` from the facets** and the chirality bracket `[0126] < 0`. -/
-theorem convex24_of_fac (F : S0xFac 9 s0x_S24 y) (h : det3 (y 1 - y 0) (y 2 - y 0) (y 6 - y 0) < 0) :
-    Convex24 (ext y) := by
-  intro p hp
-  have key : ∀ p ∈ cvList, ∃ (t : Fin 9) (v : Fin 7), p = (t.val, v.val) ∧ v ∉ s0x_S24 t := by decide +kernel
-  obtain ⟨t, v, rfl, hv⟩ := key p hp
-  exact cv_pos24 F h t v hv
 
-/-- **`QuadD` from the facets**: the quadrilateral `0345` lies in a plane. -/
-theorem quadD_of_fac (F : S0xFac 9 s0x_S24 y) : QuadD (ext y) := by
-  have n := nn24 F 3
-  have e := det_perp' (y 3 - y 0) (y 4 - y 0) (y 5 - y 0) (F.N 3) (perp24 F 3 3 0 (by decide) (by decide))
-    (perp24 F 3 4 0 (by decide) (by decide))
-  rw [perp24 F 3 5 0 (by decide) (by decide), mul_zero] at e
-  show det3 (y 3 - y 0) (y 4 - y 0) (y 5 - y 0) = 0
-  exact (mul_eq_zero.mp e).resolve_right n.ne'
 
 end
 
 
-/-- **The frame sign of F24c from convexity alone**: `cv_{C,3} > 0` (facet `C = 025`, vertex `3`) is
-`det (x3 - x0, x5 - x0, x2 - x0) > 0` (`sig 2 = 1`, `nrm 2 = (x2 - x0) x (x5 - x0)`). -/
-theorem hdet24 (x : Nat → ℝ³) (hC : Convex24 x) :
-    0 < V3.det (V3.sub (pt x 3) (pt x 0)) (V3.sub (pt x 5) (pt x 0)) (V3.sub (pt x 2) (pt x 0)) := by
-  have h := hC (2, 3) (by decide)
-  simp only at h
-  rw [cv_eq_cv3] at h
-  simp only [cv3, nrm3, fa_2, fb_2, fc_2, sg_2, V3.smul, V3.cr, V3.dot, V3.sub, V3.det] at h ⊢
-  push_cast at h
-  linarith
 
 end Minimality.T24.SAT

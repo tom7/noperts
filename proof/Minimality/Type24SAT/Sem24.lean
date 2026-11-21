@@ -80,12 +80,9 @@ def sigs : List Int := [1, -1, 1, 1, 1, -1, 1, -1, -1]
 /-- Orientation sign of facet `t`. -/
 def sig (t : Nat) : Int := sigs.getD t 0
 
-/-- The 35 convexity pairs `(t, v)`, `v` not on facet `t`, in the loop's convexity list order (`cvN` = entry `N`). -/
-def cvList : List (Nat × Nat) :=
-  (List.range 9).flatMap fun t =>
-    ((List.range 7).filter fun v => !(faces.getD t []).contains v).map fun v => (t, v)
 
 /-! ### The literals -/
+
 
 /-- A shape literal kind with its indices (the encoder's name decoded as the loop's reference decoder does). -/
 inductive Lit24 where
@@ -106,21 +103,8 @@ inductive Lit24 where
 section Coord
 variable {R : Type} [CommRing R]
 
-/-- Facet normal in coordinates. -/
-def nrm3 (P : Nat → V3 R) (t : Nat) : V3 R :=
-  V3.smul ((sig t : R)) (V3.cr (V3.sub (P (fb t)) (P (fa t))) (V3.sub (P (fc' t)) (P (fa t))))
 
-/-- The value of a literal in coordinates. -/
-def val3 (P : Nat → V3 R) : Lit24 → R
-  | .br a b c d => V3.det (V3.sub (P b) (P a)) (V3.sub (P c) (P a)) (V3.sub (P d) (P a))
-  | .lv a b c d e => V3.det (V3.sub (P b) (P a)) (V3.sub (P c) (P a)) (V3.sub (P d) (P e))
-  | .mv a b c d e f => V3.det (V3.sub (P a) (P b)) (V3.sub (P c) (P d)) (V3.sub (P e) (P f))
-  | .fc t p q => V3.dot (nrm3 P t) (V3.sub (P p) (P q))
-  | .nv r s t => V3.det (nrm3 P r) (nrm3 P s) (nrm3 P t)
-  | .kv t a b c d => V3.dot (V3.cr (V3.sub (P a) (P b)) (V3.sub (P c) (P d))) (nrm3 P t)
 
-/-- Convexity value in coordinates. -/
-def cv3 (P : Nat → V3 R) (t v : Nat) : R := -(V3.dot (nrm3 P t) (V3.sub (P v) (P (fa t))))
 
 end Coord
 
@@ -142,22 +126,14 @@ noncomputable def val (x : Nat → ℝ³) : Lit24 → ℝ
 /-- Convexity value of vertex `v` at facet `t` (positive on a strictly convex shape with these facets). -/
 noncomputable def cv (x : Nat → ℝ³) (t v : Nat) : ℝ := -⟪nrm x t, x v - x (fa t)⟫
 
-/-- The 35 strict convexity inequalities of the loop's convexity list. -/
-def Convex24 (x : Nat → ℝ³) : Prop := ∀ p ∈ cvList, 0 < cv x p.1 p.2
 
-/-- The planarity of the quadrilateral `D = 0345` (part of the type). -/
-def QuadD (x : Nat → ℝ³) : Prop := det3 (x 3 - x 0) (x 4 - x 0) (x 5 - x 0) = 0
 
-/-- A literal of a sign model: `(lit, s)` with `s = ±1` holds when `0 < s * val`. -/
-def LitHolds (x : Nat → ℝ³) (l : Lit24) (s : Int) : Prop := 0 < (s : ℝ) * val x l
 
 /-! ### Real = coordinates -/
 
 /-- The coordinate triple of a point. -/
 noncomputable def toV3 (a : ℝ³) : V3 ℝ := ⟨a 0, a 1, a 2⟩
 
-/-- The coordinates of a configuration. -/
-noncomputable def pt (x : Nat → ℝ³) (i : Nat) : V3 ℝ := toV3 (x i)
 
 theorem toV3_sub (a b : ℝ³) : toV3 (a - b) = V3.sub (toV3 a) (toV3 b) := by
   simp [toV3, V3.sub]
@@ -176,16 +152,8 @@ theorem det3_eq_det (a b c : ℝ³) : det3 a b c = V3.det (toV3 a) (toV3 b) (toV
   rw [det3_expand]
   simp only [V3.det, V3.dot, V3.cr, toV3]
 
-theorem toV3_nrm (x : Nat → ℝ³) (t : Nat) : toV3 (nrm x t) = nrm3 (pt x) t := by
-  simp only [nrm, nrm3, pt, toV3_smul, toV3_cross, toV3_sub]
 
-/-- The real values are the coordinate values. -/
-theorem val_eq_val3 (x : Nat → ℝ³) (l : Lit24) : val x l = val3 (pt x) l := by
-  cases l <;>
-    simp only [val, val3, det3_eq_det, inner_eq_dot, toV3_sub, toV3_cross, toV3_nrm, pt]
 
-theorem cv_eq_cv3 (x : Nat → ℝ³) (t v : Nat) : cv x t v = cv3 (pt x) t v := by
-  simp only [cv, cv3, inner_eq_dot, toV3_sub, toV3_nrm, pt]
 
 /-! ### Ring homomorphisms -/
 
@@ -208,50 +176,17 @@ theorem V3.map_det (f : R →+* S) (a b c : V3 R) :
     f (V3.det a b c) = V3.det (a.map f) (b.map f) (c.map f) := by
   simp only [V3.det, V3.map_dot, V3.map_cr]
 
-theorem nrm3_map (f : R →+* S) (P : Nat → V3 R) (t : Nat) :
-    (nrm3 P t).map f = nrm3 (fun i => (P i).map f) t := by
-  simp only [nrm3, V3.map_smul, V3.map_cr, V3.map_sub, map_intCast]
 
-/-- Ring homomorphisms commute with the literal values. -/
-theorem val3_map (f : R →+* S) (P : Nat → V3 R) (l : Lit24) :
-    val3 (fun i => (P i).map f) l = f (val3 P l) := by
-  cases l <;> simp only [val3, V3.map_det, V3.map_dot, V3.map_sub, V3.map_cr, nrm3_map]
 
-theorem cv3_map (f : R →+* S) (P : Nat → V3 R) (t v : Nat) :
-    cv3 (fun i => (P i).map f) t v = f (cv3 P t v) := by
-  simp only [cv3, map_neg, V3.map_dot, V3.map_sub, nrm3_map]
 
 end Map
 
 /-! ### Rational shapes -/
 
-/-- The real configuration of rational coordinates. -/
-noncomputable def ofQ (Q : Nat → V3 ℚ) (i : Nat) : ℝ³ := !₂[((Q i).x : ℝ), ((Q i).y : ℝ), ((Q i).z : ℝ)]
 
-theorem pt_ofQ (Q : Nat → V3 ℚ) : pt (ofQ Q) = fun i => (Q i).map (Rat.castHom ℝ) := by
-  funext i
-  simp [pt, ofQ, toV3, V3.map]
 
-/-- At a rational shape the value is the cast of the rational value. -/
-theorem val_ofQ (Q : Nat → V3 ℚ) (l : Lit24) : val (ofQ Q) l = ((val3 Q l : ℚ) : ℝ) := by
-  rw [val_eq_val3, pt_ofQ, val3_map]; rfl
 
-theorem cv_ofQ (Q : Nat → V3 ℚ) (t v : Nat) : cv (ofQ Q) t v = ((cv3 Q t v : ℚ) : ℝ) := by
-  rw [cv_eq_cv3, pt_ofQ, cv3_map]; rfl
 
-/-- A sign computed over `ℚ` is the real sign. -/
-theorem litHolds_ofQ (Q : Nat → V3 ℚ) (l : Lit24) (s : Int) (h : 0 < (s : ℚ) * val3 Q l) :
-    LitHolds (ofQ Q) l s := by
-  unfold LitHolds
-  rw [val_ofQ]
-  exact_mod_cast h
 
-/-- Convexity checked over `ℚ` is real convexity. -/
-theorem convex24_ofQ (Q : Nat → V3 ℚ) (h : cvList.all (fun p => decide (0 < cv3 Q p.1 p.2)) = true) :
-    Convex24 (ofQ Q) := by
-  intro p hp
-  have := List.all_eq_true.mp h p hp
-  rw [cv_ofQ]
-  exact_mod_cast of_decide_eq_true this
 
 end Minimality.T24.SAT

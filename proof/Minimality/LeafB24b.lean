@@ -39,13 +39,6 @@ theorem parPair_of_anti {p : ZMod 5 → ℝ³} {u : ℝ³} {c : ZMod 5 → ZMod 
   rw [hd]
   exact mul_neg_of_neg_of_pos (by linarith [hanti i j hj]) hpos
 
-/-- `DepthSepZ z 3 2` for the rim `0 4 6 2 5` in the wedge `z2 < z6 < z0`. -/
-theorem ds_B' {z : ZMod 5 → ℝ} (r1 : z 3 < z 2) (r2 : z 2 < z 4) (r3 : z 2 < z 0) (r4 : z 2 < z 1) :
-    DepthSepZ z 3 2 := by
-  have hv : ((3 : ZMod 5) - 2).val = 1 := by decide
-  unfold DepthSepZ; right; rw [hv]
-  refine ⟨fun s hs1 hs2 => ?_, fun s hs1 hs2 => ?_⟩ <;> interval_cases s <;>
-    first | exact r1 | exact r2 | exact r3 | exact r4
 
 /-! ### Persistence along the tilt `u + ε e` -/
 
@@ -156,21 +149,6 @@ theorem foot_ev {u e a b c : ℝ³} (hu : u ≠ 0)
         exact this.mono fun ε hε _ h2 => absurd h2 (not_lt.2 hε.le)
   exact key.filter_mono nhdsWithin_le_nhds
 
-/-- The key row of `hanti` (edge `4 → 6`, far corner `2` against vertex `5`) is one determinant:
-`det3 (x6 - x4) (x5 - x2) u < 0` (the linear form `A(c*)` of LEAFB24.md, up to the orientation sign). -/
-theorem hanti_key_iff {x : Fin 7 → ℝ³} {u : ℝ³} :
-    det3 (x (rimB (1 + 1)) - x (rimB 1)) (x (rimB 4) - x (rimB 1)) u
-        < det3 (x (rimB (1 + 1)) - x (rimB 1)) (x (rimB 3) - x (rimB 1)) u ↔
-      det3 (x 6 - x 4) (x 5 - x 2) u < 0 := by
-  have e : x 5 - x 2 = (x 5 - x 4) - (x 2 - x 4) := by abel
-  have h : det3 (x 6 - x 4) (x 5 - x 2) u
-      = det3 (x 6 - x 4) (x 5 - x 4) u - det3 (x 6 - x 4) (x 2 - x 4) u := by
-    rw [e]; simp only [det3_expand, PiLp.sub_apply]; ring
-  have r1 : rimB (1 + 1) = 6 := by decide
-  have r0 : rimB 1 = 4 := by decide
-  have r4 : rimB 4 = 5 := by decide
-  have r3 : rimB 3 = 2 := by decide
-  rw [r1, r0, r4, r3, h]; constructor <;> intro h <;> linarith
 
 end LeafB24
 end Minimality

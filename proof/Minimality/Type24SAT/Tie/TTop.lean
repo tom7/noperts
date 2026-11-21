@@ -42,16 +42,5 @@ theorem code_of_holdsW (chunks : List (List W)) (g : Geo) (n : Nat)
   rw [this] at hev
   exact hev
 
-/-- **Top theorem for a tie-file core.**  If the numbered clauses are unsatisfiable and every row passes its check, every
-type 24 shape of the chirality `Bq 0 1 2 6 < 0` that satisfies the class literals `U` is Rupert. -/
-theorem caseW_of_unsat (chunks : List (List W)) (rows : List (List Nat)) (U : List LitW)
-    (hA : CoreUnsat rows) (hall : ∀ ch ∈ rows, ∀ n ∈ ch, rowW U chunks n = true)
-    (F : S0xFac 9 s0x_S24 x) (hchir : det3 (x 1 - x 0) (x 2 - x 0) (x 6 - x 0) < 0)
-    (hU : ∀ l ∈ U, evalW (rhoW (geoF F)) l = true) : IsRupert (univ.image x) := by
-  by_contra hNR
-  have hG := geoOK_of F hchir
-  refine hA (fun i => evalW (rhoW (geoF F)) (nmOfW chunks i)) ?_
-  intro ch hch n hn
-  exact code_of_holdsW chunks _ n (rowWc_holds U F (inj_of_fac F) hNR hG hU (hall ch hch n hn))
 
 end Minimality.H24T.SAT

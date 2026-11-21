@@ -350,21 +350,4 @@ theorem isRupert_eg_h0 (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
   · exact isRupert_eg_h0k F hP hE hh hk
   · exact isRupert_eg_h0s F hP hE hh hs hk
 
-open Minimality.H24K.SAT in
-/-- **The piece `S` of the `C ∥ I` wall** (the image of `isRupert_eg_h0` under `σ = (2 6)(4 5)`):
-`⟪x 2 - x 0, x 6 - x 3⟫ = 0` (edge `02` perpendicular to edge `36`) and `⟪x 4 - x 0, x 2 - x 0⟫ > 0`. -/
-theorem isRupert_ci_h0 (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
-    (hC : ⟪F.N 2, x 6 - x 3⟫ = 0) (hh : ⟪x 2 - x 0, x 6 - x 3⟫ = 0)
-    (hs : 0 < ⟪x 4 - x 0, x 2 - x 0⟫) :
-    IsRupert (univ.image x) := by
-  have h := isRupert_eg_h0 (facSig F) (x := x ∘ wallSig)
-    (by show x 3 = x 5 + x 4 - x 0; rw [hP]; abel) hC hh hs
-  have e : Finset.univ.image (x ∘ wallSig) = Finset.univ.image x := by
-    ext y
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, Function.comp]
-    constructor
-    · rintro ⟨i, rfl⟩; exact ⟨_, rfl⟩
-    · rintro ⟨i, rfl⟩; exact ⟨wallSig i, by rw [wallSig_invol]⟩
-  rwa [e] at h
-
 end Minimality.T24.Par

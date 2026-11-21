@@ -1,8 +1,7 @@
 module
 
 public import Minimality.Type24SAT.Geo.KRel
-public import Minimality.Type24SAT.Geo.WitA
-public import Minimality.Type24SAT.Geo.RuleA
+public import Minimality.Type24SAT.Geo.Dec
 
 @[expose] public section
 
@@ -102,93 +101,15 @@ theorem geoOK_of (F : S0xFac 9 s0x_S24 x) (hchir : det3 (x 1 - x 0) (x 2 - x 0) 
 
 /-! ### The row checkers, the statement and the theorem -/
 
-/-- A packed row is not a `T(L,L)` row, or its check passes. -/
-def tllD (chunks : List (List V)) (n : Nat) : Bool :=
-  let r := decRow n
-  r.1 != 22 || tllOK r.2.1 (r.2.2.map (litOfC chunks))
 
-/-- A packed row is not a quad relation row (family 23), or its check passes. -/
-def krelD (chunks : List (List V)) (n : Nat) : Bool :=
-  let r := decRow n
-  r.1 != 23 || krelOK r.2.1 (r.2.2.map (litOfC chunks))
 
-/-- A packed row is not a unit row (family 26), or it is a single literal of the class list `U`. -/
-def unitD (U : List Lit) (chunks : List (List V)) (n : Nat) : Bool :=
-  let r := decRow n
-  r.1 != 26 || (r.2.2.length == 1 && (r.2.2.map (litOfC chunks)).all fun l => U.any (eqL l))
 
 /-- **The core is unsatisfiable**, as a statement about the numbered clauses (literal code `2 i + (1 if negative)`). -/
 def CoreUnsat (rows : List (List Nat)) : Prop :=
   ∀ ρ : Nat → Bool, ¬ ∀ ch ∈ rows, ∀ n ∈ ch, ∃ c ∈ (decRow n).2.2, ((c % 2 == 0) == ρ (c / 2)) = true
 
-/-- **Every row is true of the real data** of a non-Rupert type 24 shape, given the four checks and the class literals. -/
-theorem row_holds (chunks : List (List V)) (U : List Lit) (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geoF F))
-    (hNR : ¬ IsRupert (univ.image x)) (hU : ∀ l ∈ U, evalL (rho (geoF F)) l = true) (n : Nat)
-    (h1 : rowD chunks n = true) (h2 : ruleD chunks n = true) (h3 : witD chunks n = true)
-    (h4 : tllD chunks n = true) (h5 : unitD U chunks n = true) (h6 : krelD chunks n = true) :
-    Holds (rho (geoF F)) ((decRow n).2.2.map (litOfC chunks)) := by
-  unfold rowD at h1
-  unfold ruleD at h2
-  unfold witD at h3
-  unfold tllD at h4
-  unfold unitD at h5
-  unfold krelD at h6
-  simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, bne_iff_ne, ne_eq] at h1 h2 h3 h4 h5 h6
-  rcases h1 with ((((h | h) | h) | h) | h) | h
-  · rcases h2 with h' | h'
-    · exact absurd h h'
-    · exact ruleOK_sound F (inj_of_fac F) hNR hG h'
-  · rcases h3 with h' | h'
-    · exact absurd h h'
-    · exact witOK_sound F hG h'
-  · rcases h4 with h' | h'
-    · exact absurd h h'
-    · exact tllOK_sound hG h'
-  · rcases h5 with h' | h'
-    · exact absurd h h'
-    · obtain ⟨hlen, hall⟩ := h'
-      simp only [List.all_eq_true, List.any_eq_true] at hall
-      obtain ⟨l, hl⟩ : ∃ l, l ∈ (decRow n).2.2.map (litOfC chunks) := by
-        have : 0 < ((decRow n).2.2.map (litOfC chunks)).length := by simp; omega
-        exact ⟨_, List.getElem_mem this⟩
-      obtain ⟨u, hu, hequ⟩ := hall l hl
-      have : l = u := by simpa [eqL_iff] using hequ
-      exact ⟨l, hl, this ▸ hU u hu⟩
-  · rcases h6 with h' | h'
-    · exact absurd h h'
-    · exact krelOK_sound hG h'
-  · exact rowOK3_sound hG h
 
-/-- A clause that holds under `rho` gives the numbered-clause condition for the assignment `i -> rho (name i)`. -/
-theorem code_of_holds (chunks : List (List V)) (g : Geo) (n : Nat)
-    (h : Holds (rho g) ((decRow n).2.2.map (litOfC chunks))) :
-    ∃ c ∈ (decRow n).2.2, ((c % 2 == 0) == evalL (rho g) (nmOf chunks (c / 2))) = true := by
-  obtain ⟨l, hl, hev⟩ := h
-  obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hl
-  refine ⟨c, hc, ?_⟩
-  have : evalL (rho g) (litOfC chunks c) = ((c % 2 == 0) == evalL (rho g) (nmOf chunks (c / 2))) := by
-    unfold litOfC
-    by_cases hc2 : (c % 2 == 0) = true
-    · simp [hc2]
-    · have : (c % 2 == 0) = false := by simpa using hc2
-      simp [this, evalL_neg]
-  rw [this] at hev
-  exact hev
 
-/-- **Top theorem for a core.**  If the numbered clauses are unsatisfiable and every row passes its kernel check, every
-type 24 shape of the chirality `Bq 0 1 2 6 < 0` that satisfies the class literals `U` is Rupert. -/
-theorem case_of_unsat (chunks : List (List V)) (rows : List (List Nat)) (U : List Lit)
-    (hA : CoreUnsat rows)
-    (hall : ∀ ch ∈ rows, ∀ n ∈ ch, rowD chunks n = true ∧ ruleD chunks n = true ∧ witD chunks n = true ∧
-      tllD chunks n = true ∧ unitD U chunks n = true ∧ krelD chunks n = true)
-    (F : S0xFac 9 s0x_S24 x) (hchir : det3 (x 1 - x 0) (x 2 - x 0) (x 6 - x 0) < 0)
-    (hU : ∀ l ∈ U, evalL (rho (geoF F)) l = true) : IsRupert (univ.image x) := by
-  by_contra hNR
-  have hG := geoOK_of F hchir
-  refine hA (fun i => evalL (rho (geoF F)) (nmOf chunks i)) ?_
-  intro ch hch n hn
-  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := hall ch hch n hn
-  exact code_of_holds chunks _ n (row_holds chunks U F hG hNR hU n h1 h2 h3 h4 h5 h6)
 
 end Minimality.H24.SAT
 

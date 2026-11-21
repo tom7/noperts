@@ -650,37 +650,6 @@ theorem DSSideCovered.regions {x : Fin 7 → ℝ³} (h : DSSideCovered x) : DSRe
     · exact Or.inl ⟨k, i, r, hR, hS'.mono tp (tt _)⟩
     · exact Or.inr (Or.inr ⟨k, i, r, hR, hS'.mono tp (tt _)⟩)
 
-/-- Side-safety in the old sense (20.8′) gives DS side-safety. -/
-theorem SideCovered.ds {x : Fin 7 → ℝ³} (h : SideCovered x) : DSSideCovered x := by
-  obtain ⟨hab, hac, hbc⟩ := h
-  refine ⟨?_, ?_, ?_⟩
-  · rcases hab with ⟨k, i, r, hR, hS⟩ | ⟨k, i, r, hR, hS⟩
-    · exact Or.inl ⟨k, i, r, hR, hS.dsSafeQ⟩
-    · exact Or.inr ⟨k, i, r, hR, hS.dsSafeQ⟩
-  · rcases hac with ⟨k, i, r, hR, hS⟩ | ⟨k, i, r, hR, hS⟩
-    · refine Or.inl ⟨k, i, r, hR, ?_⟩
-      intro g p q hg _ h2 hinj
-      have e : (fun i => oblX6 x (r i) * g + oblX2 x (r i) * p + oblX0 x (r i) * q) =
-          fun i => oblX6 x (r i) * g + oblX0 x (r i) * q + oblX2 x (r i) * p :=
-        funext fun i => by ring
-      rw [e] at hinj ⊢
-      exact Or.inl (hS g q p hg h2 hinj)
-    · refine Or.inr ⟨k, i, r, hR, ?_⟩
-      intro g p q hg _ h2 hinj
-      have e : (fun i => oblX0 x (r i) * g + oblX2 x (r i) * p + oblX6 x (r i) * q) =
-          fun i => oblX0 x (r i) * g + oblX6 x (r i) * q + oblX2 x (r i) * p :=
-        funext fun i => by ring
-      rw [e] at hinj ⊢
-      exact Or.inl (hS g q p hg h2 hinj)
-  · rcases hbc with ⟨k, i, r, hR, hS⟩ | ⟨k, i, r, hR, hS⟩
-    · refine Or.inl ⟨k, i, r, hR, ?_⟩
-      intro g p q hg _ h2 hinj
-      have e : (fun i => oblX2 x (r i) * g + oblX0 x (r i) * p + oblX6 x (r i) * q) =
-          fun i => oblX2 x (r i) * g + oblX6 x (r i) * q + oblX0 x (r i) * p :=
-        funext fun i => by ring
-      rw [e] at hinj ⊢
-      exact Or.inl (hS g q p hg h2 hinj)
-    · exact Or.inr ⟨k, i, r, hR, hS.dsSafeQ⟩
 
 end Type24
 

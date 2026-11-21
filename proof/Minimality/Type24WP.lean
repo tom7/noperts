@@ -294,8 +294,6 @@ theorem isRupert_wp6 {x : Fin 7 → ℝ³} (T : Type24 x) {t : ℝ} (ht : 0 < t)
     (hI : WPItem x 6 2 5 4 t) (hC : WPChain x 6 2 5 t) : IsRupert (univ.image x) :=
   isRupert_wp T (by decide) (by decide) (by decide) (by decide) ht hI hC
 
-theorem wpChain2_iff {x : Fin 7 → ℝ³} {t : ℝ} : Type24.WPChain2 x t ↔ WPChain x 2 6 4 t :=
-  Iff.rfl
 
 /-! ### M1 with WP discharged -/
 
@@ -481,122 +479,11 @@ theorem l7_frame_radius {o ex ey ec Py Px Pg Ph u : ℝ³} {ω Xg Yg Cg Xh Yh Ch
     have := radius_pos hxy hxc hyc hδg
     linarith
 
-namespace Type24
 
-variable {x : Fin 7 → ℝ³} (T : Type24 x)
-include T
 
-theorem rep_ca (v : Fin 7) : x v = x 1 + oblX6 x v • (x 6 - x 1) + oblX0 x v • (x 0 - x 1) +
-    oblX2 x v • (x 2 - x 1) := by
-  conv_lhs => rw [T.rep v]
-  abel
 
-theorem ne_ea : x 0 - x 1 ≠ 0 := sub_ne_zero.mpr (T.inj.ne (by decide))
-theorem ne_eb : x 2 - x 1 ≠ 0 := sub_ne_zero.mpr (T.inj.ne (by decide))
-theorem ne_ec : x 6 - x 1 ≠ 0 := sub_ne_zero.mpr (T.inj.ne (by decide))
 
-omit T in
-theorem mem345 : ∀ h : Fin 7, h ∈ ({3, 4, 5} : Finset (Fin 7)) →
-    h ∉ ({1, 2, 6} : Finset (Fin 7)) ∧ h ∉ ({0, 1, 6} : Finset (Fin 7)) ∧
-      h ∉ ({0, 1, 2} : Finset (Fin 7)) := by decide
 
-omit T in
-theorem add_sub_one' (v : Fin 7) : x v = x 1 + (x v - x 1) := by abel
-
-/-- **L7 for `T′(2,6) = 012/236` at an exact corner (Lemma 15.15).**  With the rim `(0, 2, 3, h)`
-(`(y, x, g) = (0, 2, 3)`, `h ∈ {4, 5}`), `b3 ≥ 1` and `a_h ≥ 1`, the test does not fail. -/
-theorem l7_t26 (hE : ExactCorner x) (h3 : 0 < omega3 x) {h : Fin 7}
-    (hh : h ∈ ({3, 4, 5} : Finset (Fin 7)))
-    (hb3 : 1 ≤ oblX2 x 3) (hah : 1 ≤ oblX0 x h) :
-    ¬ Fails4 (x 0) (x 3) (x 2) (x h) (viewT26 x) := by
-  obtain ⟨e1, e2, e3⟩ := hE
-  exact l7_frame_corner h3 T.ne_eb T.ne_ea (by rw [real_inner_comm]; exact e1) e3 e2
-    (add_sub_one' 0) (add_sub_one' 2) (T.rep2 3) (T.rep2 h) (by simp only [viewT26]; abel)
-    hb3 (T.X0_pos (v := 3) (by decide)) (T.X2_pos (mem345 h hh).2.1) hah
-
-/-- **L7 for `T′(6,2) = 016/236` at an exact corner** (the mirror): rim `(0, 6, 3, h)`,
-`c3 ≥ 1`, `a_h ≥ 1`. -/
-theorem l7_t62 (hE : ExactCorner x) (h3 : 0 < omega3 x) {h : Fin 7}
-    (hh : h ∈ ({3, 4, 5} : Finset (Fin 7))) (hc3 : 1 ≤ oblX6 x 3) (hah : 1 ≤ oblX0 x h) :
-    ¬ Fails4 (x 0) (x 3) (x 6) (x h) (viewT62 x) := by
-  obtain ⟨e1, e2, e3⟩ := hE
-  exact l7_frame_corner h3 T.ne_ec T.ne_ea (by rw [real_inner_comm]; exact e2)
-    (by rw [real_inner_comm]; exact e3) e1
-    (add_sub_one' 0) (add_sub_one' 6) (T.rep_ca 3) (T.rep_ca h) (by simp only [viewT62]; abel)
-    hc3 (T.X0_pos (v := 3) (by decide)) (T.X6_pos (mem345 h hh).2.2) hah
-
-/-- **L7 for `T′(0,6) = 012/046` at an exact corner**: rim `(2, 0, 4, h)`
-(`(y, x, g) = (2, 0, 4)`), `a4 ≥ 1`, `b_h ≥ 1`. -/
-theorem l7_t06 (hE : ExactCorner x) (h4 : 0 < omega4 x) {h : Fin 7}
-    (hh : h ∈ ({3, 4, 5} : Finset (Fin 7))) (ha4 : 1 ≤ oblX0 x 4) (hbh : 1 ≤ oblX2 x h) :
-    ¬ Fails4 (x 2) (x 4) (x 0) (x h) (viewT06 x) := by
-  obtain ⟨e1, e2, e3⟩ := hE
-  exact l7_frame_corner h4 T.ne_ea T.ne_eb e1 e2 e3
-    (add_sub_one' 2) (add_sub_one' 0) (T.rep 4) (T.rep h) rfl
-    ha4 (T.X2_pos (v := 4) (by decide)) (T.X0_pos (mem345 h hh).1) hbh
-
-/-- **L7 for `T′(2,6)` off the corner (17.8′)**: at every metric whose three cosines at `1` are
-at most `δ`, with `δ` below both radii of 17.8′ (multiplied out, `L_a, L_b, L_c` the axis
-lengths), the rim `(0, 2, 3, h)` does not fail. -/
-theorem l7_t26_radius {h : Fin 7} {δ : ℝ}
-    (hab : |⟪x 2 - x 1, x 0 - x 1⟫| ≤ δ * (‖x 2 - x 1‖ * ‖x 0 - x 1‖))
-    (hbc : |⟪x 2 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 2 - x 1‖ * ‖x 6 - x 1‖))
-    (hac : |⟪x 0 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 0 - x 1‖ * ‖x 6 - x 1‖))
-    (hδh : δ * (|omega3 x * (oblX0 x h - 1) + oblX2 x h| * (‖x 2 - x 1‖ * ‖x 0 - x 1‖) +
-      |omega3 x * oblX6 x h| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖) +
-      |oblX6 x h| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖)) <
-        omega3 x * oblX2 x h * ‖x 2 - x 1‖ ^ 2 + (oblX0 x h - 1) * ‖x 0 - x 1‖ ^ 2)
-    (hδg : δ * (|omega3 x * oblX0 x 3 + oblX2 x 3 - 1| * (‖x 2 - x 1‖ * ‖x 0 - x 1‖) +
-      |omega3 x * oblX6 x 3| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖) +
-      |oblX6 x 3| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖)) <
-        omega3 x * (oblX2 x 3 - 1) * ‖x 2 - x 1‖ ^ 2 + oblX0 x 3 * ‖x 0 - x 1‖ ^ 2) :
-    ¬ Fails4 (x 0) (x 3) (x 2) (x h) (viewT26 x) :=
-  l7_frame_radius hab hbc hac (add_sub_one' 0) (add_sub_one' 2) (T.rep2 3) (T.rep2 h)
-    (by simp only [viewT26]; abel) hδh hδg
-
-end Type24
-
-/-- **L7 for `T′(2,6)`, Rupert form, at an exact corner**: with the rim `(0, 2, 3, h)` certified
-up to its depth pattern, `b3 ≥ 1` and `a_h ≥ 1`, the point set is Rupert. -/
-theorem isRupert_l7_t26 {x : Fin 7 → ℝ³} (T : Type24 x) (hE : ExactCorner x)
-    (h3 : 0 < omega3 x) {h : Fin 7} (hh : h ∈ ({3, 4, 5} : Finset (Fin 7)))
-    (hb3 : 1 ≤ oblX2 x 3) (hah : 1 ≤ oblX0 x h)
-    (hT : QuadTest' (univ.image x) (viewT26 x) (x 0) (x 2) (x 3) (x h)) :
-    IsRupert (univ.image x) :=
-  hT.isRupert (T.l7_t26 hE h3 hh hb3 hah)
-
-/-- **L7 for `T′(6,2)`, Rupert form, at an exact corner** (rim `(0, 6, 3, h)`). -/
-theorem isRupert_l7_t62 {x : Fin 7 → ℝ³} (T : Type24 x) (hE : ExactCorner x)
-    (h3 : 0 < omega3 x) {h : Fin 7} (hh : h ∈ ({3, 4, 5} : Finset (Fin 7)))
-    (hc3 : 1 ≤ oblX6 x 3) (hah : 1 ≤ oblX0 x h)
-    (hT : QuadTest' (univ.image x) (viewT62 x) (x 0) (x 6) (x 3) (x h)) :
-    IsRupert (univ.image x) :=
-  hT.isRupert (T.l7_t62 hE h3 hh hc3 hah)
-
-/-- **L7 for `T′(0,6)`, Rupert form, at an exact corner** (rim `(2, 0, 4, h)`). -/
-theorem isRupert_l7_t06 {x : Fin 7 → ℝ³} (T : Type24 x) (hE : ExactCorner x)
-    (h4 : 0 < omega4 x) {h : Fin 7} (hh : h ∈ ({3, 4, 5} : Finset (Fin 7)))
-    (ha4 : 1 ≤ oblX0 x 4) (hbh : 1 ≤ oblX2 x h)
-    (hT : QuadTest' (univ.image x) (viewT06 x) (x 2) (x 0) (x 4) (x h)) :
-    IsRupert (univ.image x) :=
-  hT.isRupert (T.l7_t06 hE h4 hh ha4 hbh)
-
-/-- **L7 for `T′(2,6)`, Rupert form, off the corner (17.8′).** -/
-theorem isRupert_l7_t26_radius {x : Fin 7 → ℝ³} (T : Type24 x) {h : Fin 7} {δ : ℝ}
-    (hab : |⟪x 2 - x 1, x 0 - x 1⟫| ≤ δ * (‖x 2 - x 1‖ * ‖x 0 - x 1‖))
-    (hbc : |⟪x 2 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 2 - x 1‖ * ‖x 6 - x 1‖))
-    (hac : |⟪x 0 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 0 - x 1‖ * ‖x 6 - x 1‖))
-    (hδh : δ * (|omega3 x * (oblX0 x h - 1) + oblX2 x h| * (‖x 2 - x 1‖ * ‖x 0 - x 1‖) +
-      |omega3 x * oblX6 x h| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖) +
-      |oblX6 x h| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖)) <
-        omega3 x * oblX2 x h * ‖x 2 - x 1‖ ^ 2 + (oblX0 x h - 1) * ‖x 0 - x 1‖ ^ 2)
-    (hδg : δ * (|omega3 x * oblX0 x 3 + oblX2 x 3 - 1| * (‖x 2 - x 1‖ * ‖x 0 - x 1‖) +
-      |omega3 x * oblX6 x 3| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖) +
-      |oblX6 x 3| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖)) <
-        omega3 x * (oblX2 x 3 - 1) * ‖x 2 - x 1‖ ^ 2 + oblX0 x 3 * ‖x 0 - x 1‖ ^ 2)
-    (hT : QuadTest' (univ.image x) (viewT26 x) (x 0) (x 2) (x 3) (x h)) :
-    IsRupert (univ.image x) :=
-  hT.isRupert (T.l7_t26_radius hab hbc hac hδh hδg)
 
 /-! ### The arc criterion 17.16′ on circle 2 -/
 
@@ -640,44 +527,8 @@ theorem arc_criterion2 (hE : ExactCorner x) {ι : Type*} (I : Finset ι) (α β 
   rw [T.fails4_circle2_iff hE (hα j hj), T.nu_eq (hα j hj)]
   exact hn
 
-/-- **WP_2's chain in the pencil**: `ζ_ν(6) < ζ_ν(4) < ζ_ν(0) < ζ_ν(2)`. -/
-def WPPencil (x : Fin 7 → ℝ³) (ν : ℝ) : Prop :=
-  pencil2 x ν 6 < pencil2 x ν 4 ∧ pencil2 x ν 4 < pencil2 x ν 0 ∧ pencil2 x ν 0 < pencil2 x ν 2
 
-/-- **17.14 (d) for WP_2**: at an exact corner, WP_2's chain at the arc view `t` depends on
-`ν = t κ` only. -/
-theorem wpChain2_iff_pencil (hE : ExactCorner x) (t : ℝ) :
-    WPChain2 x t ↔ WPPencil x (t * (⟪x 2 - x 1, x 2 - x 1⟫ / ⟪x 0 - x 1, x 0 - x 1⟫)) := by
-  have ga := T.ga_pos
-  have hp : ∀ v : Fin 7, ⟪x v, (x 0 - x 1) + t • (x 2 - x 1)⟫ =
-      ⟪x 1, (x 0 - x 1) + t • (x 2 - x 1)⟫ + ⟪x 0 - x 1, x 0 - x 1⟫ *
-        pencil2 x (t * (⟪x 2 - x 1, x 2 - x 1⟫ / ⟪x 0 - x 1, x 0 - x 1⟫)) v := by
-    intro v
-    have hw : (x 0 - x 1) + t • (x 2 - x 1) =
-        (1 : ℝ) • (x 0 - x 1) + t • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) := by module
-    rw [hw, T.depth_corner hE v]
-    simp only [pencil2]
-    field_simp
-    ring
-  simp only [WPChain2, WPPencil]
-  rw [hp 6, hp 4, hp 0, hp 2]
-  simp only [add_lt_add_iff_left, mul_lt_mul_iff_right₀ ga]
 
-/-- **The arc criterion with WP_2 (17.16′).**  As `arc_criterion2`, where for some `κ` WP_2's
-pencil chain may hold instead at some `ν = t κ` with `t` in the face interval `(lo, hi)`; then
-some item does not fail or WP_2's depth chain holds at an arc view in `(lo, hi)`. -/
-theorem arc_criterion2_wp (hE : ExactCorner x) {ι : Type*} (I : Finset ι) (α β : ι → ℝ)
-    (hα : ∀ j ∈ I, 0 < α j) (d₀ d₁ e₀ e₁ : ι → Fin 7) {lo hi : ℝ}
-    (hcov : ∀ κ, 0 < κ →
-      (∃ j ∈ I, ¬ PencilFails x (β j / α j * κ) (d₀ j) (d₁ j) (e₀ j) (e₁ j)) ∨
-        ∃ t, lo < t ∧ t < hi ∧ WPPencil x (t * κ)) :
-    (∃ j ∈ I, ¬ Fails4 (x (d₀ j)) (x (d₁ j)) (x (e₀ j)) (x (e₁ j))
-      (α j • (x 0 - x 1) + β j • (x 2 - x 1))) ∨ ∃ t, lo < t ∧ t < hi ∧ WPChain2 x t := by
-  rcases hcov _ (div_pos T.gb_pos T.ga_pos) with ⟨j, hj, hn⟩ | ⟨t, h1, h2, hw⟩
-  · refine Or.inl ⟨j, hj, ?_⟩
-    rw [T.fails4_circle2_iff hE (hα j hj), T.nu_eq (hα j hj)]
-    exact hn
-  · exact Or.inr ⟨t, h1, h2, (T.wpChain2_iff_pencil hE t).mpr hw⟩
 
 /-- **The pair form of the arc criterion (17.16′ with the pair rule), at an exact corner.**
 Test 1 at the view `α1 e_a + β1 e_b` fails in the pencil only at `ν ≤ m1`, test 2 at
@@ -703,30 +554,7 @@ theorem circle2_pair (hE : ExactCorner x) {α1 β1 α2 β2 m1 m2 : ℝ} (hα1 : 
 
 end Type24
 
-/-- **The arc criterion on circle 2, Rupert form.**  Every item certified up to its depth
-pattern (`QuadTest'` with the rim `(d₀, e₀, d₁, e₁)`) and `∩ Φ_τ = ∅` make `K` Rupert. -/
-theorem isRupert_arc_criterion2 {x : Fin 7 → ℝ³} (T : Type24 x) (hE : ExactCorner x)
-    {ι : Type*} (I : Finset ι) (α β : ι → ℝ) (hα : ∀ j ∈ I, 0 < α j) (d₀ d₁ e₀ e₁ : ι → Fin 7)
-    (hcov : ∀ κ, 0 < κ → ∃ j ∈ I, ¬ Type24.PencilFails x (β j / α j * κ) (d₀ j) (d₁ j) (e₀ j) (e₁ j))
-    (hQ : ∀ j ∈ I, QuadTest' (univ.image x) (α j • (x 0 - x 1) + β j • (x 2 - x 1))
-      (x (d₀ j)) (x (e₀ j)) (x (d₁ j)) (x (e₁ j))) :
-    IsRupert (univ.image x) := by
-  obtain ⟨j, hj, hn⟩ := T.arc_criterion2 hE I α β hα d₀ d₁ e₀ e₁ hcov
-  exact (hQ j hj).isRupert hn
 
-/-- **The pair form on circle 2, Rupert form.** -/
-theorem isRupert_circle2_pair {x : Fin 7 → ℝ³} (T : Type24 x) (hE : ExactCorner x)
-    {α1 β1 α2 β2 m1 m2 : ℝ} (hα1 : 0 < α1) (hβ1 : 0 < β1) (hα2 : 0 < α2) (hβ2 : 0 < β2)
-    {d₀ d₁ e₀ e₁ d₀' d₁' e₀' e₁' : Fin 7}
-    (hF1 : ∀ ν, 0 < ν → Type24.PencilFails x ν d₀ d₁ e₀ e₁ → ν ≤ m1)
-    (hF2 : ∀ ν, 0 < ν → Type24.PencilFails x ν d₀' d₁' e₀' e₁' → m2 ≤ ν)
-    (hcov : m1 * α1 * β2 < m2 * α2 * β1)
-    (hQ1 : QuadTest' (univ.image x) (α1 • (x 0 - x 1) + β1 • (x 2 - x 1)) (x d₀) (x e₀) (x d₁)
-      (x e₁))
-    (hQ2 : QuadTest' (univ.image x) (α2 • (x 0 - x 1) + β2 • (x 2 - x 1)) (x d₀') (x e₀')
-      (x d₁') (x e₁')) :
-    IsRupert (univ.image x) :=
-  isRupert_of_two_tests hQ1 hQ2 (T.circle2_pair hE hα1 hβ1 hα2 hβ2 hF1 hF2 hcov)
 
 /-! ### Radii: 17.1, 17.1′ and WP's radius (17.11) -/
 
@@ -783,79 +611,9 @@ theorem wp_form (v w : Fin 7) (t : ℝ) :
   rw [hw, inner_frame_diff, real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq]
   ring
 
-/-- **WP_2 near the corner (17.1′ for WP's three forms).**  If the three cosines at `1` are at
-most `δ` (`|h_ij| ≤ δ L_i L_j`) and `δ ‖β_k‖ < ℓ⁰_k` for WP's forms `z4 − z6`, `z0 − z4`,
-`z2 − z0` at the view `t` (multiplied out), WP_2's depth chain holds there. -/
-theorem wpChain2_radius {t δ : ℝ}
-    (hab : |⟪x 0 - x 1, x 2 - x 1⟫| ≤ δ * (‖x 0 - x 1‖ * ‖x 2 - x 1‖))
-    (hac : |⟪x 0 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 0 - x 1‖ * ‖x 6 - x 1‖))
-    (hbc : |⟪x 2 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 2 - x 1‖ * ‖x 6 - x 1‖))
-    (r1 : δ * (|oblX2 x 4 + t * oblX0 x 4| * (‖x 0 - x 1‖ * ‖x 2 - x 1‖) +
-      |oblX6 x 4 - 1| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖) +
-      |t * (oblX6 x 4 - 1)| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖)) <
-        oblX0 x 4 * ‖x 0 - x 1‖ ^ 2 + t * oblX2 x 4 * ‖x 2 - x 1‖ ^ 2)
-    (r2 : δ * (|t * (1 - oblX0 x 4) - oblX2 x 4| * (‖x 0 - x 1‖ * ‖x 2 - x 1‖) +
-      |oblX6 x 4| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖) +
-      |t * oblX6 x 4| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖)) <
-        (1 - oblX0 x 4) * ‖x 0 - x 1‖ ^ 2 - t * oblX2 x 4 * ‖x 2 - x 1‖ ^ 2)
-    (r3 : δ * (|1 - t| * (‖x 0 - x 1‖ * ‖x 2 - x 1‖)) <
-        t * ‖x 2 - x 1‖ ^ 2 - ‖x 0 - x 1‖ ^ 2) :
-    WPChain2 x t := by
-  have a0 := T.oblX0_zero'; have b0 := Type24.oblX2_zero' (x := x)
-  have c0' := Type24.oblX6_zero (x := x)
-  have a2 := Type24.oblX0_two (x := x); have b2 := T.oblX2_two
-  have c2 := Type24.oblX6_two (x := x)
-  have a6 := Type24.oblX0_six (x := x); have b6 := Type24.oblX2_six (x := x)
-  have c6 := T.oblX6_six
-  refine ⟨?_, ?_, ?_⟩
-  · have e := T.wp_form 4 6 t
-    rw [a6, b6, c6] at e
-    have := radius_pos (b1 := oblX2 x 4 - 0 + t * (oblX0 x 4 - 0)) (b2 := oblX6 x 4 - 1)
-      (b3 := t * (oblX6 x 4 - 1)) hab hac hbc
-      (l0 := (oblX0 x 4 - 0) * ‖x 0 - x 1‖ ^ 2 + t * (oblX2 x 4 - 0) * ‖x 2 - x 1‖ ^ 2)
-      (by simpa only [sub_zero] using r1)
-    linarith
-  · have e := T.wp_form 0 4 t
-    rw [a0, b0, c0'] at e
-    have := radius_pos (b1 := 0 - oblX2 x 4 + t * (1 - oblX0 x 4)) (b2 := 0 - oblX6 x 4)
-      (b3 := t * (0 - oblX6 x 4)) hab hac hbc
-      (l0 := (1 - oblX0 x 4) * ‖x 0 - x 1‖ ^ 2 + t * (0 - oblX2 x 4) * ‖x 2 - x 1‖ ^ 2)
-      (by
-        have e1 : |0 - oblX2 x 4 + t * (1 - oblX0 x 4)| = |t * (1 - oblX0 x 4) - oblX2 x 4| := by
-          ring_nf
-        have e2 : |0 - oblX6 x 4| = |oblX6 x 4| := by rw [zero_sub, abs_neg]
-        have e3 : |t * (0 - oblX6 x 4)| = |t * oblX6 x 4| := by
-          rw [zero_sub, mul_neg, abs_neg]
-        rw [e1, e3, e2]; linarith)
-    linarith
-  · have e := T.wp_form 2 0 t
-    rw [a0, b0, c0', a2, b2, c2] at e
-    have := radius_pos (b1 := 1 - 0 + t * (0 - 1)) (b2 := 0 - 0) (b3 := t * (0 - 0)) hab hac hbc
-      (l0 := (0 - 1) * ‖x 0 - x 1‖ ^ 2 + t * (1 - 0) * ‖x 2 - x 1‖ ^ 2)
-      (by
-        have e1 : |1 - 0 + t * (0 - 1)| = |1 - t| := by ring_nf
-        rw [e1]; simp only [sub_self, mul_zero, abs_zero, zero_mul, add_zero]; linarith)
-    linarith
 
 end Type24
 
-/-- **WP_2 as a Rupert item near the corner (17.1′, 17.11).** -/
-theorem isRupert_wp2_radius {x : Fin 7 → ℝ³} (T : Type24 x) {t δ : ℝ} (ht : 0 < t)
-    (hab : |⟪x 0 - x 1, x 2 - x 1⟫| ≤ δ * (‖x 0 - x 1‖ * ‖x 2 - x 1‖))
-    (hac : |⟪x 0 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 0 - x 1‖ * ‖x 6 - x 1‖))
-    (hbc : |⟪x 2 - x 1, x 6 - x 1⟫| ≤ δ * (‖x 2 - x 1‖ * ‖x 6 - x 1‖))
-    (r1 : δ * (|oblX2 x 4 + t * oblX0 x 4| * (‖x 0 - x 1‖ * ‖x 2 - x 1‖) +
-      |oblX6 x 4 - 1| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖) +
-      |t * (oblX6 x 4 - 1)| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖)) <
-        oblX0 x 4 * ‖x 0 - x 1‖ ^ 2 + t * oblX2 x 4 * ‖x 2 - x 1‖ ^ 2)
-    (r2 : δ * (|t * (1 - oblX0 x 4) - oblX2 x 4| * (‖x 0 - x 1‖ * ‖x 2 - x 1‖) +
-      |oblX6 x 4| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖) +
-      |t * oblX6 x 4| * (‖x 2 - x 1‖ * ‖x 6 - x 1‖)) <
-        (1 - oblX0 x 4) * ‖x 0 - x 1‖ ^ 2 - t * oblX2 x 4 * ‖x 2 - x 1‖ ^ 2)
-    (r3 : δ * (|1 - t| * (‖x 0 - x 1‖ * ‖x 2 - x 1‖)) <
-        t * ‖x 2 - x 1‖ ^ 2 - ‖x 0 - x 1‖ ^ 2)
-    (hI : WPItem x 2 6 4 5 t) : IsRupert (univ.image x) :=
-  isRupert_wp2 T ht hI (T.wpChain2_radius hab hac hbc r1 r2 r3)
 
 namespace Type24
 

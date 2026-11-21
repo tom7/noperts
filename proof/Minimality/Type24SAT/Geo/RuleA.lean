@@ -42,9 +42,5 @@ theorem ruleOK_sound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hx : Functi
     simp [lfalse, evalL, e]
   · rw [← Bool.not_eq_true]; exact fun he' => hn ⟨l, h0, he'⟩
 
-/-- A packed row is not a rule row, or its rule check passes. -/
-def ruleD (chunks : List (List V)) (n : Nat) : Bool :=
-  let r := decRow n
-  r.1 != 17 || ruleOK r.2.1 (r.2.2.map (litOfC chunks))
 
 end Minimality.H24.SAT

@@ -272,41 +272,5 @@ theorem isRupert_eg_notR2 (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
       exact Or.inr (rect_slide_right F hP hE hw hs' h6)
     · exact Or.inl (rect_slide_left F hP hE hw hs' (not_le.1 h2))
 
-/-- **The `E ∥ G` stratum from the SAT-level facts** (outside `R''`): the zero literals `KD0435 = KD0534 = 0` and
-`E:23 = 0` (`E:25 = 0` is not needed). -/
-theorem isRupert_parEG_of_notR2 (F : S0xFac 9 s0x_S24 x)
-    (hD : det3 (x 0 - x 4) (x 3 - x 5) (F.N 3) = 0 ∧ det3 (x 0 - x 5) (x 3 - x 4) (F.N 3) = 0)
-    (hEG : ⟪F.N 4, x 2 - x 3⟫ = 0)
-    (hR : ¬ (⟪x 5 - x 0, x 2 - x 3⟫ = 0 ∧ ⟪x 5 - x 0, x 6 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 6 - x 0, x 2 - x 3⟫ ∧
-      ⟪x 2 - x 0, x 4 - x 0⟫ ≤ 0 ∧ ⟪x 4 - x 0, x 4 - x 0⟫ ≤ ⟪x 6 - x 0, x 4 - x 0⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_eg_notR2 F (par_of_KD F hD) hEG hR
-
-open Minimality.H24K.SAT in
-/-- **The `C ∥ I` stratum outside `R''`** (the image of `isRupert_eg_notR2` under `σ = (2 6)(4 5)`). -/
-theorem isRupert_ci_notR2 (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
-    (hC : ⟪F.N 2, x 6 - x 3⟫ = 0)
-    (hR : ¬ (⟪x 4 - x 0, x 6 - x 3⟫ = 0 ∧ ⟪x 4 - x 0, x 2 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 2 - x 0, x 6 - x 3⟫ ∧
-      ⟪x 6 - x 0, x 5 - x 0⟫ ≤ 0 ∧ ⟪x 5 - x 0, x 5 - x 0⟫ ≤ ⟪x 2 - x 0, x 5 - x 0⟫)) :
-    IsRupert (univ.image x) := by
-  have h := isRupert_eg_notR2 (facSig F) (x := x ∘ wallSig)
-    (by show x 3 = x 5 + x 4 - x 0; rw [hP]; abel) hC hR
-  have e : Finset.univ.image (x ∘ wallSig) = Finset.univ.image x := by
-    ext y
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, Function.comp]
-    constructor
-    · rintro ⟨i, rfl⟩; exact ⟨_, rfl⟩
-    · rintro ⟨i, rfl⟩; exact ⟨wallSig i, by rw [wallSig_invol]⟩
-  rwa [e] at h
-
-/-- **The `C ∥ I` stratum from the SAT-level facts** (outside `R''`): `KD0435 = KD0534 = 0` and `C:36 = 0`. -/
-theorem isRupert_parCI_of_notR2 (F : S0xFac 9 s0x_S24 x)
-    (hD : det3 (x 0 - x 4) (x 3 - x 5) (F.N 3) = 0 ∧ det3 (x 0 - x 5) (x 3 - x 4) (F.N 3) = 0)
-    (hCI : ⟪F.N 2, x 3 - x 6⟫ = 0)
-    (hR : ¬ (⟪x 4 - x 0, x 6 - x 3⟫ = 0 ∧ ⟪x 4 - x 0, x 2 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 2 - x 0, x 6 - x 3⟫ ∧
-      ⟪x 6 - x 0, x 5 - x 0⟫ ≤ 0 ∧ ⟪x 5 - x 0, x 5 - x 0⟫ ≤ ⟪x 2 - x 0, x 5 - x 0⟫)) :
-    IsRupert (univ.image x) :=
-  isRupert_ci_notR2 F (par_of_KD F hD)
-    (by rw [show x 6 - x 3 = -(x 3 - x 6) by abel, inner_neg_right, hCI, neg_zero]) hR
 
 end Minimality.T24.Par

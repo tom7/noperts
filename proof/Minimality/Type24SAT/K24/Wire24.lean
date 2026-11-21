@@ -446,17 +446,6 @@ theorem cls18_z2456 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hz : b2456 x
   simp only [Cls18, clsz24, sgz, flipz, sg, Bool.not_true, Bool.not_false, hz, hc, a0, a1, a2, a3, and_self,
       true_or, or_true, and_true, lt_self_iff_false]
 
-/-- **Class exhaustion with one zero**: exactly one class bracket vanishes, the other four do not: the sign vector (in
-either orientation) is one of the 18 realised one-zero classes. -/
-theorem cls18_of_one_zero {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (h : (b1234 x = 0 ∧ b1245 x ≠ 0 ∧ b1356 x ≠ 0 ∧ b1456 x ≠ 0 ∧ b2456 x ≠ 0) ∨
-      (b1234 x ≠ 0 ∧ b1245 x = 0 ∧ b1356 x ≠ 0 ∧ b1456 x ≠ 0 ∧ b2456 x ≠ 0) ∨
-      (b1234 x ≠ 0 ∧ b1245 x ≠ 0 ∧ b1356 x = 0 ∧ b1456 x ≠ 0 ∧ b2456 x ≠ 0) ∨
-      (b1234 x ≠ 0 ∧ b1245 x ≠ 0 ∧ b1356 x ≠ 0 ∧ b1456 x = 0 ∧ b2456 x ≠ 0) ∨
-      (b1234 x ≠ 0 ∧ b1245 x ≠ 0 ∧ b1356 x ≠ 0 ∧ b1456 x ≠ 0 ∧ b2456 x = 0)) : Cls18 x := by
-  rcases h with ⟨a, b, c, d, e⟩ | ⟨a, b, c, d, e⟩ | ⟨a, b, c, d, e⟩ | ⟨a, b, c, d, e⟩ | ⟨a, b, c, d, e⟩
-  exacts [cls18_z1234 F a b c d e, cls18_z1245 F b a c d e, cls18_z1356 F c a b d e, cls18_z1456 F d a b c e,
-    cls18_z2456 F e a b c d]
 
 /-! ### Two zero brackets: five pairs are impossible (Grassmann-Plücker relations) -/
 

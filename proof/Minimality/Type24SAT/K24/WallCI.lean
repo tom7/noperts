@@ -36,25 +36,5 @@ def facSig {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : S0xFac 9 s0x_S24 (x 
   zero t i hi := F.zero (wallPi t) (wallSig i) ((wallSig_mem t i).1 hi)
   neg t i hi := F.neg (wallPi t) (wallSig i) (fun h => hi ((wallSig_mem t i).2 h))
 
-/-- **Lemma WV on type 24, `C ∥ I`, acute at `02`**: the image of `isRupert_wallEG_acute` under `σ = (2 6)(4 5)`. -/
-theorem _root_.Minimality.T24.isRupert_wallCI_acute {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hCI0 : ⟪F.N 2, x 3 - x 6⟫ = 0 ∧ ⟪F.N 2, x 4 - x 6⟫ = 0)
-    (hA : ⟪F.N 0, F.N 2⟫ < 0)
-    (hgen : ∀ t ∈ ({1, 4, 3, 5, 7, 6} : Finset (Fin 9)), ⟪F.N t, F.N 2⟫ ≠ 0) :
-    IsRupert (Finset.univ.image x) := by
-  have h := Minimality.T24.isRupert_wallEG_acute (facSig F) (x := x ∘ wallSig)
-    ⟨by
-      show ⟪F.N 2, x 6 - x 3⟫ = 0
-      rw [← neg_sub, inner_neg_right, hCI0.1, neg_zero], by
-      show ⟪F.N 2, x 6 - x 4⟫ = 0
-      rw [← neg_sub, inner_neg_right, hCI0.2, neg_zero]⟩
-    hA (fun t ht => hgen (wallPi t) (by revert t; decide))
-  have e : Finset.univ.image (x ∘ wallSig) = Finset.univ.image x := by
-    ext y
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, Function.comp]
-    constructor
-    · rintro ⟨i, rfl⟩; exact ⟨_, rfl⟩
-    · rintro ⟨i, rfl⟩; exact ⟨wallSig i, by rw [wallSig_invol]⟩
-  rwa [e] at h
 
 end Minimality.H24K.SAT

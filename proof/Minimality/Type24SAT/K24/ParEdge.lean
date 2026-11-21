@@ -578,41 +578,4 @@ theorem isRupert_eg_wall (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
     · simp only [r0, r4]
       have := h5; rw [inner_sub_left] at this; linarith
 
-open Minimality.H24K.SAT in
-/-- **Type 24, `D` a parallelogram, `C ∥ I`, off the wall: Rupert** (the image of
-`isRupert_eg_offWall` under `σ = (2 6)(4 5)`): `C ∥ I` as `⟪N_C, x 6 - x 3⟫ = 0`, the wall is
-`⟪x 4 - x 0, x 6 - x 3⟫ = 0` (edge `04` perpendicular to edge `36`); the view is `x 6 - x 3`, the
-leaves are P0234 (rim `0 4 3 2`, the image of `0 5 3 6`) and V04625 (σ-invariant). -/
-theorem isRupert_ci_offWall (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
-    (hC : ⟪F.N 2, x 6 - x 3⟫ = 0) (hw : ⟪x 4 - x 0, x 6 - x 3⟫ ≠ 0) :
-    IsRupert (univ.image x) := by
-  have h := isRupert_eg_offWall (facSig F) (x := x ∘ wallSig)
-    (by show x 3 = x 5 + x 4 - x 0; rw [hP]; abel) hC hw
-  have e : Finset.univ.image (x ∘ wallSig) = Finset.univ.image x := by
-    ext y
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, Function.comp]
-    constructor
-    · rintro ⟨i, rfl⟩; exact ⟨_, rfl⟩
-    · rintro ⟨i, rfl⟩; exact ⟨wallSig i, by rw [wallSig_invol]⟩
-  rwa [e] at h
-
-open Minimality.H24K.SAT in
-/-- **The wall `04 ⊥ 36` of `C ∥ I`** (the image of `isRupert_eg_wall` under `σ = (2 6)(4 5)`):
-`⟪x 4 - x 0, x 6 - x 3⟫ = 0` and, with `s = ⟪x 4 - x 0, x 2 - x 0⟫`, `h = ⟪x 2 - x 0, x 6 - x 3⟫`:
-`s < 0`, or `h < 0`, or `h > 0` and `s > 0`. -/
-theorem isRupert_ci_wall (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
-    (hC : ⟪F.N 2, x 6 - x 3⟫ = 0) (hw : ⟪x 4 - x 0, x 6 - x 3⟫ = 0)
-    (hs : ⟪x 4 - x 0, x 2 - x 0⟫ < 0 ∨ ⟪x 2 - x 0, x 6 - x 3⟫ < 0 ∨
-      (0 < ⟪x 2 - x 0, x 6 - x 3⟫ ∧ 0 < ⟪x 4 - x 0, x 2 - x 0⟫)) :
-    IsRupert (univ.image x) := by
-  have h := isRupert_eg_wall (facSig F) (x := x ∘ wallSig)
-    (by show x 3 = x 5 + x 4 - x 0; rw [hP]; abel) hC hw hs
-  have e : Finset.univ.image (x ∘ wallSig) = Finset.univ.image x := by
-    ext y
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, Function.comp]
-    constructor
-    · rintro ⟨i, rfl⟩; exact ⟨_, rfl⟩
-    · rintro ⟨i, rfl⟩; exact ⟨wallSig i, by rw [wallSig_invol]⟩
-  rwa [e] at h
-
 end Minimality.T24.Par

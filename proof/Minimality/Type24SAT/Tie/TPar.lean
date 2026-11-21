@@ -285,16 +285,7 @@ theorem fam36_sound (F : S0xFac 9 s0x_S24 x) {t f kind s s2 : Nat} {σ : ℝ} (h
 
 /-! ### For T6: the tie view at the real data -/
 
-/-- Off Z0 the first level of the tie view is not zero (`u = w_f != 0`), and the facing levels of a facet are
-`<N_s, w> = -L` and `<N_s, d_+> = K`: restated for `s0x_lex2_rupert`'s `hfac`. -/
-theorem tie_levels (n a D : ℝ³) : ⟪a, cross n D⟫ = - Lf n a D ∧ ⟪a, dpl n D⟫ = Kf n a D :=
-  ⟨inner_cross_eq_Lf n a D, inner_dpl_eq_Kf n a D⟩
 
-/-- `t` itself is edge-on at every point of the tie view. -/
-theorem tie_t_levels (n D : ℝ³) : Lf n n D = 0 ∧ Kf n n D = 0 := by
-  refine ⟨?_, ?_⟩
-  · have := inner_cross_eq_Lf n n D; rw [inner_n_cross] at this; linarith
-  · rw [← inner_dpl_eq_Kf, inner_n_dpl]
 
 end Minimality.H24T.SAT
 

@@ -50,14 +50,6 @@ def u_Pi (x : Fin 7 → ℝ³) (α β : ℝ) : ℝ³ := α • e5 x + β • e4 
 
 variable {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
-/-- Normal 0 inner `e4` is negative: `⟪F.N 0, e4 x⟫ < 0`.
-Corner-frame meaning: `F.N 0` is the normal to bottom face `012`; `e4` points away from `012`. -/
-theorem inner_N0_e4_neg : ⟪F.N 0, e4 x⟫ < 0 := by
-  dsimp [e4]
-  have := (F.hN 0 (x 4) (x 0)).symm
-  rw [F.zero 0 0 (by decide), sub_zero] at this
-  rw [this]
-  exact F.neg 0 4 (by decide)
 
 /-- Normal 0 inner `e5` is negative: `⟪F.N 0, e5 x⟫ < 0`.
 Corner-frame meaning: `e5` points away from bottom face `012`. -/
@@ -77,14 +69,6 @@ theorem inner_N1_e4_neg : ⟪F.N 1, e4 x⟫ < 0 := by
   rw [this]
   exact F.neg 1 4 (by decide)
 
-/-- Normal 1 inner `e5` is negative: `⟪F.N 1, e5 x⟫ < 0`.
-Corner-frame meaning: `e5` points away from `016`. -/
-theorem inner_N1_e5_neg : ⟪F.N 1, e5 x⟫ < 0 := by
-  dsimp [e5]
-  have := (F.hN 1 (x 5) (x 0)).symm
-  rw [F.zero 1 0 (by decide), sub_zero] at this
-  rw [this]
-  exact F.neg 1 5 (by decide)
 
 /-- Normal 2 inner `e5` is zero: `⟪F.N 2, e5 x⟫ = 0`.
 Corner-frame meaning: facet 2 is `025`, which contains the edge `0 -> 5` (`e5`). -/
@@ -260,21 +244,7 @@ theorem inner_N8_u_Pi (s t α β : ℝ) (hdecomp : x 3 - x 0 = s • e4 x + t �
     _ = α * ((1 - s) * ⟪F.N 8, e4 x⟫) + β * t * ⟪F.N 8, e4 x⟫ := by rw [hrel]
     _ = (α * (1 - s) + β * t) * ⟪F.N 8, e4 x⟫ := by ring
 
-/-- Decomposition of `(s + t - 1) • e5` into the basis `(e35, e34)`. -/
-theorem e5_decomp_e35_e34 (s t : ℝ) (hdecomp : x 3 - x 0 = s • e4 x + t • e5 x) :
-    (s + t - 1) • e5 x = (1 - s) • e35 x + s • e34 x := by
-  ext j
-  have hd := congr_arg (fun (v : ℝ³) => v j) hdecomp
-  dsimp [e4, e5, e35, e34] at hd ⊢
-  linear_combination -hd
 
-/-- Decomposition of `(s + t - 1) • e4` into the basis `(e35, e34)`. -/
-theorem e4_decomp_e35_e34 (s t : ℝ) (hdecomp : x 3 - x 0 = s • e4 x + t • e5 x) :
-    (s + t - 1) • e4 x = t • e35 x + (1 - t) • e34 x := by
-  ext j
-  have hd := congr_arg (fun (v : ℝ³) => v j) hdecomp
-  dsimp [e4, e5, e35, e34] at hd ⊢
-  linear_combination -hd
 
 /-- Decomposition of `(s + t - 1) • u_Pi x α β` into the basis `(e35, e34)`. -/
 theorem u_Pi_in_e35_e34 (s t α β : ℝ) (hdecomp : x 3 - x 0 = s • e4 x + t • e5 x) :
@@ -639,41 +609,6 @@ theorem rim6352_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ
     hne_63 hne_35 hne_52 hne_26
     ⟨hN7, hN8⟩ hN3 ⟨hN6, hN2⟩ ⟨hN7, hN5⟩
 
-/-- Rim 6052 convexity and vertex 1 interior position from silhouette signs.
-Matches the rim quad `quad (x 2) (x 5) (x 0) (x 6)` of Lemma X4.
-Satisfiability at intended view (Regime C1, `τ < 1`, view `u = - (e4 - ε e5)`):
-In the vertex 1 corner frame, `β = 1 > 0` and `α = -ε < 0`.
-`⟪F.N 4, u⟫ = - α ⟪F.N 4, e5⟫ < 0` (`N4 < 0`) and `0 < N1`.
-`⟪F.N 2, u⟫ = - β ⟪F.N 2, e4⟫ > 0` (`0 < N2`).
-`σ ⟪F.N 6, u_doc⟫ = c6 (1 - τ) > 0` since `τ < 1`, so `⟪F.N 6, u⟫ < 0` (`N6 < 0`).
-Ridge 5-2 between facet 6 and facet 2 has `(t0, t0') = (6, 2)`.
-`⟪F.N 7, u⟫ < 0` from `τ < 1 < σ + τ`, and `a4 > 1` gives `0 < N5`.
-All hypotheses strictly hold. -/
-theorem rim6052_of_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {u : ℝ³}
-    (hN3 : ⟪F.N 3, u⟫ = 0)
-    (hN2 : 0 < ⟪F.N 2, u⟫) (hN6 : ⟪F.N 6, u⟫ < 0)
-    (hN1 : 0 < ⟪F.N 1, u⟫) (hN4 : ⟪F.N 4, u⟫ < 0)
-    (hN7 : ⟪F.N 7, u⟫ < 0) (hN5 : 0 < ⟪F.N 5, u⟫) :
-    ∃ ρ : ℝ, ρ ≠ 0 ∧
-      (∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
-        0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
-          (quad (x 2) (x 5) (x 0) (x 6) j - quad (x 2) (x 5) (x 0) (x 6) i) u) ∧
-      (∀ i : ZMod 4,
-        0 < ρ * det3 (quad (x 2) (x 5) (x 0) (x 6) (i + 1) - quad (x 2) (x 5) (x 0) (x 6) i)
-          (x 1 - quad (x 2) (x 5) (x 0) (x 6) i) u) := by
-  have hne_25 := cross_ne_zero_of_facet_sign F 2 2 5 (by decide) (by decide) hN2.ne' 0 (by decide) (by decide)
-  have hne_50 := cross_ne_zero_of_facet_sign F 2 5 0 (by decide) (by decide) hN2.ne' 6 (by decide) (by decide)
-  have hne_06 := cross_ne_zero_of_facet_sign F 1 0 6 (by decide) (by decide) hN1.ne' 0 (by decide) (by decide)
-  have hne_62 := cross_ne_zero_of_facet_sign F 5 6 2 (by decide) (by decide) hN5.ne' 1 (by decide) (by decide)
-  exact quadRim_of_signs F 2 5 0 6 6 2 4 1 7 5
-    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) (by decide)
-    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ ⟨by decide, by decide⟩
-    (Or.inl (by decide)) (Or.inr (by decide)) (Or.inl (by decide))
-    (by decide) (by decide) (by decide)
-    (Or.inl (by decide)) (Or.inl (by decide)) (Or.inl (by decide))
-    (Or.inl (by decide)) (Or.inl (by decide)) (Or.inl (by decide))
-    hne_25 hne_50 hne_06 hne_62
-    ⟨hN6, hN2⟩ hN3 ⟨hN4, hN1⟩ ⟨hN7, hN5⟩
 
 /-- Canonical rim 6052 starting at apex 6: quad `(x 6) (x 0) (x 5) (x 2)`.
 Instantiates `quadRim_of_signs` with `(t2, t2') = (6, 2)`. -/
