@@ -1040,6 +1040,187 @@ theorem isRupert_type24_outside_Cbar {x : Fin 7 → ℝ³} (T : Type24 x)
     have hR : RegionB24 x := ⟨h3, h4, h5, p34, p35, p45, hΔ⟩
     exact isRupert_type24_B T hR (hB hR)
 
+/-- Generic oblique-view frame lemma (the window frame's `key`, factored for any view coefficients
+`da, db, dc` with `0 < da + db + dc`). -/
+theorem isRupert_obliqueView_frame (V : Finset ℝ³) (o pa pb pc : ℝ³)
+    (ha : pa ∈ V) (hb : pb ∈ V) (hc : pc ∈ V)
+    (hD : vol3 (pa - o) (pb - o) (pc - o) ≠ 0) {da db dc : ℝ}
+    (hS : 0 < da + db + dc)
+    (hV : ∀ v ∈ V, v ≠ pa → v ≠ pb → v ≠ pc → ∃ A B C : ℝ,
+      v = o + A • (pa - o) + B • (pb - o) + C • (pc - o) ∧
+      0 < A * (db + dc) + da * (1 - B - C) ∧
+      0 < B * (da + dc) + db * (1 - A - C) ∧
+      0 < C * (da + db) + dc * (1 - A - B)) :
+    IsRupert V := by
+  classical
+  obtain ⟨S, hS_eq⟩ : ∃ S : ℝ, S = da + db + dc := ⟨_, rfl⟩
+  have hS0 : 0 < S := by rw [hS_eq]; exact hS
+  obtain ⟨u, hu⟩ : ∃ u : ℝ³, u = da • (pa - o) + db • (pb - o) + dc • (pc - o) := ⟨_, rfl⟩
+  obtain ⟨N, hN⟩ : ∃ N : ℝ³, N = cross (pb - pa) (pc - pa) := ⟨_, rfl⟩
+  have hNu : ⟪N, u⟫ = S * vol3 (pa - o) (pb - o) (pc - o) := by
+    rw [hN, hu, hS_eq]
+    change det3 _ _ _ = _
+    simp only [det3_expand, vol3, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
+    ring
+  have hNu0 : ⟪N, u⟫ ≠ 0 := by rw [hNu]; exact mul_ne_zero hS0.ne' hD
+  have hN0 : N ≠ 0 := by intro h0; apply hNu0; rw [h0, inner_zero_left]
+  have hind : AffineIndependent ℝ ![pa, pb, pc] := by
+    rw [hN] at hN0; exact affineIndependent_of_cross_ne_zero hN0
+  have hinj := hind.injective
+  have hab : pa ≠ pb := fun h => by
+    have := @hinj 0 1 (by simp [h]); exact absurd this (by decide)
+  have hac : pa ≠ pc := fun h => by
+    have := @hinj 0 2 (by simp [h]); exact absurd this (by decide)
+  have hbc : pb ≠ pc := fun h => by
+    have := @hinj 1 2 (by simp [h]); exact absurd this (by decide)
+  have hNb : ⟪N, pb⟫ = ⟪N, pa⟫ := by
+    have := inner_cross_left (pb - pa) (pc - pa); rw [← hN, inner_sub_right] at this; linarith
+  have hNc : ⟪N, pc⟫ = ⟪N, pa⟫ := by
+    have := inner_cross_right (pb - pa) (pc - pa); rw [← hN, inner_sub_right] at this; linarith
+  have hWN : ∀ w ∈ ({pa, pb, pc} : Finset ℝ³), ⟪N, w⟫ = ⟪N, pa⟫ := by
+    intro w hw
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+    rcases hw with rfl | rfl | rfl
+    · rfl
+    · exact hNb
+    · exact hNc
+  have hpa_b : pa ∉ ({pb, pc} : Finset ℝ³) := by simp [hab, hac]
+  have hpb_c : pb ∉ ({pc} : Finset ℝ³) := by simp [hbc]
+  have hsum : ∀ g : ℝ³ → ℝ, ∑ w ∈ ({pa, pb, pc} : Finset ℝ³), g w = g pa + g pb + g pc := by
+    intro g; rw [Finset.sum_insert hpa_b, Finset.sum_insert hpb_c, Finset.sum_singleton,
+      add_assoc]
+  have hsumv : ∀ g : ℝ³ → ℝ, ∑ w ∈ ({pa, pb, pc} : Finset ℝ³), g w • w =
+      g pa • pa + g pb • pb + g pc • pc := by
+    intro g; rw [Finset.sum_insert hpa_b, Finset.sum_insert hpb_c, Finset.sum_singleton,
+      add_assoc]
+  refine isRupert_of_crossing V {pa, pb, pc}
+    (fun w hw => by
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+      rcases hw with rfl | rfl | rfl <;> assumption)
+    N ⟪N, pa⟫ hWN (by simp) (by simp) (by simp) hind u hNu0 ?_
+  intro v hv hvW
+  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hvW
+  obtain ⟨h1, h2, h3⟩ := hvW
+  obtain ⟨A, B, C, rfl, n1, n2, n3⟩ := hV v hv h1 h2 h3
+  obtain ⟨τ, hτ⟩ : ∃ τ : ℝ, τ = (1 - A - B - C) / S := ⟨_, rfl⟩
+  obtain ⟨ma, hma⟩ : ∃ m : ℝ, m = A + τ * da := ⟨_, rfl⟩
+  obtain ⟨mb, hmb⟩ : ∃ m : ℝ, m = B + τ * db := ⟨_, rfl⟩
+  obtain ⟨mc, hmc⟩ : ∃ m : ℝ, m = C + τ * dc := ⟨_, rfl⟩
+  have pa' : 0 < ma := by
+    have e : ma = (A * (db + dc) + da * (1 - B - C)) / S := by
+      rw [hma, hτ, hS_eq]; field_simp; ring
+    rw [e]; exact div_pos n1 hS0
+  have pb' : 0 < mb := by
+    have e : mb = (B * (da + dc) + db * (1 - A - C)) / S := by
+      rw [hmb, hτ, hS_eq]; field_simp; ring
+    rw [e]; exact div_pos n2 hS0
+  have pc' : 0 < mc := by
+    have e : mc = (C * (da + db) + dc * (1 - A - B)) / S := by
+      rw [hmc, hτ, hS_eq]; field_simp; ring
+    rw [e]; exact div_pos n3 hS0
+  have hm1 : 1 = ma + mb + mc := by
+    rw [hma, hmb, hmc, hτ, hS_eq]; field_simp; ring
+  refine ⟨τ, fun w => if w = pa then ma else if w = pb then mb else mc, ?_, ?_, ?_⟩
+  · intro w hw
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+    rcases hw with rfl | rfl | rfl
+    · simp only [ite_true]; exact pa'
+    · simp only [Ne.symm hab, ite_true, ite_false]; exact pb'
+    · simp only [Ne.symm hac, Ne.symm hbc, ite_false]; exact pc'
+  · rw [hsum]
+    simp only [ite_true, Ne.symm hab, Ne.symm hac, Ne.symm hbc, ite_false]
+    linarith
+  · rw [hsumv]
+    simp only [ite_true, Ne.symm hab, Ne.symm hac, Ne.symm hbc, ite_false]
+    rw [hu, hma, hmb, hmc]
+    rw [hma, hmb, hmc] at hm1
+    linear_combination (norm := module) hm1 • o
+
+/-- **Lemma CV (corner view) in a frame.**  If `1 + ω_ac, 1 + ω_bc, 1 + ω_ab > 0` and `Δ < 0`,
+then along the oblique direction `((1 + ω_ac)(1 + ω_ab), (1 + ω_bc)(1 + ω_ab), (1 + ω_ac)(1 + ω_bc))`
+from `o`, every other vertex projects strictly inside triangle `pa pb pc`. -/
+theorem isRupert_cornerView_frame (V : Finset ℝ³) (o pa pb pc : ℝ³)
+    (ha : pa ∈ V) (hb : pb ∈ V) (hc : pc ∈ V)
+    (hD : vol3 (pa - o) (pb - o) (pc - o) ≠ 0) {wac wbc wab : ℝ}
+    (h1 : 0 < 1 + wac) (h2 : 0 < 1 + wbc) (h3 : 0 < 1 + wab)
+    (hΔ : wac * wbc * wab - wac - wbc - wab - 2 < 0)
+    (hV : ∀ v ∈ V, v ≠ pa → v ≠ pb → v ≠ pc → v = o ∨ ∃ A B C : ℝ,
+      v = o + A • (pa - o) + B • (pb - o) + C • (pc - o) ∧ 0 < A ∧ 0 < B ∧
+      0 < C ∧ B + C - wbc * A ≤ 1 ∧ A + C - wac * B ≤ 1 ∧
+      A + B - wab * C ≤ 1) :
+    IsRupert V := by
+  set da := (1 + wac) * (1 + wab)
+  set db := (1 + wbc) * (1 + wab)
+  set dc := (1 + wac) * (1 + wbc)
+  have hda : 0 < da := mul_pos h1 h3
+  have hdb : 0 < db := mul_pos h2 h3
+  have hdc : 0 < dc := mul_pos h1 h2
+  have hnΔ : 0 < -(wac * wbc * wab - wac - wbc - wab - 2) := neg_pos.mpr hΔ
+  refine isRupert_obliqueView_frame V o pa pb pc ha hb hc hD (da := da) (db := db) (dc := dc)
+    (by linarith) ?_
+  intro v hv hpa hpb hpc
+  rcases hV v hv hpa hpb hpc with rfl | ⟨A, B, C, rfl, hA, hB, hC, s1, s2, s3⟩
+  · refine ⟨0, 0, 0, by simp, ?_, ?_, ?_⟩ <;> linarith
+  · refine ⟨A, B, C, rfl, ?_, ?_, ?_⟩
+    · have hid : A * (db + dc) + da * (1 - B - C) =
+          -(wac * wbc * wab - wac - wbc - wab - 2) * A + da * (1 - (B + C - wbc * A)) := by
+        simp only [da, db, dc]; ring
+      rw [hid]
+      nlinarith [mul_pos hnΔ hA, mul_nonneg hda.le (sub_nonneg.mpr s1)]
+    · have hid : B * (da + dc) + db * (1 - A - C) =
+          -(wac * wbc * wab - wac - wbc - wab - 2) * B + db * (1 - (A + C - wac * B)) := by
+        simp only [da, db, dc]; ring
+      rw [hid]
+      nlinarith [mul_pos hnΔ hB, mul_nonneg hdb.le (sub_nonneg.mpr s2)]
+    · have hid : C * (da + db) + dc * (1 - A - B) =
+          -(wac * wbc * wab - wac - wbc - wab - 2) * C + dc * (1 - (A + B - wab * C)) := by
+        simp only [da, db, dc]; ring
+      rw [hid]
+      nlinarith [mul_pos hnΔ hC, mul_nonneg hdc.le (sub_nonneg.mpr s3)]
+
+/-- **Lemma CV on Type 24**: every Type-24 point set with `-1 < ω3, ω4, ω5` and `Delta24 < 0`
+is Rupert (metric-free, no depth or HDN conditions). -/
+theorem isRupert_type24_corner {x : Fin 7 → ℝ³} (T : Type24 x)
+    (h3 : -1 < omega3 x) (h4 : -1 < omega4 x) (h5 : -1 < omega5 x)
+    (hΔ : Delta24 x < 0) : IsRupert (univ.image x) := by
+  have gen : ∀ v : Fin 7, v ≠ 0 → v ≠ 1 → v ≠ 2 → v ≠ 6 → ∃ A B C : ℝ,
+      x v = x 1 + A • (x 0 - x 1) + B • (x 2 - x 1) + C • (x 6 - x 1) ∧ 0 < A ∧ 0 < B ∧
+        0 < C ∧ B + C - omega3 x * A ≤ 1 ∧ A + C - omega4 x * B ≤ 1 ∧
+        A + B - omega5 x * C ≤ 1 := by
+    intro v h0 h1 h2 h6
+    exact ⟨_, _, _, T.rep v, T.X0_pos (by simp [h1, h2, h6]), T.X2_pos (by simp [h0, h1, h6]),
+      T.X6_pos (by simp [h0, h1, h2]), T.le236 v, T.le046 v, T.le025 v⟩
+  refine isRupert_cornerView_frame (univ.image x) (x 1) (x 0) (x 2) (x 6) (Type24.mem 0)
+    (Type24.mem 2) (Type24.mem 6) T.det_ne (wac := omega4 x) (wbc := omega3 x) (wab := omega5 x)
+    (by linarith) (by linarith) (by linarith) (by unfold Delta24 at hΔ; linarith) ?_
+  intro v hv h0 h2 h6
+  obtain ⟨i, -, rfl⟩ := mem_image.mp hv
+  rcases fin7_cases i with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  · exact absurd rfl h0
+  · exact Or.inl rfl
+  · exact absurd rfl h2
+  · exact Or.inr (gen 3 (by decide) (by decide) (by decide) (by decide))
+  · exact Or.inr (gen 4 (by decide) (by decide) (by decide) (by decide))
+  · exact Or.inr (gen 5 (by decide) (by decide) (by decide) (by decide))
+  · exact absurd rfl h6
+
+/-- **Corollary 15.8 without `Σ_B`**: every Type-24 point set outside `C̄` is Rupert. -/
+theorem isRupert_type24_outside_Cbar' {x : Fin 7 → ℝ³} (T : Type24 x)
+    (hC : ¬ (0 < omega3 x ∧ 0 < omega4 x ∧ 0 < omega5 x ∧ 0 ≤ Delta24 x)) :
+    IsRupert (univ.image x) := by
+  by_cases hω : omega3 x ≤ 0 ∨ omega4 x ≤ 0 ∨ omega5 x ≤ 0
+  · rcases hω with h3 | h4 | h5
+    · exact isRupert_type24_window6 T (Or.inr (Or.inr h3))
+    · exact isRupert_type24_window6 T (Or.inr (Or.inl h4))
+    · exact isRupert_type24_window2 T (Or.inr (Or.inl h5))
+  · push Not at hω
+    obtain ⟨h3, h4, h5⟩ := hω
+    have hΔ : Delta24 x < 0 := by
+      by_contra h
+      push Not at h
+      exact hC ⟨h3, h4, h5, h⟩
+    exact isRupert_type24_corner T (by linarith) (by linarith) (by linarith) hΔ
+
 end Minimality
 
 end

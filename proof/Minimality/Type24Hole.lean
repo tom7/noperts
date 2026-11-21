@@ -25,16 +25,11 @@ namespace Minimality.T24
 Refines the Type-24 branch of `Minimality.lean` by combining:
 1. `Minimality.T24.Face.rupert_or_resid24_noFacetCell_noNC_noAdj_noFace` (SAT + no facet cell,
    no Root T0, no Lemma NC, no Adjacency Lemma, no Lemma E2 face pair),
-2. `Minimality.isRupert_type24_outside_Cbar` (closes outside `C̄ ∪ Σ_B`, `Type24.lean` / `NOTES` §15), and
+2. `Minimality.isRupert_type24_outside_Cbar'` (closes all of `¬ CbarIn`, `Type24.lean` / Lemma CV), and
 3. `Q45.isRupert_q45_half` (closes `Q45-Half` off `Q45Special`, `Q45.lean` / `Q45THEOREM24.md`).
 
 Every remaining open sub-region is exposed as a named disjunct of `Hole24`.
 -/
-
-/-- Outside `C̄`, the residual `Σ_B` locus: `RegionB24` with no free side crossing
-(attacked in `Type24.lean` / `FEWER-FACES-PROOFS.md` §15). -/
-def Hole24SigmaB (x : Fin 7 → ℝ³) : Prop :=
-  Minimality.RegionB24 x ∧ ¬ (Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x)
 
 /-- Special loci of Theorem Q45 inside `C̄ ∩ Resid24` (no `OB1` restriction, since `q45_half_cell`
 requires only `F` and `Q45HalfPred F`; refined to `Q45Special' F` after trying `q45_B1_cell`..`q45_C2_cell`). -/
@@ -53,10 +48,10 @@ def Hole24Flags (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : P
 /-- The single named Type-24 open hole proposition for `Minimality.lean`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Flags x fs ∧
-    (Hole24SigmaB x ∨ Hole24Q45Special x F ∨ Hole24RRes F)
+    (Hole24Q45Special x F ∨ Hole24RRes F)
 
 /-- Main Type-24 reduction using `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`,
-`isRupert_type24_outside_Cbar`, and `isRupert_q45_half` (`mkFac24` constructs `F`). -/
+`isRupert_type24_outside_Cbar'`, and `isRupert_q45_half` (`mkFac24` constructs `F`). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -98,7 +93,7 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     · by_cases hHalf : Q45HalfPred F
       · rcases Q45.q45_half_cell F hHalf with hRup | hSp
         · exact Or.inl hRup
-        · exact Or.inr ⟨hh, hflags, Or.inr (Or.inl ⟨hCbar, hres, hHalf, hSp⟩)⟩
+        · exact Or.inr ⟨hh, hflags, Or.inl ⟨hCbar, hres, hHalf, hSp⟩⟩
       · rcases RDispatch.r_dispatch F hCbar hHalf with
           h0 | h1 | h2 | h3 | h4 | hRup | hRes
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inl h0))
@@ -109,18 +104,8 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
         · exact Or.inl hRup
         · by_cases hSpec : RSpec.HSpecAny F
           · exact Or.inl (RSpec.rspec_closes F hSpec)
-          · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr ⟨hres, hRes, hSpec⟩)⟩
-    · by_cases hSig : Minimality.RegionB24 x →
-          Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x
-      · exact Or.inl (Minimality.isRupert_type24_outside_Cbar
-          (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar hSig)
-      · have hnotB : Minimality.RegionB24 x ∧
-            ¬ (Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x) := by
-          by_contra hc
-          apply hSig
-          intro hr
-          by_contra hf
-          exact hc ⟨hr, hf⟩
-        exact Or.inr ⟨hh, hflags, Or.inl hnotB⟩
+          · exact Or.inr ⟨hh, hflags, Or.inr ⟨hres, hRes, hSpec⟩⟩
+    · exact Or.inl (Minimality.isRupert_type24_outside_Cbar'
+        (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar)
 
 end Minimality.T24
