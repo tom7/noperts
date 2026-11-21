@@ -40,6 +40,7 @@ public import Minimality.Type24NC
 public import Minimality.Type24Adj
 public import Minimality.Type24Face
 public import Minimality.Type24Hole
+public import Minimality.Type29Hole
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -392,11 +393,11 @@ vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional
 a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside `Minimality.T24.Hole24`
-(`Hole24SigmaB` in `Σ_B`, `Hole24Q45Special` on `Q45Special`, `Hole24R` in `C̄ ∩ OB1 \ Q45-Half`, and `Hole24OffOB1`
-in `C̄ \ OB1 \ Q45-Half` for `mpppz`/`mpppp`/`mpppm`; outside `C̄ ∪ Σ_B` is closed by `isRupert_type24_outside_Cbar`
+(`Hole24Flags` together with `Hole24Q45Special ∨ Hole24R`; outside `C̄ ∪ Σ_B` is closed by `isRupert_type24_outside_Cbar`
 and `Q45-Half` off `Q45Special` by `isRupert_q45_half`, while off-`OB1` outside `mpppz`/`mpppp`/`mpppm` is closed by
-`Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); for type 29 (split by
-the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the class K1
+`Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); and type 29 inside `Minimality.H29.Hole29` (split by
+the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`, class K1 on `OB6` off `Z`, under
+`H29GenResid N.facets` and off `AnyFaceChord29`, `LexAny29`, `SplitAny29`;
 (K2 is closed, on the strata `Z1 ∪ σ(Z1)` by a metric case split and the Slide Lemma at a right
 dihedral, `NF29.isRupert_K2a_Z1_caseB`); type 16 is closed (every bracket sign vector,
 `Minimality.H16.SAT.cls16_exhaust`, by the sign-matrix SAT route and the Slide Lemma on its
@@ -1112,7 +1113,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 24: `Minimality.T24.type24_rupert_or_hole` combines `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`
     -- (SAT + no facet cell, Root T0, Lemma NC, Adjacency, Lemma E2), `isRupert_type24_outside_Cbar` (closes outside
     -- `C̄ ∪ Σ_B`), and `Q45.isRupert_q45_half` (closes `Q45-Half` off `Q45Special`), leaving `Minimality.T24.Hole24`:
-    -- `Hole24Flags` together with `Hole24SigmaB ∨ Hole24Q45Special ∨ Hole24R ∨ Hole24OffOB1`.
+    -- `Hole24Flags` together with `Hole24Q45Special ∨ Hole24R`.
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {1, 2, 6} (by decide)
@@ -1242,10 +1243,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         exact hnR (N.isRupert_K1_Z hK1 hZ)
       · by_cases hOB : inner ℝ (x 3 - x 6) (x 4 - x 6) ≤ 0 ∧ inner ℝ (x 3 - x 6) (x 5 - x 6) ≤ 0 ∧
             inner ℝ (x 4 - x 6) (x 5 - x 6) ≤ 0
-        · exact byThm5Faces hx hN _ h3 (fun _ => by
-            by_cases hres : Minimality.H29S.H29GenResid N.facets
-            · sorry  -- class K1 on the obtuse corner `OB6` (all face angles at vertex 6 non-acute) off `Z`: open
-            · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)
+        · rcases Minimality.H29.type29_rupert_or_hole N hK1 hZ hOB with hRup | hHole
+          · exact hnR hRup
+          · exact byThm5Faces hx hN _ h3 (fun _ => sorry)
         · -- some face angle at vertex 6 is acute: the SAT route (`NF29.isRupert_K1_offOB6`)
           exact hnR (N.isRupert_K1_offOB6 hK1 hOB)
     · -- class K3a: the SAT route (`NF29.isRupert_K3a_closed`)
