@@ -11,6 +11,7 @@ public import Minimality.RX16B
 public import Minimality.RX27
 public import Minimality.RTope24
 public import Minimality.RJ0T62
+public import Minimality.RCell24
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Q45
 
@@ -22,7 +23,7 @@ set_option relaxedAutoImplicit false
 open scoped RealInnerProductSpace
 open Finset
 open Minimality Minimality.H21 Minimality.FaceChord Minimality.T24.SAT
-open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046 Minimality.T24.RX16 Minimality.T24.H31 Minimality.T24.RX27 Minimality.T24.RTope Minimality.T24.Sym
+open Minimality.T24.Q45 Minimality.T24.R012 Minimality.T24.R046 Minimality.T24.RX16 Minimality.T24.H31 Minimality.T24.RX27 Minimality.T24.RTope Minimality.T24.RCell Minimality.T24.Sym
 
 namespace Minimality.T24
 
@@ -858,7 +859,7 @@ def H_tie62pent_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_tie62pent_sym F ∧ 
 
 /-! ### Disjunctions `HAvail`, `CaseAny`, `Wall24` and `RResidual` -/
 
-/-- Disjunction of all 74 proved R-region leaf hypothesis bundles (37 base + 37 `Sym24` mirrors). -/
+/-- Disjunction of all 76 proved R-region leaf hypothesis bundles (37 base + 37 `Sym24` mirrors + `ToCC` + `CircCC`). -/
 def HAvail (F : S0xFac 9 s0x_S24 x) : Prop :=
   H_w3p F ∨ H_w3nA F ∨ H_w3nB F ∨ H_w4n F ∨ H_w4p F ∨ H_f346A F ∨ H_f346B F ∨
   H_LCp F ∨ H_LCm F ∨ H_m1 F ∨ H_m6 F ∨ H_m1p5 F ∨ H_m1p6 F ∨
@@ -873,9 +874,10 @@ def HAvail (F : S0xFac 9 s0x_S24 x) : Prop :=
   H_f346_5_sym F ∨ H_f346_4w_sym F ∨ H_f346_6w_sym F ∨ H_f346_neg5_sym F ∨
   H_crossCore_sym F ∨ H_crossCbar_sym F ∨ H_crossB_sym F ∨ H_crossN_sym F ∨ H_cop_sym F ∨
   H_J0exp_sym F ∨ H_J0expGt_sym F ∨ H_tie45_sym F ∨ H_tie62quad_sym F ∨ H_tie62pent_sym F ∨
-  H_KminusE5_sym F ∨ H_KminusE34_sym F ∨ H_h31_sym F ∨ H_T5_sym F
+  H_KminusE5_sym F ∨ H_KminusE34_sym F ∨ H_h31_sym F ∨ H_T5_sym F ∨
+  ToCC F ∨ CircCC F
 
-/-- Disjunction of all 74 strict case conditions (without genericity `Gen_*`). -/
+/-- Disjunction of all 76 strict case conditions (without genericity `Gen_*`, plus `ToCC` + `CircCC`). -/
 def CaseAny (F : S0xFac 9 s0x_S24 x) : Prop :=
   Case_w3p F ∨ Case_w3nA F ∨ Case_w3nB F ∨ Case_w4n F ∨ Case_w4p F ∨ Case_f346A F ∨ Case_f346B F ∨
   Case_LCp F ∨ Case_LCm F ∨ Case_m1 F ∨ Case_m6 F ∨ Case_m1p5 F ∨ Case_m1p6 F ∨
@@ -890,7 +892,8 @@ def CaseAny (F : S0xFac 9 s0x_S24 x) : Prop :=
   Case_f346_5_sym F ∨ Case_f346_4w_sym F ∨ Case_f346_6w_sym F ∨ Case_f346_neg5_sym F ∨
   Case_crossCore_sym F ∨ Case_crossCbar_sym F ∨ Case_crossB_sym F ∨ Case_crossN_sym F ∨ Case_cop_sym F ∨
   Case_J0exp_sym F ∨ Case_J0expGt_sym F ∨ Case_tie45_sym F ∨ Case_tie62quad_sym F ∨ Case_tie62pent_sym F ∨
-  Case_KminusE5_sym F ∨ Case_KminusE34_sym F ∨ Case_h31_sym F ∨ Case_T5_sym F
+  Case_KminusE5_sym F ∨ Case_KminusE34_sym F ∨ Case_h31_sym F ∨ Case_T5_sym F ∨
+  ToCC F ∨ CircCC F
 
 /-- One-sided codimension-1 walls in facet-sign form (`c3=1`, `c4=1`, `a4=1`, `a5=1`, `s=1`, `P=0`,
 Lemma D1/D2/M1/LC/J0 walls). -/
@@ -1130,7 +1133,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
       FaceChordView F 3 ∨ FaceChordView F 4 ∨ IsRupert (univ.image x) := by
   rcases h with
     h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
+    h | h
   · exact Or.inl (leaf_w3p h)
   · exact Or.inl (leaf_w3nA h)
   · exact Or.inl (leaf_w3nB h)
@@ -1205,6 +1209,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_KminusE34 h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_h31 h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (isRupert_of_comp_pi24 (leaf_T5_wrap h))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (toCC_isRupert F h)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (circCC_isRupert F h)))))
 
 /-- **Region-R Dispatcher (`r_dispatch`)**: inside `Hole24NoQ45 x F` (`CbarIn x ∧ ¬ Q45HalfPred F`,
 without `OB1`), either one of the proved leaves closes `F`, or `F` falls into
