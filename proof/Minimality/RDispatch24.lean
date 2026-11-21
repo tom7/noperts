@@ -10,6 +10,7 @@ public import Minimality.RF346C
 public import Minimality.RX16B
 public import Minimality.RX27
 public import Minimality.RTope24
+public import Minimality.RJ0T62
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Q45
 
@@ -627,6 +628,59 @@ def Case_T5 (F : S0xFac 9 s0x_S24 x) : Prop :=
 /-- Hypothesis bundle for `Minimality.T24.RTope.leaf_T5`. -/
 def H_T5 (F : S0xFac 9 s0x_S24 x) : Prop := Case_T5 F
 
+-- 23. rj0t_tie62_quad
+def Case_tie62quad (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧
+    x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧
+    0 < tieAlpha62 x ∧ 0 < tieBeta62 x ∧
+    0 < tieAlpha62 x * (1 - s) + tieBeta62 x * t ∧
+    0 < tieAlpha62 x * s + tieBeta62 x * (1 - t) ∧
+    ⟪F.N 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ < 0 ∧
+    ∃ σ : ℝ, σ * ⟪x 6 - x 2, x 4 - x 5⟫ ≠ 0 ∧
+      (σ * ⟪x 6 - x 2, x 4 - x 5⟫ < 0 ∨
+        min ⟪x 6, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ⟪x 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ <
+          max ⟪x 4, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ⟪x 2, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫) ∧
+      (0 < σ * ⟪x 6 - x 2, x 4 - x 5⟫ ∨
+        min ⟪x 4, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ⟪x 2, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ <
+          max ⟪x 6, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ⟪x 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫)
+
+def Gen_tie62quad (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ⟪x 6, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ≠ ⟪x 4, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+  ⟪x 6, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ≠ ⟪x 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+  ⟪x 4, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ≠ ⟪x 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+  ⟪x 4, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ≠ ⟪x 2, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+  ⟪x 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ≠ ⟪x 2, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+  F.f 3 (x 2) ≠ F.f 3 (x 6) ∧
+  (⟪F.N 3, cross (x 5 - x 4) (x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 4)⟫ ≠ 0 ∨
+    ⟪x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 4, x 5 - x 4⟫ < 0 ∨
+    ⟪x (if F.f 3 (x 2) < F.f 3 (x 6) then 2 else 6) - x 5, x 4 - x 5⟫ < 0)
+
+/-- Hypothesis bundle for `Minimality.T24.Q45.rj0t_tie62_quad`. -/
+def H_tie62quad (F : S0xFac 9 s0x_S24 x) : Prop := Case_tie62quad F ∧ Gen_tie62quad F
+
+-- 24. rj0t_tie62_pent
+def Case_tie62pent (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧
+    x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧
+    0 < tieAlpha62 x ∧ 0 < tieBeta62 x ∧
+    0 < tieAlpha62 x * (1 - s) + tieBeta62 x * t ∧
+    tieAlpha62 x * s + tieBeta62 x * (1 - t) < 0 ∧
+    0 < ⟪F.N 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+    0 < ⟪F.N 7, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+    ⟪x 1, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ < ⟪x 2, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+    ⟪x 6, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ < ⟪x 4, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ ∧
+    ⟪x 4, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ < ⟪x 3, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫
+
+def Gen_tie62pent (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ⟪x 6 - x 2, x 4 - x 5⟫ ≠ 0 ∧
+  ∃ w : Fin 7, (w = 1 ∨ w = 2 ∨ w = 6) ∧
+    (∀ m : Fin 7, m ≠ w → (m = 1 ∨ m = 2 ∨ m = 6) → F.f 3 (x w) < F.f 3 (x m)) ∧
+    (⟪F.N 3, cross (x 3 - x 4) (x w - x 4)⟫ ≠ 0 ∨ ⟪x w - x 4, x 3 - x 4⟫ < 0 ∨
+      ⟪x w - x 3, x 4 - x 3⟫ < 0)
+
+/-- Hypothesis bundle for `Minimality.T24.Q45.rj0t_tie62_pent`. -/
+def H_tie62pent (F : S0xFac 9 s0x_S24 x) : Prop := Case_tie62pent F ∧ Gen_tie62pent F
+
 -- Sym24 mirrors (21..40)
 def Case_w3p_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_w3p (sym24 F)
 def Gen_w3p_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_w3p (sym24 F)
@@ -792,37 +846,51 @@ def Case_T5_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_T5 (sym24 F)
 /-- Mirror hypothesis bundle for `leaf_T5` (`x ∘ pi24`). -/
 def H_T5_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_T5_sym F
 
+def Case_tie62quad_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_tie62quad (sym24 F)
+def Gen_tie62quad_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_tie62quad (sym24 F)
+/-- Mirror hypothesis bundle for `rj0t_tie62_quad` via `Sym.faceChordView_sym`. -/
+def H_tie62quad_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_tie62quad_sym F ∧ Gen_tie62quad_sym F
+
+def Case_tie62pent_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_tie62pent (sym24 F)
+def Gen_tie62pent_sym (F : S0xFac 9 s0x_S24 x) : Prop := Gen_tie62pent (sym24 F)
+/-- Mirror hypothesis bundle for `rj0t_tie62_pent` via `Sym.faceChordView_sym`. -/
+def H_tie62pent_sym (F : S0xFac 9 s0x_S24 x) : Prop := Case_tie62pent_sym F ∧ Gen_tie62pent_sym F
+
 /-! ### Disjunctions `HAvail`, `CaseAny`, `Wall24` and `RResidual` -/
 
-/-- Disjunction of all 70 proved R-region leaf hypothesis bundles (35 base + 35 `Sym24` mirrors). -/
+/-- Disjunction of all 74 proved R-region leaf hypothesis bundles (37 base + 37 `Sym24` mirrors). -/
 def HAvail (F : S0xFac 9 s0x_S24 x) : Prop :=
   H_w3p F ∨ H_w3nA F ∨ H_w3nB F ∨ H_w4n F ∨ H_w4p F ∨ H_f346A F ∨ H_f346B F ∨
   H_LCp F ∨ H_LCm F ∨ H_m1 F ∨ H_m6 F ∨ H_m1p5 F ∨ H_m1p6 F ∨
   H_x16lo F ∨ H_x16hi F ∨ H_x16pent F ∨ H_x16hex F ∨ H_f0345 F ∨ H_f0345n F ∨
   H_f346_5 F ∨ H_f346_4w F ∨ H_f346_6w F ∨ H_f346_neg5 F ∨
   H_crossCore F ∨ H_crossCbar F ∨ H_crossB F ∨ H_crossN F ∨ H_cop F ∨
-  H_J0exp F ∨ H_J0expGt F ∨ H_tie45 F ∨ H_KminusE5 F ∨ H_KminusE34 F ∨ H_h31 F ∨ H_T5 F ∨
+  H_J0exp F ∨ H_J0expGt F ∨ H_tie45 F ∨ H_tie62quad F ∨ H_tie62pent F ∨
+  H_KminusE5 F ∨ H_KminusE34 F ∨ H_h31 F ∨ H_T5 F ∨
   H_w3p_sym F ∨ H_w3nA_sym F ∨ H_w3nB_sym F ∨ H_w4n_sym F ∨ H_w4p_sym F ∨ H_f346A_sym F ∨ H_f346B_sym F ∨
   H_LCp_sym F ∨ H_LCm_sym F ∨ H_m1_sym F ∨ H_m6_sym F ∨ H_m1p5_sym F ∨ H_m1p6_sym F ∨
   H_x16lo_sym F ∨ H_x16hi_sym F ∨ H_x16pent_sym F ∨ H_x16hex_sym F ∨ H_f0345_sym F ∨ H_f0345n_sym F ∨
   H_f346_5_sym F ∨ H_f346_4w_sym F ∨ H_f346_6w_sym F ∨ H_f346_neg5_sym F ∨
   H_crossCore_sym F ∨ H_crossCbar_sym F ∨ H_crossB_sym F ∨ H_crossN_sym F ∨ H_cop_sym F ∨
-  H_J0exp_sym F ∨ H_J0expGt_sym F ∨ H_tie45_sym F ∨ H_KminusE5_sym F ∨ H_KminusE34_sym F ∨ H_h31_sym F ∨ H_T5_sym F
+  H_J0exp_sym F ∨ H_J0expGt_sym F ∨ H_tie45_sym F ∨ H_tie62quad_sym F ∨ H_tie62pent_sym F ∨
+  H_KminusE5_sym F ∨ H_KminusE34_sym F ∨ H_h31_sym F ∨ H_T5_sym F
 
-/-- Disjunction of all 70 strict case conditions (without genericity `Gen_*`). -/
+/-- Disjunction of all 74 strict case conditions (without genericity `Gen_*`). -/
 def CaseAny (F : S0xFac 9 s0x_S24 x) : Prop :=
   Case_w3p F ∨ Case_w3nA F ∨ Case_w3nB F ∨ Case_w4n F ∨ Case_w4p F ∨ Case_f346A F ∨ Case_f346B F ∨
   Case_LCp F ∨ Case_LCm F ∨ Case_m1 F ∨ Case_m6 F ∨ Case_m1p5 F ∨ Case_m1p6 F ∨
   Case_x16lo F ∨ Case_x16hi F ∨ Case_x16pent F ∨ Case_x16hex F ∨ Case_f0345 F ∨ Case_f0345n F ∨
   Case_f346_5 F ∨ Case_f346_4w F ∨ Case_f346_6w F ∨ Case_f346_neg5 F ∨
   Case_crossCore F ∨ Case_crossCbar F ∨ Case_crossB F ∨ Case_crossN F ∨ Case_cop F ∨
-  Case_J0exp F ∨ Case_J0expGt F ∨ Case_tie45 F ∨ Case_KminusE5 F ∨ Case_KminusE34 F ∨ Case_h31 F ∨ Case_T5 F ∨
+  Case_J0exp F ∨ Case_J0expGt F ∨ Case_tie45 F ∨ Case_tie62quad F ∨ Case_tie62pent F ∨
+  Case_KminusE5 F ∨ Case_KminusE34 F ∨ Case_h31 F ∨ Case_T5 F ∨
   Case_w3p_sym F ∨ Case_w3nA_sym F ∨ Case_w3nB_sym F ∨ Case_w4n_sym F ∨ Case_w4p_sym F ∨ Case_f346A_sym F ∨ Case_f346B_sym F ∨
   Case_LCp_sym F ∨ Case_LCm_sym F ∨ Case_m1_sym F ∨ Case_m6_sym F ∨ Case_m1p5_sym F ∨ Case_m1p6_sym F ∨
   Case_x16lo_sym F ∨ Case_x16hi_sym F ∨ Case_x16pent_sym F ∨ Case_x16hex_sym F ∨ Case_f0345_sym F ∨ Case_f0345n_sym F ∨
   Case_f346_5_sym F ∨ Case_f346_4w_sym F ∨ Case_f346_6w_sym F ∨ Case_f346_neg5_sym F ∨
   Case_crossCore_sym F ∨ Case_crossCbar_sym F ∨ Case_crossB_sym F ∨ Case_crossN_sym F ∨ Case_cop_sym F ∨
-  Case_J0exp_sym F ∨ Case_J0expGt_sym F ∨ Case_tie45_sym F ∨ Case_KminusE5_sym F ∨ Case_KminusE34_sym F ∨ Case_h31_sym F ∨ Case_T5_sym F
+  Case_J0exp_sym F ∨ Case_J0expGt_sym F ∨ Case_tie45_sym F ∨ Case_tie62quad_sym F ∨ Case_tie62pent_sym F ∨
+  Case_KminusE5_sym F ∨ Case_KminusE34_sym F ∨ Case_h31_sym F ∨ Case_T5_sym F
 
 /-- One-sided codimension-1 walls in facet-sign form (`c3=1`, `c4=1`, `a4=1`, `a5=1`, `s=1`, `P=0`,
 Lemma D1/D2/M1/LC/J0 walls). -/
@@ -884,6 +952,13 @@ def Wall24_0 (F : S0xFac 9 s0x_S24 x) : Prop :=
   (⟪F.N 7, u0 x (tstar F)⟫ = 0 ∧ ⟪F.N 7, x 2 - x 1⟫ = 0) ∨
   min ⟪x 4, u0 x (tstar F)⟫ ⟪x 2, u0 x (tstar F)⟫ =
     max ⟪x 0, u0 x (tstar F)⟫ ⟪x 6, u0 x (tstar F)⟫ ∨
+  ⟪F.N 5, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ = 0 ∨
+  ⟪F.N 7, u_Pi x (tieAlpha62 x) (tieBeta62 x)⟫ = 0 ∨
+  ⟪x 6 - x 2, x 4 - x 5⟫ = 0 ∨
+  (∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧
+    x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧
+    (tieAlpha62 x * s + tieBeta62 x * (1 - t) = 0 ∨
+      tieAlpha62 x * (1 - s) + tieBeta62 x * t = 0)) ∨
   (∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧
     x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ s = 1)
 
@@ -1036,14 +1111,26 @@ private theorem leaf_T5_wrap {F : S0xFac 9 s0x_S24 x} (h : H_T5 F) : IsRupert (u
   obtain ⟨u, h0, h1, h2, h3, h5, h6, h7, h8, h10, h05, h53⟩ := h
   exact leaf_T5 F h0 h1 h2 h3 h5 h6 h7 h8 h10 h05 h53
 
+private theorem leaf_tie62quad {F : S0xFac 9 s0x_S24 x} (h : H_tie62quad F) : FaceChordView F 3 := by
+  obtain ⟨⟨s, t, hs0, ht, hst, hdec, hα, hβ, h8, h6, hN5, σ, hΔ, hn, hp⟩,
+    h64, h65, h45, h42, h52, hS3, hS4⟩ := h
+  exact rj0t_tie62_quad F s t hs0 ht hst hdec (tieAlpha62 x) (tieBeta62 x) hα hβ h8 h6 hN5
+    (inner_tie62 x) σ hΔ hn hp h64 h65 h45 h42 h52 hS3 hS4
+
+private theorem leaf_tie62pent {F : S0xFac 9 s0x_S24 x} (h : H_tie62pent F) : FaceChordView F 3 := by
+  obtain ⟨⟨s, t, hs0, ht, hst, hdec, hα, hβ, h8, h6, hN5, hN7, h12, h64, h43⟩,
+    hΔ, w, hw, hmin, hoff⟩ := h
+  exact rj0t_tie62_pent F s t hs0 ht hst hdec (tieAlpha62 x) (tieBeta62 x) hα hβ h8 h6 hN5 hN7
+    (inner_tie62 x) 1 (by simpa using hΔ) h12 h64 h43 w hw hmin hoff
+
 /-- Every disjunct of `HAvail F` yields one of the five `FaceChordView` circles `{0, 1, 2, 3, 4}`
 or closes `univ.image x` directly as Rupert. -/
 theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
     FaceChordView F 0 ∨ FaceChordView F 1 ∨ FaceChordView F 2 ∨
       FaceChordView F 3 ∨ FaceChordView F 4 ∨ IsRupert (univ.image x) := by
   rcases h with
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
-    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h
   · exact Or.inl (leaf_w3p h)
   · exact Or.inl (leaf_w3nA h)
   · exact Or.inl (leaf_w3nB h)
@@ -1075,6 +1162,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_J0exp h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_J0expGt h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_tie45 h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_tie62quad h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_tie62pent h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_KminusE5 h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_KminusE34 h))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf_h31 h))))
@@ -1110,6 +1199,8 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_J0exp h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_J0expGt h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_tie45 h)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_tie62quad h)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_tie62pent h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_KminusE5 h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_KminusE34 h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inl (faceChordView_sym F (t := 3) (leaf_h31 h)))))
