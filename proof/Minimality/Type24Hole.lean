@@ -4,6 +4,7 @@ public import Minimality.Type24Face
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Type24
 public import Minimality.Q45
+public import Minimality.Q45LX
 public import Minimality.RDispatch24
 public import Minimality.RSpec24
 
@@ -34,7 +35,7 @@ Every remaining open sub-region is exposed as a named disjunct of `Hole24`.
 /-- Special loci of Theorem Q45 inside `C̄ ∩ Resid24` (no `OB1` restriction, since `q45_half_cell`
 requires only `F` and `Q45HalfPred F`; refined to `Q45Special' F` after trying `q45_B1_cell`..`q45_C2_cell`). -/
 def Hole24Q45Special (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special' F
+  CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special' F ∧ ¬ RCell.LexAny F
 
 /-- Region `R` + off-`OB1` residual inside `C̄ ∩ Resid24 \ Q45HalfPred` after applying
 `RDispatch.r_dispatch` (`R24Spec ∨ R24Wall ∨ R24Open`) and excluding the `RSpec` closed-cell leaves.
@@ -94,7 +95,9 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     · by_cases hHalf : Q45HalfPred F
       · rcases Q45.q45_half_cell F hHalf with hRup | hSp
         · exact Or.inl hRup
-        · exact Or.inr ⟨hh, hflags, Or.inl ⟨hCbar, hres, hHalf, hSp⟩⟩
+        · by_cases hLex : RCell.LexAny F
+          · exact Or.inl (RCell.lexAny_isRupert F hLex)
+          · exact Or.inr ⟨hh, hflags, Or.inl ⟨hCbar, hres, hHalf, hSp, hLex⟩⟩
       · rcases RDispatch.r_dispatch F hCbar hHalf with
           h0 | h1 | h2 | h3 | h4 | hRup | hRes
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inl h0))
