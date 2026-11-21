@@ -2,6 +2,7 @@ module
 
 public import Minimality.FaceCircleClosed
 public import Minimality.Type24SAT.K24.ParR2
+public import Minimality.FaceChordFac
 
 @[expose] public section
 
@@ -13,7 +14,7 @@ open Finset
 
 namespace Minimality.T24.RCell
 
-open Minimality Minimality.H21 Minimality.H24.SAT Minimality.T24.SAT
+open Minimality Minimality.H21 Minimality.H24.SAT Minimality.T24.SAT Minimality.FaceChord
 
 /-- Generic closed-cell tope leaf on Type 24 (`k ≥ 4`).
 Note: `k = 3` has no closed-cell version in the toolbox because `RobUni` is vacuously true
@@ -44,5 +45,15 @@ theorem circCC_isRupert {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : Circ
     IsRupert (univ.image x) := by
   rcases h with ⟨f, k, _, c, U, Dn, u₀, hk, hc, hcyc, hf, hNf, hf0, hU, hD, hR⟩
   exact isRupert_faceCircleClosed hk F (inj_of_fac F) hc hcyc hf hNf hf0 hU hD hR
+
+/-- Existence of a `FaceChordView` on any of the nine facets of Type 24. -/
+def AnyFaceChord {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ t : Fin 9, FaceChordView F t
+
+/-- Any `FaceChordView` on any of the nine facets of Type 24 yields `IsRupert`. -/
+theorem anyFaceChord_isRupert {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : AnyFaceChord F) :
+    IsRupert (univ.image x) := by
+  rcases h with ⟨t, ht⟩
+  exact isRupert_of_faceChordView F ht
 
 end Minimality.T24.RCell

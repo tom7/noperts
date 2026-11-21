@@ -37,7 +37,8 @@ def Hole24Q45Special (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special' F
 
 /-- Region `R` + off-`OB1` residual inside `C̄ ∩ Resid24 \ Q45HalfPred` after applying
-`RDispatch.r_dispatch` (`R24Spec ∨ R24Wall ∨ R24Open`) and excluding the `RSpec` closed-cell leaves. -/
+`RDispatch.r_dispatch` (`R24Spec ∨ R24Wall ∨ R24Open`) and excluding the `RSpec` closed-cell leaves.
+Note: `R24Open` now implies `(∀ t : Fin 9, ¬ FaceChord.FaceChordView F t) ∧ ¬ RCell.ToCC F ∧ ¬ RCell.CircCC F`. -/
 def Hole24RRes {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
   Resid24 x ∧ RDispatch.RResidual' F ∧ ¬ RSpec.HSpecAny F
 
