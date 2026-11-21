@@ -989,6 +989,12 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     conv_lhs => arg 3; rw [h61]
     rw [M4.det3_frame x]; ring
 
+private theorem det3_P5_tie_row (x : Fin 7 → ℝ³) (ε : ℝ) :
+    det3 (x 0 - x 5) (x 2 - x 6) ((x 5 - x 0) + ε • (x 6 - x 1)) =
+      ε * det3 (x 0 - x 5) (x 2 - x 6) (x 6 - x 1) := by
+  simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+  ring
+
 theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hC : CbarIn x) (ha5 : 1 < oblX0 x 5) (hL : 0 < Lam5 x)
     (h346 : F.f 8 (x 0) < F.f 8 (x 5)) (hnc : F.f 3 (x 1) < F.f 3 (x 6))
@@ -1021,7 +1027,7 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       linear_combination h1' + F.f 2 (x 1) * e5
     have h6_eq : F.f 2 (x 6) - F.f 2 (x 1) = F.f 2 (x 1) * omega5 x :=
       sub_eq_zero.mp ((mul_eq_zero.mp h2').resolve_left hc5.ne')
-    rw [h6_eq]
+    rw [h6_eq, ← neg_mul]
     exact mul_pos (by linarith [F.neg 2 1 (by decide)]) hC.2.2.1
   have hd1_3 : 0 < ⟪F.N 3, d1⟫ := by
     dsimp [d1]; rw [← F.hN 3 (x 6) (x 1)]; exact sub_pos.mpr hnc
@@ -1063,6 +1069,30 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
           det3 (x (c (i + 1)) - x (c i)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1)) := by
     rw [eventually_all]; intro i
     rw [eventually_all]; intro j
+    have hev_neg : ∀ (u a b : ℝ³), ⟪u, w05⟫ < 0 → det24 x * det3 a b w05 < 0 →
+        ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * (⟪u, w05 + ε • d1⟫ * det3 a b (w05 + ε • d1)) := by
+      intro u a b hu hdet0
+      have hc1 : Continuous fun ε : ℝ => ⟪u, w05 + ε • d1⟫ := by fun_prop
+      have hc2 : Continuous fun ε : ℝ => det24 x * det3 a b (w05 + ε • d1) := by
+        simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
+      have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪u, w05 + ε • d1⟫ < 0 :=
+        (hc1.continuousAt.eventually (gt_mem_nhds (by simpa only [zero_smul, add_zero] using hu))).filter_mono nhdsWithin_le_nhds
+      have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), det24 x * det3 a b (w05 + ε • d1) < 0 :=
+        (hc2.continuousAt.eventually (gt_mem_nhds (by simpa only [zero_smul, add_zero] using hdet0))).filter_mono nhdsWithin_le_nhds
+      filter_upwards [h1, h2] with ε hε1 hε2
+      have := mul_pos_of_neg_of_neg hε1 hε2; linarith
+    have hev_pos : ∀ (u a b : ℝ³), 0 < ⟪u, w05⟫ → 0 < det24 x * det3 a b w05 →
+        ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * (⟪u, w05 + ε • d1⟫ * det3 a b (w05 + ε • d1)) := by
+      intro u a b hu hdet0
+      have hc1 : Continuous fun ε : ℝ => ⟪u, w05 + ε • d1⟫ := by fun_prop
+      have hc2 : Continuous fun ε : ℝ => det24 x * det3 a b (w05 + ε • d1) := by
+        simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
+      have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ⟪u, w05 + ε • d1⟫ :=
+        (hc1.continuousAt.eventually (lt_mem_nhds (by simpa only [zero_smul, add_zero] using hu))).filter_mono nhdsWithin_le_nhds
+      have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * det3 a b (w05 + ε • d1) :=
+        (hc2.continuousAt.eventually (lt_mem_nhds (by simpa only [zero_smul, add_zero] using hdet0))).filter_mono nhdsWithin_le_nhds
+      filter_upwards [h1, h2] with ε hε1 hε2
+      have := mul_pos hε1 hε2; linarith
     have hc0 : c 0 = 0 := rfl
     have hc1 : c 1 = 4 := rfl
     have hc2 : c 2 = 6 := rfl
@@ -1077,93 +1107,51 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     rcases hi i with rfl | rfl | rfl | rfl | rfl
     · by_cases hj : j = 0 ∨ j = 0 + 1
       · rcases hj with rfl | rfl
-        · have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪x (c 0) - x (c 4), w05 + ε • d1⟫ < 0 :=
-            (Continuous.continuousAt (by fun_prop)).eventually
-              (gt_mem_nhds (by simp only [hc0, hc4]; exact hz05)) |>.filter_mono nhdsWithin_le_nhds
-          have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-              det24 x * det3 (x (c (0 + 1)) - x (c 0)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1) < 0 := by
-            have hdet0 : det24 x * det3 (x (c (0 + 1)) - x (c 0)) (x (c (2 + 1)) - x (c 2)) w05 < 0 := by
-              simp only [he0, he2, hc0, hc1, hc2, hc3, w05]; rw [hrows.1]; nlinarith
-            refine (Continuous.continuousAt ?_).eventually (gt_mem_nhds hdet0) |>.filter_mono nhdsWithin_le_nhds
-            simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
-          filter_upwards [h1, h2] with ε hε1 hε2 _ _ _
-          have := mul_pos_of_neg_of_neg hε1 hε2; linarith
-        · have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪x (c (0 + 1)) - x (c 4), w05 + ε • d1⟫ < 0 :=
-            (Continuous.continuousAt (by fun_prop)).eventually
-              (gt_mem_nhds (by simp only [he0, hc1, hc4]; exact hz45)) |>.filter_mono nhdsWithin_le_nhds
-          have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-              det24 x * det3 (x (c (0 + 1)) - x (c 0)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1) < 0 := by
-            have hdet0 : det24 x * det3 (x (c (0 + 1)) - x (c 0)) (x (c (2 + 1)) - x (c 2)) w05 < 0 := by
-              simp only [he0, he2, hc0, hc1, hc2, hc3, w05]; rw [hrows.1]; nlinarith
-            refine (Continuous.continuousAt ?_).eventually (gt_mem_nhds hdet0) |>.filter_mono nhdsWithin_le_nhds
-            simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
-          filter_upwards [h1, h2] with ε hε1 hε2 _ _ _
-          have := mul_pos_of_neg_of_neg hε1 hε2; linarith
+        · simp only [he0, he2, hc0, hc1, hc2, hc3, hc4]
+          have hdet0 : det24 x * det3 (x 4 - x 0) (x 2 - x 6) w05 < 0 := by
+            dsimp [w05]; rw [hrows.1]; nlinarith
+          exact (hev_neg _ _ _ hz05 hdet0).mono fun ε hε _ _ _ => hε
+        · simp only [he0, he2, hc0, hc1, hc2, hc3, hc4]
+          have hdet0 : det24 x * det3 (x 4 - x 0) (x 2 - x 6) w05 < 0 := by
+            dsimp [w05]; rw [hrows.1]; nlinarith
+          exact (hev_neg _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · by_cases hj : j = 1 ∨ j = 1 + 1
       · rcases hj with rfl | rfl
-        · have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪x (c 1) - x (c 4), w05 + ε • d1⟫ < 0 :=
-            (Continuous.continuousAt (by fun_prop)).eventually
-              (gt_mem_nhds (by simp only [hc1, hc4]; exact hz45)) |>.filter_mono nhdsWithin_le_nhds
-          have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-              det24 x * det3 (x (c (1 + 1)) - x (c 1)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1) < 0 := by
-            have hdet0 : det24 x * det3 (x (c (1 + 1)) - x (c 1)) (x (c (2 + 1)) - x (c 2)) w05 < 0 := by
-              simp only [he1, he2, hc1, hc2, hc3, w05]; rw [hrows.2.1]; nlinarith
-            refine (Continuous.continuousAt ?_).eventually (gt_mem_nhds hdet0) |>.filter_mono nhdsWithin_le_nhds
-            simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
-          filter_upwards [h1, h2] with ε hε1 hε2 _ _ _
-          have := mul_pos_of_neg_of_neg hε1 hε2; linarith
-        · have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪x (c (1 + 1)) - x (c 4), w05 + ε • d1⟫ < 0 :=
-            (Continuous.continuousAt (by fun_prop)).eventually
-              (gt_mem_nhds (by simp only [he1, hc2, hc4]; exact hz65)) |>.filter_mono nhdsWithin_le_nhds
-          have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-              det24 x * det3 (x (c (1 + 1)) - x (c 1)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1) < 0 := by
-            have hdet0 : det24 x * det3 (x (c (1 + 1)) - x (c 1)) (x (c (2 + 1)) - x (c 2)) w05 < 0 := by
-              simp only [he1, he2, hc1, hc2, hc3, w05]; rw [hrows.2.1]; nlinarith
-            refine (Continuous.continuousAt ?_).eventually (gt_mem_nhds hdet0) |>.filter_mono nhdsWithin_le_nhds
-            simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
-          filter_upwards [h1, h2] with ε hε1 hε2 _ _ _
-          have := mul_pos_of_neg_of_neg hε1 hε2; linarith
+        · simp only [he1, he2, hc1, hc2, hc3, hc4]
+          have hdet0 : det24 x * det3 (x 6 - x 4) (x 2 - x 6) w05 < 0 := by
+            dsimp [w05]; rw [hrows.2.1]; nlinarith
+          exact (hev_neg _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
+        · simp only [he1, he2, hc1, hc2, hc3, hc4]
+          have hdet0 : det24 x * det3 (x 6 - x 4) (x 2 - x 6) w05 < 0 := by
+            dsimp [w05]; rw [hrows.2.1]; nlinarith
+          exact (hev_neg _ _ _ hz65 hdet0).mono fun ε hε _ _ _ => hε
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · exact Eventually.of_forall fun _ h => absurd rfl h
     · by_cases hj : j = 3 ∨ j = 3 + 1
       · rcases hj with rfl | rfl
-        · have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ⟪x (c 3) - x (c 4), w05 + ε • d1⟫ :=
-            (Continuous.continuousAt (by fun_prop)).eventually
-              (lt_mem_nhds (by simp only [hc3, hc4]; exact hz25)) |>.filter_mono nhdsWithin_le_nhds
-          have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-              0 < det24 x * det3 (x (c (3 + 1)) - x (c 3)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1) := by
-            have hdet0 : 0 < det24 x * det3 (x (c (3 + 1)) - x (c 3)) (x (c (2 + 1)) - x (c 2)) w05 := by
-              simp only [he3, he2, hc2, hc3, hc4, w05]; rw [hrows.2.2.1]; nlinarith
-            refine (Continuous.continuousAt ?_).eventually (lt_mem_nhds hdet0) |>.filter_mono nhdsWithin_le_nhds
-            simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
-          filter_upwards [h1, h2] with ε hε1 hε2 _ _ _
-          have := mul_pos hε1 hε2; linarith
+        · simp only [he3, he2, hc2, hc3, hc4]
+          have hdet0 : 0 < det24 x * det3 (x 5 - x 2) (x 2 - x 6) w05 := by
+            dsimp [w05]; rw [hrows.2.2.1]; nlinarith
+          exact (hev_pos _ _ _ hz25 hdet0).mono fun ε hε _ _ _ => hε
         · exact Eventually.of_forall fun _ _ _ h => absurd rfl h
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · by_cases hj : j = 4 ∨ j = 4 + 1
       · rcases hj with rfl | rfl
         · exact Eventually.of_forall fun _ _ _ h => absurd rfl h
-        · have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪x (c (4 + 1)) - x (c 4), w05 + ε • d1⟫ < 0 :=
-            (Continuous.continuousAt (by fun_prop)).eventually
-              (gt_mem_nhds (by simp only [he4, hc0, hc4]; exact hz05)) |>.filter_mono nhdsWithin_le_nhds
+        · have hc1_fn : Continuous fun ε : ℝ => ⟪x 0 - x 5, w05 + ε • d1⟫ := by fun_prop
+          have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪x 0 - x 5, w05 + ε • d1⟫ < 0 :=
+            (hc1_fn.continuousAt.eventually (gt_mem_nhds (by simpa only [zero_smul, add_zero] using hz05))).filter_mono nhdsWithin_le_nhds
           have hdet_eq : ∀ ε : ℝ,
-              det24 x * det3 (x (c (4 + 1)) - x (c 4)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1) =
+              det24 x * det3 (x 0 - x 5) (x 2 - x 6) (w05 + ε • d1) =
               ε * ((det24 x * det24 x) * (1 - oblX0 x 5)) := by
             intro ε
-            simp only [he4, he2, hc0, hc2, hc3, hc4, w05]
-            have h0 : det3 (x 0 - x 5) (x 2 - x 6) (x 5 - x 0) = 0 := by
-              simp only [det3_expand]; ring
-            have hlin : det3 (x 0 - x 5) (x 2 - x 6) (x 5 - x 0 + ε • d1) =
-                det3 (x 0 - x 5) (x 2 - x 6) (x 5 - x 0) +
-                ε * det3 (x 0 - x 5) (x 2 - x 6) d1 := by
-              simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
-            rw [hlin, h0, zero_add]
-            dsimp [d1]
-            rw [hrows.2.2.2]
+            dsimp [w05, d1]
+            rw [det3_P5_tie_row, hrows.2.2.2]
             ring
+          simp only [he4, he2, hc0, hc2, hc3, hc4]
           filter_upwards [h1, self_mem_nhdsWithin] with ε hε1 (hε_pos : 0 < ε) _ _ _
-          have h2 : det24 x * det3 (x (c (4 + 1)) - x (c 4)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1) < 0 := by
+          have h2 : det24 x * det3 (x 0 - x 5) (x 2 - x 6) (w05 + ε • d1) < 0 := by
             rw [hdet_eq ε]
             exact mul_neg_of_pos_of_neg hε_pos (mul_neg_of_pos_of_neg hd2 (by linarith))
           have := mul_pos_of_neg_of_neg hε1 h2; linarith
