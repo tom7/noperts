@@ -100,12 +100,13 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
         · exact Or.inl hRup
         · exact Or.inr ⟨hh, hflags, Or.inr (Or.inl ⟨hCbar, hres, hHalf, hSp⟩)⟩
       · rcases RDispatch.r_dispatch F hCbar hHalf with
-          h0 | h1 | h2 | h3 | h4 | hRes
+          h0 | h1 | h2 | h3 | h4 | hRup | hRes
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inl h0))
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inl h1)))
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inl h2))))
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inl h3)))))
         · exact Or.inl (FaceChord.isRupert_cover24_S5 F (Or.inr (Or.inr (Or.inr (Or.inr h4)))))
+        · exact Or.inl hRup
         · by_cases hSpec : RSpec.HSpecAny F
           · exact Or.inl (RSpec.rspec_closes F hSpec)
           · exact Or.inr ⟨hh, hflags, Or.inr (Or.inr ⟨hres, hRes, hSpec⟩)⟩
