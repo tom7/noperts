@@ -958,7 +958,7 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
   have hw : x 5 - x 0 = (oblX0 x 5 - 1) • (x 0 - x 1) + oblX2 x 5 • (x 2 - x 1) +
       oblX6 x 5 • (x 6 - x 1) := by
     rw [show x 5 - x 0 = (x 5 - x 1) - (x 0 - x 1) by abel, hrep 5]; module
-  have h26 : x 2 - x 6 = 0 • (x 0 - x 1) + 1 • (x 2 - x 1) + (-1 : ℝ) • (x 6 - x 1) := by
+  have h26 : x 2 - x 6 = (0 : ℝ) • (x 0 - x 1) + (1 : ℝ) • (x 2 - x 1) + (-1 : ℝ) • (x 6 - x 1) := by
     module
   have h40 : x 4 - x 0 = (oblX0 x 4 - 1) • (x 0 - x 1) + oblX2 x 4 • (x 2 - x 1) +
       oblX6 x 4 • (x 6 - x 1) := by
@@ -972,29 +972,27 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
   have h05 : x 0 - x 5 = (1 - oblX0 x 5) • (x 0 - x 1) + (-oblX2 x 5) • (x 2 - x 1) +
       (-oblX6 x 5) • (x 6 - x 1) := by
     rw [show x 0 - x 5 = (x 0 - x 1) - (x 5 - x 1) by abel, hrep 5]; module
-  have h61 : x 6 - x 1 = 0 • (x 0 - x 1) + 0 • (x 2 - x 1) + 1 • (x 6 - x 1) := by module
-  have hdet_eq : ∀ u v w : ℝ³, det3 u v w = Minimality.det3 u v w := by
-    intro u v w; simp [Minimality.Split.det3, Minimality.det3_expand]
+  have h61 : x 6 - x 1 = (0 : ℝ) • (x 0 - x 1) + (0 : ℝ) • (x 2 - x 1) + (1 : ℝ) • (x 6 - x 1) := by module
   refine ⟨?_, ?_, ?_, ?_⟩
-  · rw [hdet_eq]; conv_lhs => arg 1; rw [h40]
+  · conv_lhs => arg 1; rw [h40]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
     rw [M4.det3_frame x (oblX0 x 4 - 1) (oblX2 x 4) (oblX6 x 4) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     dsimp [R04]; ring
-  · rw [hdet_eq]; conv_lhs => arg 1; rw [h64]
+  · conv_lhs => arg 1; rw [h64]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
     rw [M4.det3_frame x (-oblX0 x 4) (-oblX2 x 4) (1 - oblX6 x 4) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     dsimp [R46]; ring
-  · rw [hdet_eq]; conv_lhs => arg 1; rw [h52]
+  · conv_lhs => arg 1; rw [h52]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
     rw [M4.det3_frame x (oblX0 x 5) (oblX2 x 5 - 1) (oblX6 x 5) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     ring
-  · rw [hdet_eq]; conv_lhs => arg 1; rw [h05]
+  · conv_lhs => arg 1; rw [h05]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [h61]
     rw [M4.det3_frame x (1 - oblX0 x 5) (-oblX2 x 5) (-oblX6 x 5) 0 1 (-1) 0 0 1]
