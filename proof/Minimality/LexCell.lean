@@ -30,6 +30,39 @@ def RobUniLex {k : ℕ} (z : ZMod k → ℝ × ℝ × ℝ) : Prop :=
     LexLt3 (z B) (z (B + b)) ∨ LexLt3 (z (B + c)) (z (B + b)) ∨
     LexLt3 (z B) (z (B + d)) ∨ LexLt3 (z (B + c)) (z (B + d))
 
+/-- For a 4-cycle of triples, mixed `diagPairs` (`{0, 2} × {1, 3}`) comparisons give `RobUniLex`. -/
+theorem robUniLex_four_of_mixed {z : ZMod 4 → ℝ × ℝ × ℝ}
+    (hn : ∃ p ∈ Minimality.RimCell.diagPairs, LexLt3 (z p.1) (z p.2))
+    (hp : ∃ q ∈ Minimality.RimCell.diagPairs, LexLt3 (z q.2) (z q.1)) :
+    RobUniLex z := by
+  obtain ⟨p, hpm, hpn⟩ := hn
+  obtain ⟨q, hqm, hqp⟩ := hp
+  simp only [Minimality.RimCell.diagPairs, Finset.mem_product, Finset.mem_insert,
+    Finset.mem_singleton] at hpm hqm
+  intro B b c d hb hbc hcd hd
+  have hb1 : b = 1 := by omega
+  have hc2 : c = 2 := by omega
+  have hd3 : d = 3 := by omega
+  subst hb1 hc2 hd3
+  obtain ⟨p1, p2⟩ := p
+  obtain ⟨q1, q2⟩ := q
+  simp only at hpm hqm hpn hqp
+  have e : ((0 : ZMod 4) + 1 = 1 ∧ (0 : ZMod 4) + 2 = 2 ∧ (0 : ZMod 4) + 3 = 3) ∧
+      ((1 : ZMod 4) + 1 = 2 ∧ (1 : ZMod 4) + 2 = 3 ∧ (1 : ZMod 4) + 3 = 0) ∧
+      ((2 : ZMod 4) + 1 = 3 ∧ (2 : ZMod 4) + 2 = 0 ∧ (2 : ZMod 4) + 3 = 1) ∧
+      ((3 : ZMod 4) + 1 = 0 ∧ (3 : ZMod 4) + 2 = 1 ∧ (3 : ZMod 4) + 3 = 2) := by decide
+  obtain ⟨⟨e01, e02, e03⟩, ⟨e11, e12, e13⟩, ⟨e21, e22, e23⟩, ⟨e31, e32, e33⟩⟩ := e
+  have hB : B = 0 ∨ B = 1 ∨ B = 2 ∨ B = 3 := by revert B; decide
+  rcases hB with rfl | rfl | rfl | rfl
+  · simp only [Nat.cast_one, Nat.cast_ofNat, e01, e02, e03]
+    rcases hpm with ⟨rfl | rfl, rfl | rfl⟩ <;> simp_all
+  · simp only [Nat.cast_one, Nat.cast_ofNat, e11, e12, e13]
+    rcases hqm with ⟨rfl | rfl, rfl | rfl⟩ <;> simp_all
+  · simp only [Nat.cast_one, Nat.cast_ofNat, e21, e22, e23]
+    rcases hpm with ⟨rfl | rfl, rfl | rfl⟩ <;> simp_all
+  · simp only [Nat.cast_one, Nat.cast_ofNat, e31, e32, e33]
+    rcases hqm with ⟨rfl | rfl, rfl | rfl⟩ <;> simp_all
+
 theorem ev_lexPos3 {a b c : ℝ} (h : LexPos3 a b c) :
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < a + ε * b + ε ^ 2 * c := by
   rcases h with h | ⟨rfl, h | ⟨rfl, h⟩⟩
