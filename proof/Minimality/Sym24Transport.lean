@@ -110,4 +110,90 @@ theorem lexAny_sym {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : LexAny (s
     rcases mem_map.mp ht' with ⟨t, ht, rfl⟩
     exact hD t ht
 
+@[simp] theorem pi24_pi24 (i : Fin 7) : pi24 (pi24 i) = i := by
+  revert i; decide
+
+@[simp] theorem sig24_sig24 (t : Fin 9) : sig24 (sig24 t) = t := by
+  revert t; decide
+
+theorem lexAny_iff_sym {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    LexAny (sym24 F) ↔ LexAny F := by
+  constructor
+  · exact lexAny_sym F
+  · intro h
+    rcases h with ⟨k, hne, c, U, Dn, b, d1, d2, hk, hc, hcyc, hU, hD, hR⟩
+    refine ⟨k, hne, pi24 ∘ c, U.map sig24.toEmbedding, Dn.map sig24.toEmbedding, b, d1, d2,
+      hk, pi24.injective.comp hc, ?_, ?_, ?_, by simpa [Function.comp_apply, pi24_pi24] using hR⟩
+    · intro i
+      obtain ⟨a, ha, b, hb, h1, h2, h3, h4, h5⟩ := hcyc i
+      refine ⟨sig24 a, mem_map_of_mem _ ha, sig24 b, mem_map_of_mem _ hb,
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 a) (pi24 (c i))).2 (by simpa),
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 b) (pi24 (c i))).2 (by simpa),
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 a) (pi24 (c (i + 1)))).2 (by simpa),
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 b) (pi24 (c (i + 1)))).2 (by simpa),
+        ?_⟩
+      intro q hqi hqi1
+      obtain ⟨q', rfl⟩ := pi24.surjective q
+      rcases h5 q' (fun h => hqi (by simp [h])) (fun h => hqi1 (by simp [h])) with hq | hq
+      · exact Or.inl (fun h => hq (by
+          have := (s24_sym (sig24 a) (pi24 q')).1 (by simpa using h)
+          simpa [sig24_sig24, pi24_pi24] using this))
+      · exact Or.inr (fun h => hq (by
+          have := (s24_sym (sig24 b) (pi24 q')).1 (by simpa using h)
+          simpa [sig24_sig24, pi24_pi24] using this))
+    · intro t' ht'
+      rcases mem_map.mp ht' with ⟨t, ht, rfl⟩
+      simpa [sig24_sig24] using hU t ht
+    · intro t' ht'
+      rcases mem_map.mp ht' with ⟨t, ht, rfl⟩
+      simpa [sig24_sig24] using hD t ht
+
+/-- `SplitAny24` transfers along the `(2 6)(4 5)` symmetry `sym24`. -/
+theorem splitAny24_sym {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : SplitAny24 (sym24 F)) :
+    SplitAny24 F := by
+  rcases h with ⟨k, hne, c, pat, u, v, a, cc, σ, hk, hc, hcyc, hfac, hca, hca1, hrows⟩
+  refine ⟨k, hne, pi24 ∘ c, pat ∘ sig24, u, v, a, cc, σ,
+    hk, pi24.injective.comp hc, ?_, ?_, hca, hca1, hrows⟩
+  · intro i
+    obtain ⟨ea, eb, hea, heb, h0a, h0b, h1a, h1b, hs⟩ := hcyc i
+    refine ⟨sig24 ea, sig24 eb, by simp [hea], by simp [heb],
+      (s24_sym ea (c i)).1 h0a, (s24_sym eb (c i)).1 h0b,
+      (s24_sym ea (c (i + 1))).1 h1a, (s24_sym eb (c (i + 1))).1 h1b, ?_⟩
+    intro q hqi hqi1
+    obtain ⟨q', rfl⟩ := pi24.surjective q
+    rcases hs q' (fun h => hqi (by simp [h])) (fun h => hqi1 (by simp [h])) with hq | hq
+    · exact Or.inl (fun h => hq ((s24_sym ea q').2 h))
+    · exact Or.inr (fun h => hq ((s24_sym eb q').2 h))
+  · intro t
+    simpa [sig24_sig24] using hfac (sig24 t)
+
+theorem splitAny24_iff_sym {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    SplitAny24 (sym24 F) ↔ SplitAny24 F := by
+  constructor
+  · exact splitAny24_sym F
+  · intro h
+    rcases h with ⟨k, hne, c, pat, u, v, a, cc, σ, hk, hc, hcyc, hfac, hca, hca1, hrows⟩
+    refine ⟨k, hne, pi24 ∘ c, pat ∘ sig24, u, v, a, cc, σ,
+      hk, pi24.injective.comp hc, ?_, ?_, hca, hca1,
+      by simpa [Function.comp_apply, pi24_pi24] using hrows⟩
+    · intro i
+      obtain ⟨ea, eb, hea, heb, h0a, h0b, h1a, h1b, hs⟩ := hcyc i
+      refine ⟨sig24 ea, sig24 eb, by simp [hea], by simp [heb],
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 ea) (pi24 (c i))).2 (by simpa),
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 eb) (pi24 (c i))).2 (by simpa),
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 ea) (pi24 (c (i + 1)))).2 (by simpa),
+        by simpa [pi24_pi24, sig24_sig24] using (s24_sym (sig24 eb) (pi24 (c (i + 1)))).2 (by simpa),
+        ?_⟩
+      intro q hqi hqi1
+      obtain ⟨q', rfl⟩ := pi24.surjective q
+      rcases hs q' (fun h => hqi (by simp [h])) (fun h => hqi1 (by simp [h])) with hq | hq
+      · exact Or.inl (fun h => hq (by
+          have := (s24_sym (sig24 ea) (pi24 q')).1 (by simpa using h)
+          simpa [sig24_sig24, pi24_pi24] using this))
+      · exact Or.inr (fun h => hq (by
+          have := (s24_sym (sig24 eb) (pi24 q')).1 (by simpa using h)
+          simpa [sig24_sig24, pi24_pi24] using this))
+    · intro t
+      simpa [sig24_sig24] using hfac (sig24 t)
+
 end Minimality.T24.Sym
