@@ -973,29 +973,31 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
       (-oblX6 x 5) • (x 6 - x 1) := by
     rw [show x 0 - x 5 = (x 0 - x 1) - (x 5 - x 1) by abel, hrep 5]; module
   have h61 : x 6 - x 1 = 0 • (x 0 - x 1) + 0 • (x 2 - x 1) + 1 • (x 6 - x 1) := by module
+  have hdet_eq : ∀ u v w : ℝ³, det3 u v w = Minimality.det3 u v w := by
+    intro u v w; simp [Minimality.Split.det3, Minimality.det3_expand]
   refine ⟨?_, ?_, ?_, ?_⟩
-  · conv_lhs => arg 1; rw [h40]
+  · rw [hdet_eq]; conv_lhs => arg 1; rw [h40]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    erw [M4.det3_frame x (oblX0 x 4 - 1) (oblX2 x 4) (oblX6 x 4) 0 1 (-1)
+    rw [M4.det3_frame x (oblX0 x 4 - 1) (oblX2 x 4) (oblX6 x 4) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     dsimp [R04]; ring
-  · conv_lhs => arg 1; rw [h64]
+  · rw [hdet_eq]; conv_lhs => arg 1; rw [h64]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    erw [M4.det3_frame x (-oblX0 x 4) (-oblX2 x 4) (1 - oblX6 x 4) 0 1 (-1)
+    rw [M4.det3_frame x (-oblX0 x 4) (-oblX2 x 4) (1 - oblX6 x 4) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     dsimp [R46]; ring
-  · conv_lhs => arg 1; rw [h52]
+  · rw [hdet_eq]; conv_lhs => arg 1; rw [h52]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    erw [M4.det3_frame x (oblX0 x 5) (oblX2 x 5 - 1) (oblX6 x 5) 0 1 (-1)
+    rw [M4.det3_frame x (oblX0 x 5) (oblX2 x 5 - 1) (oblX6 x 5) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     ring
-  · conv_lhs => arg 1; rw [h05]
+  · rw [hdet_eq]; conv_lhs => arg 1; rw [h05]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [h61]
-    erw [M4.det3_frame x (1 - oblX0 x 5) (-oblX2 x 5) (-oblX6 x 5) 0 1 (-1) 0 0 1]
+    rw [M4.det3_frame x (1 - oblX0 x 5) (-oblX2 x 5) (-oblX6 x 5) 0 1 (-1) 0 0 1]
     ring
 
 private theorem det3_P5_tie_row (x : Fin 7 → ℝ³) (ε : ℝ) :
