@@ -975,19 +975,19 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
   · conv_lhs => arg 1; rw [h40]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    rw [M4.det3_frame x]; dsimp [R04]; ring
+    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by dsimp [R04]; ring)
   · conv_lhs => arg 1; rw [h64]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    rw [M4.det3_frame x]; dsimp [R46]; ring
+    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by dsimp [R46]; ring)
   · conv_lhs => arg 1; rw [h52]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    rw [M4.det3_frame x]; ring
+    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by ring)
   · conv_lhs => arg 1; rw [h05]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [h61]
-    rw [M4.det3_frame x]; ring
+    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by ring)
 
 private theorem det3_P5_tie_row (x : Fin 7 → ℝ³) (ε : ℝ) :
     det3 (x 0 - x 5) (x 2 - x 6) ((x 5 - x 0) + ε • (x 6 - x 1)) =
@@ -1155,8 +1155,9 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
           filter_upwards [h1, self_mem_nhdsWithin] with ε hε1 (hε_pos : 0 < ε) _ _ _
           have h2 : det24 x * det3 (x 0 - x 5) (x 2 - x 6) (w05 + ε • d1) < 0 := by
             rw [hdet_eq ε]
-            exact mul_neg_of_pos_of_neg hε_pos (mul_neg_of_pos_of_neg hd2 (by linarith))
-          have := mul_pos_of_neg_of_neg hε1 h2; linarith
+            exact mul_neg_of_pos_of_neg hε_pos (mul_neg_of_pos_of_neg hd2 (sub_neg.mpr ha5))
+          rw [mul_left_comm]
+          exact mul_pos_of_neg_of_neg hε1 h2
       · exact Eventually.of_forall fun _ _ h => absurd h hj
   obtain ⟨ε, ⟨hfac_ε, hrows_ε⟩, _⟩ := ((hev_fac.and hev_rows).and self_mem_nhdsWithin).exists
   have hdet_eq : ∀ u v w : ℝ³, Minimality.Split.det3 u v w = Minimality.det3 u v w := by
