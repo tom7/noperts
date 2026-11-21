@@ -120,6 +120,7 @@ import Minimality.Type08S.C2K17F2A
 import Minimality.AcuteEdge
 import Minimality.Type16SAT.FinalW
 import Minimality.M4Type24
+import Minimality.M4bType24
 import ProofOfMainTheorem
 
 /-!
@@ -914,3 +915,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.M4.isRupert_of_m4half
 #print axioms Minimality.T24.M4.m4half
 #print axioms Minimality.T24.M4.isRupert_of_m4half
+#assert_standard_axioms Minimality.T24.A7.v31_bound
+#assert_standard_axioms Minimality.T24.A7.v30_bound
+#assert_standard_axioms Minimality.T24.A7.diag_of_bc_zero
+#assert_standard_axioms Minimality.T24.A7.splitAny24_E05P5
+#assert_standard_axioms Minimality.T24.A7.isRupert_of_E05P5
+#print axioms Minimality.T24.A7.v31_bound
+#print axioms Minimality.T24.A7.v30_bound
+#print axioms Minimality.T24.A7.diag_of_bc_zero
+#print axioms Minimality.T24.A7.splitAny24_E05P5
+#print axioms Minimality.T24.A7.isRupert_of_E05P5
