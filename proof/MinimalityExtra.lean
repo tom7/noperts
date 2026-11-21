@@ -1940,4 +1940,35 @@ def PictureSymmetricPoseNoPassage : Prop :=
 
 end EqualWidth
 
+section Stieltjes
+
+/-- **Stieltjes decomposition of symmetric positive definite matrices with nonpositive off-diagonals.**
+Every `n × n` Stieltjes matrix `G` has `G⁻¹ ≥ 0` entrywise, `d := G⁻¹ 1 > 0`, and decomposes as
+`∑ k, μ k e_k e_kᵀ + ∑ i < j, lam i j (ξ i e_i - ξ j e_j)(ξ i e_i - ξ j e_j)ᵀ` with
+`ξ k = μ k = 1 / d k > 0` and `lam i j = -G i j / (ξ i ξ j) ≥ 0`; conversely, any such sum
+with `μ > 0`, `ξ > 0`, `lam ≥ 0` is symmetric positive definite with nonpositive off-diagonals. -/
+def StieltjesDecomposition : Prop :=
+  (∀ (n : ℕ) (G : Matrix (Fin n) (Fin n) ℝ),
+    G.PosDef → (∀ i j : Fin n, i ≠ j → G i j ≤ 0) →
+    let d : Fin n → ℝ := Matrix.mulVec G⁻¹ fun _ => 1
+    let ξ : Fin n → ℝ := fun k => 1 / d k
+    let μ : Fin n → ℝ := ξ
+    let lam : Fin n → Fin n → ℝ := fun i j => -G i j / (ξ i * ξ j)
+    (∀ i j : Fin n, 0 ≤ G⁻¹ i j) ∧
+    (∀ k, 0 < d k) ∧ (∀ k, 0 < μ k) ∧ (∀ i j, i < j → 0 ≤ lam i j) ∧
+    G = (∑ k : Fin n, μ k • Matrix.vecMulVec (Pi.single k 1) (Pi.single k 1)) +
+        ∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j : Fin n => i < j),
+          lam i j • Matrix.vecMulVec (ξ i • Pi.single i 1 - ξ j • Pi.single j 1)
+                                     (ξ i • Pi.single i 1 - ξ j • Pi.single j 1)) ∧
+  (∀ (n : ℕ) (μ ξ : Fin n → ℝ) (lam : Fin n → Fin n → ℝ),
+    (∀ k, 0 < μ k) → (∀ k, 0 < ξ k) → (∀ i j, i < j → 0 ≤ lam i j) →
+    let M : Matrix (Fin n) (Fin n) ℝ :=
+      (∑ k : Fin n, μ k • Matrix.vecMulVec (Pi.single k 1) (Pi.single k 1)) +
+      ∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j : Fin n => i < j),
+        lam i j • Matrix.vecMulVec (ξ i • Pi.single i 1 - ξ j • Pi.single j 1)
+                                   (ξ i • Pi.single i 1 - ξ j • Pi.single j 1)
+    M.PosDef ∧ ∀ i j : Fin n, i ≠ j → M i j ≤ 0)
+
+end Stieltjes
+
 end MinimalityExtra

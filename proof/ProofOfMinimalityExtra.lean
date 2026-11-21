@@ -38,6 +38,7 @@ public import MinimalityExtra.NoUnimodalOpen
 public import MinimalityExtra.SeptLimit
 public import MinimalityExtra.PictureSymmetric
 public import MinimalityExtra.LimitRows
+public import MinimalityExtra.Stieltjes
 public import MinimalityExtra.QuadEdge
 public import MinimalityExtra.AcuteEdge
 public import MinimalityExtra.Slide
@@ -229,3 +230,4 @@ theorem type29Faces_agree :
 end MinimalityExtra
 
 #print axioms MinimalityExtra.HasFirstOrderPassage.isRupert
+#print axioms MinimalityExtra.stieltjesDecomposition
