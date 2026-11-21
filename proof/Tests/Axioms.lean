@@ -298,7 +298,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_vertexTri
 #assert_standard_axioms Minimality.exists_window_t
 #assert_standard_axioms Minimality.isRupert_window_frame
-#assert_standard_axioms Minimality.isRupert_sideCrossing_frame
+#assert_standard_axioms Minimality.isRupert_obliqueView_frame
+#assert_standard_axioms Minimality.isRupert_cornerView_frame
 #assert_standard_axioms Minimality.Face16.mem_iff
 #assert_standard_axioms Minimality.Type24.inj
 #assert_standard_axioms Minimality.omega_identity
@@ -325,11 +326,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_type24_window2
 #assert_standard_axioms Minimality.isRupert_type24_window0
 #assert_standard_axioms Minimality.isRupert_type24_window
-#assert_standard_axioms Minimality.isRupert_type24_S6
-#assert_standard_axioms Minimality.isRupert_type24_S2
-#assert_standard_axioms Minimality.isRupert_type24_S0
-#assert_standard_axioms Minimality.isRupert_type24_B
-#assert_standard_axioms Minimality.isRupert_type24_outside_Cbar
+#assert_standard_axioms Minimality.isRupert_type24_corner
+#assert_standard_axioms Minimality.isRupert_type24_outside_Cbar'
 #assert_standard_axioms Minimality.exists_arch
 #assert_standard_axioms Minimality.isCyclicUnimodal_of_arch
 #assert_standard_axioms Minimality.capStep_of_cos
