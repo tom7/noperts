@@ -35,15 +35,15 @@ terms of the generic negations:
 - `Hole24R` (inside `C̄ ∩ Resid24 \ Q45HalfPred`, off `AnyFaceChord` and `LexAny`).
 -/
 
-/-- Special loci of Theorem Q45 inside `C̄ ∩ Resid24`, off `AnyFaceChord` and `LexAny`. -/
+/-- Special loci of Theorem Q45 inside `C̄ ∩ Resid24`, off `AnyFaceChord`, `LexAny`, and `SplitAny24`. -/
 def Hole24Q45Special (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ Resid24 x ∧ Q45HalfPred F ∧ Q45.Q45Special' F ∧
-    ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F
+    ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F ∧ ¬ RCell.SplitAny24 F
 
-/-- Region `R` residual inside `C̄ ∩ Resid24 \ Q45HalfPred`, off `AnyFaceChord` and `LexAny`. -/
+/-- Region `R` residual inside `C̄ ∩ Resid24 \ Q45HalfPred`, off `AnyFaceChord`, `LexAny`, and `SplitAny24`. -/
 def Hole24R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ Resid24 x ∧ ¬ Q45HalfPred F ∧
-    ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F
+    ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F ∧ ¬ RCell.SplitAny24 F
 
 /-- Existing non-closure flags from `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`. -/
 def Hole24Flags (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
@@ -98,11 +98,13 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
       · exact Or.inl (RCell.anyFaceChord_isRupert F hAfc)
       · by_cases hLex : RCell.LexAny F
         · exact Or.inl (RCell.lexAny_isRupert F hLex)
-        · by_cases hHalf : Q45HalfPred F
-          · rcases Q45.q45_half_cell F hHalf with hRup | hSp
-            · exact Or.inl hRup
-            · exact Or.inr ⟨hh, hflags, Or.inl ⟨hCbar, hres, hHalf, hSp, hAfc, hLex⟩⟩
-          · exact Or.inr ⟨hh, hflags, Or.inr ⟨hCbar, hres, hHalf, hAfc, hLex⟩⟩
+        · by_cases hSp24 : RCell.SplitAny24 F
+          · exact Or.inl (RCell.splitAny24_isRupert F hSp24)
+          · by_cases hHalf : Q45HalfPred F
+            · rcases Q45.q45_half_cell F hHalf with hRup | hSp
+              · exact Or.inl hRup
+              · exact Or.inr ⟨hh, hflags, Or.inl ⟨hCbar, hres, hHalf, hSp, hAfc, hLex, hSp24⟩⟩
+            · exact Or.inr ⟨hh, hflags, Or.inr ⟨hCbar, hres, hHalf, hAfc, hLex, hSp24⟩⟩
     · exact Or.inl (Minimality.isRupert_type24_outside_Cbar'
         (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar)
 
