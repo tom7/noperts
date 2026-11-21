@@ -174,7 +174,7 @@ private theorem exists_delta_det3_ne (S : Finset (ℝ³ × ℝ³)) (u : ℝ³)
         rcases Finset.mem_insert.mp hp with rfl | hp'
         · exact ha0
         · exact hδ p hp'⟩
-    · push_neg at ha0
+    · push Not at ha0
       set n := cross (a.2 - a.1) u
       have hn : n ≠ 0 := hS a (Finset.mem_insert_self a s)
       have hnn : det3 (a.2 - a.1) n u ≠ 0 := by
@@ -253,7 +253,7 @@ private theorem wedge_of_pos_comb (S : Finset ℝ³) (w : ℝ³ → ℝ) (m u : 
       Finset.sum_pos (fun s hs => mul_pos (hw s hs) (hall s hs)) ⟨s₁, hs₁⟩
     linarith [hsum m]
   by_contra hnowedge
-  push_neg at hnowedge
+  push Not at hnowedge
   obtain ⟨s₀, hs₀⟩ := hSpos_ne
   have hs₀_S : s₀ ∈ S := (Finset.mem_filter.mp hs₀).1
   have hs₀_pos : 0 < det3 s₀ m u := (Finset.mem_filter.mp hs₀).2
@@ -358,7 +358,7 @@ private theorem tiltCert_wedge_replace (O : Finset ℝ³) (v a b c : ℝ³)
       linarith
     have hex_p : ∃ p ∈ ({a, b, c} : Finset ℝ³), 0 < det3 (p - x) m u ∧ det3 (p - x) (y₀ - x) u ≤ 0 := by
       by_contra hno
-      push_neg at hno
+      push Not at hno
       have ha1 : det3 (a - x) m u ≤ 0 := by
         by_contra h; exact ha_both ⟨hno a (by simp) (not_le.mp h), not_le.mp h⟩
       have hb1 : det3 (b - x) m u ≤ 0 := by
@@ -369,7 +369,7 @@ private theorem tiltCert_wedge_replace (O : Finset ℝ³) (v a b c : ℝ³)
       nlinarith
     have hex_q : ∃ q ∈ ({a, b, c} : Finset ℝ³), det3 (q - x) m u ≤ 0 ∧ 0 < det3 (q - x) (y₀ - x) u := by
       by_contra hno
-      push_neg at hno
+      push Not at hno
       have ha1 : det3 (a - x) (y₀ - x) u ≤ 0 := by
         by_contra h
         have hpos := not_le.mp h
@@ -428,7 +428,7 @@ private theorem tiltCert_wedge_replace (O : Finset ℝ³) (v a b c : ℝ³)
         linarith
       exact ⟨q, hqO, p, hpO, hpq, hp_m, hxm_q⟩
     · exfalso
-      push_neg at hw
+      push Not at hw
       let SQ := ({a, b, c} : Finset ℝ³).filter (fun s => 0 < det3 (s - x) (y₀ - x) u)
       have hSQ_ne : SQ.Nonempty := ⟨q₀, Finset.mem_filter.mpr ⟨hq₀_mem, hq₀_y⟩⟩
       obtain ⟨q_star, hqs_mem, hqs_max⟩ := SQ.exists_max_image
@@ -707,7 +707,7 @@ theorem freeAt_of_insert_of_cone (O : Finset ℝ³) (v a b c : ℝ³) (ha : a �
           exact hne_x y hyO (Finset.mem_filter.mp hs').2
         have hnoncol'' : ∃ s₁ ∈ S'', ∃ s₂ ∈ S'', det3 s₁ s₂ u ≠ 0 := by
           by_contra hno
-          push_neg at hno
+          push Not at hno
           have hzero_all : ∀ s₁ ∈ S', ∀ s₂ ∈ S', det3 s₁ s₂ u = 0 := fun s₁ hs₁ s₂ hs₂ => by
             by_cases h1c : cross s₁ u = 0
             · have : det3 s₁ s₂ u = -⟪cross s₁ u, s₂⟫ := by

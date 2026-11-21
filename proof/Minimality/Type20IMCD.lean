@@ -683,7 +683,7 @@ lemma zt_I1c {hp hm tp tm sp sm km kp B : ℝ} (tm0 : 0 < tm)
       hp*(1-sm)*sp*(hm*B-(hm+km*tm-km)*(hm*tp+hp*tm)) :=
   mul_left_cancel₀ tm0.ne' (zt_I1 hp hm tp tm sp sm km kp B tie hkm hkp)
 
-lemma zt_I2c {hp hm tp tm sp sm km kp B : ℝ} (tm0 : 0 < tm)
+lemma zt_I2c {hp hm tp tm sp sm km kp : ℝ} (tm0 : 0 < tm)
     (tie : sm*((1-tm)*(1-tp))*km*hm = hp*(hm+km*tm-km)*tm*(1-sm))
     (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm)) :
     sm*km*ddT3 hp hm tp tm sp sm km kp =
@@ -711,7 +711,7 @@ theorem zt_depths {hp hm tp tm sp sm km kp B : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm
     (ddT2 hp hm tp tm sp sm km kp B < 0 ∨
       ddT2 hp hm tp tm sp sm km kp B < ddT6 hp hm tp tm sp km B) := by
   have I1 := zt_I1c (B := B) (kp := kp) tm0 tie hkm hkp
-  have I2 := zt_I2c (B := B) (kp := kp) tm0 tie hkm hkp
+  have I2 := zt_I2c (kp := kp) tm0 tie hkm hkp
   have I4 := zt_I4c (B := B) (kp := kp) tm0 km0 tie hkm hkp
   have hKp : 0 < km - hm := by have := mul_pos sm0 hp0; linarith
   have s1 : 0 < 1 - sm := by linarith

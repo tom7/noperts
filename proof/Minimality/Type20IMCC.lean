@@ -776,7 +776,7 @@ lemma imc_main (hCorner : F.CornerStmt) (hZt : F.ZtStmt)
   rcases lt_or_ge (Kq F.S) 0 with hK | hK
   · exact F.imc_L4 hx hR hI hA hQ hK
   rcases lt_or_ge (F15 F.S) 0 with hF | hF
-  · exact F.imc_L5 hx hR hI hQ hK hF
+  · exact F.imc_L5 hx hR hI hQ hF
   rcases hK.eq_or_lt with hK0 | hKp
   · -- K = 0: then VM > 0
     have hVM := VM_pos_of_K0 F.S hK0.symm hQ

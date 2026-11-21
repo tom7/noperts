@@ -909,7 +909,7 @@ theorem imc_L4 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
 leaf `s15:01346[C^]` (view `x1 - x5 = (1, 0, 0)`; the one literal `F-` is `F15 < 0`; order
 `z1 > z0 > z6 > z4`, `z1 > z3 >= z4`). -/
 theorem imc_L5 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 19))
-    (hI : F.IMC) (hQ : 0 ≤ (F.S.km*(1-F.S.tm)-F.S.hm*(1-F.S.sm*F.S.tp)-F.S.hp*F.S.sm*(1-F.S.tm))) (hK : 0 ≤ (F.S.km-F.S.hm)) (hF : (F.S.kp-F.S.hp*(1-F.S.sp)) < 0) : IsRupert (Finset.univ.image x) := by
+    (hI : F.IMC) (hQ : 0 ≤ (F.S.km*(1-F.S.tm)-F.S.hm*(1-F.S.sm*F.S.tp)-F.S.hp*F.S.sm*(1-F.S.tm))) (hF : (F.S.kp-F.S.hp*(1-F.S.sp)) < 0) : IsRupert (Finset.univ.image x) := by
   set FF := h20s_fac hR with hFF
   obtain ⟨r, B, P⟩ := F.par hI
   have hden := P.hden

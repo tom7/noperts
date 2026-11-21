@@ -1296,7 +1296,6 @@ theorem rimFA_restA (H : FPar tp tm hm sp kp sm km ρ b lam)
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFB_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0)
@@ -1446,7 +1445,6 @@ theorem rimFB_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFC_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) (pN sm km) pB)
@@ -1557,7 +1555,6 @@ theorem rimFC_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFD_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
@@ -1673,7 +1670,6 @@ theorem rimFD_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 end
@@ -1941,7 +1937,6 @@ theorem rimAP_restA (H : FPar tp tm hm sp kp sm km ρ b lam)
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimBP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0)
@@ -2071,7 +2066,6 @@ theorem rimBP_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimCP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) (pN sm km) pB)
@@ -2159,7 +2153,6 @@ theorem rimCP_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimDP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
@@ -2249,7 +2242,6 @@ theorem rimDP_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 end

@@ -148,13 +148,14 @@ theorem rest_R1 (hsa : 0 < l * vx - vz) (hsb : 0 < -(k * vx + vz)) (hsc : 0 < tp
 
 set_option maxHeartbeats 4000000 in
 include ha1 ha3 ha4 hk hl a1 a3 a4 hBB in
-theorem cyc_R2 (hsa : 0 < l * vx - vz) (hsb : 0 < -(k * vx + vz)) (hsc : 0 < -(tp * vz - k * (1 - tp) * vx)) :
+theorem cyc_R2 (hsa : 0 < l * vx - vz) (hsb : 0 < -(k * vx + vz)) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST (-1) ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩
         ((Pt tp tp tm sm k l (c2 (i + 1))).sub (Pt tp tp tm sm k l (c2 i)))
         ((Pt tp tp tm sm k l (c2 j)).sub (Pt tp tp tm sm k l (c2 i))) := by
   fnbpre
   have ev : 0 < -vz := by nlinarith [mul_pos hk hsa, mul_pos hl hsb]
+  have hsc : (0 : ℝ) < 1 := one_pos
   have e2 : (0:ℝ) < 1 := one_pos
   have e3 : (0:ℝ) < 1 := one_pos
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
@@ -319,7 +320,7 @@ theorem rimR2 (F : Frame02 x) (hr : gA12 x = gA11 x)
   have ha4 := F.S.sm_pos
   have hj : ∀ j' : Fin 7, (∀ jj, j' ≠ c2 jj) → j' = 0 ∨ j' = 6 := by intro j' hj'; fin_cases j' <;> first | exact Or.inl rfl | exact Or.inr rfl | exact absurd rfl (hj' 0) | exact absurd rfl (hj' 1) | exact absurd rfl (hj' 2) | exact absurd rfl (hj' 3) | exact absurd rfl (hj' 4)
   refine F.rim_top hr hP (k := 5) (by norm_num) c2 (-1) vx vz 2 ?_ ?_ ?_
-  · exact cyc_R2 _ _ _ _ _ _ _ ha1 ha3 ha4 hk hl a1 a3 a4 hBB hsa hsb hsc
+  · exact cyc_R2 _ _ _ _ _ _ _ ha1 ha3 ha4 hk hl a1 a3 a4 hBB hsa hsb
   · intro j' hj' i
     rcases hj j' hj' with rfl | rfl
     all_goals exact rest_R2 _ _ _ _ _ _ _ ha1 ha3 ha4 hk hl a1 a3 a4 hBB hsa hsb hsc _ (by simp) i

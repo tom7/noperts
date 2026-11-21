@@ -231,8 +231,8 @@ theorem sector_final (V : Finset ℝ³) (x : ZMod 5 → ℝ³) (hxV : ∀ i, x i
       have h1 : ⟪x i, ε • u0 + s • (ε • w)⟫ = ε * (⟪x i, u0⟫ + s * ⟪x i, w⟫) := by
         rw [inner_add_right, real_inner_smul_right, real_inner_smul_right, real_inner_smul_right]; ring
       rw [h1, ← mul_assoc, hεε, one_mul, HFrame.inner_u0_coord, hw, Fr.inner_w_coord (px / E) (py / M)]
-      simp only [hzz, hww]
-      rw [← hw]; ring
+      · simp only [hzz, hww]
+        rw [← hw]; ring
     have hl : ∀ᶠ s in 𝓝[>] (0 : ℝ), (0 < zz 2 - zz 3 + s * (ww 2 - ww 3)) ∨
         (0 < zz 4 - zz 3 + s * (ww 4 - ww 3)) := by
       rcases hlex with h | ⟨h, h'⟩ | h | ⟨h, h'⟩
