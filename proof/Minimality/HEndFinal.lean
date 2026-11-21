@@ -116,7 +116,7 @@ theorem rim_final {k : ℕ} [NeZero k] (hk : 3 ≤ k) (V M W : Finset ℝ³) (x 
         ε * (⟪v, e - δ • u0⟫ - δ * ⟪g - v, u0⟫) := by
       funext i
       rw [real_inner_smul_right, HFrame.inner_uδ δ (x i)]
-      simp only [dep]; ring
+      · simp only [dep]; ring
     rw [h1]
     exact huni.affine_sign (by omega) hεs _
   · have h2 : NoHDNAt W (ε • uδ) := by
