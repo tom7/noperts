@@ -4,7 +4,7 @@ public import Minimality.Type24Face
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Type24
 public import Minimality.Q45
-public import Minimality.Q45LX
+public import Minimality.RCell24
 public import Minimality.RDispatch24
 public import Minimality.RSpec24
 

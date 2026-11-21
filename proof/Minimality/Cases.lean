@@ -200,11 +200,9 @@ theorem not_type24_outside_Cbar_of_isNopert (x : Fin 7 → ℝ³)
     (hF : ∀ i, (i ∈ ({0, 2, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
       (i ∉ ({0, 2, 5} : Finset (Fin 7)) → fF (x i) < 0))
     (hCbar : ¬ (0 < Minimality.omega3 x ∧ 0 < Minimality.omega4 x ∧ 0 < Minimality.omega5 x ∧
-      0 ≤ Minimality.Delta24 x))
-    (hSigma : Minimality.RegionB24 x →
-      Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x) : False :=
-  h.2 (Minimality.isRupert_type24_outside_Cbar
-    (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar hSigma)
+      0 ≤ Minimality.Delta24 x)) : False :=
+  h.2 (Minimality.isRupert_type24_outside_Cbar'
+    (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar)
 
 /-- **Type 21 outside codimension 2** (§18.6 step 2 and §22 of `FEWER-FACES-PROOFS.md`): a nopert
 does not have seven points labelled so that `014`, `015`, `0256`, `046`, `134`, `135`, `2346`,
