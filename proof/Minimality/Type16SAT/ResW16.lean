@@ -113,7 +113,7 @@ theorem isRupert_res_split (N : NF16 x) (F : H21.S0xFac 8 Minimality.V2.fIdx x)
     (hrows : RowsOK N.a N.b N.p ⟪N.E₁, N.E₁⟫ ⟪N.E₂, N.E₂⟫ ⟪N.E₃, N.E₃⟫ RL C A0 A1 σ l) :
     IsRupert (univ.image x) := by
   obtain ⟨e12, e13, e23⟩ := res_orth N hg hd h1 h2 hc
-  obtain ⟨ς, -, hςD⟩ := exists_sign N.hD
+  obtain ⟨ς, -, hςD⟩ := det3_pos_or_neg N.hD
   set w : ℝ³ := ς • nfV N.E₁ N.E₂ N.E₃ (l 0) (l 1) (l 2) with hw
   have hS := res_sub N hg hd hq hr
   have hrimN : Minimality.Split.StrictRimN x w lab := by

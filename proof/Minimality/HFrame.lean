@@ -11,15 +11,12 @@ open Filter
 theorem inner_eq3 (p q : ℝ³) : ⟪p, q⟫ = p 0 * q 0 + p 1 * q 1 + p 2 * q 2 := by
   simp [PiLp.inner_apply, Fin.sum_univ_three]; ring
 
-theorem cross_apply0 (a b : ℝ³) : cross a b 0 = a 1 * b 2 - a 2 * b 1 := by simp [cross]
-theorem cross_apply1 (a b : ℝ³) : cross a b 1 = a 2 * b 0 - a 0 * b 2 := by simp [cross]
-theorem cross_apply2 (a b : ℝ³) : cross a b 2 = a 0 * b 1 - a 1 * b 0 := by simp [cross]
 
 /-- Gram expansion in the frame `e`, `u₀`, `u₀ × e`. -/
 theorem parseval_w (e u p q : ℝ³) (he : ⟪e, u⟫ = 0) :
     (⟪e, e⟫ * ⟪u, u⟫) * ⟪p, q⟫ = ⟪u, u⟫ * ⟪p, e⟫ * ⟪q, e⟫ + ⟪e, e⟫ * ⟪p, u⟫ * ⟪q, u⟫ +
       ⟪p, cross u e⟫ * ⟪q, cross u e⟫ := by
-  simp only [inner_eq3, cross_apply0, cross_apply1, cross_apply2] at he ⊢
+  simp only [inner_eq3, cross_apply_zero, cross_apply_one, cross_apply_two] at he ⊢
   linear_combination (((e 0 * u 0 + e 1 * u 1 + e 2 * u 2) * (p 0 * q 0 + p 1 * q 1 + p 2 * q 2)) -
     (p 0 * e 0 + p 1 * e 1 + p 2 * e 2) * (q 0 * u 0 + q 1 * u 1 + q 2 * u 2) -
     (p 0 * u 0 + p 1 * u 1 + p 2 * u 2) * (q 0 * e 0 + q 1 * e 1 + q 2 * e 2)) * he

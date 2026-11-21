@@ -213,10 +213,10 @@ theorem vRa4_cyc_c (S : Shape20) (hD : 0 ≤ -S.hp*S.sm*S.sp + S.hp*S.sm + S.hp*
   have rm : 0 < S.km * (1 - S.tm) - S.hm * (1 - S.sm) := sub_pos.2 S.roof_m'
   refine ⟨(by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; left; linarith [hD, (mul_pos hsm1 rp)]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; left; linarith [rp]),
-    (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; exact (hD.lt_or_eq.elim (fun h => Or.inl (by linarith)) (fun h => Or.inr ⟨by linarith, pos_of_pos_mul hsp1 (by linarith [mul_pos hsm1 hkp, mul_pos hkm hsp1])⟩))),
+    (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; exact (hD.lt_or_eq.elim (fun h => Or.inl (by linarith)) (fun h => Or.inr ⟨by linarith, pos_of_mul_pos_pos (by linarith [mul_pos hsm1 hkp, mul_pos hkm hsp1]) hsp1⟩))),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; left; linarith [hD, (mul_pos hsm1 rp)]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; left; linarith [(mul_pos S.sm_pos rp)]),
-    (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; exact (hD.lt_or_eq.elim (fun h => Or.inl (by linarith)) (fun h => Or.inr ⟨by linarith, pos_of_pos_mul hsp1 (by linarith [mul_pos hsm1 hkp, mul_pos hkm hsp1])⟩))),
+    (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; exact (hD.lt_or_eq.elim (fun h => Or.inl (by linarith)) (fun h => Or.inr ⟨by linarith, pos_of_mul_pos_pos (by linarith [mul_pos hsm1 hkp, mul_pos hkm hsp1]) hsp1⟩))),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; left; linarith [rp]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vRa4, Shape20.w_vRa4]; left; linarith [(mul_pos S.sm_pos rp)])⟩
 
@@ -298,14 +298,14 @@ theorem Frame20.vRa4_c {x : Fin 7 → ℝ³} (F : Frame20 x) (hQ : 0 < F.S.hm*F.
     IsRupert (Finset.univ.image x) := by
   have htm1 : 0 < 1 - F.S.tm := sub_pos.2 F.S.tm_lt
   have hsp1 : 0 < 1 - F.S.sp := sub_pos.2 F.S.sp_lt
-  have hW' : 0 < (-F.S.hp*F.S.sp + F.S.hp - F.S.kp) := pos_of_pos_mul htm1 (by linarith [mul_pos (mul_pos F.S.hm_pos F.S.tp_pos) hsp1])
+  have hW' : 0 < (-F.S.hp*F.S.sp + F.S.hp - F.S.kp) := pos_of_mul_pos_pos (by linarith [mul_pos (mul_pos F.S.hm_pos F.S.tp_pos) hsp1]) htm1
   exact F.vRa4_cD hW' hQ hD hA hB
 
 theorem Frame20.vRv_c {x : Fin 7 → ℝ³} (F : Frame20 x) (hV : 0 < F.S.hm*F.S.sp*F.S.tp - F.S.hm*F.S.tp + F.S.hp*F.S.sp*F.S.tm - F.S.hp*F.S.tm + F.S.kp*F.S.tm)
     (hA : F.dep F.S.u_vRv 0 < F.dep F.S.u_vRv 6 ∨ F.dep F.S.u_vRv 0 < F.dep F.S.u_vRv 5 ∨ F.dep F.S.u_vRv 4 < F.dep F.S.u_vRv 6 ∨ F.dep F.S.u_vRv 4 < F.dep F.S.u_vRv 5) (hB : F.dep F.S.u_vRv 6 < F.dep F.S.u_vRv 0 ∨ F.dep F.S.u_vRv 5 < F.dep F.S.u_vRv 0 ∨ F.dep F.S.u_vRv 6 < F.dep F.S.u_vRv 4 ∨ F.dep F.S.u_vRv 5 < F.dep F.S.u_vRv 4) :
     IsRupert (Finset.univ.image x) := by
   have hsp1 : 0 < 1 - F.S.sp := sub_pos.2 F.S.sp_lt
-  have hW' : 0 < (F.S.hp*F.S.sp - F.S.hp + F.S.kp) := pos_of_pos_mul F.S.tm_pos (by linarith [mul_pos (mul_pos F.S.hm_pos F.S.tp_pos) hsp1])
+  have hW' : 0 < (F.S.hp*F.S.sp - F.S.hp + F.S.kp) := pos_of_mul_pos_pos (by linarith [mul_pos (mul_pos F.S.hm_pos F.S.tp_pos) hsp1]) F.S.tm_pos
   exact F.vRv hW' hV hA hB
 
 
@@ -366,7 +366,7 @@ theorem Frame20.ra4_Y_cc {x : Fin 7 → ℝ³} (F : Frame20 x)
   by_cases o0 : (F.dep F.S.u_vRa4 0 < F.dep F.S.u_vRa4 6 ∨ F.dep F.S.u_vRa4 0 < F.dep F.S.u_vRa4 1 ∨ F.dep F.S.u_vRa4 4 < F.dep F.S.u_vRa4 6 ∨ F.dep F.S.u_vRa4 4 < F.dep F.S.u_vRa4 1) ∧ (F.dep F.S.u_vRa4 6 < F.dep F.S.u_vRa4 0 ∨ F.dep F.S.u_vRa4 1 < F.dep F.S.u_vRa4 0 ∨ F.dep F.S.u_vRa4 6 < F.dep F.S.u_vRa4 4 ∨ F.dep F.S.u_vRa4 1 < F.dep F.S.u_vRa4 4)
   · exact F.vRa4_c (by linarith only [hQ]) (by linarith only [hD]) o0.1 o0.2
   by_cases o1 : (F.dep F.S.u_yY 1 < F.dep F.S.u_yY 3 ∨ F.dep F.S.u_yY 1 < F.dep F.S.u_yY 6 ∨ F.dep F.S.u_yY 2 < F.dep F.S.u_yY 6 ∨ F.dep F.S.u_yY 2 < F.dep F.S.u_yY 5) ∧ (F.dep F.S.u_yY 6 < F.dep F.S.u_yY 1 ∨ F.dep F.S.u_yY 6 < F.dep F.S.u_yY 2 ∨ F.dep F.S.u_yY 5 < F.dep F.S.u_yY 2 ∨ F.dep F.S.u_yY 5 < F.dep F.S.u_yY 3) ∧ (F.dep F.S.u_yY 2 < F.dep F.S.u_yY 6 ∨ F.dep F.S.u_yY 2 < F.dep F.S.u_yY 5 ∨ F.dep F.S.u_yY 3 < F.dep F.S.u_yY 5 ∨ F.dep F.S.u_yY 3 < F.dep F.S.u_yY 1) ∧ (F.dep F.S.u_yY 5 < F.dep F.S.u_yY 2 ∨ F.dep F.S.u_yY 5 < F.dep F.S.u_yY 3 ∨ F.dep F.S.u_yY 1 < F.dep F.S.u_yY 3 ∨ F.dep F.S.u_yY 1 < F.dep F.S.u_yY 6) ∧ (F.dep F.S.u_yY 3 < F.dep F.S.u_yY 5 ∨ F.dep F.S.u_yY 3 < F.dep F.S.u_yY 1 ∨ F.dep F.S.u_yY 6 < F.dep F.S.u_yY 1 ∨ F.dep F.S.u_yY 6 < F.dep F.S.u_yY 2)
-  · exact F.yY_c (by refine pos_of_pos_mul htp1 ?_; linarith only [(mul_nonneg (F.S.tm_pos).le hCm), (mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) hA1r)]) (by linarith only [hA3h]) o1.1 o1.2.1 o1.2.2.1 o1.2.2.2.1 o1.2.2.2.2
+  · exact F.yY_c (by refine pos_of_mul_pos_pos ?_ htp1; linarith only [(mul_nonneg (F.S.tm_pos).le hCm), (mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) hA1r)]) (by linarith only [hA3h]) o1.1 o1.2.1 o1.2.2.1 o1.2.2.2.1 o1.2.2.2.2
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -1482,7 +1482,7 @@ theorem Frame20.ra4_Y_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x)
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_vRa4 0 < F.rFrame.dep F.rFrame.S.u_vRa4 6 ∨ F.rFrame.dep F.rFrame.S.u_vRa4 0 < F.rFrame.dep F.rFrame.S.u_vRa4 1 ∨ F.rFrame.dep F.rFrame.S.u_vRa4 4 < F.rFrame.dep F.rFrame.S.u_vRa4 6 ∨ F.rFrame.dep F.rFrame.S.u_vRa4 4 < F.rFrame.dep F.rFrame.S.u_vRa4 1) ∧ (F.rFrame.dep F.rFrame.S.u_vRa4 6 < F.rFrame.dep F.rFrame.S.u_vRa4 0 ∨ F.rFrame.dep F.rFrame.S.u_vRa4 1 < F.rFrame.dep F.rFrame.S.u_vRa4 0 ∨ F.rFrame.dep F.rFrame.S.u_vRa4 6 < F.rFrame.dep F.rFrame.S.u_vRa4 4 ∨ F.rFrame.dep F.rFrame.S.u_vRa4 1 < F.rFrame.dep F.rFrame.S.u_vRa4 4)
   · exact rupert_of_r (F.rFrame.vRa4_c (by simp only [rFrame_S, Shape20.swap]; linarith only [hQ]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hD]) o0.1 o0.2)
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_yY 1 < F.rFrame.dep F.rFrame.S.u_yY 3 ∨ F.rFrame.dep F.rFrame.S.u_yY 1 < F.rFrame.dep F.rFrame.S.u_yY 6 ∨ F.rFrame.dep F.rFrame.S.u_yY 2 < F.rFrame.dep F.rFrame.S.u_yY 6 ∨ F.rFrame.dep F.rFrame.S.u_yY 2 < F.rFrame.dep F.rFrame.S.u_yY 5) ∧ (F.rFrame.dep F.rFrame.S.u_yY 6 < F.rFrame.dep F.rFrame.S.u_yY 1 ∨ F.rFrame.dep F.rFrame.S.u_yY 6 < F.rFrame.dep F.rFrame.S.u_yY 2 ∨ F.rFrame.dep F.rFrame.S.u_yY 5 < F.rFrame.dep F.rFrame.S.u_yY 2 ∨ F.rFrame.dep F.rFrame.S.u_yY 5 < F.rFrame.dep F.rFrame.S.u_yY 3) ∧ (F.rFrame.dep F.rFrame.S.u_yY 2 < F.rFrame.dep F.rFrame.S.u_yY 6 ∨ F.rFrame.dep F.rFrame.S.u_yY 2 < F.rFrame.dep F.rFrame.S.u_yY 5 ∨ F.rFrame.dep F.rFrame.S.u_yY 3 < F.rFrame.dep F.rFrame.S.u_yY 5 ∨ F.rFrame.dep F.rFrame.S.u_yY 3 < F.rFrame.dep F.rFrame.S.u_yY 1) ∧ (F.rFrame.dep F.rFrame.S.u_yY 5 < F.rFrame.dep F.rFrame.S.u_yY 2 ∨ F.rFrame.dep F.rFrame.S.u_yY 5 < F.rFrame.dep F.rFrame.S.u_yY 3 ∨ F.rFrame.dep F.rFrame.S.u_yY 1 < F.rFrame.dep F.rFrame.S.u_yY 3 ∨ F.rFrame.dep F.rFrame.S.u_yY 1 < F.rFrame.dep F.rFrame.S.u_yY 6) ∧ (F.rFrame.dep F.rFrame.S.u_yY 3 < F.rFrame.dep F.rFrame.S.u_yY 5 ∨ F.rFrame.dep F.rFrame.S.u_yY 3 < F.rFrame.dep F.rFrame.S.u_yY 1 ∨ F.rFrame.dep F.rFrame.S.u_yY 6 < F.rFrame.dep F.rFrame.S.u_yY 1 ∨ F.rFrame.dep F.rFrame.S.u_yY 6 < F.rFrame.dep F.rFrame.S.u_yY 2)
-  · exact rupert_of_r (F.rFrame.yY_c (by simp only [rFrame_S, Shape20.swap]; refine pos_of_pos_mul hsm1 ?_; linarith only [(mul_nonneg (F.S.sp_pos).le hCm), (mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) hA1r)]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA3h]) o1.1 o1.2.1 o1.2.2.1 o1.2.2.2.1 o1.2.2.2.2)
+  · exact rupert_of_r (F.rFrame.yY_c (by simp only [rFrame_S, Shape20.swap]; refine pos_of_mul_pos_pos ?_ hsm1; linarith only [(mul_nonneg (F.S.sp_pos).le hCm), (mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) hA1r)]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA3h]) o1.1 o1.2.1 o1.2.2.1 o1.2.2.2.1 o1.2.2.2.2)
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1

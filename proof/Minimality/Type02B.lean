@@ -36,7 +36,7 @@ theorem cyc_V1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   have a5 := sub_pos.2 hB
   have a6 := a1
   subst hA
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5c j with rfl | rfl | rfl | rfl | rfl <;>
@@ -65,7 +65,7 @@ theorem rest_V1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   have a5 := sub_pos.2 hB
   have a6 := a1
   subst hA
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i
   rcases hw with rfl | rfl <;>
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
@@ -89,7 +89,7 @@ theorem cyc_V1B6 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   have a5 := sub_pos.2 hB
   have a6 := a1
   subst hA
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5c j with rfl | rfl | rfl | rfl | rfl <;>
@@ -118,7 +118,7 @@ theorem rest_V1B6 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   have a5 := sub_pos.2 hB
   have a6 := a1
   subst hA
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i
   rcases hw with rfl | rfl <;>
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
@@ -157,7 +157,7 @@ theorem cyc_V12 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm 
   have a5 := a1
   have a6 := a3
   subst hA hB
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5c j with rfl | rfl | rfl | rfl | rfl <;>
@@ -186,7 +186,7 @@ theorem rest_V12 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   have a5 := a1
   have a6 := a3
   subst hA hB
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i
   rcases hw with rfl | rfl <;>
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>

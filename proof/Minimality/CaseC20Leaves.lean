@@ -67,7 +67,7 @@ theorem Frame20.ra4_tBR {x : Fin 7 → ℝ³} (F : Frame20 x)
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tB 0 < F.rFrame.dep F.rFrame.S.u_tB 1 ∨ F.rFrame.dep F.rFrame.S.u_tB 0 < F.rFrame.dep F.rFrame.S.u_tB 2 ∨ F.rFrame.dep F.rFrame.S.u_tB 6 < F.rFrame.dep F.rFrame.S.u_tB 1 ∨ F.rFrame.dep F.rFrame.S.u_tB 6 < F.rFrame.dep F.rFrame.S.u_tB 2) ∧ (F.rFrame.dep F.rFrame.S.u_tB 1 < F.rFrame.dep F.rFrame.S.u_tB 0 ∨ F.rFrame.dep F.rFrame.S.u_tB 2 < F.rFrame.dep F.rFrame.S.u_tB 0 ∨ F.rFrame.dep F.rFrame.S.u_tB 1 < F.rFrame.dep F.rFrame.S.u_tB 6 ∨ F.rFrame.dep F.rFrame.S.u_tB 2 < F.rFrame.dep F.rFrame.S.u_tB 6)
-  · exact rupert_of_r (F.rFrame.tB (by simp only [rFrame_S, Shape20.swap]; refine pos_of_pos_mul htp1 ?_; linarith only [(mul_pos hsp1 hCr), (mul_pos F.S.sm_pos rp)]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hCr]) o0.1 o0.2)
+  · exact rupert_of_r (F.rFrame.tB (by simp only [rFrame_S, Shape20.swap]; refine pos_of_mul_pos_pos ?_ htp1; linarith only [(mul_pos hsp1 hCr), (mul_pos F.S.sm_pos rp)]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hCr]) o0.1 o0.2)
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   rcases o0 with n0 | n0

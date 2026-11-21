@@ -20,8 +20,6 @@ theorem noPersistHDN_smul {k : ℕ} (x : ZMod k → ℝ³) (u₀ n : ℝ³) {σ 
     exact (mul_eq_zero.mp he).resolve_left hσ
   exact h i j Y hY Y' hY' hne hu he'
 
-theorem det3_swap_two_three (A B C : ℝ³) : det3 A B C = -det3 A C B := by
-  simp only [det3_expand]; ring
 
 theorem det3_middle_decomp (X A B u₀ : ℝ³) (s δ : ℝ) :
     det3 X ((1 - s) • A + s • B + δ • u₀) u₀ =
@@ -132,7 +130,7 @@ theorem isRupert_faceChord_tilt {N nf : ℕ} {S : Fin nf → Finset (Fin N)} {x 
       have : det3 E_a u₀ Z * ⟪n, n⟫ = 0 := by
         linear_combination -hpr + ⟪n, Z⟫ * hDa0 - det3 n Z u₀ * hnE + det3 n Z E_a * hnu
       exact (mul_eq_zero.mp this).resolve_right hnn
-    have hswap : det3 E_a Z u₀ = -det3 E_a u₀ Z := det3_swap_two_three E_a Z u₀
+    have hswap : det3 E_a Z u₀ = -det3 E_a u₀ Z := det3_swap23 E_a Z u₀
     rw [hdetEZ, neg_zero] at hswap
     exact hdetZ hswap
   set P := ρ * D_a * sgn_δ with hP_def

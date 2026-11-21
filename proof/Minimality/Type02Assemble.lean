@@ -27,9 +27,6 @@ namespace Minimality.CaseC18
 open Finset Filter Minimality.CaseC09
 open scoped RealInnerProductSpace Topology
 
-theorem isRupert_of_comp_perm {x : Fin 7 → ℝ³} (π : Equiv.Perm (Fin 7))
-    (h : IsRupert (Finset.univ.image (x ∘ π))) : IsRupert (Finset.univ.image x) := by
-  rwa [isRupert_image_comp_perm] at h
 
 namespace Frame02
 variable {x : Fin 7 → ℝ³}
@@ -41,17 +38,17 @@ theorem isRupert_acute (F : Frame02 x) (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA2
     rcases lt_trichotomy F.S.tm F.S.sm with hB | hB | hB
   · exact F.acute_A0B5_pf h1 h2 hA hB
   · obtain ⟨G, g1, g2, g3, g4, e1, e2, e3⟩ := F.alpha_spec
-    refine isRupert_of_comp_perm permAlpha (G.acute_V1B5_pf (by rw [e2, e1]; exact h1) (by rw [e2, e3]; exact h2)
+    refine v12_comp_perm permAlpha (G.acute_V1B5_pf (by rw [e2, e1]; exact h1) (by rw [e2, e3]; exact h2)
       (by rw [g1, g3]; exact hB) (by rw [g2, g4]; exact hA))
   · obtain ⟨G, g1, g2, g3, g4, e1, e2, e3⟩ := F.alpha_spec
-    exact isRupert_of_comp_perm permAlpha (G.acute_A1B5_pf (by rw [e2, e1]; exact h1)
+    exact v12_comp_perm permAlpha (G.acute_A1B5_pf (by rw [e2, e1]; exact h1)
       (by rw [e2, e3]; exact h2) (by rw [g1, g3]; exact hB) (by rw [g2, g4]; exact hA))
   · exact F.acute_V1B5_pf h1 h2 hA hB
   · exact F.acute_V12_pf h1 h2 hA hB
   · exact F.acute_V1B6_pf h1 h2 hA hB
   · exact F.acute_A1B5_pf h1 h2 hA hB
   · obtain ⟨G, g1, g2, g3, g4, e1, e2, e3⟩ := F.alpha_spec
-    exact isRupert_of_comp_perm permAlpha (G.acute_V1B6_pf (by rw [e2, e1]; exact h1)
+    exact v12_comp_perm permAlpha (G.acute_V1B6_pf (by rw [e2, e1]; exact h1)
       (by rw [e2, e3]; exact h2) (by rw [g1, g3]; exact hB) (by rw [g2, g4]; exact hA))
   · exact F.acute_A1B6_pf h1 h2 hA hB
 
@@ -65,13 +62,13 @@ theorem isRupert_right (F : Frame02 x) (hr : gA12 x = gA11 x) :
     obtain ⟨G, g1, g2, g3, g4, e1, e2, e3⟩ := F.alpha_spec
     have hr' : gA12 (x ∘ permAlpha) = gA11 (x ∘ permAlpha) := by rw [e2, e1]; exact hr
     by_cases hR : F1Rect x
-    · exact isRupert_of_comp_perm permAlpha (G.right_X1_pf hr' (by rw [g1, g3]; exact hB)
+    · exact v12_comp_perm permAlpha (G.right_X1_pf hr' (by rw [g1, g3]; exact hB)
         (by rw [g2, g4]; exact hA) ((F1Rect_alpha x).2 hR))
-    · exact isRupert_of_comp_perm permAlpha (G.right_V1B5_pf hr' (by rw [g1, g3]; exact hB)
+    · exact v12_comp_perm permAlpha (G.right_V1B5_pf hr' (by rw [g1, g3]; exact hB)
         (by rw [g2, g4]; exact hA) (fun h => hR ((F1Rect_alpha x).1 h)))
   · -- α of (1,5)
     obtain ⟨G, g1, g2, g3, g4, e1, e2, e3⟩ := F.alpha_spec
-    exact isRupert_of_comp_perm permAlpha (G.right_A1B5_pf (by rw [e2, e1]; exact hr)
+    exact v12_comp_perm permAlpha (G.right_A1B5_pf (by rw [e2, e1]; exact hr)
       (by rw [g1, g3]; exact hB) (by rw [g2, g4]; exact hA))
   · by_cases hR : F1Rect x
     · exact F.right_X1_pf hr hA hB hR
@@ -87,7 +84,7 @@ theorem isRupert_right (F : Frame02 x) (hr : gA12 x = gA11 x) :
   · exact F.right_A1B5_pf hr hA hB
   · -- α of (`A` vertical, `B = 6`)
     obtain ⟨G, g1, g2, g3, g4, e1, e2, e3⟩ := F.alpha_spec
-    exact isRupert_of_comp_perm permAlpha (G.right_V1B6_pf (by rw [e2, e1]; exact hr)
+    exact v12_comp_perm permAlpha (G.right_V1B6_pf (by rw [e2, e1]; exact hr)
       (by rw [g1, g3]; exact hB) (by rw [g2, g4]; exact hA))
   · exact F.right_A1B6_pf hr hA hB
 
@@ -101,7 +98,7 @@ theorem isRupert (F : Frame02 x) : IsRupert (Finset.univ.image x) := by
   · rcases lt_or_eq_of_le h2 with h2 | h2
     · exact F.isRupert_acute h1 h2
     · obtain ⟨G, -, -, -, -, e1, e2, e3⟩ := F.beta_spec
-      exact isRupert_of_comp_perm permBeta (G.isRupert_right (by rw [e3, e1]; exact h2))
+      exact v12_comp_perm permBeta (G.isRupert_right (by rw [e3, e1]; exact h2))
   · exact F.isRupert_right h1
 
 end Frame02

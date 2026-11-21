@@ -47,7 +47,7 @@ theorem hidden_lt {n d e q : ℝ³} (hn : n ≠ 0) (hnd : ⟪n, d⟫ = 0) (hne :
     (hpos : 0 < ⟪cross n d, e⟫) (hd : det3 e q d < 0) : ⟪n, q⟫ < 0 := by
   have g := det3_gram n e q d
   rw [hne, hnd] at g
-  have h3 : det3 e n d = ⟪cross n d, e⟫ := by rw [det3_swap_ab, det3_nea]; ring
+  have h3 : det3 e n d = ⟪cross n d, e⟫ := by rw [det3_swap12, det3_nea]; ring
   rw [h3] at g
   have hp := real_inner_self_pos.mpr hn
   nlinarith

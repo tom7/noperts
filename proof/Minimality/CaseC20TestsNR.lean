@@ -45,10 +45,10 @@ theorem vN4_pcyc (S : Shape20) (hVW : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.s
   have rm : 0 < S.km * (1 - S.tm) - S.hm * (1 - S.sm) := sub_pos.2 S.roof_m'
   refine ⟨(by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos S.sm_pos rp), (mul_pos S.sm_pos hVW)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [ (mul_pos S.tp_pos S.kp_pos)]),
-    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; refine pos_of_pos_mul htm1 ?_; linarith [(mul_pos (mul_pos S.tp_pos hsp1) rm), (mul_pos (mul_pos S.tm_pos hsm1) hVW)]),
+    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; refine pos_of_mul_pos_pos ?_ htm1; linarith [(mul_pos (mul_pos S.tp_pos hsp1) rm), (mul_pos (mul_pos S.tm_pos hsm1) hVW)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos S.sm_pos rp), (mul_pos S.sm_pos hVW)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos (mul_pos S.tp_pos hsp1) S.km_pos), (mul_pos (mul_pos S.tp_pos hsm1) S.kp_pos)]),
-    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; refine pos_of_pos_mul htm1 ?_; linarith [(mul_pos (mul_pos S.tp_pos hsp1) rm), (mul_pos (mul_pos S.tm_pos hsm1) hVW)]),
+    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; refine pos_of_mul_pos_pos ?_ htm1; linarith [(mul_pos (mul_pos S.tp_pos hsp1) rm), (mul_pos (mul_pos S.tm_pos hsm1) hVW)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [ (mul_pos S.tp_pos S.kp_pos)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos (mul_pos S.tp_pos hsp1) S.km_pos), (mul_pos (mul_pos S.tp_pos hsm1) S.kp_pos)])⟩
 

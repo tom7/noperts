@@ -643,8 +643,6 @@ namespace Minimality.CaseC20
 namespace IVT
 variable {x : Fin 7 → ℝ³} (F : Frame20 x)
 
-lemma lp_pos {a b : ℝ} (h : 0 < a) : h21b_LP a b := Or.inl h
-lemma lp_zero {a b : ℝ} (h : a = 0) (h2 : 0 < b) : h21b_LP a b := Or.inr ⟨h, h2⟩
 lemma lpn_pos {a b : ℝ} (h : a < 0) : h21b_LP (-a) (-b) := Or.inl (neg_pos.2 h)
 lemma lpn_zero {a b : ℝ} (h : a = 0) (h2 : b < 0) : h21b_LP (-a) (-b) :=
   Or.inr ⟨by rw [h, neg_zero], neg_pos.2 h2⟩

@@ -549,8 +549,6 @@ theorem det3_add_mid (v w w' u : ℝ³) : det3 v (w + w') u = det3 v w u + det3 
 theorem det3_smul_mid (v w u : ℝ³) (c : ℝ) : det3 v (c • w) u = c * det3 v w u := by
   simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
 
-theorem det3_self_mid (v u : ℝ³) : det3 v v u = 0 := by
-  simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
 
 theorem det3_mid_right (v u : ℝ³) : det3 v u u = 0 := by
   simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
@@ -608,7 +606,7 @@ theorem isRupert_caseI_at (V : Finset ℝ³) (h : ℝ) (u p q a b : ℝ³) (hu2 
       rw [hqx]; ext i; simp
       have := congrArg (fun t => t * C i) hsum; simp at this; linarith
     rw [e, det3_add_mid, det3_add_mid, det3_add_mid, det3_smul_mid, det3_smul_mid, det3_smul_mid,
-      det3_smul_mid, det3_self_mid, det3_mid_right, det3_horiz _ _ _ (hhor a C hah hC) hu2,
+      det3_smul_mid, det3_self_left, det3_mid_right, det3_horiz _ _ _ (hhor a C hah hC) hu2,
       det3_horiz _ _ _ (hhor b C hbh hC) hu2, tval_sub, tval_sub]
     simp only [PiLp.sub_apply, hC]; ring
   have hxA : ∀ C : ℝ³, C 2 = h → det3 (C - p) (q - p) u =
@@ -618,7 +616,7 @@ theorem isRupert_caseI_at (V : Finset ℝ³) (h : ℝ) (u p q a b : ℝ³) (hu2 
       rw [hqx]; ext i; simp
       have := congrArg (fun t => t * p i) hsum; simp at this; linarith
     rw [e, det3_add_mid, det3_add_mid, det3_add_mid, det3_smul_mid, det3_smul_mid, det3_smul_mid,
-      det3_smul_mid, det3_self_mid, det3_mid_right, det3_horiz _ _ _ (hhor a C hah hC) hu2,
+      det3_smul_mid, det3_self_left, det3_mid_right, det3_horiz _ _ _ (hhor a C hah hC) hu2,
       det3_horiz _ _ _ (hhor b C hbh hC) hu2, tval_sub, tval_sub]
     simp only [PiLp.sub_apply, hC]; ring
   have hsB : α * (tval u a - tval u B) + β * (tval u b - tval u B) < 0 := by

@@ -426,10 +426,6 @@ theorem EdgeMid.swap {v w a b m : ℝ³} (h : EdgeMid v w a b m) : EdgeMid v w b
 
 /-! ### Tools for the certificates -/
 
-theorem exists_sign {D : ℝ} (hD : D ≠ 0) : ∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧ 0 < σ * D := by
-  rcases lt_or_gt_of_ne hD with h | h
-  · exact ⟨-1, Or.inr rfl, by linarith⟩
-  · exact ⟨1, Or.inl rfl, by linarith⟩
 
 theorem nfV_ne_zero {E₁ E₂ E₃ : ℝ³} {α β γ : ℝ} (hD : det3 E₁ E₂ E₃ ≠ 0)
     (h : α ≠ 0 ∨ β ≠ 0 ∨ γ ≠ 0) : nfV E₁ E₂ E₃ α β γ ≠ 0 := by

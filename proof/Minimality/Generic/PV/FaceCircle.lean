@@ -25,10 +25,6 @@ theorem det3_gram (n a b w : ℝ³) :
   simp
   ring
 
-theorem det3_swap_ab (a b w : ℝ³) : det3 b a w = -det3 a b w := by
-  simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]
-  simp
-  ring
 
 theorem inner_self_pos_of_ne {n : ℝ³} (hn : n ≠ 0) : 0 < ⟪n, n⟫ := real_inner_self_pos.mpr hn
 
@@ -49,7 +45,7 @@ theorem tiltSignS_edge {σ : ℝ} {n u0 v c c' y : ℝ³} {h : ℝ} (hn : n ≠ 
   rw [ha, hb, hu] at g0
   rcases hy.lt_or_eq with hlt | heq
   · left
-    have h1 : det3 (c' - c) n u0 = -det3 n (c' - c) u0 := det3_swap_ab _ _ _
+    have h1 : det3 (c' - c) n u0 = -det3 n (c' - c) u0 := det3_swap12 _ _ _
     have h2 : ⟪n, n⟫ * (σ * det3 (c' - c) (y - c) u0) = (h - ⟪n, y⟫) * (σ * det3 n (c' - c) u0) := by
       have : ⟪n, n⟫ * det3 (c' - c) (y - c) u0 = (⟪n, y⟫ - h) * det3 (c' - c) n u0 := by
         linarith

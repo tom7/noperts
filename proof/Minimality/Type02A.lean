@@ -20,11 +20,6 @@ noncomputable def ptv (tp tm sp sm κp κm : ℝ) : Fin 7 → C3 :=
   ![⟨tp, 0, κp * (1 - tp)⟩, ⟨0, sp, κp * (1 - sp)⟩, ⟨0, 0, 0⟩, ⟨1, 0, 0⟩, ⟨0, 1, 0⟩,
     ⟨tm, 0, -(κm * (1 - tm))⟩, ⟨0, sm, -(κm * (1 - sm))⟩]
 
-theorem z4a : (0 : ZMod 4) + 1 = 1 ∧ (1 : ZMod 4) + 1 = 2 ∧ (2 : ZMod 4) + 1 = 3 ∧
-    (3 : ZMod 4) + 1 = 0 := by decide
-theorem z4c (i : ZMod 4) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by revert i; decide
-theorem z5a : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1 = 3 ∧
-    (3 : ZMod 5) + 1 = 4 ∧ (4 : ZMod 5) + 1 = 0 := by decide
 theorem z5c (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
 
 open Lean in
@@ -73,10 +68,10 @@ theorem cyc_A0B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   have a4 := sub_pos.2 hsm1
   have a5 := sub_pos.2 hA
   have a6 := sub_pos.2 hB
-  obtain ⟨b0, b1, b2, b3⟩ := z4a
+  obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i j h1 h2
-  rcases z4c i with rfl | rfl | rfl | rfl <;>
-    rcases z4c j with rfl | rfl | rfl | rfl <;>
+  rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
     first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
@@ -101,10 +96,10 @@ theorem rest_A0B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   have a4 := sub_pos.2 hsm1
   have a5 := sub_pos.2 hA
   have a6 := sub_pos.2 hB
-  obtain ⟨b0, b1, b2, b3⟩ := z4a
+  obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i
   rcases hw with rfl | rfl | rfl <;>
-  rcases z4c i with rfl | rfl | rfl | rfl <;>
+  rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     norm_num
     stfin htp htm hsp
@@ -124,7 +119,7 @@ theorem cyc_A1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   have a4 := sub_pos.2 hsm1
   have a5 := sub_pos.2 hA
   have a6 := sub_pos.2 hB
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5c j with rfl | rfl | rfl | rfl | rfl <;>
@@ -152,7 +147,7 @@ theorem rest_A1B5 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   have a4 := sub_pos.2 hsm1
   have a5 := sub_pos.2 hA
   have a6 := sub_pos.2 hB
-  obtain ⟨b0, b1, b2, b3, b4⟩ := z5a
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i
   rcases hw with rfl | rfl <;>
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
@@ -175,10 +170,10 @@ theorem cyc_A1B6 (tp tm sp sm κp κm : ℝ) (htp1 : tp < 1) (htm1 : tm < 1)
   have a4 := sub_pos.2 hsm1
   have a5 := sub_pos.2 hA
   have a6 := sub_pos.2 hB
-  obtain ⟨b0, b1, b2, b3⟩ := z4a
+  obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i j h1 h2
-  rcases z4c i with rfl | rfl | rfl | rfl <;>
-    rcases z4c j with rfl | rfl | rfl | rfl <;>
+  rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
     first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
@@ -203,10 +198,10 @@ theorem rest_A1B6 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (ht
   have a4 := sub_pos.2 hsm1
   have a5 := sub_pos.2 hA
   have a6 := sub_pos.2 hB
-  obtain ⟨b0, b1, b2, b3⟩ := z4a
+  obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i
   rcases hw with rfl | rfl | rfl <;>
-  rcases z4c i with rfl | rfl | rfl | rfl <;>
+  rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     norm_num
     stfin htp htm hsp hsm
@@ -271,7 +266,7 @@ theorem acute_A0B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
   have hc : ∀ i, F.toFrame7.ptC (quad ((5 : Fin 7)) 3 0 2 i) =
       quad (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 5) (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 3) (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 0) (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 2) i := by
     intro i
-    rcases z4c i with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp [quad_0, quad_1, quad_2, quad_3, hpt]
   refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad ((5 : Fin 7)) 3 0 2)
     (-1) ⟨-1, 1, 0⟩ ⟨1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
@@ -293,7 +288,7 @@ theorem acute_A0B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
         ⟨-1, 1, 0⟩) = fun i : ZMod 4 => quad (-((gA11 x - gA12 x) * F.S.tm)) (-(gA11 x - gA12 x)) (-((gA11 x - gA12 x) * F.S.tp)) 0 i := by
       funext i
       rw [hc]
-      rcases z4c i with rfl | rfl | rfl | rfl <;>
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
         simp [quad_0, quad_1, quad_2, quad_3, F.GG_uA, ptv] <;> ring
     rw [hz]
     exact rob_A0B5 hα F.S.tm_pos F.S.tm_lt
@@ -346,7 +341,7 @@ theorem acute_A1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
   have hc : ∀ i, F.toFrame7.ptC (quad ((6 : Fin 7)) 4 1 2 i) =
       quad (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 6) (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 4) (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 1) (ptv F.S.tp F.S.tm F.S.sp F.S.sm κp κm 2) i := by
     intro i
-    rcases z4c i with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp [quad_0, quad_1, quad_2, quad_3, hpt]
   refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad ((6 : Fin 7)) 4 1 2)
     (-1) ⟨-1, 1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl (by norm_num)) ?_ ?_ ?_
@@ -368,7 +363,7 @@ theorem acute_A1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
         ⟨-1, 1, 0⟩) = fun i : ZMod 4 => quad ((gA22 x - gA12 x) * F.S.sm) (gA22 x - gA12 x) ((gA22 x - gA12 x) * F.S.sp) 0 i := by
       funext i
       rw [hc]
-      rcases z4c i with rfl | rfl | rfl | rfl <;>
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
         simp [quad_0, quad_1, quad_2, quad_3, F.GG_uA, ptv]
     rw [hz]
     exact rob_A1B6 hγ F.S.sm_pos F.S.sm_lt

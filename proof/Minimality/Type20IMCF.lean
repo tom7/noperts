@@ -98,14 +98,14 @@ theorem leaf_T {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : 0 ≤ Kc q
   · intro t
     have ht : t = 0 ∨ t = 1 ∨ t = 2 ∨ t = 3 ∨ t = 4 ∨ t = 5 ∨ t = 6 ∨ t = 7 := by revert t; decide
     rcases ht with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    · exact ⟨fun _ => lp1 (by rw [e0]; exact pA), fun h => absurd h (by decide)⟩
-    · exact ⟨fun _ => lp2 e1 (by rw [v1]; positivity), fun h => absurd h (by decide)⟩
-    · exact ⟨fun _ => lp1 (by rw [e2]; exact sp0), fun h => absurd h (by decide)⟩
-    · exact ⟨fun h => absurd h (by decide), fun _ => lp1 (by rw [e3]; linarith)⟩
-    · exact ⟨fun _ => lp1 (by rw [e4]; exact mul_pos q0 (by linarith)), fun h => absurd h (by decide)⟩
-    · exact ⟨fun _ => lp2 e5 (by rw [v5]; positivity), fun h => absurd h (by decide)⟩
-    · exact ⟨fun _ => lp1 (by rw [e6]; exact hGs), fun h => absurd h (by decide)⟩
-    · exact ⟨fun h => absurd h (by decide), fun _ => lp1 (by
+    · exact ⟨fun _ => lp_pos (by rw [e0]; exact pA), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => lp_zero e1 (by rw [v1]; positivity), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => lp_pos (by rw [e2]; exact sp0), fun h => absurd h (by decide)⟩
+    · exact ⟨fun h => absurd h (by decide), fun _ => lp_pos (by rw [e3]; linarith)⟩
+    · exact ⟨fun _ => lp_pos (by rw [e4]; exact mul_pos q0 (by linarith)), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => lp_zero e5 (by rw [v5]; positivity), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => lp_pos (by rw [e6]; exact hGs), fun h => absurd h (by decide)⟩
+    · exact ⟨fun h => absurd h (by decide), fun _ => lp_pos (by
         rw [e7]; have : 0 < kk*(1-q*tm) := by positivity
         linarith)⟩
   · have d35 : zN q tm sp sm kk B (1-q*tm) (-sp) (q-kk) 3 = tm * (sm*(1-q) - tm*sp + (1-tm)*sm*kk) := by
@@ -272,18 +272,18 @@ theorem leaf_Wt {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : Kc q tm s
   · intro t
     have ht : t = 0 ∨ t = 1 ∨ t = 2 ∨ t = 3 ∨ t = 4 ∨ t = 5 ∨ t = 6 ∨ t = 7 := by revert t; decide
     rcases ht with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    · exact ⟨fun _ => lp1 (by rw [e0]; positivity), fun h => absurd h (by decide)⟩
-    · exact ⟨fun _ => lp1 (by
+    · exact ⟨fun _ => lp_pos (by rw [e0]; positivity), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => lp_pos (by
         rw [e1]; have := mul_nonneg tp0.le hG; have : 0 < q*tm*sp*(1 - q*(1+tm-sm)) := by positivity
         linarith), fun h => absurd h (by decide)⟩
-    · exact ⟨fun _ => lp1 (by rw [e2]; exact s1), fun h => absurd h (by decide)⟩
-    · exact ⟨fun _ => lp1 (by rw [e3]; exact p3), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => lp_pos (by rw [e2]; exact s1), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => lp_pos (by rw [e3]; exact p3), fun h => absurd h (by decide)⟩
     · have : 0 < (1-q*tm)*(q*((1-sm)+tm)) := by positivity
-      exact ⟨fun h => absurd h (by decide), fun _ => lp1 (by rw [e4]; linarith)⟩
-    · exact ⟨fun h => absurd h (by decide), fun _ => lp1 (by rw [e5]; linarith)⟩
-    · exact ⟨fun h => absurd h (by decide), fun _ => lp2 (by rw [e6]; ring) (by rw [v6]; linarith)⟩
+      exact ⟨fun h => absurd h (by decide), fun _ => lp_pos (by rw [e4]; linarith)⟩
+    · exact ⟨fun h => absurd h (by decide), fun _ => lp_pos (by rw [e5]; linarith)⟩
+    · exact ⟨fun h => absurd h (by decide), fun _ => lp_zero (by rw [e6]; ring) (by rw [v6]; linarith)⟩
     · have : 0 < kk*(q*tm*(1-sm)) := by positivity
-      exact ⟨fun h => absurd h (by decide), fun _ => lp1 (by rw [e7]; linarith)⟩
+      exact ⟨fun h => absurd h (by decide), fun _ => lp_pos (by rw [e7]; linarith)⟩
   · refine ruWt ?_ ?_ ?_ ?_
     · show zN q tm sp sm kk B _ _ _ 0 < zN q tm sp sm kk B _ _ _ 1
       have : 0 < q*tm*((sm-tm)*(1-q*tm*sm)) := by

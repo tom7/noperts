@@ -69,7 +69,7 @@ theorem rest_insert_of_hiddenAt (O : Finset ℝ³) (v u : ℝ³) (hv : HiddenAt 
       by_cases hji : j = i
       · subst hji; rw [sub_self, det3_zero_mid]
       by_cases hji' : j = i + 1
-      · subst hji'; rw [det3_self_mid]
+      · subst hji'; rw [det3_self_left]
       exact (hcyc i j hji hji').le
     · push Not at hzx
       exact (hrest z hz hzx i).le

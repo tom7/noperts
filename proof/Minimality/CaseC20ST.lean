@@ -18,8 +18,6 @@ namespace Minimality.CaseC20
 open Finset Filter Minimality.CaseC09 Minimality.CaseC18
 open scoped RealInnerProductSpace Topology
 
-theorem pos_of_pos_mul {M T : ℝ} (hM : 0 < M) (h : 0 < M * T) : 0 < T :=
-  (mul_pos_iff_of_pos_left hM).mp h
 
 
 /-- The three tests of a triangle rim cycle. -/

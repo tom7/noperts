@@ -56,9 +56,9 @@ theorem k22z1gc2_tsc {D w k v1 v2 : ℝ} (hD : 0 < D) (hw : 0 < w) (hk : 0 < k)
       TSc D (k22z1gc2Y w k (i + 1) - k22z1gc2Y w k i) ((0, 1, 0) - k22z1gc2Y w k i) (v1, v2, 0)) := by
   obtain ⟨s, hs0, hsd⟩ : ∃ s, 0 < s ∧ s = -(v1 + w * k * v2) := ⟨_, by linarith, rfl⟩
   have e1 := k19_z6
-  have z6a : (0 : ZMod 6) + 1 = 1 ∧ (1 : ZMod 6) + 1 = 2 ∧ (2 : ZMod 6) + 1 = 3 ∧
+  have zmod6_add_one : (0 : ZMod 6) + 1 = 1 ∧ (1 : ZMod 6) + 1 = 2 ∧ (2 : ZMod 6) + 1 = 3 ∧
     (3 : ZMod 6) + 1 = 4 ∧ (4 : ZMod 6) + 1 = 5 ∧ (5 : ZMod 6) + 1 = 0 := z6_add_one
-  obtain ⟨a0, a1, a2, a3, a4, a5⟩ := z6a
+  obtain ⟨a0, a1, a2, a3, a4, a5⟩ := zmod6_add_one
   have pwk := mul_pos hw hk
   have pwv := mul_pos hw hv2
   have pkv := mul_pos hk hv2

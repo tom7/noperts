@@ -26,8 +26,6 @@ open Finset
 theorem wsil_inn3 (a b : ℝ³) : ⟪a, b⟫ = a 0 * b 0 + a 1 * b 1 + a 2 * b 2 := by
   simp only [PiLp.inner_apply, Fin.sum_univ_three, RCLike.inner_apply, conj_trivial]; ring
 
-theorem wsil_det3_neg (a b c : ℝ³) : det3 a b (-c) = -det3 a b c := by
-  simp only [det3, inner_neg_right]
 
 /-- `det3 (μ • (A × B)) w u = μ (⟪A, w⟫ ⟪B, u⟫ - ⟪B, w⟫ ⟪A, u⟫)`. -/
 theorem wsil_det3_cross (μ : ℝ) (A B w u : ℝ³) :
@@ -57,10 +55,10 @@ theorem isRupert_of_wallView_cw (V : Finset ℝ³) (n : ℝ³) (hn : n ≠ 0) {k
   · intro i j hj hj'
     have := hcyc (i + R) (j + R) (fun h => hj (add_right_cancel h))
       (fun h => hj' (by rw [add_right_comm] at h; exact add_right_cancel h))
-    rw [show i + 1 + R = i + R + 1 by ring, wsil_det3_neg]; linarith
+    rw [show i + 1 + R = i + R + 1 by ring, det3_neg_right]; linarith
   · intro y hy hyx i
     have := hrest y hy (fun j h => hyx (j - R) (by simpa using h)) (i + R)
-    rw [show i + 1 + R = i + R + 1 by ring, wsil_det3_neg]; linarith
+    rw [show i + 1 + R = i + R + 1 by ring, det3_neg_right]; linarith
   · refine ⟨by omega, by omega, by omega, ?_, ?_, ?_, ?_⟩
     · intro t ht
       rw [hl, hl1, show t + 1 + r = t + r + 1 by ring]

@@ -44,7 +44,7 @@ theorem _root_.Minimality.TiltWeak.zero (a u₀ v : ℝ³) : TiltWeak a 0 u₀ v
   exact Or.inr ⟨h u₀, (h v).ge⟩
 
 theorem _root_.Minimality.TiltWeak.self (a u₀ v : ℝ³) : TiltWeak a a u₀ v :=
-  Or.inr ⟨det3_self_mid a u₀, (det3_self_mid a v).ge⟩
+  Or.inr ⟨det3_self_left a u₀, (det3_self_left a v).ge⟩
 
 theorem _root_.Minimality.TiltSign.add_weak {a b b' u₀ v : ℝ³} (h : TiltSign a b u₀ v) (h' : TiltWeak a b' u₀ v) :
     TiltSign a (b + b') u₀ v := by

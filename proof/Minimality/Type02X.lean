@@ -21,9 +21,6 @@ theorem sext_3 : sext p0 p1 p2 p3 p4 p5 3 = p3 := rfl
 theorem sext_4 : sext p0 p1 p2 p3 p4 p5 4 = p4 := rfl
 theorem sext_5 : sext p0 p1 p2 p3 p4 p5 5 = p5 := rfl
 end sext
-theorem z6a : (0 : ZMod 6) + 1 = 1 ∧ (1 : ZMod 6) + 1 = 2 ∧ (2 : ZMod 6) + 1 = 3 ∧
-    (3 : ZMod 6) + 1 = 4 ∧ (4 : ZMod 6) + 1 = 5 ∧ (5 : ZMod 6) + 1 = 0 := by decide
-theorem z6c (i : ZMod 6) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 5 := by revert i; decide
 
 /-! ### X1: rim `(4,6,5,2,0,1)` at the edge view `02`, lexicographic depth predicate. -/
 
@@ -50,7 +47,7 @@ theorem Q6x_unimodal {z : ZMod 6 → ℝ} (hinj : Function.Injective z) (h : Q6x
     IsCyclicUnimodal z := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := h
   have hc : ∀ i : ZMod 6, i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 5 := by decide
-  obtain ⟨a0, a1, a2, a3, a4, a5⟩ := z6a
+  obtain ⟨a0, a1, a2, a3, a4, a5⟩ := zmod6_add_one
   obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_sub_one
   have h23 : z 2 ≠ z 3 := hinj.ne (by decide)
   rcases lt_or_gt_of_ne h23 with h6 | h6
@@ -107,10 +104,10 @@ theorem cyc_X1 (t k δ sm : ℝ) (ht : 0 < t) (ht1 : t < 1) (hk : 0 < k) (hδ : 
   have ha1 := sub_pos.2 ht1
   have ha5 := sub_pos.2 hs
   have ha6 := sub_pos.2 hs1
-  obtain ⟨b0, b1, b2, b3, b4, b5⟩ := z6a
+  obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
   intro i j h1 h2
-  rcases z6c i with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    rcases z6c j with rfl | rfl | rfl | rfl | rfl | rfl <;>
+  rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
+    rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
@@ -131,9 +128,9 @@ theorem rest_X1 (t k δ sm : ℝ) (ht : 0 < t) (ht1 : t < 1) (hk : 0 < k) (hδ :
   have ha1 := sub_pos.2 ht1
   have ha5 := sub_pos.2 hs
   have ha6 := sub_pos.2 hs1
-  obtain ⟨b0, b1, b2, b3, b4, b5⟩ := z6a
+  obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
   intro i
-  rcases z6c i with rfl | rfl | rfl | rfl | rfl | rfl <;>
+  rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, cX1, pX1, b0, b1, b2, b3, b4, b5, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5]
     norm_num
     stx1
@@ -267,7 +264,7 @@ theorem right_X1_pf (hr : gA12 x = gA11 x)
     ⟨(gA22 x - gA11 x) / (2 * gA11 x), div_pos (by linarith) (by linarith), by field_simp⟩
   have hc : ∀ i, F.toFrame7.ptC (sext (4 : Fin 7) 6 5 2 0 1 i) = cX1 F.S.tp k F.S.sm i := by
     intro i
-    rcases z6c i with rfl | rfl | rfl | rfl | rfl | rfl <;>
+    rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       simp [cX1, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5, hpt, pX1]
   refine F.toFrame7.rupert_rim (k := 6) (by norm_num) (sext (4 : Fin 7) 6 5 2 0 1)
     1 ⟨-F.S.tp, 0, -(k * F.S.tp)⟩ ⟨-1, 1, k * δ⟩ (Or.inl (by simpa using ht.ne')) ?_ ?_
@@ -326,10 +323,10 @@ theorem cyc_X2 (tp tm hp hm : ℝ) (htp : 0 < tp) (htm : 0 < tm) (hhp : 0 < hp) 
   have a3 : 0 < 1 - tp - tm := by linarith
   have q1 : 0 < hm * (1 - tp) - tm * hp := by linarith
   have q2 : 0 < hp * (1 - tm) - tp * hm := by linarith
-  obtain ⟨b0, b1, b2, b3⟩ := z4a
+  obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i j h1 h2
-  rcases z4c i with rfl | rfl | rfl | rfl <;>
-    rcases z4c j with rfl | rfl | rfl | rfl <;>
+  rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
     first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
@@ -353,10 +350,10 @@ theorem rest_X2 (tp tm hp hm : ℝ) (htp : 0 < tp) (htm : 0 < tm) (hhp : 0 < hp)
   have a3 : 0 < 1 - tp - tm := by linarith
   have q1 : 0 < hm * (1 - tp) - tm * hp := by linarith
   have q2 : 0 < hp * (1 - tm) - tp * hm := by linarith
-  obtain ⟨b0, b1, b2, b3⟩ := z4a
+  obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i
   rcases hw with rfl | rfl | rfl <;>
-  rcases z4c i with rfl | rfl | rfl | rfl <;>
+  rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, cX2, pX2, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     norm_num
     stx2
@@ -476,7 +473,7 @@ theorem right_X2_obtuse_pf (hr : gA12 x = gA11 x)
     fin_cases j <;> simp [Frame02.pt, pX2, e2, e3, ← hA, ← hB]
   have hc : ∀ i, F.toFrame7.ptC (quad ((3 : Fin 7)) 5 6 4 i) = cX2 F.S.tm F.S.hm i := by
     intro i
-    rcases z4c i with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp [cX2, quad_0, quad_1, quad_2, quad_3, hpt, pX2]
   refine F.toFrame7.rupert_rim_rob (k := 4) (by norm_num) (quad ((3 : Fin 7)) 5 6 4)
     1 ⟨1 - F.S.tp, 0, -F.S.hp⟩ ⟨-1, 1, -1⟩ (Or.inl (by simp; linarith)) ?_ ?_ ?_
@@ -506,7 +503,7 @@ theorem right_X2_obtuse_pf (hr : gA12 x = gA11 x)
           (gA11 x * (1 - F.S.tp) * F.S.tm + ⟪F.e, F.e⟫ * F.S.hp * F.S.hm) (gA11 x * (1 - F.S.tp)) i := by
       funext i
       rw [hG]
-      rcases z4c i with rfl | rfl | rfl | rfl <;>
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
         simp [quad_0, quad_1, quad_2, quad_3, cX2, Gf] <;> ring
     rw [hz]
     have hlt : gA11 x * (1 - F.S.tp) * F.S.tm + ⟪F.e, F.e⟫ * F.S.hp * F.S.hm < gA11 x * (1 - F.S.tp) := by

@@ -15,6 +15,9 @@ namespace H21
 /-- Lexicographic positivity of a pair. -/
 def h21b_LP (a b : ℝ) : Prop := 0 < a ∨ (a = 0 ∧ 0 < b)
 
+lemma lp_pos {a b : ℝ} (h : 0 < a) : h21b_LP a b := Or.inl h
+lemma lp_zero {a b : ℝ} (h : a = 0) (h2 : 0 < b) : h21b_LP a b := Or.inr ⟨h, h2⟩
+
 /-- Silhouette data with lex facings at `(u₀, v)`: edge `i` has the up facet `fA i` and the down facet
 `fB i`; either may be edge-on at `u₀`, in which case the tilt `v` decides. -/
 structure h21b_SilDataL {n : ℕ} (k : ℕ) (x : Fin n → ℝ³) (c : ZMod k → Fin n) (u₀ v : ℝ³) where
