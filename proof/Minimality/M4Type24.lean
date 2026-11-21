@@ -153,7 +153,7 @@ theorem cross35_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     have e_comb : (α - β) * (oblX2 x 5 * oblX6 x 4 - oblX2 x 4 * oblX6 x 5) +
         α * oblX6 x 5 * (oblX0 x 4 + oblX2 x 4 - omega5 x * oblX6 x 4 - 1) = 0 := by
       have := eq5 F
-      linear_combination -oblX6 x 5 * h4 + oblX6 x 4 * h5 + α * oblX6 x 5 * this
+      linear_combination oblX6 x 5 * h4 - oblX6 x 4 * h5 + α * oblX6 x 4 * this
     have hαβ : α - β = -F.f 3 (x 2) := by dsimp [α, β]; ring
     have hαβ_pos : 0 < α - β := by rw [hαβ]; linarith
     have hrhs_pos : 0 < -α * oblX6 x 5 * (oblX0 x 4 + oblX2 x 4 - omega5 x * oblX6 x 4 - 1) := by
@@ -167,11 +167,10 @@ theorem cross35_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     have : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) := hdec
     calc x 3 - x 1 = (x 0 - x 1) + (x 3 - x 0) := by abel
       _ = (x 0 - x 1) + (s • (x 4 - x 0) + t • (x 5 - x 0)) := by rw [this]
-      _ = (1 - s - t) • (x 0 - x 1) + s • ((x 4 - x 1) - (x 0 - x 1)) +
-          t • ((x 5 - x 1) - (x 0 - x 1)) := by
-          simp only [sub_smul, one_smul]; abel
       _ = (1 - s - t) • (x 0 - x 1) + s • (x 4 - x 1) + t • (x 5 - x 1) := by
-          simp only [smul_sub]; abel
+          rw [show x 4 - x 0 = (x 4 - x 1) - (x 0 - x 1) from by abel,
+              show x 5 - x 0 = (x 5 - x 1) - (x 0 - x 1) from by abel]
+          module
   -- Extract `oblX2` and `oblX6` by linearity of `vol3`:
   have hb3 : oblX2 x 3 = s * oblX2 x 4 + t * oblX2 x 5 := by
     have hd := T.det_ne
@@ -374,7 +373,7 @@ theorem w02_convex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       nlinarith
     have h7 : oblX0 x 5 + oblX2 x 5 < oblX0 x 3 + oblX2 x 3 := by nlinarith
     have h8 : 0 < (oblX0 x 3 + oblX2 x 3) - (oblX0 x 5 + oblX2 x 5) := by linarith
-    nlinarith [mul_nonpos_of_nonneg_of_nonpos h1 h2.le, mul_pos hc5 h8]
+    linarith [hQ2, mul_nonpos_of_nonneg_of_nonpos h1 h2.le, mul_pos hc5 h8]
   exact ⟨hY5, hii, hQ2, hc53⟩
 
 /-! ### L4: Eight `det3` row formulas on `![1, 2, 5, 3, 6]` at `w02 = x 2 - x 0` -/
@@ -552,11 +551,10 @@ theorem lexAny_R2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   refine ⟨5, inferInstance, (![1, 0, 5, 3, 6] : ZMod 5 → Fin 7), {0, 2, 5, 6, 7}, {1, 3, 8},
     x 2 - x 0, 2 • x 2 - x 1 - x 5, 0, by decide,
     (by intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)),
-    (by unfold S0xCycUD; decide), ?_, ?_, by simpa [inner_zero_right] using hR⟩
+    (by unfold S0xCycUD; decide), ?_, ?_, by simpa only [inner_zero_right] using hR⟩
   · intro t ht
-    fin_cases t <;> dsimp only at ht ⊢ <;>
-      simp only [Finset.mem_insert, Finset.mem_singleton, Fin.reduceEq,
-        or_self, not_false_eq_true, false_or, or_false] at ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl | rfl | rfl
     · refine Or.inr ⟨hw.1, Or.inl ?_⟩
       have he : 2 • x 2 - x 1 - x 5 = (x 2 - x 1) + (x 2 - x 5) := by abel
       rw [he, inner_add_right, ← F.hN 0 (x 2) (x 1), ← F.hN 0 (x 2) (x 5),
@@ -571,9 +569,8 @@ theorem lexAny_R2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · exact Or.inl hw.2.2.2.2.2.2.1
     · exact Or.inl hw.2.2.2.2.2.2.2.1
   · intro t ht
-    fin_cases t <;> dsimp only at ht ⊢ <;>
-      simp only [Finset.mem_insert, Finset.mem_singleton, Fin.reduceEq,
-        or_self, not_false_eq_true, false_or, or_false] at ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl
     · exact Or.inl (by linarith [hw.2.1])
     · exact Or.inl (by linarith [hw.2.2.2.1])
     · exact Or.inl (by linarith [hw.2.2.2.2.2.2.2.2])
@@ -593,7 +590,7 @@ private theorem hfac_R1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     dsimp [dm]
     have e : -⟪F.N 0, x 5 + x 1 - 2 • x 2⟫ =
         -(⟪F.N 0, x 5 - x 2⟫ + ⟪F.N 0, x 1 - x 2⟫) := by
-      simp only [inner_sub_right, inner_add_right, inner_smul_right]; ring
+      simp only [inner_sub_right, inner_add_right, two_smul]; ring
     rw [e, ← F.hN 0 (x 5) (x 2), ← F.hN 0 (x 1) (x 2),
       F.zero 0 2 (by decide), F.zero 0 1 (by decide), sub_zero, sub_self, add_zero]
     linarith [F.neg 0 5 (by decide)]
@@ -602,7 +599,7 @@ private theorem hfac_R1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     dsimp [dm]
     have e : -⟪F.N 2, x 5 + x 1 - 2 • x 2⟫ =
         -(⟪F.N 2, x 5 - x 2⟫ + ⟪F.N 2, x 1 - x 2⟫) := by
-      simp only [inner_sub_right, inner_add_right, inner_smul_right]; ring
+      simp only [inner_sub_right, inner_add_right, two_smul]; ring
     rw [e, ← F.hN 2 (x 5) (x 2), ← F.hN 2 (x 1) (x 2),
       F.zero 2 2 (by decide), F.zero 2 5 (by decide), sub_self, sub_zero, zero_add]
     linarith [F.neg 2 1 (by decide)]
@@ -640,40 +637,52 @@ theorem split_R1_piv6_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     rw [show x 5 - x 6 = (x 5 - x 1) - (x 6 - x 1) from by abel, inner_sub_left]; linarith
   have hz36 : 0 < ⟪x 3 - x 6, x 2 - x 0⟫ := by
     rw [show x 3 - x 6 = (x 3 - x 1) - (x 6 - x 1) from by abel, inner_sub_left]; linarith
-  fin_cases i
+  have hi : ∀ i : ZMod 5, i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by decide
+  rcases hi i with rfl | rfl | rfl | rfl | rfl
   · exact absurd rfl hia
   · rcases hj with rfl | rfl
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz26), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.2.2.2.1]
-      nlinarith
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz56), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.2.2.2.1]
-      nlinarith
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, one_mul] using hz26), ?_⟩
+      rw [show (1 : ZMod 5) + 1 = 2 from rfl, show (0 : ZMod 5) + 1 = 1 from rfl, hrows.2.2.2.2.1,
+        show det24 x * 1 * (det24 x * oblX6 x 5) = (det24 x * det24 x) * oblX6 x 5 by ring]
+      exact mul_pos hd2 hc5
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, show (1 : ZMod 5) + 1 = 2 from rfl,
+          one_mul] using hz56), ?_⟩
+      rw [show (1 : ZMod 5) + 1 = 2 from rfl, show (0 : ZMod 5) + 1 = 1 from rfl, hrows.2.2.2.2.1,
+        show det24 x * 1 * (det24 x * oblX6 x 5) = (det24 x * det24 x) * oblX6 x 5 by ring]
+      exact mul_pos hd2 hc5
   · rcases hj with rfl | rfl
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz56), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.2.2.2.2.1]
-      nlinarith
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz36), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.2.2.2.2.1]
-      nlinarith
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, one_mul] using hz56), ?_⟩
+      rw [show (2 : ZMod 5) + 1 = 3 from rfl, show (0 : ZMod 5) + 1 = 1 from rfl, hrows.2.2.2.2.2.1,
+        show det24 x * 1 * (det24 x * (oblX6 x 3 - oblX6 x 5)) =
+          (det24 x * det24 x) * (oblX6 x 3 - oblX6 x 5) by ring]
+      exact mul_pos hd2 (by linarith [hconv.2.2.2])
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, show (2 : ZMod 5) + 1 = 3 from rfl,
+          one_mul] using hz36), ?_⟩
+      rw [show (2 : ZMod 5) + 1 = 3 from rfl, show (0 : ZMod 5) + 1 = 1 from rfl, hrows.2.2.2.2.2.1,
+        show det24 x * 1 * (det24 x * (oblX6 x 3 - oblX6 x 5)) =
+          (det24 x * det24 x) * (oblX6 x 3 - oblX6 x 5) by ring]
+      exact mul_pos hd2 (by linarith [hconv.2.2.2])
   · rcases hj with rfl | rfl
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz36), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.2.2.2.2.2.1]
-      nlinarith
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, one_mul] using hz36), ?_⟩
+      rw [show (3 : ZMod 5) + 1 = 4 from rfl, show (0 : ZMod 5) + 1 = 1 from rfl, hrows.2.2.2.2.2.2.1,
+        show det24 x * 1 * (det24 x * (1 - oblX6 x 3)) =
+          (det24 x * det24 x) * (1 - oblX6 x 3) by ring]
+      exact mul_pos hd2 (by linarith)
     · exact absurd rfl hjc
   · rcases hj with rfl | rfl
     · exact absurd rfl hjc
     · refine ⟨-1, ?_, ?_⟩
-      · simp only [Matrix.cons_val, neg_mul, one_mul, neg_sub]
+      · simp only [Matrix.cons_val, show (4 : ZMod 5) + 1 = 0 from rfl, neg_mul, one_mul]
         have he1 : -(⟪x 1 - x 6, x 2 - x 0⟫) = ⟪x 6 - x 1, x 2 - x 0⟫ := by
           rw [← neg_sub, inner_neg_left, neg_neg]
         have he2 : -(⟪x 1 - x 6, x 5 + x 1 - 2 • x 2⟫) = ⟪x 6 - x 1, x 5 + x 1 - 2 • x 2⟫ := by
           rw [← neg_sub, inner_neg_left, neg_neg]
         have he3 : -(⟪x 1 - x 6, x 6 - x 1⟫) = ⟪x 6 - x 1, x 6 - x 1⟫ := by
           rw [← neg_sub, inner_neg_left, neg_neg]
-        simpa [← neg_sub, inner_neg_left] using h16
-      · simp only [Matrix.cons_val, hrows.2.2.2.2.2.2.2]
-        nlinarith
+        rw [he1, he2, he3]; exact h16
+      · rw [show (4 : ZMod 5) + 1 = 0 from rfl, show (0 : ZMod 5) + 1 = 1 from rfl,
+          hrows.2.2.2.2.2.2.2, show det24 x * -1 * (det24 x * -1) = det24 x * det24 x by ring]
+        exact hd2
 
 theorem split_R1_piv6 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hC : CbarIn x) (hc3 : oblX6 x 3 < 1) (h346 : F.f 8 (x 2) < F.f 8 (x 0))
@@ -709,44 +718,57 @@ theorem split_R1_piv1_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (x 2 - x 0) (x 5 + x 1 - 2 • x 2) (x 6 - x 1) (hfac_R1 F h346 (x 6 - x 1))
     3 0 (by decide) (by decide) (-det24 x) ?_
   intro i hia j hj hjc
-  fin_cases i
+  have hi : ∀ i : ZMod 5, i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by decide
+  rcases hi i with rfl | rfl | rfl | rfl | rfl
   · rcases hj with rfl | rfl
     · exact absurd rfl hjc
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz2_pos), ?_⟩
-      simp only [Matrix.cons_val, hrows.1]
-      have hpos : 0 < (det24 x * det24 x) * (1 - oblX6 x 3) := mul_pos hd2 (by linarith)
-      linarith
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, show (0 : ZMod 5) + 1 = 1 from rfl,
+          one_mul] using hz2_pos), ?_⟩
+      rw [show (0 : ZMod 5) + 1 = 1 from rfl, show (3 : ZMod 5) + 1 = 4 from rfl, hrows.1,
+        show -det24 x * 1 * (det24 x * -(1 - oblX6 x 3)) =
+          (det24 x * det24 x) * (1 - oblX6 x 3) by ring]
+      exact mul_pos hd2 (by linarith)
   · rcases hj with rfl | rfl
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz2_pos), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.1]
-      have hpos : 0 < (det24 x * det24 x) * (oblX6 x 5 * (oblX0 x 3 + oblX2 x 3) +
-          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5 - 1)) :=
-        mul_pos hd2 (add_pos (mul_pos hc5 hY3) (mul_pos (by linarith) (by linarith)))
-      linarith
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz5_pos), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.1]
-      have hpos : 0 < (det24 x * det24 x) * (oblX6 x 5 * (oblX0 x 3 + oblX2 x 3) +
-          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5 - 1)) :=
-        mul_pos hd2 (add_pos (mul_pos hc5 hY3) (mul_pos (by linarith) (by linarith)))
-      linarith
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, one_mul] using hz2_pos), ?_⟩
+      rw [show (1 : ZMod 5) + 1 = 2 from rfl, show (3 : ZMod 5) + 1 = 4 from rfl, hrows.2.1,
+        show -det24 x * 1 * (det24 x * (-oblX6 x 5 * (oblX0 x 3 + oblX2 x 3) -
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5 - 1))) =
+          (det24 x * det24 x) * (oblX6 x 5 * (oblX0 x 3 + oblX2 x 3) +
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5 - 1)) by ring]
+      exact mul_pos hd2 (add_pos (mul_pos hc5 hY3) (mul_pos (by linarith) (by linarith [hconv.1])))
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, show (1 : ZMod 5) + 1 = 2 from rfl,
+          one_mul] using hz5_pos), ?_⟩
+      rw [show (1 : ZMod 5) + 1 = 2 from rfl, show (3 : ZMod 5) + 1 = 4 from rfl, hrows.2.1,
+        show -det24 x * 1 * (det24 x * (-oblX6 x 5 * (oblX0 x 3 + oblX2 x 3) -
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5 - 1))) =
+          (det24 x * det24 x) * (oblX6 x 5 * (oblX0 x 3 + oblX2 x 3) +
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5 - 1)) by ring]
+      exact mul_pos hd2 (add_pos (mul_pos hc5 hY3) (mul_pos (by linarith) (by linarith [hconv.1])))
   · rcases hj with rfl | rfl
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz5_pos), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.2.1]
-      have hpos : 0 < (det24 x * det24 x) * ((1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3) -
-          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5)) := mul_pos hd2 hconv.2.1
-      linarith
-    · refine ⟨1, Or.inl (by simpa [Matrix.cons_val] using hz3_pos), ?_⟩
-      simp only [Matrix.cons_val, hrows.2.2.1]
-      have hpos : 0 < (det24 x * det24 x) * ((1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3) -
-          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5)) := mul_pos hd2 hconv.2.1
-      linarith
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, one_mul] using hz5_pos), ?_⟩
+      rw [show (2 : ZMod 5) + 1 = 3 from rfl, show (3 : ZMod 5) + 1 = 4 from rfl, hrows.2.2.1,
+        show -det24 x * 1 * (det24 x * -((1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3) -
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5))) =
+          (det24 x * det24 x) * ((1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3) -
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5)) by ring]
+      exact mul_pos hd2 hconv.2.1
+    · refine ⟨1, Or.inl (by simpa only [Matrix.cons_val, show (2 : ZMod 5) + 1 = 3 from rfl,
+          one_mul] using hz3_pos), ?_⟩
+      rw [show (2 : ZMod 5) + 1 = 3 from rfl, show (3 : ZMod 5) + 1 = 4 from rfl, hrows.2.2.1,
+        show -det24 x * 1 * (det24 x * -((1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3) -
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5))) =
+          (det24 x * det24 x) * ((1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3) -
+          (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5)) by ring]
+      exact mul_pos hd2 hconv.2.1
   · exact absurd rfl hia
   · rcases hj with rfl | rfl
     · refine ⟨-1, ?_, ?_⟩
-      · simpa [Matrix.cons_val] using hz6_lex
-      · simp only [Matrix.cons_val, hrows.2.2.2.1]
-        have hpos : 0 < (det24 x * det24 x) * (oblX0 x 3 + oblX2 x 3) := mul_pos hd2 hY3
-        linarith
+      · simp only [Matrix.cons_val, neg_mul, one_mul]
+        exact hz6_lex
+      · rw [show (4 : ZMod 5) + 1 = 0 from rfl, show (3 : ZMod 5) + 1 = 4 from rfl, hrows.2.2.2.1,
+          show -det24 x * -1 * (det24 x * (oblX0 x 3 + oblX2 x 3)) =
+            (det24 x * det24 x) * (oblX0 x 3 + oblX2 x 3) by ring]
+        exact mul_pos hd2 hY3
     · exact absurd rfl hjc
 
 theorem split_R1_piv1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
@@ -800,8 +822,8 @@ theorem robUni5_caseB (z : Fin 7 → ℝ) (d1 d2 : Fin 7 → ℝ)
       (b = 1 ∧ c = 3 ∧ d = 4) ∨ (b = 2 ∧ c = 3 ∧ d = 4) := by omega
   have h25 : LexLt3 (z 2, d1 2, d2 2) (z 5, d1 5, d2 5) := by
     rcases eq_or_lt_of_le hz5 with h | h
-    · exact Or.inr ⟨h.symm, Or.inl (hd h.symm)⟩
-    · exact Or.inl h
+    · exact Or.inr ⟨sub_eq_zero.mpr h.symm, Or.inl (sub_pos.mpr (hd h.symm))⟩
+    · exact Or.inl (sub_pos.mpr h)
   rcases hB with rfl | rfl | rfl | rfl | rfl <;>
     rcases hbcd with ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ <;>
     simp only [Nat.cast_one, Nat.cast_ofNat, Matrix.cons_val,
@@ -874,7 +896,7 @@ theorem w02_dichotomy {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hz2_pos : 0 < ⟪x 2 - x 1, x 2 - x 0⟫ := by
     have e : x 2 - x 0 = (x 2 - x 1) - (x 0 - x 1) := by abel
     rw [e, inner_sub_right]
-    linarith
+    linarith [real_inner_comm (x 0 - x 1) (x 2 - x 1)]
   have hz0_neg : ⟪x 0 - x 1, x 2 - x 0⟫ < 0 := by
     have e : x 2 - x 0 = (x 2 - x 1) - (x 0 - x 1) := by abel
     rw [e, inner_sub_right]
