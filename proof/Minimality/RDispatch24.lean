@@ -40,7 +40,7 @@ def Q45HalfPred {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
     x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) → Q45HalfHyp F s t
 
 /-- Region `R`: `C̄ ∩ OB1` with `¬ Q45HalfPred F`. -/
-def Hole24R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+def Hole24ROB1 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ H24K.SAT.OB1 x ∧ ¬ Q45HalfPred F
 
 /-- Closed `C̄` outside `Q45HalfPred` (with or without `OB1`). -/
@@ -1213,6 +1213,137 @@ theorem avail_closes {F : S0xFac 9 s0x_S24 x} (h : HAvail F) :
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (circCC_isRupert F h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (anyFaceChord_isRupert F h)))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (lexAny_isRupert F h)))))
+
+private theorem toCC_of_T5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : H_T5 F) :
+    ToCC F := by
+  obtain ⟨u, h0, h1, h2, h3, h5, h6, h7, h8, h10, h05, h53⟩ := h
+  have hcell : CellAt F UT5 DT5 u := by
+    refine ⟨?_, ?_⟩
+    · intro t ht
+      simp only [UT5, mem_insert, mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl <;> assumption
+    · intro t ht
+      simp only [DT5, mem_insert, mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl | rfl | rfl <;> assumption
+  refine ⟨5, inferInstance, cT5, UT5, DT5, u, u, by decide, injT5, cycT5, hcell, hcell.cellLe, ?_⟩
+  exact Minimality.T24.Par.robUni_v5d _ (by simpa [cT5] using h10) (by simpa [cT5] using h05) (by simpa [cT5] using h53)
+
+private theorem toCC_sym {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : ToCC (sym24 F)) :
+    ToCC F := by
+  rcases h with ⟨k, hk0, c, U, Dn, a, u₀, hk, hc, hcyc, ha, hu, hR⟩
+  refine ⟨k, hk0, pi24 ∘ c, U.image sig24, Dn.image sig24, a, u₀, hk,
+    pi24.injective.comp hc, ?_, ?_, ?_, hR⟩
+  · intro i
+    obtain ⟨a₀, ha₀, b₀, hb₀, h1, h2, h3, h4, h5⟩ := hcyc i
+    refine ⟨sig24 a₀, mem_image_of_mem _ ha₀, sig24 b₀, mem_image_of_mem _ hb₀,
+      (s24_sym a₀ (c i)).1 h1, (s24_sym b₀ (c i)).1 h2,
+      (s24_sym a₀ (c (i + 1))).1 h3, (s24_sym b₀ (c (i + 1))).1 h4, ?_⟩
+    intro q hq1 hq2
+    have hq1' : pi24.symm q ≠ c i := fun e => hq1 (by simpa using congrArg pi24 e)
+    have hq2' : pi24.symm q ≠ c (i + 1) := fun e => hq2 (by simpa using congrArg pi24 e)
+    rcases h5 (pi24.symm q) hq1' hq2' with hq | hq
+    · exact Or.inl fun hm => hq ((s24_sym a₀ (pi24.symm q)).2 (by simpa using hm))
+    · exact Or.inr fun hm => hq ((s24_sym b₀ (pi24.symm q)).2 (by simpa using hm))
+  · refine ⟨?_, ?_⟩
+    · intro t' ht'
+      obtain ⟨t, ht, rfl⟩ := mem_image.mp ht'
+      exact ha.1 t ht
+    · intro t' ht'
+      obtain ⟨t, ht, rfl⟩ := mem_image.mp ht'
+      exact ha.2 t ht
+  · refine ⟨?_, ?_⟩
+    · intro t' ht'
+      obtain ⟨t, ht, rfl⟩ := mem_image.mp ht'
+      exact hu.1 t ht
+    · intro t' ht'
+      obtain ⟨t, ht, rfl⟩ := mem_image.mp ht'
+      exact hu.2 t ht
+
+/-- Every disjunct of `HAvail F` implies either `AnyFaceChord F` or `LexAny F`. -/
+theorem hAvail_imp {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : HAvail F) :
+    AnyFaceChord F ∨ LexAny F := by
+  rcases h with
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
+    h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h | h |
+    h | h | h | h
+  · exact Or.inl ⟨0, leaf_w3p h⟩
+  · exact Or.inl ⟨0, leaf_w3nA h⟩
+  · exact Or.inl ⟨0, leaf_w3nB h⟩
+  · exact Or.inl ⟨0, leaf_w4n h⟩
+  · exact Or.inl ⟨0, leaf_w4p h⟩
+  · exact Or.inl ⟨0, leaf_f346A h⟩
+  · exact Or.inl ⟨0, leaf_f346B h⟩
+  · exact Or.inl ⟨0, leaf_LCp h⟩
+  · exact Or.inl ⟨0, leaf_LCm h⟩
+  · exact Or.inl ⟨0, leaf_m1 h⟩
+  · exact Or.inl ⟨0, leaf_m6 h⟩
+  · exact Or.inl ⟨0, leaf_m1p5 h⟩
+  · exact Or.inl ⟨0, leaf_m1p6 h⟩
+  · exact Or.inl ⟨0, leaf_x16lo h⟩
+  · exact Or.inl ⟨0, leaf_x16hi h⟩
+  · exact Or.inl ⟨0, leaf_x16pent h⟩
+  · exact Or.inl ⟨0, leaf_x16hex h⟩
+  · exact Or.inl ⟨0, leaf_f0345 h⟩
+  · exact Or.inl ⟨0, leaf_f0345n h⟩
+  · exact Or.inl ⟨0, leaf_f346_5 h⟩
+  · exact Or.inl ⟨0, leaf_f346_4w h⟩
+  · exact Or.inl ⟨0, leaf_f346_6w h⟩
+  · exact Or.inl ⟨0, leaf_f346_neg5 h⟩
+  · exact Or.inl ⟨4, leaf_crossCore h⟩
+  · exact Or.inl ⟨4, leaf_crossCbar h⟩
+  · exact Or.inl ⟨4, leaf_crossB h⟩
+  · exact Or.inl ⟨4, leaf_crossN h⟩
+  · exact Or.inl ⟨4, leaf_cop h⟩
+  · exact Or.inl ⟨3, leaf_J0exp h⟩
+  · exact Or.inl ⟨3, leaf_J0expGt h⟩
+  · exact Or.inl ⟨3, leaf_tie45 h⟩
+  · exact Or.inl ⟨3, leaf_tie62quad h⟩
+  · exact Or.inl ⟨3, leaf_tie62pent h⟩
+  · exact Or.inl ⟨3, leaf_KminusE5 h⟩
+  · exact Or.inl ⟨3, leaf_KminusE34 h⟩
+  · exact Or.inl ⟨3, leaf_h31 h⟩
+  · exact Or.inr (toCC_imp_lexAny F (toCC_of_T5 F h))
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_w3p h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_w3nA h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_w3nB h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_w4n h)⟩
+  · exact Or.inl ⟨1, leaf_w4p_sym h⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f346A h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f346B h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_LCp h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_LCm h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_m1 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_m6 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_m1p5 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_m1p6 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_x16lo h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_x16hi h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_x16pent h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_x16hex h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f0345 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f0345n h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f346_5 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f346_4w h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f346_6w h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 0) (leaf_f346_neg5 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 4) (leaf_crossCore h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 4) (leaf_crossCbar h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 4) (leaf_crossB h)⟩
+  · exact Or.inl ⟨2, leaf_crossN_sym h⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 4) (leaf_cop h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_J0exp h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_J0expGt h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_tie45 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_tie62quad h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_tie62pent h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_KminusE5 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_KminusE34 h)⟩
+  · exact Or.inl ⟨_, faceChordView_sym F (t := 3) (leaf_h31 h)⟩
+  · exact Or.inr (toCC_imp_lexAny F (toCC_sym F (toCC_of_T5 (sym24 F) h)))
+  · exact Or.inr (toCC_imp_lexAny F h)
+  · exact Or.inr (circCC_imp_lexAny F h)
+  · exact Or.inl h
+  · exact Or.inr h
 
 /-- **Region-R Dispatcher (`r_dispatch`)**: inside `Hole24NoQ45 x F` (`CbarIn x ∧ ¬ Q45HalfPred F`,
 without `OB1`), either one of the proved leaves closes `F`, or `F` falls into
