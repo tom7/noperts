@@ -498,9 +498,9 @@ theorem v31_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       rcases ht with rfl | rfl
       · exact Or.inl (by linarith [hfac.1])
       · exact Or.inl (by linarith [hfac.2.2.1])
-    · refine robUniLex_four_of_mixed _
-        (Exists.intro ((0 : ZMod 4), (3 : ZMod 4)) ⟨by decide, ?_⟩)
-        (Exists.intro ((0 : ZMod 4), (1 : ZMod 4)) ⟨by decide, ?_⟩)
+    · refine robUniLex_four_of_mixed
+        ⟨((0 : ZMod 4), (3 : ZMod 4)), by decide, ?_⟩
+        ⟨((0 : ZMod 4), (1 : ZMod 4)), by decide, ?_⟩
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 1, hshift 2]; simp only [sub_self, inner_zero_left]; linarith)
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 0, hshift 1]; simp only [sub_self, inner_zero_left]; linarith)
   · -- 5-rim `![1, 0, 5, 3, 2]` with `U = {1, 3, 4, 5, 7, 8}`, `Dn = {0, 2, 6}`, tilt `x 0 - x 2`.
@@ -808,9 +808,9 @@ theorem v30_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       rcases ht' with rfl | rfl
       · exact Or.inl (by linarith [hfac.2.1])
       · exact Or.inl (by linarith [hfac.2.2.2.2.1])
-    · refine robUniLex_four_of_mixed _
-        (Exists.intro ((0 : ZMod 4), (3 : ZMod 4)) ⟨by decide, ?_⟩)
-        (Exists.intro ((0 : ZMod 4), (1 : ZMod 4)) ⟨by decide, ?_⟩)
+    · refine robUniLex_four_of_mixed
+        ⟨((0 : ZMod 4), (3 : ZMod 4)), by decide, ?_⟩
+        ⟨((0 : ZMod 4), (1 : ZMod 4)), by decide, ?_⟩
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 1, hshift 6]; simp only [sub_self, inner_zero_left]; linarith)
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 0, hshift 1]; simp only [sub_self, inner_zero_left]; linarith)
   · -- 5-rim `![1, 0, 4, 3, 6]` with `U = {0, 2, 3, 5, 6, 7}`, `Dn = {1, 4, 8}`, tilt `x 0 - x 6`.
