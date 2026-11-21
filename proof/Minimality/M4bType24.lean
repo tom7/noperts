@@ -427,10 +427,11 @@ theorem v31_depths {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hid : oblX2 x 5 * ⟪x 3 - x 1, v31 x⟫ + (oblX2 x 3 - oblX2 x 5) * ⟪x 0 - x 1, v31 x⟫ -
       oblX2 x 3 * ⟪x 5 - x 1, v31 x⟫ = s * ⟪v31 x, v31 x⟫ := by
     have h1 : s * ⟪v31 x, v31 x⟫ = ⟪s • v31 x, v31 x⟫ := (real_inner_smul_left _ _ _).symm
-    rw [hsv, inner_add_left, real_inner_smul_left, real_inner_smul_left,
-      show x 3 - x 5 = (x 3 - x 1) - (x 5 - x 1) by abel,
-      show x 5 - x 0 = (x 5 - x 1) - (x 0 - x 1) by abel,
-      inner_sub_left, inner_sub_left] at h1
+    have hs1 : ⟪x 3 - x 5, v31 x⟫ = ⟪x 3 - x 1, v31 x⟫ - ⟪x 5 - x 1, v31 x⟫ := by
+      rw [show x 3 - x 5 = (x 3 - x 1) - (x 5 - x 1) by abel, inner_sub_left]
+    have hs2 : ⟪x 5 - x 0, v31 x⟫ = ⟪x 5 - x 1, v31 x⟫ - ⟪x 0 - x 1, v31 x⟫ := by
+      rw [show x 5 - x 0 = (x 5 - x 1) - (x 0 - x 1) by abel, inner_sub_left]
+    rw [hsv, inner_add_left, real_inner_smul_left, real_inner_smul_left, hs1, hs2] at h1
     linarith
   exact ⟨hz0, hv_pos, s, hs, hid⟩
 
@@ -497,7 +498,7 @@ theorem v31_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       rcases ht with rfl | rfl
       · exact Or.inl (by linarith [hfac.1])
       · exact Or.inl (by linarith [hfac.2.2.1])
-    · refine robUniLex_four_of_mixed _ ⟨(0, 3), by decide, ?_⟩ ⟨(1, 0), by decide, ?_⟩
+    · refine robUniLex_four_of_mixed _ ⟨(0, 3), by decide, ?_⟩ ⟨(0, 1), by decide, ?_⟩
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 1, hshift 2]; simp only [sub_self, inner_zero_left]; linarith)
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 0, hshift 1]; simp only [sub_self, inner_zero_left]; linarith)
   · -- 5-rim `![1, 0, 5, 3, 2]` with `U = {1, 3, 4, 5, 7, 8}`, `Dn = {0, 2, 6}`, tilt `x 0 - x 2`.
@@ -762,10 +763,11 @@ theorem v30_depths {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hid : oblX6 x 4 * ⟪x 3 - x 1, v30 x⟫ + (oblX6 x 3 - oblX6 x 4) * ⟪x 0 - x 1, v30 x⟫ -
       oblX6 x 3 * ⟪x 4 - x 1, v30 x⟫ = t * ⟪v30 x, v30 x⟫ := by
     have h1 : t * ⟪v30 x, v30 x⟫ = ⟪t • v30 x, v30 x⟫ := (real_inner_smul_left _ _ _).symm
-    rw [htv, inner_add_left, real_inner_smul_left, real_inner_smul_left,
-      show x 3 - x 4 = (x 3 - x 1) - (x 4 - x 1) by abel,
-      show x 4 - x 0 = (x 4 - x 1) - (x 0 - x 1) by abel,
-      inner_sub_left, inner_sub_left] at h1
+    have hs1 : ⟪x 3 - x 4, v30 x⟫ = ⟪x 3 - x 1, v30 x⟫ - ⟪x 4 - x 1, v30 x⟫ := by
+      rw [show x 3 - x 4 = (x 3 - x 1) - (x 4 - x 1) by abel, inner_sub_left]
+    have hs2 : ⟪x 4 - x 0, v30 x⟫ = ⟪x 4 - x 1, v30 x⟫ - ⟪x 0 - x 1, v30 x⟫ := by
+      rw [show x 4 - x 0 = (x 4 - x 1) - (x 0 - x 1) by abel, inner_sub_left]
+    rw [htv, inner_add_left, real_inner_smul_left, real_inner_smul_left, hs1, hs2] at h1
     linarith
   exact ⟨hz0, hv_pos, t, ht, hid⟩
 
@@ -804,7 +806,7 @@ theorem v30_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       rcases ht' with rfl | rfl
       · exact Or.inl (by linarith [hfac.2.1])
       · exact Or.inl (by linarith [hfac.2.2.2.2.1])
-    · refine robUniLex_four_of_mixed _ ⟨(0, 3), by decide, ?_⟩ ⟨(1, 0), by decide, ?_⟩
+    · refine robUniLex_four_of_mixed _ ⟨(0, 3), by decide, ?_⟩ ⟨(0, 1), by decide, ?_⟩
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 1, hshift 6]; simp only [sub_self, inner_zero_left]; linarith)
       · exact Or.inl (by dsimp only [Matrix.cons_val]; rw [hshift 0, hshift 1]; simp only [sub_self, inner_zero_left]; linarith)
   · -- 5-rim `![1, 0, 4, 3, 6]` with `U = {0, 2, 3, 5, 6, 7}`, `Dn = {1, 4, 8}`, tilt `x 0 - x 6`.
@@ -893,7 +895,7 @@ theorem diag_of_bc_zero {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 /-! ### P1–P4: Leaf E05-P5 (`a5 > 1`, `σ < 1`, rim `0 4 6 2 5`, pivot `5`, edge `26`) -/
 
 theorem w05_facings_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : 1 < oblX0 x 5) (hL : 0 < Lam5 x)
+    (ha5 : 1 < oblX0 x 5) (hL : 0 < Lam5 x)
     (h346 : F.f 8 (x 0) < F.f 8 (x 5)) :
     ⟪F.N 0, x 5 - x 0⟫ < 0 ∧
     ⟪F.N 1, x 5 - x 0⟫ < 0 ∧
@@ -975,19 +977,26 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
   · conv_lhs => arg 1; rw [h40]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by dsimp [R04]; ring)
+    rw [M4.det3_frame x (oblX0 x 4 - 1) (oblX2 x 4) (oblX6 x 4) 0 1 (-1)
+      (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
+    dsimp [R04]; ring
   · conv_lhs => arg 1; rw [h64]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by dsimp [R46]; ring)
+    rw [M4.det3_frame x (-oblX0 x 4) (-oblX2 x 4) (1 - oblX6 x 4) 0 1 (-1)
+      (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
+    dsimp [R46]; ring
   · conv_lhs => arg 1; rw [h52]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by ring)
+    rw [M4.det3_frame x (oblX0 x 5) (oblX2 x 5 - 1) (oblX6 x 5) 0 1 (-1)
+      (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
+    ring
   · conv_lhs => arg 1; rw [h05]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [h61]
-    exact (M4.det3_frame x _ _ _ _ _ _ _ _ _).trans (by ring)
+    rw [M4.det3_frame x (1 - oblX0 x 5) (-oblX2 x 5) (-oblX6 x 5) 0 1 (-1) 0 0 1]
+    ring
 
 private theorem det3_P5_tie_row (x : Fin 7 → ℝ³) (ε : ℝ) :
     det3 (x 0 - x 5) (x 2 - x 6) ((x 5 - x 0) + ε • (x 6 - x 1)) =
@@ -1033,7 +1042,7 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
   have hd2 : 0 < det24 x * det24 x := mul_self_pos.mpr T.det_ne
-  have hfac := w05_facings_P5 F hC ha5 hL h346
+  have hfac := w05_facings_P5 F ha5 hL h346
   have hrows := rows_P5 F
   let c : ZMod 5 → Fin 7 := ![0, 4, 6, 2, 5]
   let pat : Fin 9 → Bool := fun t => decide (t = 3 ∨ t = 6 ∨ t = 7 ∨ t = 8)
@@ -1111,22 +1120,22 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       · rcases hj with rfl | rfl
         · simp only [he0, he2, hc0, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 4 - x 0) (x 2 - x 6) w05 < 0 := by
-            dsimp [w05]; rw [hrows.1]; nlinarith
+            dsimp [w05]; rw [hrows.1, ← mul_assoc]; exact mul_neg_of_pos_of_neg hd2 hR04
           exact (hev_neg_aux x w05 d1 _ _ _ hz05 hdet0).mono fun ε hε _ _ _ => hε
         · simp only [he0, he2, hc0, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 4 - x 0) (x 2 - x 6) w05 < 0 := by
-            dsimp [w05]; rw [hrows.1]; nlinarith
+            dsimp [w05]; rw [hrows.1, ← mul_assoc]; exact mul_neg_of_pos_of_neg hd2 hR04
           exact (hev_neg_aux x w05 d1 _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · by_cases hj : j = 1 ∨ j = 1 + 1
       · rcases hj with rfl | rfl
         · simp only [he1, he2, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 6 - x 4) (x 2 - x 6) w05 < 0 := by
-            dsimp [w05]; rw [hrows.2.1]; nlinarith
+            dsimp [w05]; rw [hrows.2.1, ← mul_assoc]; exact mul_neg_of_pos_of_neg hd2 hR46
           exact (hev_neg_aux x w05 d1 _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
         · simp only [he1, he2, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 6 - x 4) (x 2 - x 6) w05 < 0 := by
-            dsimp [w05]; rw [hrows.2.1]; nlinarith
+            dsimp [w05]; rw [hrows.2.1, ← mul_assoc]; exact mul_neg_of_pos_of_neg hd2 hR46
           exact (hev_neg_aux x w05 d1 _ _ _ hz65 hdet0).mono fun ε hε _ _ _ => hε
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · exact Eventually.of_forall fun _ h => absurd rfl h
@@ -1134,7 +1143,8 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       · rcases hj with rfl | rfl
         · simp only [he3, he2, hc2, hc3, hc4]
           have hdet0 : 0 < det24 x * det3 (x 5 - x 2) (x 2 - x 6) w05 := by
-            dsimp [w05]; rw [hrows.2.2.1]; nlinarith
+            dsimp [w05]; rw [hrows.2.2.1, ← mul_assoc]
+            exact mul_pos hd2 (by linarith only [ha5, hb5, hc5])
           exact (hev_pos_aux x w05 d1 _ _ _ hz25 hdet0).mono fun ε hε _ _ _ => hε
         · exact Eventually.of_forall fun _ _ _ h => absurd rfl h
       · exact Eventually.of_forall fun _ _ h => absurd h hj
