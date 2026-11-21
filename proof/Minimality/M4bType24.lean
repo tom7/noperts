@@ -992,8 +992,34 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
 private theorem det3_P5_tie_row (x : Fin 7 → ℝ³) (ε : ℝ) :
     det3 (x 0 - x 5) (x 2 - x 6) ((x 5 - x 0) + ε • (x 6 - x 1)) =
       ε * det3 (x 0 - x 5) (x 2 - x 6) (x 6 - x 1) := by
-  simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+  simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
   ring
+
+private theorem hev_neg_aux (x : Fin 7 → ℝ³) (w05 d1 u a b : ℝ³)
+    (hu : ⟪u, w05⟫ < 0) (hdet0 : det24 x * det3 a b w05 < 0) :
+    ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * (⟪u, w05 + ε • d1⟫ * det3 a b (w05 + ε • d1)) := by
+  have hc1 : Continuous fun ε : ℝ => ⟪u, w05 + ε • d1⟫ := by fun_prop
+  have hc2 : Continuous fun ε : ℝ => det24 x * det3 a b (w05 + ε • d1) := by
+    simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
+  have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪u, w05 + ε • d1⟫ < 0 :=
+    (hc1.continuousAt.eventually (gt_mem_nhds (by simpa only [zero_smul, add_zero] using hu))).filter_mono nhdsWithin_le_nhds
+  have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), det24 x * det3 a b (w05 + ε • d1) < 0 :=
+    (hc2.continuousAt.eventually (gt_mem_nhds (by simpa only [zero_smul, add_zero] using hdet0))).filter_mono nhdsWithin_le_nhds
+  filter_upwards [h1, h2] with ε hε1 hε2
+  have := mul_pos_of_neg_of_neg hε1 hε2; linarith
+
+private theorem hev_pos_aux (x : Fin 7 → ℝ³) (w05 d1 u a b : ℝ³)
+    (hu : 0 < ⟪u, w05⟫) (hdet0 : 0 < det24 x * det3 a b w05) :
+    ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * (⟪u, w05 + ε • d1⟫ * det3 a b (w05 + ε • d1)) := by
+  have hc1 : Continuous fun ε : ℝ => ⟪u, w05 + ε • d1⟫ := by fun_prop
+  have hc2 : Continuous fun ε : ℝ => det24 x * det3 a b (w05 + ε • d1) := by
+    simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
+  have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ⟪u, w05 + ε • d1⟫ :=
+    (hc1.continuousAt.eventually (lt_mem_nhds (by simpa only [zero_smul, add_zero] using hu))).filter_mono nhdsWithin_le_nhds
+  have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * det3 a b (w05 + ε • d1) :=
+    (hc2.continuousAt.eventually (lt_mem_nhds (by simpa only [zero_smul, add_zero] using hdet0))).filter_mono nhdsWithin_le_nhds
+  filter_upwards [h1, h2] with ε hε1 hε2
+  have := mul_pos hε1 hε2; linarith
 
 theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hC : CbarIn x) (ha5 : 1 < oblX0 x 5) (hL : 0 < Lam5 x)
@@ -1069,30 +1095,6 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
           det3 (x (c (i + 1)) - x (c i)) (x (c (2 + 1)) - x (c 2)) (w05 + ε • d1)) := by
     rw [eventually_all]; intro i
     rw [eventually_all]; intro j
-    have hev_neg : ∀ (u a b : ℝ³), ⟪u, w05⟫ < 0 → det24 x * det3 a b w05 < 0 →
-        ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * (⟪u, w05 + ε • d1⟫ * det3 a b (w05 + ε • d1)) := by
-      intro u a b hu hdet0
-      have hc1 : Continuous fun ε : ℝ => ⟪u, w05 + ε • d1⟫ := by fun_prop
-      have hc2 : Continuous fun ε : ℝ => det24 x * det3 a b (w05 + ε • d1) := by
-        simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
-      have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪u, w05 + ε • d1⟫ < 0 :=
-        (hc1.continuousAt.eventually (gt_mem_nhds (by simpa only [zero_smul, add_zero] using hu))).filter_mono nhdsWithin_le_nhds
-      have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), det24 x * det3 a b (w05 + ε • d1) < 0 :=
-        (hc2.continuousAt.eventually (gt_mem_nhds (by simpa only [zero_smul, add_zero] using hdet0))).filter_mono nhdsWithin_le_nhds
-      filter_upwards [h1, h2] with ε hε1 hε2
-      have := mul_pos_of_neg_of_neg hε1 hε2; linarith
-    have hev_pos : ∀ (u a b : ℝ³), 0 < ⟪u, w05⟫ → 0 < det24 x * det3 a b w05 →
-        ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * (⟪u, w05 + ε • d1⟫ * det3 a b (w05 + ε • d1)) := by
-      intro u a b hu hdet0
-      have hc1 : Continuous fun ε : ℝ => ⟪u, w05 + ε • d1⟫ := by fun_prop
-      have hc2 : Continuous fun ε : ℝ => det24 x * det3 a b (w05 + ε • d1) := by
-        simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; fun_prop
-      have h1 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ⟪u, w05 + ε • d1⟫ :=
-        (hc1.continuousAt.eventually (lt_mem_nhds (by simpa only [zero_smul, add_zero] using hu))).filter_mono nhdsWithin_le_nhds
-      have h2 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det24 x * det3 a b (w05 + ε • d1) :=
-        (hc2.continuousAt.eventually (lt_mem_nhds (by simpa only [zero_smul, add_zero] using hdet0))).filter_mono nhdsWithin_le_nhds
-      filter_upwards [h1, h2] with ε hε1 hε2
-      have := mul_pos hε1 hε2; linarith
     have hc0 : c 0 = 0 := rfl
     have hc1 : c 1 = 4 := rfl
     have hc2 : c 2 = 6 := rfl
@@ -1110,22 +1112,22 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         · simp only [he0, he2, hc0, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 4 - x 0) (x 2 - x 6) w05 < 0 := by
             dsimp [w05]; rw [hrows.1]; nlinarith
-          exact (hev_neg _ _ _ hz05 hdet0).mono fun ε hε _ _ _ => hε
+          exact (hev_neg_aux x w05 d1 _ _ _ hz05 hdet0).mono fun ε hε _ _ _ => hε
         · simp only [he0, he2, hc0, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 4 - x 0) (x 2 - x 6) w05 < 0 := by
             dsimp [w05]; rw [hrows.1]; nlinarith
-          exact (hev_neg _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
+          exact (hev_neg_aux x w05 d1 _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · by_cases hj : j = 1 ∨ j = 1 + 1
       · rcases hj with rfl | rfl
         · simp only [he1, he2, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 6 - x 4) (x 2 - x 6) w05 < 0 := by
             dsimp [w05]; rw [hrows.2.1]; nlinarith
-          exact (hev_neg _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
+          exact (hev_neg_aux x w05 d1 _ _ _ hz45 hdet0).mono fun ε hε _ _ _ => hε
         · simp only [he1, he2, hc1, hc2, hc3, hc4]
           have hdet0 : det24 x * det3 (x 6 - x 4) (x 2 - x 6) w05 < 0 := by
             dsimp [w05]; rw [hrows.2.1]; nlinarith
-          exact (hev_neg _ _ _ hz65 hdet0).mono fun ε hε _ _ _ => hε
+          exact (hev_neg_aux x w05 d1 _ _ _ hz65 hdet0).mono fun ε hε _ _ _ => hε
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · exact Eventually.of_forall fun _ h => absurd rfl h
     · by_cases hj : j = 3 ∨ j = 3 + 1
@@ -1133,7 +1135,7 @@ theorem splitAny24_E05P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         · simp only [he3, he2, hc2, hc3, hc4]
           have hdet0 : 0 < det24 x * det3 (x 5 - x 2) (x 2 - x 6) w05 := by
             dsimp [w05]; rw [hrows.2.2.1]; nlinarith
-          exact (hev_pos _ _ _ hz25 hdet0).mono fun ε hε _ _ _ => hε
+          exact (hev_pos_aux x w05 d1 _ _ _ hz25 hdet0).mono fun ε hε _ _ _ => hε
         · exact Eventually.of_forall fun _ _ _ h => absurd rfl h
       · exact Eventually.of_forall fun _ _ h => absurd h hj
     · by_cases hj : j = 4 ∨ j = 4 + 1
