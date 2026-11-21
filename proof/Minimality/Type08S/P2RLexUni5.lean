@@ -30,7 +30,6 @@ theorem pc5_2 {α : Type*} {w0 w1 w2 w3 w4 : α} : pc5 w0 w1 w2 w3 w4 2 = w2 := 
 theorem pc5_3 {α : Type*} {w0 w1 w2 w3 w4 : α} : pc5 w0 w1 w2 w3 w4 3 = w3 := rfl
 theorem pc5_4 {α : Type*} {w0 w1 w2 w3 w4 : α} : pc5 w0 w1 w2 w3 w4 4 = w4 := rfl
 
-
 theorem z5_add : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1 = 3 ∧
     (3 : ZMod 5) + 1 = 4 ∧ (4 : ZMod 5) + 1 = 0 := by decide
 

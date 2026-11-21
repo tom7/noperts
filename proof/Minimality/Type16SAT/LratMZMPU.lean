@@ -972,7 +972,6 @@ def MZMPUS9 : List Step := [
 (3905,[256],[3870,3800,134]),
 (3924,[],[3905,3903,3475,138])
 ]
-def MZMPUSteps : List Step := MZMPUS0 ++ MZMPUS1 ++ MZMPUS2 ++ MZMPUS3 ++ MZMPUS4 ++ MZMPUS5 ++ MZMPUS6 ++ MZMPUS7 ++ MZMPUS8 ++ MZMPUS9
 def MZMPUCnf : List Cl := [
 [7,9],
 [5,6],

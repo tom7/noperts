@@ -47,39 +47,17 @@ structure Shape20 where
 namespace Shape20
 variable (S : Shape20)
 
-noncomputable def ap : ℝ := S.hp / S.tp
 noncomputable def bp : ℝ := S.hp / (1 - S.tp)
-noncomputable def am : ℝ := S.hm / S.tm
 noncomputable def bm : ℝ := S.hm / (1 - S.tm)
-noncomputable def cp : ℝ := S.kp / S.sp
 noncomputable def dp : ℝ := S.kp / (1 - S.sp)
-noncomputable def cm : ℝ := S.km / S.sm
 noncomputable def dm : ℝ := S.km / (1 - S.sm)
-noncomputable def A1 : ℝ := S.ap + S.am
-noncomputable def A2 : ℝ := S.cp + S.cm
-noncomputable def B1 : ℝ := S.bp + S.bm
 
-lemma ap_pos : 0 < S.ap := div_pos S.hp_pos S.tp_pos
-lemma am_pos : 0 < S.am := div_pos S.hm_pos S.tm_pos
-lemma bp_pos : 0 < S.bp := div_pos S.hp_pos (by linarith [S.tp_lt])
-lemma bm_pos : 0 < S.bm := div_pos S.hm_pos (by linarith [S.tm_lt])
-lemma dp_pos : 0 < S.dp := div_pos S.kp_pos (by linarith [S.sp_lt])
-lemma dm_pos : 0 < S.dm := div_pos S.km_pos (by linarith [S.sm_lt])
-
-lemma ap_mul : S.ap * S.tp = S.hp := by
-  unfold ap; field_simp [S.tp_pos.ne']
-lemma am_mul : S.am * S.tm = S.hm := by
-  unfold am; field_simp [S.tm_pos.ne']
 lemma bp_mul : S.bp * (1 - S.tp) = S.hp := by
   have : (1 - S.tp) ≠ 0 := by linarith [S.tp_lt]
   unfold bp; field_simp
 lemma bm_mul : S.bm * (1 - S.tm) = S.hm := by
   have : (1 - S.tm) ≠ 0 := by linarith [S.tm_lt]
   unfold bm; field_simp
-lemma cp_mul : S.cp * S.sp = S.kp := by
-  unfold cp; field_simp [S.sp_pos.ne']
-lemma cm_mul : S.cm * S.sm = S.km := by
-  unfold cm; field_simp [S.sm_pos.ne']
 lemma dp_mul : S.dp * (1 - S.sp) = S.kp := by
   have : (1 - S.sp) ≠ 0 := by linarith [S.sp_lt]
   unfold dp; field_simp

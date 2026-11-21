@@ -43,8 +43,6 @@ def vtxPQW : Fin 11 → Fin 8 × Fin 8 × Fin 7 :=
   ![(0, 4, 0), (0, 5, 5), (1, 4, 6), (1, 7, 5), (2, 3, 0), (2, 5, 4), (2, 6, 4), (3, 6, 6), (4, 5, 4), (4, 7, 4),
     (6, 7, 4)]
 
-theorem vtx_inter : ∀ t, fIdx (vtxPQW t).1 ∩ fIdx (vtxPQW t).2.1 = {(vtxPQW t).2.2} := by decide
-
 variable {x : Fin 7 → ℝ³}
 
 def _root_.Minimality.Type16.ff (T : Type16 x) : Fin 8 → ℝ³ → ℝ

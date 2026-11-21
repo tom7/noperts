@@ -53,12 +53,6 @@ def Q16.K (q : Q16) : ℕ := (Lab16 q.2.2).1
 /-- The labels of the rim of `q`. -/
 def Q16.lab (q : Q16) : ZMod q.K → Fin 7 := (Lab16 q.2.2).2
 
-theorem Q16.K_three (q : Q16) : 3 ≤ q.K := by
-  rcases q with ⟨v, e, L | L | L⟩ <;> simp [Q16.K, Lab16]
-
-instance (q : Q16) : NeZero q.K :=
-  ⟨by have := q.K_three; omega⟩
-
 /-! ### Rotations and reflections of a rim -/
 
 /-! ### Several views with ties -/

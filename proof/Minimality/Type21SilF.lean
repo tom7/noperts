@@ -43,11 +43,6 @@ noncomputable def fac8 {x : Fin 7 → ℝ³} (T : Facets21 x) : Fac8 x where
 
 variable {x : Fin 7 → ℝ³}
 
-theorem Fac8.le (F : Fac8 x) (t : Fin 8) (m : Fin 7) : F.f t (x m) ≤ 0 := by
-  by_cases h : m ∈ h21S t
-  · rw [F.zero t m h]
-  · exact (F.neg t m h).le
-
 /-- Facing up: `j` in the facet, `i` not. -/
 theorem Fac8.up (F : Fac8 x) (t : Fin 8) {i j : Fin 7} (hj : j ∈ h21S t) (hi : i ∉ h21S t) :
     0 < F.f t (x j) - F.f t (x i) := by

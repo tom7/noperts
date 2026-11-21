@@ -207,14 +207,9 @@ noncomputable def rhoW (g : Geo) : W → Bool
     if pos then decide (0 < Qv g kind key e1 e2) else decide (Qv g kind key e1 e2 < 0)
   | .sf kind view f sd cyc => decide (¬ SplitCert g kind view f sd cyc)
 
-theorem rhoW_base (g : Geo) (v : V) : rhoW g (W.base v) = rho g v := rfl
 theorem rhoW_wgate (g : Geo) (sa : Bool) (a : W) (sb : Bool) (b : W) :
     rhoW g (W.wgate sa a sb b) = (evalW (rhoW g) (sa, a) && evalW (rhoW g) (sb, b)) := rfl
-theorem rhoW_z0 (g : Geo) (t f : Nat) : rhoW g (W.z0 t f) = decide (Z0 g t f) := rfl
 
-theorem rhoW_qv (g : Geo) (kind key e1 e2 : Nat) (pos : Bool) :
-    rhoW g (W.qv kind key e1 e2 pos) =
-      (if pos then decide (0 < Qv g kind key e1 e2) else decide (Qv g kind key e1 e2 < 0)) := rfl
 theorem rhoW_sf (g : Geo) (kind view f sd : Nat) (cyc : List Nat) :
     rhoW g (W.sf kind view f sd cyc) = decide (¬ SplitCert g kind view f sd cyc) := rfl
 

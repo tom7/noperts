@@ -1205,7 +1205,6 @@ def ZPMMS11 : List Step := [
 (5896,[80],[5890,5158,69]),
 (5901,[],[5895,5896,5677,5582,5618,5335,5409,5369,4864])
 ]
-def ZPMMSteps : List Step := ZPMMS0 ++ ZPMMS1 ++ ZPMMS2 ++ ZPMMS3 ++ ZPMMS4 ++ ZPMMS5 ++ ZPMMS6 ++ ZPMMS7 ++ ZPMMS8 ++ ZPMMS9 ++ ZPMMS10 ++ ZPMMS11
 def ZPMMCnf : List Cl := [
 [7,9],
 [5,6],

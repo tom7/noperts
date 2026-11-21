@@ -41,8 +41,6 @@ namespace NF16
 
 variable {x : Fin 7 → ℝ³}
 
-theorem mem_image (i : Fin 7) : x i ∈ univ.image x := Finset.mem_image_of_mem x (mem_univ i)
-
 /-! ### Lemma 19.1 and the dispatch of Theorem 19.2 -/
 
 /-- The nondegeneracy conditions of the cover (§19.7.1, "equality in a sign condition of the

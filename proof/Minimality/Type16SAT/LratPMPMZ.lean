@@ -1100,7 +1100,6 @@ def PMPMZS10 : List Step := [
 (5645,[2993],[5628,1494]),
 (5664,[],[5641,5645,4235])
 ]
-def PMPMZSteps : List Step := PMPMZS0 ++ PMPMZS1 ++ PMPMZS2 ++ PMPMZS3 ++ PMPMZS4 ++ PMPMZS5 ++ PMPMZS6 ++ PMPMZS7 ++ PMPMZS8 ++ PMPMZS9 ++ PMPMZS10
 def PMPMZCnf : List Cl := [
 [7,9],
 [3,8],

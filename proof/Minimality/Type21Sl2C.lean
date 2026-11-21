@@ -77,13 +77,5 @@ theorem h21b_core_pos_rim (hc : Function.Injective c) (hk : 3 ≤ k) (D : h21b_S
     obtain ⟨m, -, rfl⟩ := mem_image.1 hy
     exact P i m (fun h => hne i (by rw [h])) (fun h => hne (i + 1) (by rw [h]))
 
-theorem h21b_core_pos (hc : Function.Injective c) (hk : 3 ≤ k) (D : h21b_SilDataL k x c u₀ v)
-    (μ : ZMod k → ℝ) (hμ : ∀ i, 0 < μ i)
-    (hd : ∀ i, x (c (i + 1)) - x (c i) = μ i • cross (D.A i) (D.B i))
-    (hL : LexUni (fun i => ⟪x (c i), u₀⟫) (fun i => ⟪x (c i), v⟫)) :
-    HasLexCellAt (univ.image x) u₀ :=
-  let ⟨v', h⟩ := h21b_core_pos_rim hc hk D μ hμ hd hL
-  ⟨k, inferInstance, fun i => x (c i), v', h⟩
-
 end H21
 end Minimality

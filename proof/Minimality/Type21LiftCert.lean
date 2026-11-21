@@ -32,11 +32,6 @@ open Finset Filter
 /-- `{v, w} = {p, q}`. -/
 def SPair (v w p q : ℝ³) : Prop := (v = p ∧ w = q) ∨ (v = q ∧ w = p)
 
-theorem SPair.symm {v w p q : ℝ³} (h : SPair v w p q) : SPair w v p q := by
-  rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩
-  · exact Or.inr ⟨h2, h1⟩
-  · exact Or.inl ⟨h2, h1⟩
-
 theorem SPair.swap {v w p q : ℝ³} (h : SPair v w p q) : SPair v w q p := Or.comm.mp h
 
 /-- **The thirteen edges of type 21** in the labels of a cap `d` over the octahedron
@@ -54,10 +49,6 @@ local macro "edge21_perm" : tactic => `(tactic| (
   unfold Edge21 at *
   rcases ‹_› with h | h | h | h | h | h | h | h | h | h | h | h | h <;>
   (unfold SPair at h ⊢; rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> simp [h1, h2])))
-
-theorem Edge21.symm {a a' b b' c c' d v w : ℝ³} (h : Edge21 a a' b b' c c' d v w) :
-    Edge21 a a' b b' c c' d w v := by
-  edge21_perm
 
 /-- The edges under `σ1 = (04)(35)`. -/
 theorem Edge21.sigma1 {a a' b b' c c' d v w : ℝ³} (h : Edge21 b b' a a' c c' d v w) :

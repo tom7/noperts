@@ -22,12 +22,12 @@ namespace Type08Sp
 theorem z4_cases (i : ZMod 4) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by
   revert i; decide
 
-theorem z4_rel : ∀ i p : ZMod 4, p = i - 1 ∨ p = i + 1 ∨ p = i + 2 ∨ p = i := by decide
-
 theorem quad4_0 {α : Type*} {w0 w1 w2 w3 : α} : quad w0 w1 w2 w3 0 = w0 := rfl
 theorem quad4_1 {α : Type*} {w0 w1 w2 w3 : α} : quad w0 w1 w2 w3 1 = w1 := rfl
 theorem quad4_2 {α : Type*} {w0 w1 w2 w3 : α} : quad w0 w1 w2 w3 2 = w2 := rfl
 theorem quad4_3 {α : Type*} {w0 w1 w2 w3 : α} : quad w0 w1 w2 w3 3 = w3 := rfl
+
+theorem z4_rel : ∀ i p : ZMod 4, p = i - 1 ∨ p = i + 1 ∨ p = i + 2 ∨ p = i := by decide
 
 theorem zn4 : (∀ i : ZMod 4, i + 1 ≠ i) ∧ (∀ i : ZMod 4, i + 2 ≠ i) ∧ (∀ i : ZMod 4, i + 3 ≠ i) ∧
     (∀ i : ZMod 4, i + 1 ≠ i + 2) ∧ (∀ i : ZMod 4, i + 1 ≠ i + 3) ∧ (∀ i : ZMod 4, i + 2 ≠ i + 3) ∧

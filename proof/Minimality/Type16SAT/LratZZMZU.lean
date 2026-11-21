@@ -1111,7 +1111,6 @@ def ZZMZUS10 : List Step := [
 (4356,[823],[4348,4347]),
 (4366,[],[4355,4356,1206])
 ]
-def ZZMZUSteps : List Step := ZZMZUS0 ++ ZZMZUS1 ++ ZZMZUS2 ++ ZZMZUS3 ++ ZZMZUS4 ++ ZZMZUS5 ++ ZZMZUS6 ++ ZZMZUS7 ++ ZZMZUS8 ++ ZZMZUS9 ++ ZZMZUS10
 def ZZMZUCnf : List Cl := [
 [7,9],
 [5,6],

@@ -134,13 +134,6 @@ lemma ptC_6 : F.toFrame7.ptC 6 = ⟨F.S.tm, 0, -F.S.hm⟩ := by simp [toFrame7, 
 /-- The depth of the point `j` along the view of `V`. -/
 noncomputable def dV (j : Fin 7) : ℝ := F.toFrame7.GG (F.toFrame7.ptC j) F.S.uV
 
-lemma dV_0 : F.dV 0 = F.a11 * (F.S.tp * (-F.S.sp * F.S.tp + F.S.tp)) +
-    F.gg * (F.S.hp * (-F.S.hp * F.S.sp + F.S.hp - F.S.kp)) := by
-  simp only [dV, ptC_0, GG_eq, Shape18.uV]; ring
-lemma dV_6 : F.dV 6 = F.a11 * (F.S.tm * (-F.S.sp * F.S.tp + F.S.tp)) +
-    F.gg * (-F.S.hm * (-F.S.hp * F.S.sp + F.S.hp - F.S.kp)) := by
-  simp only [dV, ptC_6, GG_eq, Shape18.uV]; ring
-
 end Frame18
 
 namespace Frame18

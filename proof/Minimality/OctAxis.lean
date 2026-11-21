@@ -231,17 +231,6 @@ depth-separated. -/
 def DepthSep (d₀ d₁ e₀ e₁ u : ℝ³) : Prop :=
   max ⟪d₀, u⟫ ⟪d₁, u⟫ < min ⟪e₀, u⟫ ⟪e₁, u⟫ ∨ max ⟪e₀, u⟫ ⟪e₁, u⟫ < min ⟪d₀, u⟫ ⟪d₁, u⟫
 
-theorem DepthSep.swap {d₀ d₁ e₀ e₁ u : ℝ³} (h : DepthSep d₀ d₁ e₀ e₁ u) :
-    DepthSep d₁ d₀ e₁ e₀ u := by
-  simp only [DepthSep, max_comm ⟪d₁, u⟫, min_comm ⟪e₁, u⟫, max_comm ⟪e₁, u⟫,
-    min_comm ⟪d₁, u⟫] at h ⊢
-  exact h
-
-theorem SegMeet.swap {d₀ d₁ e₀ e₁ u : ℝ³} (h : SegMeet d₀ d₁ e₀ e₁ u) : SegMeet d₁ d₀ e₁ e₀ u := by
-  obtain ⟨s, t, μ, hs0, hs1, ht0, ht1, h⟩ := h
-  refine ⟨1 - s, 1 - t, μ, by linarith, by linarith, by linarith, by linarith, ?_⟩
-  rw [← h]; module
-
 theorem inner_seg (x y u : ℝ³) (t : ℝ) : ⟪x + t • (y - x), u⟫ = (1 - t) * ⟪x, u⟫ + t * ⟪y, u⟫ := by
   simp only [inner_add_left, inner_sub_left, real_inner_smul_left]; ring
 

@@ -45,6 +45,7 @@ variable {x : Fin 7 → ℝ³}
 def c1 : ZMod 6 → Fin 7 := ![5, 3, 4, 1, 0, 2]
 def c3 : ZMod 6 → Fin 7 := ![5, 6, 4, 1, 0, 2]
 def c2 : ZMod 5 → Fin 7 := ![5, 3, 4, 1, 2]
+
 theorem c1_0 : c1 0 = 5 := rfl
 theorem c1_1 : c1 1 = 3 := rfl
 theorem c1_2 : c1 2 = 4 := rfl

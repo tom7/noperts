@@ -76,6 +76,9 @@ theorem Face16.det3_ne {x : Fin 7 → ℝ³} {S : Finset (Fin 7)} (F : Face16 x 
   rw [this, mul_zero] at k
   linarith [F.neg b hb]
 
+theorem sgnB_cases (ε : Bool) : sgnB ε = 1 ∨ sgnB ε = -1 := by
+  cases ε <;> simp [sgnB]
+
 theorem triEdge16_det {x : Fin 7 → ℝ³} (T : Type16 x) (e : Fin 6) :
     det3 (x (triEdge16 e).2.1 - x (triEdge16 e).1) (x (triEdge16 e).2.2.1 - x (triEdge16 e).1)
       (x (triEdge16 e).2.2.2 - x (triEdge16 e).1) ≠ 0 := by
@@ -107,9 +110,6 @@ theorem triVtx16_ne {t : Fin 6} (ht : TriVtx16 t) :
       (vtx16 t).1.1 ≠ (vtx16 t).1.2.2 ∧ (vtx16 t).2.1 ≠ (vtx16 t).2.2.1 ∧
       (vtx16 t).2.2.1 ≠ (vtx16 t).2.2.2 ∧ (vtx16 t).2.1 ≠ (vtx16 t).2.2.2 := by
   rcases ht with rfl | rfl | rfl | rfl <;> decide
-
-theorem sgnB_cases (ε : Bool) : sgnB ε = 1 ∨ sgnB ε = -1 := by
-  cases ε <;> simp [sgnB]
 
 /-- **The tilt alternative gives a hiding tilt for the limit rim** of a certificate at a view
 with `Sec16`. -/

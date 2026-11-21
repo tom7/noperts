@@ -1077,7 +1077,6 @@ def ZZMPZS10 : List Step := [
 (5198,[878],[5170,1578]),
 (5206,[],[5182,5198,4793,1662])
 ]
-def ZZMPZSteps : List Step := ZZMPZS0 ++ ZZMPZS1 ++ ZZMPZS2 ++ ZZMPZS3 ++ ZZMPZS4 ++ ZZMPZS5 ++ ZZMPZS6 ++ ZZMPZS7 ++ ZZMPZS8 ++ ZZMPZS9 ++ ZZMPZS10
 def ZZMPZCnf : List Cl := [
 [3,5],
 [5,6],

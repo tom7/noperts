@@ -21,8 +21,6 @@ noncomputable def P5 : ℝ³ := fp (9/10) (19/10) (4/5)
 noncomputable def dA : ℝ³ := (1/5 : ℝ) • ea + (177/10 : ℝ) • ec
 noncomputable def dB : ℝ³ := (9/5 : ℝ) • ea + (4/5 : ℝ) • ec
 
-noncomputable def P2 : ℝ³ := eb
-
 /-- The 7 vertices `X0 = e_a, X1 = 0, X2 = e_b, X3, X4, X5, X6 = e_c`. -/
 noncomputable def V : Finset ℝ³ := {ea, 0, eb, P3, P4, P5, ec}
 

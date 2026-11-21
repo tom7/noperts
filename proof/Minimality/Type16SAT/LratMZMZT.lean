@@ -449,7 +449,6 @@ def MZMZTS4 : List Step := [
 (992,[1039],[990,376]),
 (993,[],[991,992,873,961,972,897,880,913,905,516])
 ]
-def MZMZTSteps : List Step := MZMZTS0 ++ MZMZTS1 ++ MZMZTS2 ++ MZMZTS3 ++ MZMZTS4
 def MZMZTCnf : List Cl := [
 [5,6],
 [9,2],

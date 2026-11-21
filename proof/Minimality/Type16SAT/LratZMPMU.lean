@@ -993,7 +993,6 @@ def ZMPMUS9 : List Step := [
 (4318,[2175],[4296,1049]),
 (4326,[],[4309,4318,4255,1050])
 ]
-def ZMPMUSteps : List Step := ZMPMUS0 ++ ZMPMUS1 ++ ZMPMUS2 ++ ZMPMUS3 ++ ZMPMUS4 ++ ZMPMUS5 ++ ZMPMUS6 ++ ZMPMUS7 ++ ZMPMUS8 ++ ZMPMUS9
 def ZMPMUCnf : List Cl := [
 [3,5],
 [5,6],

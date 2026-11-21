@@ -34,12 +34,7 @@ def ka' (ν β6 C0 : ℝ) : P3 := (0, 0, β6 * ν + C0)
 def kb' (r W ha w3 C0 α4 γ4 : ℝ) : P3 := (r * (1 - γ4) + α4 * W, α4 * ha, α4 * w3 + γ4 * C0)
 def kc' (r W ha w3 ν α1 β1 : ℝ) : P3 := (r + α1 * W, α1 * ha, α1 * w3 + β1 * ν)
 
-def cyc4 {α : Type*} (p0 p1 p2 p3 : α) : ZMod 4 → α := ![p0, p1, p2, p3]
 def cyc5 {α : Type*} (p0 p1 p2 p3 p4 : α) : ZMod 5 → α := ![p0, p1, p2, p3, p4]
-
-theorem z5c (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
-theorem z5s : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1 = 3 ∧ (3 : ZMod 5) + 1 = 4 ∧
-    (4 : ZMod 5) + 1 = 0 := by decide
 
 theorem c5_0 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 0 = p0 := rfl
 theorem c5_1 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 1 = p1 := rfl
@@ -47,9 +42,10 @@ theorem c5_2 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 2 = p2 := 
 theorem c5_3 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 3 = p3 := rfl
 theorem c5_4 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 4 = p4 := rfl
 
-/- Positive facts (names are used by the cell proofs): the strict-convexity table of the screen quadrilateral
-`(q, c̄', b̄', q')` with `ā` on `(q, c̄')` (Lemma G′), and products of the three side signs `p1 p3 p4 > 0` with the
-depth coefficients of the corner-split and side lemmas. -/
+theorem z5c (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
+theorem z5s : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1 = 3 ∧ (3 : ZMod 5) + 1 = 4 ∧
+    (4 : ZMod 5) + 1 = 0 := by decide
+
 set_option hygiene false in
 macro "kfacts" : tactic => `(tactic| (
   have hα1' : (0:ℝ) < α1 - 1 := by linarith

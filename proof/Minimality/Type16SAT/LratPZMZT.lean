@@ -225,7 +225,6 @@ def PZMZTS2 : List Step := [
 (449,[427],[447,200]),
 (450,[],[448,449,401,445,444,442,446,438,238])
 ]
-def PZMZTSteps : List Step := PZMZTS0 ++ PZMZTS1 ++ PZMZTS2
 def PZMZTCnf : List Cl := [
 [5,2],
 [11,8],

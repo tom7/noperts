@@ -175,12 +175,6 @@ theorem dv_edE (g : Geo) {x y : Nat} (hx : x < 7) (hy : y < 7) (hxy : x ≠ y) :
     simp only [h, decide_false, ite_false, Bool.false_eq_true]
     rw [dv_EI g hx hy h', neg_smul, one_smul, neg_sub]
 
-theorem edE_lt {x y : Nat} (hx : x < 7) (hy : y < 7) (hxy : x ≠ y) : edE x y < 21 := by
-  unfold edE
-  split_ifs with h
-  · exact EI_lt21 y hy x hx h
-  · exact EI_lt21 x hx y hy (by omega)
-
 /-- The chirotope entry of the triple `(a, b, c)` of differences (the encoder's `ent`): the sorted entry of `triOf`
 with the sign of the permutation, `0` for a repeated difference. -/
 def entS (a b c : Nat) : S3 :=

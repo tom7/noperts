@@ -50,12 +50,6 @@ def Q21.K (q : Q21) : ℕ := (Lab16 q.1.2.2).1
 /-- The labels of the rim of `q`. -/
 def Q21.lab (q : Q21) : ZMod q.K → Fin 7 := (Lab16 q.1.2.2).2
 
-theorem Q21.K_three (q : Q21) : 3 ≤ q.K := by
-  obtain ⟨⟨v, e, L | L | L⟩, hq⟩ := q <;> simp [Q21.K, Lab16]
-
-instance (q : Q21) : NeZero q.K :=
-  ⟨by have := q.K_three; omega⟩
-
 /-! ### Two views with ties -/
 
 end Minimality

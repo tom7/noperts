@@ -475,25 +475,9 @@ def CertN16 (x : Fin 7 → ℝ³) : Prop := ∃ u, Named16 x u ∧ RimCert (univ
 theorem named16_seg {x : Fin 7 → ℝ³} (i j : Fin 7) : Named16 x (x j - x i) :=
   ⟨.inl (i, j), 1, one_ne_zero, (one_smul _ _).symm⟩
 
-theorem Named16.smul {x : Fin 7 → ℝ³} {u : ℝ³} (h : Named16 x u) {c : ℝ} (hc : c ≠ 0) :
-    Named16 x (c • u) := by
-  obtain ⟨v, d, hd, rfl⟩ := h
-  exact ⟨v, c * d, mul_ne_zero hc hd, by rw [smul_smul]⟩
-
 theorem vtxView16_sigma (x : Fin 7 → ℝ³) (t : Fin 6) :
     vtxView16 (x ∘ sigma16) t = vtxView16 x (t + 3) := by
   fin_cases t <;> rfl
-
-theorem Named16.sigma {x : Fin 7 → ℝ³} {u : ℝ³} (h : Named16 (x ∘ sigma16) u) : Named16 x u := by
-  obtain ⟨v, c, hc, rfl⟩ := h
-  rcases v with ⟨i, j⟩ | t
-  · exact ⟨.inl (sigma16 i, sigma16 j), c, hc, rfl⟩
-  · exact ⟨.inr (t + 3), c, hc, by simp only [view16, vtxView16_sigma]⟩
-
-theorem CertN16.sigma {x : Fin 7 → ℝ³} (h : CertN16 (x ∘ sigma16)) : CertN16 x := by
-  obtain ⟨u, hn, hc⟩ := h
-  rw [image_sigma16] at hc
-  exact ⟨u, hn.sigma, hc⟩
 
 /-- **`rimCert_edgePair_robust` in either orientation** (as `isRupert_edgePairσ_robust`). -/
 theorem rimCert_edgePairσ_robust {v w a b c : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
@@ -645,10 +629,6 @@ def PX16 (x : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 6) (l : Fin 7 × Fi
     Prop :=
   (v = .inl (3, 5) → l.2.1 = 1 → Reg193 x) ∧ (v = .inl (3, 5) → l.2.1 = 2 → Reg193 (x ∘ sigma16))
 
-theorem PX16.of_ne {x : Fin 7 → ℝ³} {v : (Fin 7 × Fin 7) ⊕ Fin 6}
-    {l : Fin 7 × Fin 7 × Fin 7 × Fin 7} (h : v ≠ .inl (3, 5)) : PX16 x v l :=
-  ⟨fun e => absurd e h, fun e => absurd e h⟩
-
 /-- A pair certificate of Lemmas 19.3–19.5: a labelled rim certificate (four or five corners) at
 one of their views (with `PX16` at four corners). -/
 def CertP16 (x : Fin 7 → ℝ³) : Prop :=
@@ -676,76 +656,10 @@ theorem Cert16.toN {x : Fin 7 → ℝ³} (h : Cert16 x) : CertN16 x := by
   · exact ⟨_, ⟨v, c, hc, rfl⟩, hr.rimCert (Or.inr (Or.inl rfl))⟩
   · exact ⟨_, ⟨v, c, hc, rfl⟩, hr.rimCert (Or.inr (Or.inr rfl))⟩
 
-set_option maxRecDepth 20000 in
-theorem ePairList16_sigma : ∀ t ∈ ePairList16,
-    (sigma16 t.1, sigma16 t.2.1, sigma16 t.2.2.1, sigma16 t.2.2.2.1, sigma16 t.2.2.2.2) ∈
-      ePairList16 := by decide
-
-set_option maxRecDepth 20000 in
-theorem eTriList16_sigma : ∀ t ∈ eTriList16,
-    (sigma16 t.1, sigma16 t.2.1, sigma16 t.2.2.1, sigma16 t.2.2.2) ∈ eTriList16 := by decide
-
 /-- The views under `σ`. -/
 def sigmaView16 : (Fin 7 × Fin 7) ⊕ Fin 6 → (Fin 7 × Fin 7) ⊕ Fin 6
   | .inl (i, j) => .inl (sigma16 i, sigma16 j)
   | .inr t => .inr (t + 3)
-
-theorem view16_sigma (x : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 6) :
-    view16 (x ∘ sigma16) v = view16 x (sigmaView16 v) := by
-  rcases v with ⟨i, j⟩ | t
-  · rfl
-  · simp only [view16, sigmaView16, vtxView16_sigma]
-
-set_option maxRecDepth 20000 in
-theorem pQuadLabels16_sigma : ∀ q ∈ pQuadLabels16, (sigmaView16 q.1, (sigma16 q.2.1,
-    sigma16 q.2.2.1, sigma16 q.2.2.2.1, sigma16 q.2.2.2.2)) ∈ pQuadLabels16 := by decide
-
-set_option maxRecDepth 20000 in
-theorem pQuintLabels16_sigma : ∀ q ∈ pQuintLabels16, (sigmaView16 q.1, (sigma16 q.2.1,
-    sigma16 q.2.2.1, sigma16 q.2.2.2.1, sigma16 q.2.2.2.2.1, sigma16 q.2.2.2.2.2)) ∈
-      pQuintLabels16 := by
-  intro q hq
-  simp only [pQuintLabels16, Finset.mem_insert, Finset.mem_singleton] at hq ⊢
-  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp only [sigmaView16, sigma16, Prod.mk.injEq, Sum.inl.injEq, reduceCtorEq] <;> decide
-
-theorem comp_sigma16_sigma16 (x : Fin 7 → ℝ³) : (x ∘ sigma16) ∘ sigma16 = x := by
-  funext i; fin_cases i <;> rfl
-
-theorem sigmaView16_eq35 {v : (Fin 7 × Fin 7) ⊕ Fin 6} (h : sigmaView16 v = .inl (3, 5)) :
-    v = .inl (3, 5) := by
-  rcases v with ⟨i, j⟩ | t
-  · simp only [sigmaView16, Sum.inl.injEq, Prod.mk.injEq] at h
-    obtain ⟨h1, h2⟩ := h
-    have hi : i = 3 := by revert h1; revert i; decide
-    have hj : j = 5 := by revert h2; revert j; decide
-    rw [hi, hj]
-  · simp [sigmaView16] at h
-
-/-- `PX16` under `σ`. -/
-theorem PX16.sigma {x : Fin 7 → ℝ³} {v : (Fin 7 × Fin 7) ⊕ Fin 6}
-    {l : Fin 7 × Fin 7 × Fin 7 × Fin 7} (h : PX16 (x ∘ sigma16) v l) :
-    PX16 x (sigmaView16 v) (sigma16 l.1, sigma16 l.2.1, sigma16 l.2.2.1, sigma16 l.2.2.2) := by
-  refine ⟨fun hv h1 => ?_, fun hv h2 => ?_⟩
-  · have key : ∀ i : Fin 7, sigma16 i = 1 → i = 2 := by decide
-    have h1' : l.2.1 = 2 := key _ h1
-    have := h.2 (sigmaView16_eq35 hv) h1'
-    rwa [comp_sigma16_sigma16] at this
-  · have key : ∀ i : Fin 7, sigma16 i = 2 → i = 1 := by decide
-    have h2' : l.2.1 = 1 := key _ h2
-    exact h.1 (sigmaView16_eq35 hv) h2'
-
-theorem Cert16.sigma {x : Fin 7 → ℝ³} (h : Cert16 (x ∘ sigma16)) : Cert16 x := by
-  rcases h with ⟨v, w, a, b, c, ht, σ, hd⟩ | ⟨v, w, a, b, ht, σ, hd⟩ |
-    ⟨v, l, hl, hx, c, hc, hr⟩ | ⟨v, l, hl, c, hc, hr⟩
-  · rw [image_sigma16] at hd
-    exact Or.inl ⟨_, _, _, _, _, ePairList16_sigma _ ht, σ, hd⟩
-  · rw [image_sigma16] at hd
-    exact Or.inr (Or.inl ⟨_, _, _, _, eTriList16_sigma _ ht, σ, hd⟩)
-  · rw [image_sigma16, view16_sigma] at hr
-    exact Or.inr (Or.inr (Or.inl ⟨_, _, pQuadLabels16_sigma (v, l) hl, hx.sigma, c, hc, hr⟩))
-  · rw [image_sigma16, view16_sigma] at hr
-    exact Or.inr (Or.inr (Or.inr ⟨_, _, pQuintLabels16_sigma (v, l) hl, c, hc, hr⟩))
 
 /-- Rewrite the points of a normal form and the frame determinants: every test becomes
 `σ * (det3c … * D)`. -/

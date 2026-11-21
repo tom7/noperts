@@ -1100,7 +1100,6 @@ def ZMZMUS10 : List Step := [
 (5497,[632],[1846,5496]),
 (5498,[],[5497,5403,5339,5106])
 ]
-def ZMZMUSteps : List Step := ZMZMUS0 ++ ZMZMUS1 ++ ZMZMUS2 ++ ZMZMUS3 ++ ZMZMUS4 ++ ZMZMUS5 ++ ZMZMUS6 ++ ZMZMUS7 ++ ZMZMUS8 ++ ZMZMUS9 ++ ZMZMUS10
 def ZMZMUCnf : List Cl := [
 [3,8],
 [11,13],

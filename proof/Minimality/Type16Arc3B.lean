@@ -36,9 +36,6 @@ def H16A3Any (T : Type16 x) : Prop :=
 
 def H16ArcResid3 (T : Type16 x) : Prop := H16VResid T ∧ ¬ H16A3Any T
 
-theorem h16a3_resid3_imp_resid2 (T : Type16 x) (h : H16ArcResid3 T) : H16ArcResid2 T :=
-  ⟨h.1, fun ha => h.2 (Or.inl ha)⟩
-
 theorem h16a3_any_isRupert (T : Type16 x) (h : H16A3Any T) : IsRupert (univ.image x) := by
   rcases h with h | h | h
   · exact h16a2_any_isRupert T h

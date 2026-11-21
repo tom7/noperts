@@ -41,12 +41,6 @@ noncomputable def Lf (n a D : ℝ³) : ℝ := det3 n a D
 /-- The second level of a facing at the tie view: `K(s) = |N_t|^2 <D_f, N_s> - <N_t, D_f> <N_t, N_s>`. -/
 noncomputable def Kf (n a D : ℝ³) : ℝ := ⟪n, n⟫ * ⟪D, a⟫ - ⟪n, D⟫ * ⟪n, a⟫
 
-theorem dpl_eq_cross (n D : ℝ³) : dpl n D = cross (cross n D) n := by
-  ext i
-  fin_cases i <;>
-    simp only [dpl, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, PiLp.sub_apply, PiLp.smul_apply,
-      smul_eq_mul, cross_apply_zero, cross_apply_one, cross_apply_two, inn3] <;> ring
-
 /-- First level: `<a, n x D> = - L`. -/
 theorem inner_cross_eq_Lf (n a D : ℝ³) : ⟪a, cross n D⟫ = - Lf n a D := by
   simp only [Lf, det3_expand, inn3, cross_apply_zero, cross_apply_one, cross_apply_two]; ring

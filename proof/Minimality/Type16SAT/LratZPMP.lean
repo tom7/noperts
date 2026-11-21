@@ -776,7 +776,6 @@ def ZPMPS7 : List Step := [
 (4710,[1239],[4681,275]),
 (4728,[],[4708,4710,4464,276])
 ]
-def ZPMPSteps : List Step := ZPMPS0 ++ ZPMPS1 ++ ZPMPS2 ++ ZPMPS3 ++ ZPMPS4 ++ ZPMPS5 ++ ZPMPS6 ++ ZPMPS7
 def ZPMPCnf : List Cl := [
 [3,8],
 [9,2],

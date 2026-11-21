@@ -963,7 +963,6 @@ def ZMMMZZS9 : List Step := [
 (4674,[134],[4673,60]),
 (4688,[],[4673,4674,4476,4427])
 ]
-def ZMMMZZSteps : List Step := ZMMMZZS0 ++ ZMMMZZS1 ++ ZMMMZZS2 ++ ZMMMZZS3 ++ ZMMMZZS4 ++ ZMMMZZS5 ++ ZMMMZZS6 ++ ZMMMZZS7 ++ ZMMMZZS8 ++ ZMMMZZS9
 def ZMMMZZCnf : List Cl := [
 [7,9],
 [5,6],

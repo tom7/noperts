@@ -56,7 +56,6 @@ noncomputable def cm : ℝ := S.km / S.sm
 noncomputable def dm : ℝ := S.km / (1 - S.sm)
 noncomputable def A1 : ℝ := S.ap + S.am
 noncomputable def A2 : ℝ := S.cp + S.cm
-noncomputable def B1 : ℝ := S.bp + S.bm
 
 lemma ap_pos : 0 < S.ap := div_pos S.hp_pos S.tp_pos
 lemma am_pos : 0 < S.am := div_pos S.hm_pos S.tm_pos

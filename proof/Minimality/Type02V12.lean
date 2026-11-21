@@ -22,6 +22,7 @@ variable {x : Fin 7 → ℝ³}
 def vA : ZMod 5 → Fin 7 := ![0, 2, 6, 4, 1]
 def vB : ZMod 5 → Fin 7 := ![2, 6, 4, 3, 0]
 def vC : ZMod 6 → Fin 7 := ![2, 5, 6, 4, 1, 0]
+
 theorem vA_0 : vA 0 = 0 := rfl
 theorem vA_1 : vA 1 = 2 := rfl
 theorem vA_2 : vA 2 = 6 := rfl

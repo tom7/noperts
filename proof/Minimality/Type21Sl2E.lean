@@ -35,9 +35,6 @@ def h21b_SegSpec.Good {k : ℕ} [NeZero k] (s : h21b_SegSpec k) : Prop :=
   (∃ m, m ∈ h21S s.X ∧ m ∉ h21S s.Y) ∧ (∃ m, m ∈ h21S s.Y ∧ m ∉ h21S s.X) ∧
   Function.Injective s.c ∧ 3 ≤ k ∧ h21b_CycOK s.c s.pat
 
-instance {k : ℕ} [NeZero k] (s : h21b_SegSpec k) : Decidable s.Good := by
-  unfold h21b_SegSpec.Good; infer_instance
-
 /-! ### Line views -/
 
 /-- A line-view leaf: the view `u = N_X × N_Y`, the facing pattern of the other six facets (true =
@@ -47,12 +44,6 @@ structure h21b_LinSpec (k : ℕ) where
   Y : Fin 8
   pat : Fin 8 → Bool
   c : ZMod k → Fin 7
-
-def h21b_LinSpec.Good {k : ℕ} [NeZero k] (s : h21b_LinSpec k) : Prop :=
-  s.X ≠ s.Y ∧ Function.Injective s.c ∧ 3 ≤ k ∧ h21b_CycOK s.c s.pat
-
-instance {k : ℕ} [NeZero k] (s : h21b_LinSpec k) : Decidable s.Good := by
-  unfold h21b_LinSpec.Good; infer_instance
 
 theorem h21b_dual {n1 n2 : ℝ³} (h : cross n1 n2 ≠ 0) :
     ∃ v1 v2 : ℝ³, ⟪n1, v1⟫ < 0 ∧ ⟪n2, v1⟫ = 0 ∧ ⟪n1, v2⟫ = 0 ∧ ⟪n2, v2⟫ < 0 := by

@@ -183,7 +183,7 @@ theorem Views.of (T : Type16 x) (N : NF16 x)
 theorem npp_idx {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (hpp : NoPlaneParallel (univ.image x)) {i j k l m : Fin 7} (h : [i, j, k, l, m].Nodup) :
     det3 (x j - x i) (x k - x i) (x m - x l) ≠ 0 :=
-  hpp _ (mem_image i) _ (mem_image j) _ (mem_image k) _ (mem_image l) _ (mem_image m)
+  hpp _ (mem_image7 i) _ (mem_image7 j) _ (mem_image7 k) _ (mem_image7 l) _ (mem_image7 m)
     (by simpa using h.map hx)
 
 /-- **The nondegeneracy conditions from the points**: no parallel segments (`GenPosTie`: the
@@ -198,7 +198,7 @@ theorem Gen.of (T : Type16 x) (N : NF16 x) (hg : GenPosTie (univ.image x))
     (hHA : ∀ u : ℝ³, u ≠ 0 → ⟪T.t036.N, u⟫ = 0 → ⟪T.t146.N, u⟫ = 0 →
       det3 (x 4 - x 2) (x 5 - x 2) u ≠ 0) : Gen N := by
   have P := fun {i j k l m : Fin 7} (h : [i, j, k, l, m].Nodup) => npp_idx N.inj hpp h
-  have hm := fun i => mem_image (x := x) i
+  have hm := fun i => mem_image7 (x := x) i
   have par := fun {s t u v : Fin 7} (hst : s ≠ t) (huv : u ≠ v) (htu : t ≠ u ∧ t ≠ v) (r : ℝ) =>
     hg.ne_smul (hm s) (hm t) (hm u) (hm v) (N.inj.ne hst) (N.inj.ne huv)
       ⟨N.inj.ne htu.1, N.inj.ne htu.2⟩ r
@@ -249,9 +249,6 @@ theorem Gen.of (T : Type16 x) (N : NF16 x) (hg : GenPosTie (univ.image x))
     simp only [NF16.vA, NF16.f03]; nf_simp N; simp only [det3c]; linear_combination D * e
   · apply P (i := 0) (j := 2) (k := 4) (l := 1) (m := 5) (by decide)
     nf_simp N; simp only [det3c]; linear_combination (-D) * e
-
-theorem det3_cyc (a b c : ℝ³) : det3 c a b = det3 a b c := by
-  simp only [det3_expand]; ring
 
 end NF16
 

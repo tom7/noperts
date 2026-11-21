@@ -20,8 +20,5 @@ def h21b_CycOK {k : ℕ} [NeZero k] (c : ZMod k → Fin 7) (pat : Fin 8 → Bool
     c (i + 1) ∈ h21S a ∧ c (i + 1) ∈ h21S b ∧
     ∀ m : Fin 7, m ≠ c i → m ≠ c (i + 1) → m ∉ h21S a ∨ m ∉ h21S b
 
-instance {k : ℕ} [NeZero k] (c : ZMod k → Fin 7) (pat : Fin 8 → Bool) :
-    Decidable (h21b_CycOK c pat) := by unfold h21b_CycOK; infer_instance
-
 end H21
 end Minimality

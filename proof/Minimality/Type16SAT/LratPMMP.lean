@@ -1001,7 +1001,6 @@ def PMMPS9 : List Step := [
 (4916,[2055],[4836,788]),
 (5018,[],[4911,4916,4769,789])
 ]
-def PMMPSteps : List Step := PMMPS0 ++ PMMPS1 ++ PMMPS2 ++ PMMPS3 ++ PMMPS4 ++ PMMPS5 ++ PMMPS6 ++ PMMPS7 ++ PMMPS8 ++ PMMPS9
 def PMMPCnf : List Cl := [
 [5,6],
 [3,8],

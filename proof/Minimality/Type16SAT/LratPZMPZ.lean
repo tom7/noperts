@@ -1116,7 +1116,6 @@ def PZMPZS10 : List Step := [
 (5505,[540],[5469,4874,687]),
 (5550,[],[5505,5498,4612,685])
 ]
-def PZMPZSteps : List Step := PZMPZS0 ++ PZMPZS1 ++ PZMPZS2 ++ PZMPZS3 ++ PZMPZS4 ++ PZMPZS5 ++ PZMPZS6 ++ PZMPZS7 ++ PZMPZS8 ++ PZMPZS9 ++ PZMPZS10
 def PZMPZCnf : List Cl := [
 [3,5],
 [5,6],

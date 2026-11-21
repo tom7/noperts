@@ -1183,7 +1183,6 @@ def PPMMS11 : List Step := [
 (5105,[606],[5052,4863,1394]),
 (5114,[],[5053,5105,5023,4998,1614])
 ]
-def PPMMSteps : List Step := PPMMS0 ++ PPMMS1 ++ PPMMS2 ++ PPMMS3 ++ PPMMS4 ++ PPMMS5 ++ PPMMS6 ++ PPMMS7 ++ PPMMS8 ++ PPMMS9 ++ PPMMS10 ++ PPMMS11
 def PPMMCnf : List Cl := [
 [3,5],
 [5,6],

@@ -1094,7 +1094,6 @@ def PMMMS10 : List Step := [
 (4585,[126],[4583,4580,4516,3498]),
 (4586,[],[4585,4583,4516,3494])
 ]
-def PMMMSteps : List Step := PMMMS0 ++ PMMMS1 ++ PMMMS2 ++ PMMMS3 ++ PMMMS4 ++ PMMMS5 ++ PMMMS6 ++ PMMMS7 ++ PMMMS8 ++ PMMMS9 ++ PMMMS10
 def PMMMCnf : List Cl := [
 [7,9],
 [3,8],

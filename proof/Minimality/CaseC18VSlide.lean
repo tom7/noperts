@@ -105,14 +105,6 @@ theorem tang_slide (η : ℝ) :
   unfold PS
   rw [this, one_mul]
 
-theorem uD_ne (hV : 0 < S.Vp) :
-    (S.tm - S.tp) * S.uV.z - (-S.hm - S.hp) * S.uV.x ≠ 0 := by
-  have : (S.tm - S.tp) * S.uV.z - (-S.hm - S.hp) * S.uV.x = S.Vp + S.kp * S.tp := by
-    simp only [uV, Vp]; ring
-  rw [this]
-  have := mul_pos S.kp_pos S.tp_pos
-  linarith
-
 end Shape18
 
 namespace Frame18
