@@ -977,25 +977,25 @@ theorem rows_P5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
   · conv_lhs => arg 1; rw [h40]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    rw [M4.det3_frame x (oblX0 x 4 - 1) (oblX2 x 4) (oblX6 x 4) 0 1 (-1)
+    erw [M4.det3_frame x (oblX0 x 4 - 1) (oblX2 x 4) (oblX6 x 4) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     dsimp [R04]; ring
   · conv_lhs => arg 1; rw [h64]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    rw [M4.det3_frame x (-oblX0 x 4) (-oblX2 x 4) (1 - oblX6 x 4) 0 1 (-1)
+    erw [M4.det3_frame x (-oblX0 x 4) (-oblX2 x 4) (1 - oblX6 x 4) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     dsimp [R46]; ring
   · conv_lhs => arg 1; rw [h52]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [hw]
-    rw [M4.det3_frame x (oblX0 x 5) (oblX2 x 5 - 1) (oblX6 x 5) 0 1 (-1)
+    erw [M4.det3_frame x (oblX0 x 5) (oblX2 x 5 - 1) (oblX6 x 5) 0 1 (-1)
       (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)]
     ring
   · conv_lhs => arg 1; rw [h05]
     conv_lhs => arg 2; rw [h26]
     conv_lhs => arg 3; rw [h61]
-    rw [M4.det3_frame x (1 - oblX0 x 5) (-oblX2 x 5) (-oblX6 x 5) 0 1 (-1) 0 0 1]
+    erw [M4.det3_frame x (1 - oblX0 x 5) (-oblX2 x 5) (-oblX6 x 5) 0 1 (-1) 0 0 1]
     ring
 
 private theorem det3_P5_tie_row (x : Fin 7 → ℝ³) (ε : ℝ) :
