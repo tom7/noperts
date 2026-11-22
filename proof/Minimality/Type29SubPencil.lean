@@ -1183,18 +1183,14 @@ and the `F-B` front diagonal `FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x)`. -/
 theorem fb_of_not_lexAny29 (N : NF29 x)
     (hh : N.h0 < N.h2) (h035 : 0 < N.v035) (h234 : N.v234 < 0) (h346 : N.v346 < 0) (h356 : 0 < N.v356)
     (hF0123 : FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x))
-    (hF0124 : FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x))
-    (hM0124 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0134 : FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0134 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0234 : FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0234 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF1234 : FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x))
-    (hM1234 : ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hA0124 : LexClause (x 2) (x 5) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0124 : LexClause (x 1) (x 3) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0134 : LexClause (x 2) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0134 : LexClause (x 1) (x 6) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0234 : LexClause (x 3) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0234 : LexClause (x 1) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA1234 : LexClause (x 3) (x 5) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB1234 : LexClause (x 2) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) :
     0 ≤ Row_sp (N.s - P2_sp N.a2 N.b2 N.h2 N.s N.t) (N.t - D234_sp N.a2 N.b2 N.h2 N.s N.t) (-N.h2)
       (v4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
@@ -1204,8 +1200,9 @@ theorem fb_of_not_lexAny29 (N : NF29 x)
   have hM : ⟪x 2, N.bLine x⟫ ≤ ⟪x 1, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧
       ⟪x 6, N.bLine x⟫ ≤ ⟪x 1, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ := by
     by_contra hnot
-    exact hnf (lexAny29_F012F1456 N hh h035 h234 h346 h356 (Or.inr ⟨hF0123, hnot⟩)
-      hF0124 hM0124 hF0134 hM0134 hF0234 hM0234 hF1234 hM1234)
+    exact hnf (lexAny29_F012F1456_clauses N hh h035 h234 h346 h356
+      (lexClause_of_notM hnot) (lexClause_of_frontOf (bLine_ne_zero N) (FrontDet.frontOf hF0123))
+      hA0124 hB0124 hA0134 hB0134 hA0234 hB0234 hA1234 hB1234)
   have hqc := nf29_q_coords N
   dsimp only at hqc
   have h1c : S_sp N.s N.t • (x 1 - x 6) =
@@ -1235,18 +1232,14 @@ theorem cert_FB_CQ1_leaf (N : NF29 x)
     (hF1234Q : FrontDet (x 2) (x 6) (x 4) (x 5) (N.u23Q x))
     (h035 : 0 < N.v035) (h234 : N.v234 < 0) (h346 : N.v346 < 0) (h356 : 0 < N.v356)
     (hF0123F : FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x))
-    (hF0124F : FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x))
-    (hM0124F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0134F : FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0134F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0234F : FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0234F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF1234F : FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x))
-    (hM1234F : ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hA0124F : LexClause (x 2) (x 5) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0124F : LexClause (x 1) (x 3) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0134F : LexClause (x 2) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0134F : LexClause (x 1) (x 6) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0234F : LexClause (x 3) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0234F : LexClause (x 1) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA1234F : LexClause (x 3) (x 5) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB1234F : LexClause (x 2) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) : False := by
   have hdG4 : 0 < N.dG4 := by
     dsimp [NF29.dG4]
@@ -1263,7 +1256,7 @@ theorem cert_FB_CQ1_leaf (N : NF29 x)
     hA0123 hB0123 hA0124 hB0124 hA0134 hB0134 hA0234 hB0234 hF1234Q hnf
   obtain ⟨r21, r23⟩ := w14_of_not_lexAny29 N hk ht1 hdG4 hb0h0 hnf
   have r12 := fb_of_not_lexAny29 N (by linarith) h035 h234 h346 h356
-    hF0123F hF0124F hM0124F hF0134F hM0134F hF0234F hM0234F hF1234F hM1234F hnf
+    hF0123F hA0124F hB0124F hA0134F hB0134F hA0234F hB0234F hA1234F hB1234F hnf
   exact cert_FB_CQ1_false hh2 hh0 N.ht ht1 hU4 hU5 hG4 hb0h0 hqA4 hD0 hP4 hS hG55
     r24 q4n q5n r21 r23 r12
 
@@ -1285,18 +1278,14 @@ theorem cert_FB_CQ3_leaf (N : NF29 x)
     (hB1234 : LexClause (x 2) (x 6) (x 4) (x 5) (N.u23Q x) (x 3 - x 6) 0)
     (h035 : 0 < N.v035) (h234 : N.v234 < 0) (h346 : N.v346 < 0) (h356 : 0 < N.v356)
     (hF0123F : FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x))
-    (hF0124F : FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x))
-    (hM0124F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0134F : FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0134F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0234F : FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0234F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF1234F : FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x))
-    (hM1234F : ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hA0124F : LexClause (x 2) (x 5) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0124F : LexClause (x 1) (x 3) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0134F : LexClause (x 2) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0134F : LexClause (x 1) (x 6) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0234F : LexClause (x 3) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0234F : LexClause (x 1) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA1234F : LexClause (x 3) (x 5) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB1234F : LexClause (x 2) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) : False := by
   have hdG4 : 0 < N.dG4 := by
     dsimp [NF29.dG4]
@@ -1307,7 +1296,7 @@ theorem cert_FB_CQ3_leaf (N : NF29 x)
     hF0123Q hA0124 hB0124 hA0134 hB0134 hA0234 hB0234 hA1234 hB1234 hnf
   obtain ⟨r21, r23⟩ := w14_of_not_lexAny29 N hk ht1 hdG4 hb0h0 hnf
   have r12 := fb_of_not_lexAny29 N (by linarith) h035 h234 h346 h356
-    hF0123F hF0124F hM0124F hF0134F hM0134F hF0234F hM0234F hF1234F hM1234F hnf
+    hF0123F hA0124F hB0124F hA0134F hB0134F hA0234F hB0234F hA1234F hB1234F hnf
   have hP4 : 0 < P4C_sp N.b0 N.h0 N.b2 N.h2 := by dsimp [P4C_sp]; linarith [N.hF4]
   have hP5 : 0 < P5C_sp N.a0 N.h0 N.a2 N.h2 := by dsimp [P5C_sp]; linarith [N.hF5]
   exact cert_FB_CQ34_false N.ha0 hk N.hb2 N.hs ht1 hh2 hh0 hP4 hP5 N.hDD hG4 hU4
@@ -1331,18 +1320,14 @@ theorem cert_FB_CQ4_leaf (N : NF29 x)
     (hB1234 : LexClause (x 2) (x 6) (x 4) (x 5) (N.u23Q x) (x 3 - x 6) 0)
     (h035 : 0 < N.v035) (h234 : N.v234 < 0) (h346 : N.v346 < 0) (h356 : 0 < N.v356)
     (hF0123F : FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x))
-    (hF0124F : FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x))
-    (hM0124F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0134F : FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0134F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0234F : FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0234F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF1234F : FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x))
-    (hM1234F : ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hA0124F : LexClause (x 2) (x 5) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0124F : LexClause (x 1) (x 3) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0134F : LexClause (x 2) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0134F : LexClause (x 1) (x 6) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0234F : LexClause (x 3) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0234F : LexClause (x 1) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA1234F : LexClause (x 3) (x 5) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB1234F : LexClause (x 2) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) : False := by
   have hdG4 : 0 < N.dG4 := by
     dsimp [NF29.dG4]
@@ -1353,7 +1338,7 @@ theorem cert_FB_CQ4_leaf (N : NF29 x)
     hA0123 hB0123 hF0124Q hA0134 hB0134 hA0234 hB0234 hA1234 hB1234 hnf
   obtain ⟨r21, r23⟩ := w14_of_not_lexAny29 N hk ht1 hdG4 hb0h0 hnf
   have r12 := fb_of_not_lexAny29 N (by linarith) h035 h234 h346 h356
-    hF0123F hF0124F hM0124F hF0134F hM0134F hF0234F hM0234F hF1234F hM1234F hnf
+    hF0123F hA0124F hB0124F hA0134F hB0134F hA0234F hB0234F hA1234F hB1234F hnf
   have hP4 : 0 < P4C_sp N.b0 N.h0 N.b2 N.h2 := by dsimp [P4C_sp]; linarith [N.hF4]
   have hP5 : 0 < P5C_sp N.a0 N.h0 N.a2 N.h2 := by dsimp [P5C_sp]; linarith [N.hF5]
   exact cert_FB_CQ34_false N.ha0 hk N.hb2 N.hs ht1 hh2 hh0 hP4 hP5 N.hDD hG4 hU4

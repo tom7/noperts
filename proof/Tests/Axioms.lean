@@ -1095,6 +1095,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.lexAny29_U023Qx8
 #assert_standard_axioms Minimality.NF29.lexAny29_W14x5
 #assert_standard_axioms Minimality.NF29.lexAny29_W14x5'
+#assert_standard_axioms Minimality.NF29.lexAny29_F012F1456_clauses
 #assert_standard_axioms Minimality.NF29.lexAny29_F012F1456
 #print axioms Minimality.GenQuad.FrontDet.frontOf
 #print axioms Minimality.NF29.lexAny29_U023Qx_clauses
@@ -1102,6 +1103,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.NF29.lexAny29_U023Qx8
 #print axioms Minimality.NF29.lexAny29_W14x5
 #print axioms Minimality.NF29.lexAny29_W14x5'
+#print axioms Minimality.NF29.lexAny29_F012F1456_clauses
 #print axioms Minimality.NF29.lexAny29_F012F1456
 #assert_standard_axioms Minimality.NF29.lexAny29_F015_124_pmp
 #assert_standard_axioms Minimality.NF29.lexAny29_F015_035_ppp
