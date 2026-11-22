@@ -1411,7 +1411,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.radon02356_signs
 #assert_standard_axioms Minimality.T24.A20.w63_closes_wall
 #assert_standard_axioms Minimality.T24.A20.e23_closes_wall
+#assert_standard_axioms Minimality.T24.A20.one_add_omega3_pos
+#assert_standard_axioms Minimality.T24.A20.one_add_omega4_pos
+#assert_standard_axioms Minimality.T24.A20.one_add_omega5_pos
 #assert_standard_axioms Minimality.T24.hole24R4_reduce
+#assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
 #assert_standard_axioms Minimality.T24.A20.w02_u27_noA
 #assert_standard_axioms Minimality.T24.A20.z_core_neg_z3
@@ -1454,7 +1458,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.radon02356_signs
 #assert_standard_axioms Minimality.T24.A20.w63_closes_wall
 #assert_standard_axioms Minimality.T24.A20.e23_closes_wall
+#assert_standard_axioms Minimality.T24.A20.one_add_omega3_pos
+#assert_standard_axioms Minimality.T24.A20.one_add_omega4_pos
+#assert_standard_axioms Minimality.T24.A20.one_add_omega5_pos
 #assert_standard_axioms Minimality.T24.hole24R4_reduce
+#assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
 #assert_standard_axioms Minimality.T24.A10.e0416_hrow
 #assert_standard_axioms Minimality.T24.A10.dl_sigma
@@ -1597,5 +1605,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.radon02356_signs
 #assert_standard_axioms Minimality.T24.A20.w63_closes_wall
 #assert_standard_axioms Minimality.T24.A20.e23_closes_wall
+#assert_standard_axioms Minimality.T24.A20.one_add_omega3_pos
+#assert_standard_axioms Minimality.T24.A20.one_add_omega4_pos
+#assert_standard_axioms Minimality.T24.A20.one_add_omega5_pos
 #assert_standard_axioms Minimality.T24.hole24R4_reduce
+#assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties

@@ -44,13 +44,12 @@ theorem mustar_comp_pi24 (x : Fin 7 → ℝ³) : mustar (x ∘ pi24) = mu23 x :=
 /-- **E23 single-view theorem** (`pi24` mirror of `w63_closes_mustar_pos`): on
 `{CbarIn x, 1 < b3, 0 < mu23}` with distinct `E23`-depths on `{0, 2, 3, 5, 6}`,
 `E23 = x 3 - x 2` gives `Minimality.Gen.LexAny F`. -/
-theorem e23_closes_mu23_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem e23_closes_mu23_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hb3 : 1 < oblX2 x 3) (hmu : 0 < mu23 x)
     (hgen : ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
       ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
       i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫) :
     Minimality.Gen.LexAny F := by
-  have hC' : CbarIn (x ∘ pi24) := (cbarIn_comp_pi24 x).2 hC
   have hc3' : 1 < oblX6 (x ∘ pi24) 3 := by simpa [oblX6_comp_pi24, pi24_3] using hb3
   have hmu' : 0 < mustar (x ∘ pi24) := by rwa [mustar_comp_pi24]
   have hgen' : ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
@@ -71,7 +70,7 @@ theorem e23_closes_mu23_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC :
     dsimp only [Function.comp_apply]
     rw [pi24_3, pi24_6]
     exact h1
-  exact lexAny_sym F (w63_closes_mustar_pos (sym24 F) hC' hc3' hmu' hgen')
+  exact lexAny_sym F (w63_closes_mustar_pos (sym24 F) hc3' hmu' hgen')
 
 /-! ### 2. Coupling & algebraic identities -/
 
@@ -167,8 +166,8 @@ theorem mu23_eq {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {al be : ℝ}
   dsimp only [mu23]
   linear_combination hom3_eq - be * hom4_eq + h0 - omega4 x * h2 + h6
 
-/-- On `CbarIn` with `mustar ≤ 0`, `0 < Delta24 x`. -/
-theorem delta_pos_of_mustar_nonpos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+/-- With `mustar ≤ 0`, `0 < Delta24 x` (from `F` alone). -/
+theorem delta_pos_of_mustar_nonpos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hmu : mustar x ≤ 0) : 0 < Delta24 x := by
   have T := type24OfFac F
   have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
@@ -198,8 +197,8 @@ theorem delta_pos_of_mustar_nonpos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
         mustar x * (omega4 x + 1) := by
     dsimp only [Delta24, mustar]
     linear_combination omega4 x * (omega5 x + 1) * hom3_eq
-  have hom4 : 0 < omega4 x + 1 := by linarith [hC.2.1]
-  have hom5 : 0 < omega5 x + 1 := by linarith [hC.2.2.1]
+  have hom4 : 0 < omega4 x + 1 := by linarith [one_add_omega4_pos F]
+  have hom5 : 0 < omega5 x + 1 := by linarith [one_add_omega5_pos F]
   have hprod : 0 < oblX0 x 3 * Delta24 x := by
     rw [hid]
     have h1 : 0 < (1 - oblX0 x 3 - oblX6 x 3 + oblX2 x 3 * omega4 x) * (omega5 x + 1) :=
@@ -453,54 +452,12 @@ theorem facetCell_0345 {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] �
   · rw [hN]; exact hu3
   · rw [hN]; exact hus s hs
 
-private theorem one_add_omega4_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
-    0 < 1 + omega4 x := by
-  have T := type24OfFac F
-  have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
-  have hc4 : 0 < oblX6 x 4 := T.X6_pos (v := 4) (by decide)
-  have h31 : F.f 3 (x 1) < 0 := F.neg 3 1 (by decide)
-  have h32 : F.f 3 (x 2) < 0 := F.neg 3 2 (by decide)
-  have h36 : F.f 3 (x 6) < 0 := F.neg 3 6 (by decide)
-  have ev3_4 := fac_eval F 3 4
-  rw [F.zero 3 0 (by decide), F.zero 3 4 (by decide)] at ev3_4
-  have hom4_eq : oblX2 x 4 * omega4 x = oblX0 x 4 + oblX6 x 4 - 1 := by
-    simp only [omega4]; field_simp [hb4.ne']
-  have hid : oblX2 x 4 * (1 + omega4 x) * F.f 3 (x 1) =
-      oblX2 x 4 * F.f 3 (x 2) + oblX6 x 4 * F.f 3 (x 6) := by
-    linear_combination ev3_4 + F.f 3 (x 1) * hom4_eq
-  have hneg : oblX2 x 4 * (1 + omega4 x) * F.f 3 (x 1) < 0 := by rw [hid]; nlinarith
-  have hpos : 0 < oblX2 x 4 * (1 + omega4 x) := by
-    by_contra hn; push Not at hn
-    nlinarith [mul_nonneg_of_nonpos_of_nonpos hn h31.le]
-  exact (mul_pos_iff_of_pos_left hb4).mp hpos
-
-private theorem one_add_omega5_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
-    0 < 1 + omega5 x := by
-  have T := type24OfFac F
-  have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
-  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
-  have h31 : F.f 3 (x 1) < 0 := F.neg 3 1 (by decide)
-  have h32 : F.f 3 (x 2) < 0 := F.neg 3 2 (by decide)
-  have h36 : F.f 3 (x 6) < 0 := F.neg 3 6 (by decide)
-  have ev3_5 := fac_eval F 3 5
-  rw [F.zero 3 0 (by decide), F.zero 3 5 (by decide)] at ev3_5
-  have hom5_eq : oblX6 x 5 * omega5 x = oblX0 x 5 + oblX2 x 5 - 1 := by
-    simp only [omega5]; field_simp [hc5.ne']
-  have hid : oblX6 x 5 * (1 + omega5 x) * F.f 3 (x 1) =
-      oblX2 x 5 * F.f 3 (x 2) + oblX6 x 5 * F.f 3 (x 6) := by
-    linear_combination ev3_5 + F.f 3 (x 1) * hom5_eq
-  have hneg : oblX6 x 5 * (1 + omega5 x) * F.f 3 (x 1) < 0 := by rw [hid]; nlinarith
-  have hpos : 0 < oblX6 x 5 * (1 + omega5 x) := by
-    by_contra hn; push Not at hn
-    nlinarith [mul_nonneg_of_nonpos_of_nonpos hn h31.le]
-  exact (mul_pos_iff_of_pos_left hc5).mp hpos
-
-/-- On `¬ FacetCell24 fs` with `0 < al, 0 < be, be ≤ 1, al ≤ 1` (from `par2546_quad`),
+/-- On `¬ FacetCell24 fs` with `0 ≤ al, 0 ≤ be, be ≤ 1, al ≤ 1` (from `par2546_quad`),
 `0 ≤ mustar x ∨ 0 ≤ mu23 x`. -/
 theorem mustar_or_mu23_nonneg {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
     (h : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hz : ¬ FacetCell24 fs) {al be : ℝ}
-    (halp : 0 < al) (hbep : 0 < be)
+    (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
     (hbe : be ≤ 1) (hal : al ≤ 1) :
     0 ≤ mustar x ∨ 0 ≤ mu23 x := by
@@ -518,7 +475,7 @@ theorem mustar_or_mu23_nonneg {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ
       have : 0 ≤ (1 - be) * (1 + omega5 x) := mul_nonneg (sub_nonneg.mpr hbe) hom5.le
       linarith [hnot.1]
     by_contra hn; push Not at hn
-    exact absurd hneg (not_lt.mpr (mul_nonneg hbep.le hn))
+    exact absurd hneg (not_lt.mpr (mul_nonneg hbep hn))
   have hk5 : oblX0 x 5 + oblX6 x 5 + omega4 x * (1 - oblX2 x 5) < 0 := by
     have hme := mu23_eq F hq
     have hid : al * (oblX0 x 5 + oblX6 x 5 + omega4 x * (1 - oblX2 x 5)) =
@@ -528,15 +485,15 @@ theorem mustar_or_mu23_nonneg {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ
       have : 0 ≤ (1 - al) * (1 + omega4 x) := mul_nonneg (sub_nonneg.mpr hal) hom4.le
       linarith [hnot.2]
     by_contra hn; push Not at hn
-    exact absurd hneg (not_lt.mpr (mul_nonneg halp.le hn))
+    exact absurd hneg (not_lt.mpr (mul_nonneg halp hn))
   exact hz (facetCell_0345 fs h hk4 hk5)
 
-/-- Strict version on `¬ FacetCell24 fs` with `0 < al, 0 < be, be < 1, al < 1`:
+/-- Strict version on `¬ FacetCell24 fs` with `0 ≤ al, 0 ≤ be, be < 1, al < 1`:
 `0 < mustar x ∨ 0 < mu23 x`. -/
 theorem mustar_or_mu23_pos {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
     (h : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hz : ¬ FacetCell24 fs) {al be : ℝ}
-    (halp : 0 < al) (hbep : 0 < be)
+    (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
     (hbe : be < 1) (hal : al < 1) :
     0 < mustar x ∨ 0 < mu23 x := by
@@ -554,7 +511,7 @@ theorem mustar_or_mu23_pos {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[�
       have : 0 < (1 - be) * (1 + omega5 x) := mul_pos (sub_pos.mpr hbe) hom5
       linarith [hnot.1]
     by_contra hn; push Not at hn
-    exact absurd hneg (not_lt.mpr (mul_nonneg hbep.le hn))
+    exact absurd hneg (not_lt.mpr (mul_nonneg hbep hn))
   have hk5 : oblX0 x 5 + oblX6 x 5 + omega4 x * (1 - oblX2 x 5) < 0 := by
     have hme := mu23_eq F hq
     have hid : al * (oblX0 x 5 + oblX6 x 5 + omega4 x * (1 - oblX2 x 5)) =
@@ -564,14 +521,14 @@ theorem mustar_or_mu23_pos {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[�
       have : 0 < (1 - al) * (1 + omega4 x) := mul_pos (sub_pos.mpr hal) hom4
       linarith [hnot.2]
     by_contra hn; push Not at hn
-    exact absurd hneg (not_lt.mpr (mul_nonneg halp.le hn))
+    exact absurd hneg (not_lt.mpr (mul_nonneg halp hn))
   exact hz (facetCell_0345 fs h hk4 hk5)
 
 /-! ### 4. The walls `mustar = 0` and `mu23 = 0` (`Task DI`) -/
 
 /-- Facet signs at `w63 = x 3 - x 6` on the wall `{1 < oblX6 x 3, mustar x = 0}`:
 `Up = {3, 6}`, `Dn = {0, 1, 4, 5}`, and on-line `{2, 7, 8}` (`025 = 0`, `236 = 0`, `346 = 0`). -/
-theorem w63_facings_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (_hC : CbarIn x)
+theorem w63_facings_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : 1 < oblX6 x 3) (hmu : mustar x = 0) :
     ⟪F.N 0, x 3 - x 6⟫ < 0 ∧ ⟪F.N 1, x 3 - x 6⟫ < 0 ∧ ⟪F.N 2, x 3 - x 6⟫ = 0 ∧
     0 < ⟪F.N 3, x 3 - x 6⟫ ∧ ⟪F.N 4, x 3 - x 6⟫ < 0 ∧ ⟪F.N 5, x 3 - x 6⟫ < 0 ∧
@@ -711,11 +668,11 @@ theorem radon02356_depth {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (w : ℝ
   simp only [inner_add_left, inner_sub_left, real_inner_smul_left, inner_zero_left] at h
   linear_combination h + ⟪x 1, w⟫ * radon02356_sum x
 
-/-- Under `CbarIn x`, the Radon weights of `{0, 2, 3, 5, 6}` have signs `+ + + - -`. -/
-theorem radon02356_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x) :
+/-- The Radon weights of `{0, 2, 3, 5, 6}` have signs `+ + + - -` from `F` alone. -/
+theorem radon02356_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     0 < nu0 x ∧ 0 < nu2 x ∧ 0 < nu3 x ∧ nu5 x < 0 ∧ nu6 x < 0 := by
   have T := type24OfFac F
-  have hmu4 : mu4 x < 0 := (radon02346_signs F hC).2.2.2.1
+  have hmu4 : mu4 x < 0 := (radon02346_signs F).2.2.2.1
   have hd3 : 0 < d3_24 x := by
     dsimp only [d3_24]; dsimp only [mu4] at hmu4; linarith
   have hnu5 : nu5 x < 0 := by dsimp only [nu5]; linarith
@@ -1040,18 +997,18 @@ private theorem radon32_no_sep {a0 a1 a2 b0 b1 p0 p1 p2 q0 q1 : ℝ}
       linear_combination M * hsum
     linarith
 
-/-- **Wall `w63` theorem**: on `{CbarIn x, 1 < oblX6 x 3, mustar x = 0}` with distinct
+/-- **Wall `w63` theorem**: on `{1 < oblX6 x 3, mustar x = 0}` with distinct
 `w63`-depths on `{0, 2, 3, 4, 5, 6}`, `w63 = x 3 - x 6` gives `Minimality.Gen.LexAny F`. -/
-theorem w63_closes_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem w63_closes_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : 1 < oblX6 x 3) (hmu : mustar x = 0)
     (hgen : ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) :
     Minimality.Gen.LexAny F := by
   let w : ℝ³ := x 3 - x 6
-  have hfac := w63_facings_wall F hC hc3 hmu
-  have hsgn2346 := radon02346_signs F hC
-  have hsgn2356 := radon02356_signs F hC
+  have hfac := w63_facings_wall F hc3 hmu
+  have hsgn2346 := radon02346_signs F
+  have hsgn2356 := radon02356_signs F
   have hv_mem : ∀ i : Fin 6, v023456 i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)) := by
     intro i; fin_cases i <;> decide
   have hv_inj : Function.Injective v023456 := by decide
@@ -1336,15 +1293,14 @@ theorem w63_closes_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : Cba
       (by simpa [c_w046325, v023456] using mk_lc2 (d1 := -tilt_ppm F) q2345)
 
 /-- **Wall `E23` theorem** (`pi24` mirror of `w63_closes_wall`): on
-`{CbarIn x, 1 < oblX2 x 3, mu23 x = 0}` with distinct `E23`-depths on `{0, 2, 3, 4, 5, 6}`,
+`{1 < oblX2 x 3, mu23 x = 0}` with distinct `E23`-depths on `{0, 2, 3, 4, 5, 6}`,
 `E23 = x 3 - x 2` gives `Minimality.Gen.LexAny F`. -/
-theorem e23_closes_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem e23_closes_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hb3 : 1 < oblX2 x 3) (hmu : mu23 x = 0)
     (hgen : ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫) :
     Minimality.Gen.LexAny F := by
-  have hC' : CbarIn (x ∘ pi24) := (cbarIn_comp_pi24 x).2 hC
   have hc3' : 1 < oblX6 (x ∘ pi24) 3 := by simpa [oblX6_comp_pi24, pi24_3] using hb3
   have hmu' : mustar (x ∘ pi24) = 0 := by rwa [mustar_comp_pi24]
   have hgen' : ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
@@ -1365,6 +1321,6 @@ theorem e23_closes_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : Cba
     dsimp only [Function.comp_apply]
     rw [pi24_3, pi24_6]
     exact h1
-  exact lexAny_sym F (w63_closes_wall (sym24 F) hC' hc3' hmu' hgen')
+  exact lexAny_sym F (w63_closes_wall (sym24 F) hc3' hmu' hgen')
 
 end Minimality.T24.A20

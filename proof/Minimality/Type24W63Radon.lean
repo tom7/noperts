@@ -73,158 +73,121 @@ theorem radon02346_depth {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ
   simp only [inner_add_left, real_inner_smul_left, inner_sub_left, inner_zero_left] at h
   linear_combination h + ⟪x 1, u⟫ * radon02346_sum x
 
-/-- **Radon signs** (region facts only): `{0, 3, 6}` against `{2, 4}` (`+ - + - +`). -/
-theorem radon02346_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x) :
+/-- `0 < 1 + omega3 x` from `F : S0xFac 9 s0x_S24 x` alone (via facet `3 = {0, 3, 4, 5}` at `x 3`). -/
+theorem one_add_omega3_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    0 < 1 + omega3 x := by
+  have T := type24OfFac F
+  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+  have hb3 : 0 < oblX2 x 3 := T.X2_pos (v := 3) (by decide)
+  have hc3 : 0 < oblX6 x 3 := T.X6_pos (v := 3) (by decide)
+  have h31 : F.f 3 (x 1) < 0 := F.neg 3 1 (by decide)
+  have h32 : F.f 3 (x 2) < 0 := F.neg 3 2 (by decide)
+  have h36 : F.f 3 (x 6) < 0 := F.neg 3 6 (by decide)
+  have ev3_3 := fac_eval F 3 3
+  rw [F.zero 3 0 (by decide), F.zero 3 3 (by decide)] at ev3_3
+  have hom3_eq : oblX0 x 3 * omega3 x = oblX2 x 3 + oblX6 x 3 - 1 := by
+    simp only [omega3]; field_simp [ha3.ne']
+  have hid : oblX0 x 3 * (1 + omega3 x) * F.f 3 (x 1) =
+      oblX2 x 3 * F.f 3 (x 2) + oblX6 x 3 * F.f 3 (x 6) := by
+    linear_combination ev3_3 + F.f 3 (x 1) * hom3_eq
+  have hneg : oblX0 x 3 * (1 + omega3 x) * F.f 3 (x 1) < 0 := by rw [hid]; nlinarith
+  have hpos : 0 < oblX0 x 3 * (1 + omega3 x) := by
+    by_contra hn; push Not at hn
+    nlinarith [mul_nonneg_of_nonpos_of_nonpos hn h31.le]
+  exact (mul_pos_iff_of_pos_left ha3).mp hpos
+
+/-- `0 < 1 + omega4 x` from `F : S0xFac 9 s0x_S24 x` alone (via facet `3 = {0, 3, 4, 5}` at `x 4`). -/
+theorem one_add_omega4_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    0 < 1 + omega4 x := by
+  have T := type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (v := 4) (by decide)
+  have h31 : F.f 3 (x 1) < 0 := F.neg 3 1 (by decide)
+  have h32 : F.f 3 (x 2) < 0 := F.neg 3 2 (by decide)
+  have h36 : F.f 3 (x 6) < 0 := F.neg 3 6 (by decide)
+  have ev3_4 := fac_eval F 3 4
+  rw [F.zero 3 0 (by decide), F.zero 3 4 (by decide)] at ev3_4
+  have hom4_eq : oblX2 x 4 * omega4 x = oblX0 x 4 + oblX6 x 4 - 1 := by
+    simp only [omega4]; field_simp [hb4.ne']
+  have hid : oblX2 x 4 * (1 + omega4 x) * F.f 3 (x 1) =
+      oblX2 x 4 * F.f 3 (x 2) + oblX6 x 4 * F.f 3 (x 6) := by
+    linear_combination ev3_4 + F.f 3 (x 1) * hom4_eq
+  have hneg : oblX2 x 4 * (1 + omega4 x) * F.f 3 (x 1) < 0 := by rw [hid]; nlinarith
+  have hpos : 0 < oblX2 x 4 * (1 + omega4 x) := by
+    by_contra hn; push Not at hn
+    nlinarith [mul_nonneg_of_nonpos_of_nonpos hn h31.le]
+  exact (mul_pos_iff_of_pos_left hb4).mp hpos
+
+/-- `0 < 1 + omega5 x` from `F : S0xFac 9 s0x_S24 x` alone (via facet `3 = {0, 3, 4, 5}` at `x 5`). -/
+theorem one_add_omega5_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    0 < 1 + omega5 x := by
+  have T := type24OfFac F
+  have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  have h31 : F.f 3 (x 1) < 0 := F.neg 3 1 (by decide)
+  have h32 : F.f 3 (x 2) < 0 := F.neg 3 2 (by decide)
+  have h36 : F.f 3 (x 6) < 0 := F.neg 3 6 (by decide)
+  have ev3_5 := fac_eval F 3 5
+  rw [F.zero 3 0 (by decide), F.zero 3 5 (by decide)] at ev3_5
+  have hom5_eq : oblX6 x 5 * omega5 x = oblX0 x 5 + oblX2 x 5 - 1 := by
+    simp only [omega5]; field_simp [hc5.ne']
+  have hid : oblX6 x 5 * (1 + omega5 x) * F.f 3 (x 1) =
+      oblX2 x 5 * F.f 3 (x 2) + oblX6 x 5 * F.f 3 (x 6) := by
+    linear_combination ev3_5 + F.f 3 (x 1) * hom5_eq
+  have hneg : oblX6 x 5 * (1 + omega5 x) * F.f 3 (x 1) < 0 := by rw [hid]; nlinarith
+  have hpos : 0 < oblX6 x 5 * (1 + omega5 x) := by
+    by_contra hn; push Not at hn
+    nlinarith [mul_nonneg_of_nonpos_of_nonpos hn h31.le]
+  exact (mul_pos_iff_of_pos_left hc5).mp hpos
+
+/-- **Radon signs** (region facts only, via facet pairing): `{0, 3, 6}` against `{2, 4}` (`+ - + - +`). -/
+theorem radon02346_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     0 < mu0 x ∧ mu2 x < 0 ∧ 0 < mu3 x ∧ mu4 x < 0 ∧ 0 < mu6 x := by
   have T := type24OfFac F
-  have hom3 : 0 < omega3 x := hC.1
-  have hom4 : 0 < omega4 x := hC.2.1
-  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
   have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
-  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   have hmu3 : 0 < mu3 x := by
     have hom4_eq : oblX2 x 4 * omega4 x = oblX0 x 4 + oblX6 x 4 - 1 := by
-      simp only [omega4]; field_simp
+      simp only [omega4]; field_simp [hb4.ne']
     have hmu3_eq : mu3 x = oblX2 x 4 * (1 + omega4 x) := by dsimp only [mu3]; linarith
-    rw [hmu3_eq]; exact mul_pos hb4 (by linarith)
-  have hmu4 : mu4 x < 0 := by
-    have hom3_eq : oblX0 x 3 * omega3 x = oblX2 x 3 + oblX6 x 3 - 1 := by
-      simp only [omega3]; field_simp
-    have hmu4_eq : mu4 x = -oblX0 x 3 * (1 + omega3 x) := by dsimp only [mu4]; linarith
-    rw [hmu4_eq]; exact mul_neg_of_neg_of_pos (neg_neg_of_pos ha3) (by linarith)
-  have hmu0 : 0 < mu0 x := by
-    have ev7_3 := fac_eval F 7 3
-    rw [F.zero 7 3 (by decide), F.zero 7 2 (by decide), F.zero 7 6 (by decide)] at ev7_3
-    have ev7_4 := fac_eval F 7 4
-    rw [F.zero 7 2 (by decide), F.zero 7 6 (by decide)] at ev7_4
-    have h0id : mu0 x * (-F.f 7 (x 1)) = oblX0 x 3 * (-F.f 7 (x 4)) := by
-      dsimp only [mu0, mu3, mu4]
-      linear_combination -(oblX0 x 4 * ev7_3) + oblX0 x 3 * ev7_4
-    have h71 : 0 < -F.f 7 (x 1) := neg_pos.mpr (F.neg 7 1 (by decide))
-    have h74 : 0 < -F.f 7 (x 4) := neg_pos.mpr (F.neg 7 4 (by decide))
-    have hpos : 0 < mu0 x * (-F.f 7 (x 1)) := by rw [h0id]; exact mul_pos ha3 h74
-    exact (mul_pos_iff_of_pos_right h71).mp hpos
+    rw [hmu3_eq]; exact mul_pos hb4 (one_add_omega4_pos F)
+  have eval_rad : ∀ t : Fin 9,
+      mu0 x * F.f t (x 0) + mu2 x * F.f t (x 2) + mu3 x * F.f t (x 3) +
+        mu4 x * F.f t (x 4) + mu6 x * F.f t (x 6) = 0 := by
+    intro t
+    have h := congrArg (fun u => ⟪F.N t, u⟫) (radon02346 F)
+    simp only [inner_add_right, real_inner_smul_right, inner_zero_right] at h
+    rw [← F.hN t (x 0) (x 1), ← F.hN t (x 2) (x 1), ← F.hN t (x 3) (x 1),
+      ← F.hN t (x 4) (x 1), ← F.hN t (x 6) (x 1)] at h
+    linear_combination h + F.f t (x 1) * radon02346_sum x
   have hmu2 : mu2 x < 0 := by
-    have ev8_3 := fac_eval F 8 3
-    rw [F.zero 8 3 (by decide), F.zero 8 6 (by decide)] at ev8_3
-    have ev8_4 := fac_eval F 8 4
-    rw [F.zero 8 4 (by decide), F.zero 8 6 (by decide)] at ev8_4
-    have h2id : (-mu2 x) * (-F.f 8 (x 2)) = mu0 x * (-F.f 8 (x 0)) := by
-      dsimp only [mu0, mu2, mu3, mu4]
-      linear_combination (oblX0 x 4 + oblX2 x 4 + oblX6 x 4 - 1) * ev8_3 +
-        (1 - (oblX0 x 3 + oblX2 x 3 + oblX6 x 3)) * ev8_4
-    have h80 : 0 < -F.f 8 (x 0) := neg_pos.mpr (F.neg 8 0 (by decide))
-    have h82 : 0 < -F.f 8 (x 2) := neg_pos.mpr (F.neg 8 2 (by decide))
-    have hpos : 0 < (-mu2 x) * (-F.f 8 (x 2)) := by rw [h2id]; exact mul_pos hmu0 h80
-    exact neg_pos.mp ((mul_pos_iff_of_pos_right h82).mp hpos)
+    have h4 := eval_rad 4
+    rw [F.zero 4 0 (by decide), F.zero 4 4 (by decide), F.zero 4 6 (by decide)] at h4
+    have hf42 : F.f 4 (x 2) < 0 := F.neg 4 2 (by decide)
+    have hf43 : F.f 4 (x 3) < 0 := F.neg 4 3 (by decide)
+    nlinarith
+  have hmu0 : 0 < mu0 x := by
+    have h8 := eval_rad 8
+    rw [F.zero 8 3 (by decide), F.zero 8 4 (by decide), F.zero 8 6 (by decide)] at h8
+    have hf80 : F.f 8 (x 0) < 0 := F.neg 8 0 (by decide)
+    have hf82 : F.f 8 (x 2) < 0 := F.neg 8 2 (by decide)
+    nlinarith
+  have hmu4 : mu4 x < 0 := by
+    have h7 := eval_rad 7
+    rw [F.zero 7 2 (by decide), F.zero 7 3 (by decide), F.zero 7 6 (by decide)] at h7
+    have hf70 : F.f 7 (x 0) < 0 := F.neg 7 0 (by decide)
+    have hf74 : F.f 7 (x 4) < 0 := F.neg 7 4 (by decide)
+    nlinarith
   have hmu6 : 0 < mu6 x := by
-    let w : ℝ³ := (F.f 2 (x 4) * F.f 4 (x 5)) • (x 3 - x 0) -
-      (F.f 2 (x 4) * F.f 4 (x 3)) • (x 5 - x 0) -
-      (F.f 4 (x 5) * F.f 2 (x 3)) • (x 4 - x 0)
-    have hw2 : ⟪F.N 2, w⟫ = 0 := by
-      dsimp only [w]
-      rw [inner_sub_right, inner_sub_right, real_inner_smul_right, real_inner_smul_right,
-        real_inner_smul_right, ← F.hN 2 (x 3) (x 0), ← F.hN 2 (x 5) (x 0), ← F.hN 2 (x 4) (x 0),
-        F.zero 2 0 (by decide), F.zero 2 5 (by decide)]
-      ring
-    have hw3 : ⟪F.N 3, w⟫ = 0 := by
-      dsimp only [w]
-      rw [inner_sub_right, inner_sub_right, real_inner_smul_right, real_inner_smul_right,
-        real_inner_smul_right, ← F.hN 3 (x 3) (x 0), ← F.hN 3 (x 5) (x 0), ← F.hN 3 (x 4) (x 0),
-        F.zero 3 0 (by decide), F.zero 3 3 (by decide), F.zero 3 4 (by decide), F.zero 3 5 (by decide)]
-      ring
-    have hw4 : ⟪F.N 4, w⟫ = 0 := by
-      dsimp only [w]
-      rw [inner_sub_right, inner_sub_right, real_inner_smul_right, real_inner_smul_right,
-        real_inner_smul_right, ← F.hN 4 (x 3) (x 0), ← F.hN 4 (x 5) (x 0), ← F.hN 4 (x 4) (x 0),
-        F.zero 4 0 (by decide), F.zero 4 4 (by decide)]
-      ring
-    have hli : LinearIndependent ℝ ![F.N 2, F.N 3, F.N 4] := by
-      rw [Fintype.linearIndependent_iff]
-      intro g hg
-      have h4 := congrArg (fun v => ⟪v, x 4 - x 0⟫) hg
-      have h5 := congrArg (fun v => ⟪v, x 5 - x 0⟫) hg
-      have h6 := congrArg (fun v => ⟪v, x 6 - x 0⟫) hg
-      simp only [Fin.sum_univ_three, inner_add_left, real_inner_smul_left, inner_zero_left,
-        Matrix.cons_val] at h4 h5 h6
-      rw [← F.hN 2 (x 4) (x 0), ← F.hN 3 (x 4) (x 0), ← F.hN 4 (x 4) (x 0),
-        F.zero 2 0 (by decide), F.zero 3 4 (by decide), F.zero 3 0 (by decide),
-        F.zero 4 4 (by decide), F.zero 4 0 (by decide)] at h4
-      rw [← F.hN 2 (x 5) (x 0), ← F.hN 3 (x 5) (x 0), ← F.hN 4 (x 5) (x 0),
-        F.zero 2 5 (by decide), F.zero 2 0 (by decide), F.zero 3 5 (by decide),
-        F.zero 3 0 (by decide), F.zero 4 0 (by decide)] at h5
-      rw [← F.hN 2 (x 6) (x 0), ← F.hN 3 (x 6) (x 0), ← F.hN 4 (x 6) (x 0),
-        F.zero 2 0 (by decide), F.zero 3 0 (by decide), F.zero 4 6 (by decide),
-        F.zero 4 0 (by decide)] at h6
-      have hg0 : g 0 = 0 := (mul_eq_zero.mp (by linarith)).resolve_right (F.neg 2 4 (by decide)).ne
-      have hg2 : g 2 = 0 := (mul_eq_zero.mp (by linarith)).resolve_right (F.neg 4 5 (by decide)).ne
-      have hg1 : g 1 = 0 := by
-        rw [hg0, hg2] at h6
-        exact (mul_eq_zero.mp (by linarith)).resolve_right (F.neg 3 6 (by decide)).ne
-      intro i; fin_cases i <;> [exact hg0; exact hg1; exact hg2]
-    have htop : Submodule.span ℝ (Set.range ![F.N 2, F.N 3, F.N 4]) = ⊤ :=
-      Submodule.eq_top_of_finrank_eq
-        (by rw [finrank_span_eq_card hli, Fintype.card_fin, finrank_euclideanSpace_fin])
-    have hw_zero : w = 0 := by
-      rw [← inner_self_eq_zero (𝕜 := ℝ)]
-      have hw_perp : ∀ z ∈ Submodule.span ℝ (Set.range ![F.N 2, F.N 3, F.N 4]), ⟪z, w⟫ = 0 := by
-        intro z hz
-        induction hz using Submodule.span_induction with
-        | mem y hy =>
-          rcases hy with ⟨i, rfl⟩
-          fin_cases i <;> simp [hw2, hw3, hw4]
-        | zero => simp
-        | add u v _ _ hu hv => rw [inner_add_left, hu, hv, add_zero]
-        | smul a u _ hu => rw [real_inner_smul_left, hu, mul_zero]
-      exact hw_perp w (htop ▸ Submodule.mem_top)
-    have hw0 := congrArg (fun u => ⟪F.N 0, u⟫) hw_zero
-    rw [inner_zero_right] at hw0
-    dsimp only [w] at hw0
-    rw [inner_sub_right, inner_sub_right, real_inner_smul_right, real_inner_smul_right,
-      real_inner_smul_right, ← F.hN 0 (x 3) (x 0), ← F.hN 0 (x 5) (x 0), ← F.hN 0 (x 4) (x 0),
-      F.zero 0 0 (by decide), sub_zero, sub_zero, sub_zero] at hw0
-    have hc_eval : ∀ v, F.f 0 (x v) = oblX6 x v * F.f 0 (x 6) := by
-      intro v
-      have ev := fac_eval F 0 v
-      rw [F.zero 0 0 (by decide), F.zero 0 1 (by decide), F.zero 0 2 (by decide)] at ev
-      linarith
-    rw [hc_eval 3, hc_eval 5, hc_eval 4] at hw0
-    have h06_ne : F.f 0 (x 6) ≠ 0 := (F.neg 0 6 (by decide)).ne
-    have hmul : (F.f 2 (x 4) * F.f 4 (x 5) * oblX6 x 3 -
-        (F.f 2 (x 4) * F.f 4 (x 3) * oblX6 x 5 + F.f 4 (x 5) * F.f 2 (x 3) * oblX6 x 4)) *
-        F.f 0 (x 6) = 0 := by linear_combination hw0
-    have hc_rel : F.f 2 (x 4) * F.f 4 (x 5) * oblX6 x 3 =
-        F.f 2 (x 4) * F.f 4 (x 3) * oblX6 x 5 + F.f 4 (x 5) * F.f 2 (x 3) * oblX6 x 4 :=
-      sub_eq_zero.mp ((mul_eq_zero.mp hmul).resolve_right h06_ne)
-    have ev2_4 := fac_eval F 2 4
-    rw [F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at ev2_4
-    have hrad2 := congrArg (fun u => ⟪F.N 2, u⟫) (radon02346 F)
-    simp only [inner_add_right, real_inner_smul_right, inner_zero_right] at hrad2
-    rw [← F.hN 2 (x 0) (x 1), ← F.hN 2 (x 2) (x 1), ← F.hN 2 (x 3) (x 1), ← F.hN 2 (x 4) (x 1),
-      ← F.hN 2 (x 6) (x 1), F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at hrad2
-    have hrad2' : mu3 x * F.f 2 (x 3) + mu4 x * F.f 2 (x 4) + mu6 x * F.f 2 (x 6) = 0 := by
-      linear_combination hrad2 + F.f 2 (x 1) * radon02346_sum x
-    have hev2_4' : F.f 2 (x 4) - oblX6 x 4 * F.f 2 (x 6) = (-mu3 x) * F.f 2 (x 1) := by
-      dsimp only [mu3]; linear_combination ev2_4
-    have hmu6_def : mu6 x = -(mu3 x * oblX6 x 3 + mu4 x * oblX6 x 4) := rfl
-    have hmu6_mul : (-mu3 x) * (mu6 x * (F.f 4 (x 5) * F.f 2 (x 1))) =
-        (-mu3 x) * (F.f 2 (x 4) * F.f 4 (x 3) * oblX6 x 5) := by
-      linear_combination (-mu3 x * F.f 4 (x 5) * F.f 2 (x 1) + F.f 4 (x 5) * oblX6 x 4 * F.f 2 (x 6)) * hmu6_def -
-        mu3 x * hc_rel - F.f 4 (x 5) * oblX6 x 4 * hrad2' +
-        F.f 4 (x 5) * (mu3 x * oblX6 x 3 + mu4 x * oblX6 x 4) * hev2_4'
-    have hmu6_id : mu6 x * (F.f 4 (x 5) * F.f 2 (x 1)) = F.f 2 (x 4) * F.f 4 (x 3) * oblX6 x 5 :=
-      mul_left_cancel₀ (neg_ne_zero.mpr hmu3.ne') hmu6_mul
-    have h45_21 : 0 < F.f 4 (x 5) * F.f 2 (x 1) :=
-      mul_pos_of_neg_of_neg (F.neg 4 5 (by decide)) (F.neg 2 1 (by decide))
-    have hrhs : 0 < F.f 2 (x 4) * F.f 4 (x 3) * oblX6 x 5 :=
-      mul_pos (mul_pos_of_neg_of_neg (F.neg 2 4 (by decide)) (F.neg 4 3 (by decide))) hc5
-    rw [← hmu6_id] at hrhs
-    exact (mul_pos_iff_of_pos_right h45_21).mp hrhs
+    have h3 := eval_rad 3
+    rw [F.zero 3 0 (by decide), F.zero 3 3 (by decide), F.zero 3 4 (by decide)] at h3
+    have hf32 : F.f 3 (x 2) < 0 := F.neg 3 2 (by decide)
+    have hf36 : F.f 3 (x 6) < 0 := F.neg 3 6 (by decide)
+    nlinarith
   exact ⟨hmu0, hmu2, hmu3, hmu4, hmu6⟩
 
 /-- Facet signs at `w63` for `c3 > 1`, `mu* > 0`: `Up = {2, 3, 6}`, `Dn = {0, 1, 4, 5}`,
 on-line `{7, 8}`. -/
-theorem w63_facings_gt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (_hC : CbarIn x)
+theorem w63_facings_gt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : 1 < oblX6 x 3) (hmu : 0 < mustar x) :
     ⟪F.N 0, x 3 - x 6⟫ < 0 ∧ ⟪F.N 1, x 3 - x 6⟫ < 0 ∧ 0 < ⟪F.N 2, x 3 - x 6⟫ ∧
     0 < ⟪F.N 3, x 3 - x 6⟫ ∧ ⟪F.N 4, x 3 - x 6⟫ < 0 ∧ ⟪F.N 5, x 3 - x 6⟫ < 0 ∧
@@ -392,14 +355,14 @@ private theorem close_k5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
 /-- **SEED63 region theorem**: on `{CbarIn x, 1 < c3, 0 < mustar}` (with distinct `w63`-depths
 on `{0, 2, 3, 4, 6}`), the single view `w63 = x 3 - x 6` gives `LexAny F`. -/
-theorem w63_closes_mustar_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem w63_closes_mustar_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : 1 < oblX6 x 3) (hmu : 0 < mustar x)
     (hgen : ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
       ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) :
     Minimality.Gen.LexAny F := by
   classical
-  have hfac := w63_facings_gt F hC hc3 hmu
-  have hsgn := radon02346_signs F hC
+  have hfac := w63_facings_gt F hc3 hmu
+  have hsgn := radon02346_signs F
   let w : ℝ³ := x 3 - x 6
   obtain ⟨r, hinj, hmono⟩ : ∃ r : Fin 5 → Fin 5,
       (∀ i j : Fin 5, i ≠ j → r i ≠ r j) ∧

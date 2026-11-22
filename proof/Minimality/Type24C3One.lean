@@ -114,11 +114,11 @@ theorem syz_u27_coef_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
 
 /-- **Monotone signs along the pencil, part 1** (from `w63_syzygy`): on `c3 < 1`, a vertex-pair
 difference that is positive at `w63` and at `u27` is positive at `u07`. -/
-theorem sign_u07_of_w63_u27 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem sign_u07_of_w63_u27 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : oblX6 x 3 < 1) (b : ℝ³) (hw : 0 < ⟪b, x 3 - x 6⟫) (h27 : 0 < ⟪b, u27 x⟫) :
     0 < ⟪b, u07 x⟫ := by
-  have hom3 : 0 < omega3 x := hC.1
-  have hom5 : 0 < omega5 x := hC.2.2.1
+  have hom3 : 0 < omega3 x + 1 := by linarith [one_add_omega3_pos F]
+  have hom5 : 0 < omega5 x + 1 := by linarith [one_add_omega5_pos F]
   have s := congrArg (fun w => ⟪b, w⟫) (w63_syzygy F)
   simp only [inner_add_right, real_inner_smul_right] at s
   have hmu : 0 < (omega3 x + 1) * oblX0 x 3 + (omega5 x + 1) * (1 - oblX6 x 3) := by
@@ -128,7 +128,7 @@ theorem sign_u07_of_w63_u27 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC :
   have ht : 0 < 1 - oblX6 x 3 := sub_pos.mpr hc3
   by_contra hn
   push Not at hn
-  nlinarith [mul_pos (by linarith : (0:ℝ) < omega3 x + 1) hw, mul_pos ht h27,
+  nlinarith [mul_pos hom3 hw, mul_pos ht h27,
     mul_nonpos_of_nonneg_of_nonpos hmu.le hn]
 
 /-- **Monotone signs, part 2** (from `syz_E23`): on `0 < c3 < 1`, positive at `E23` and at `w63` gives
@@ -146,20 +146,20 @@ theorem sign_u07_of_E23_w63 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
 /-- **Monotone signs, part 3** (from `syz_u27`): on `0 < c3`, positive at `u07` and at `E23` gives
 positive at `u27`. -/
-theorem sign_u27_of_u07_E23 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem sign_u27_of_u07_E23 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3p : 0 < oblX6 x 3) (b : ℝ³)
     (h07 : 0 < ⟪b, u07 x⟫) (hE : 0 < ⟪b, x 3 - x 2⟫) : 0 < ⟪b, u27 x⟫ := by
-  have hom3 : 0 < omega3 x := hC.1
+  have hom3 : 0 < 1 + omega3 x := one_add_omega3_pos F
   have hk := syz_u27_coef_pos F
   have s := congrArg (fun w => ⟪b, w⟫) (syz_u27 F)
   simp only [inner_add_right, real_inner_smul_right] at s
   by_contra hn
   push Not at hn
-  nlinarith [mul_pos hk h07, mul_pos (by linarith : (0:ℝ) < 1 + omega3 x) hE,
+  nlinarith [mul_pos hk h07, mul_pos hom3 hE,
     mul_nonpos_of_nonneg_of_nonpos hc3p.le hn]
 
 /-- **Leaf O2** (OB1-free, `{u07:06 -, u27:06 +, w63:03 +, pdx36}`, 27 of 39 pairs): degree 1. -/
-theorem leaf_O2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem leaf_O2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : oblX6 x 3 < 1)
     (h07 : ⟪x 0 - x 6, u07 x⟫ < 0) (hw : 0 < ⟪x 0 - x 3, x 3 - x 6⟫)
     (h27 : 0 < ⟪x 0 - x 6, u27 x⟫) : False := by
@@ -168,7 +168,7 @@ theorem leaf_O2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
   have hsq := real_inner_self_pos.mpr hne
   have e : x 0 - x 6 = (x 0 - x 3) + (x 3 - x 6) := by abel
   have hw' : 0 < ⟪x 0 - x 6, x 3 - x 6⟫ := by rw [e, inner_add_left]; linarith
-  linarith [sign_u07_of_w63_u27 F hC hc3 (x 0 - x 6) hw' h27]
+  linarith [sign_u07_of_w63_u27 F hc3 (x 0 - x 6) hw' h27]
 
 /-! ### Stratum `c3 = 1` case lemmas (`strat_A`..`strat_C`, `strat_A2`, `strat_B2`) -/
 
@@ -202,12 +202,12 @@ theorem strat_C (a3 om3 W k : ℝ) (ha3 : 0 < a3) (hom : 0 < om3 + 1) (hW : 0 < 
 /-! ### Rim / fail-set bridge at `c3 = 1` -/
 
 /-- At `c3 = 1`, `w63` is a positive scalar multiple of `u07`. -/
-theorem w63_eq_smul_u07 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem w63_eq_smul_u07 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : oblX6 x 3 = 1) : x 3 - x 6 = oblX0 x 3 • u07 x := by
   have hsyz := w63_syzygy F
   rw [hc3, sub_self] at hsyz
   simp only [zero_smul, add_zero, mul_zero] at hsyz
-  have hom3 : 0 < omega3 x + 1 := by linarith [hC.1]
+  have hom3 : 0 < omega3 x + 1 := by linarith [one_add_omega3_pos F]
   have hmul : (omega3 x + 1) • ((x 3 - x 6) - oblX0 x 3 • u07 x) = 0 := by
     rw [smul_sub, ← smul_assoc, smul_eq_mul, hsyz, sub_self]
   exact sub_eq_zero.mp ((smul_eq_zero.mp hmul).resolve_left hom3.ne')
@@ -215,7 +215,7 @@ theorem w63_eq_smul_u07 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : Cba
 /-- Facet inner products at `w63 = x 3 - x 6` on `c3 = 1`:
 facets `0` (`012`), `7` (`236`), `8` (`346`) are edge-on (`= 0`);
 facets `1, 4, 5` are `< 0` and facets `2, 3, 6` are `> 0`. -/
-theorem w63_facings_c3eq1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem w63_facings_c3eq1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hc3 : oblX6 x 3 = 1) :
     ⟪F.N 0, x 3 - x 6⟫ = 0 ∧ ⟪F.N 1, x 3 - x 6⟫ < 0 ∧ 0 < ⟪F.N 2, x 3 - x 6⟫ ∧
     0 < ⟪F.N 3, x 3 - x 6⟫ ∧ ⟪F.N 4, x 3 - x 6⟫ < 0 ∧ ⟪F.N 5, x 3 - x 6⟫ < 0 ∧
@@ -245,7 +245,7 @@ theorem w63_facings_c3eq1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : C
       rw [ev2_3, hf2_6, hb3, hc3]; ring
     rw [hN 2, hdiff]
     have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
-    have hom3 : 0 < 1 + omega3 x := by linarith [hC.1]
+    have hom3 : 0 < 1 + omega3 x := one_add_omega3_pos F
     exact mul_pos (neg_pos.mpr (F.neg 2 1 (by decide))) (mul_pos ha3 hom3)
   refine ⟨hf0, ?_, hf2, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · rw [hN 1, F.zero 1 6 (by decide), sub_zero]; exact F.neg 1 3 (by decide)
@@ -671,7 +671,7 @@ theorem c3eq1_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn
   have T := type24OfFac F
   have hh4_bd := (hh4_of_cbar F hC).le
   have hs_B := (hsB_of_facets F hc3).le
-  have hfac := w63_facings_c3eq1 F hC hc3
+  have hfac := w63_facings_c3eq1 F hc3
   let w : ℝ³ := x 3 - x 6
   obtain ⟨r, hinj, hmono⟩ : ∃ r : Fin 6 → Fin 6,
       (∀ i j : Fin 6, i ≠ j → r i ≠ r j) ∧
@@ -766,7 +766,7 @@ theorem c3eq1_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn
     have hW : 0 < W :=
       real_inner_self_pos.mpr (sub_ne_zero.mpr fun h => absurd (T.inj h) (by decide))
     have hu07 : ⟪u07 x, w⟫ = W / oblX0 x 3 := by
-      have hsmul := w63_eq_smul_u07 F hC hc3
+      have hsmul := w63_eq_smul_u07 F hc3
       have hdot := congrArg (fun u => ⟪u, w⟫) hsmul
       rw [real_inner_smul_left] at hdot
       exact eq_div_of_mul_eq ha3.ne' (by linarith)
