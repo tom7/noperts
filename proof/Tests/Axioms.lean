@@ -19,6 +19,8 @@ import Minimality.M4dType24
 import Minimality.Type29Leaves
 import Minimality.Type29LeavesA16
 import Minimality.Type29QPencil
+import Minimality.Type29DClose
+import Minimality.Type29SubPencil
 import Minimality.Type29Quad
 import Minimality.GenQuad
 import Minimality.GenQuadCross
@@ -1438,3 +1440,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A10.v30_frontDiag
 #assert_standard_axioms Minimality.T24.A10.v31_front_bounds
 #assert_standard_axioms Minimality.T24.A10.v30_front_bounds
+#assert_standard_axioms Minimality.NF29.d1_row_neg
+#assert_standard_axioms Minimality.NF29.d3_identity
+#assert_standard_axioms Minimality.NF29.lexAny29_F124xF346_clauses
+#assert_standard_axioms Minimality.NF29.t1_D_closed
+#print axioms Minimality.NF29.syz_012_14_Q
+#print axioms Minimality.NF29.cert_FB_CQ5_pos_eta5_pos
