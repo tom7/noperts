@@ -608,13 +608,73 @@ theorem quad_geom {x : Fin 7 → ℝ³} (p q : ℝ) :
 
 /-! ### Sample facts and the geometric step -/
 
+/-- `0 < ⟪F.N 3, u27 x⟫` on `Reg.A1` (region fact: `lam5_pos_of_sigma`, `d45_pos`, `F.f 2 (x 3) < 0`). -/
+theorem hu3_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F) :
+    0 < ⟪F.N 3, u27 x⟫ := by
+  have T := type24OfFac F
+  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  have hLam : 0 < Lam5 x := lam5_pos_of_sigma F hA1.2
+  have hD45 : 0 < D45 x := d45_pos F
+  obtain ⟨s, t, hs, ht, -, -, hb3, hc3⟩ := lemmaM_coords F
+  have hD35 : oblX2 x 5 * oblX6 x 3 - oblX2 x 3 * oblX6 x 5 = s * D45 x := by
+    rw [hb3, hc3]; dsimp [D45]; ring
+  have hD35_pos : 0 < oblX2 x 5 * oblX6 x 3 - oblX2 x 3 * oblX6 x 5 := by
+    rw [hD35]; exact mul_pos hs hD45
+  have e33 := fac_eval F 3 3
+  have e35 := fac_eval F 3 5
+  rw [F.zero 3 3 (by decide), F.zero 3 0 (by decide)] at e33
+  rw [F.zero 3 5 (by decide), F.zero 3 0 (by decide)] at e35
+  have e23 := fac_eval F 2 3
+  have e25 := fac_eval F 2 5
+  rw [F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at e23
+  rw [F.zero 2 5 (by decide), F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at e25
+  have h23_prod : (oblX6 x 5 * (1 - oblX0 x 3 - oblX2 x 3 - oblX6 x 3) +
+      oblX6 x 3 * (oblX0 x 5 + oblX2 x 5 + oblX6 x 5 - 1)) * (-F.f 2 (x 1)) =
+      oblX6 x 5 * (-F.f 2 (x 3)) := by
+    linear_combination oblX6 x 5 * e23 - oblX6 x 3 * e25
+  have h23_pos : 0 < oblX6 x 5 * (1 - oblX0 x 3 - oblX2 x 3 - oblX6 x 3) +
+      oblX6 x 3 * (oblX0 x 5 + oblX2 x 5 + oblX6 x 5 - 1) := by
+    by_contra hle; push Not at hle
+    have hlhs := mul_nonpos_of_nonpos_of_nonneg hle (neg_nonneg.2 (F.neg 2 1 (by decide)).le)
+    have hrhs := mul_pos hc5 (neg_pos.2 (F.neg 2 3 (by decide)))
+    linarith
+  have hf32 : F.f 3 (x 2) - F.f 3 (x 1) =
+      ((1 - oblX0 x 3) * oblX6 x 5 - (1 - oblX0 x 5) * oblX6 x 3) * F.f 3 (x 1) /
+        (oblX2 x 5 * oblX6 x 3 - oblX2 x 3 * oblX6 x 5) := by
+    rw [eq_div_iff hD35_pos.ne']
+    linear_combination oblX6 x 5 * e33 - oblX6 x 3 * e35
+  have hf36 : F.f 3 (x 6) - F.f 3 (x 1) =
+      (oblX2 x 3 * (1 - oblX0 x 5) - oblX2 x 5 * (1 - oblX0 x 3)) * F.f 3 (x 1) /
+        (oblX2 x 5 * oblX6 x 3 - oblX2 x 3 * oblX6 x 5) := by
+    rw [eq_div_iff hD35_pos.ne']
+    linear_combination oblX2 x 3 * e35 - oblX2 x 5 * e33
+  have hom3 : omega3 x = (oblX2 x 3 + oblX6 x 3 - 1) / oblX0 x 3 := by
+    rw [eq_div_iff ha3.ne']; linear_combination -Minimality.T24.M4.eq3 F
+  have hom5 : omega5 x = (oblX0 x 5 + oblX2 x 5 - 1) / oblX6 x 5 := by
+    rw [eq_div_iff hc5.ne']; linear_combination -Minimality.T24.M4.eq5 F
+  have hid : oblX0 x 3 * oblX6 x 5 * (oblX2 x 5 * oblX6 x 3 - oblX2 x 3 * oblX6 x 5) *
+      ⟪F.N 3, u27 x⟫ =
+      (-F.f 3 (x 1)) * (oblX0 x 3 * Lam5 x) *
+        (oblX6 x 5 * (1 - oblX0 x 3 - oblX2 x 3 - oblX6 x 3) +
+          oblX6 x 3 * (oblX0 x 5 + oblX2 x 5 + oblX6 x 5 - 1)) := by
+    rw [inner_u27_z54, F.zero 3 0 (by decide), hf32, hf36]
+    dsimp [Lam5]
+    rw [hom3, hom5]
+    have hD35' : oblX2 x 5 * oblX6 x 3 - oblX6 x 5 * oblX2 x 3 ≠ 0 := by linarith
+    field_simp [ha3.ne', hc5.ne', hD35_pos.ne', hD35']
+    ring
+  have hprod : 0 < oblX0 x 3 * oblX6 x 5 * (oblX2 x 5 * oblX6 x 3 - oblX2 x 3 * oblX6 x 5) *
+      ⟪F.N 3, u27 x⟫ := by
+    rw [hid]
+    exact mul_pos (mul_pos (neg_pos.2 (F.neg 3 1 (by decide))) (mul_pos ha3 hLam)) h23_pos
+  exact pos_of_mul_pos_right hprod (mul_pos (mul_pos ha3 hc5) hD35_pos).le
+
 /-- Sample facts for the off-tie A1 step `z54`: the `227/227` facts of A22-REFEREE (`c4 > c5`, `Qgah <= 0`) and
-the `226/227` residual `4 PAh PBh >= max(0, Qalh)^2` (fails only at `r391`), plus the facings
-`c3 < 1`, `0 < <N3, u27>`, `0 < <N8, u27>` (the rim `0 2 6 4` at `u07` / `u27`, `227/227`) that the
-weak-shadow bounds need. -/
+the `226/227` residual `4 PAh PBh >= max(0, Qalh)^2` (fails only at `r391`), plus the remaining facings
+`c3 < 1`, `0 < <N8, u27>` (`227/227`) that the weak-shadow bounds need. -/
 structure A1Z54Sample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
   hc3 : oblX6 x 3 < 1
-  hu3 : 0 < ⟪F.N 3, u27 x⟫
   hu8 : 0 < ⟪F.N 8, u27 x⟫
   hc45 : oblX6 x 5 < oblX6 x 4
   hQg : (z54Shape x).Qgah ≤ 0
@@ -639,7 +699,7 @@ theorem z54_A1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
   have hU07 : 0 ≤ (z54Shape x).U07 (gA x) (gB x) (gal x) (gbe x) (gga x) := by
     rw [← u07_geom F]; exact u07_z40_bound F hC hS.hc3 hL
   have hU27 : 0 ≤ (z54Shape x).U27 (gB x) (gC x) (gal x) (gbe x) (gga x) := by
-    rw [← u27_geom]; exact u27_z26_bound F hC hS.hu3 hS.hu8 hL
+    rw [← u27_geom]; exact u27_z26_bound F hC (hu3_of_region F hA1) hS.hu8 hL
   -- W26
   have hnC : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4 ha5)
   have hnB : F.f 3 (x 2) < F.f 3 (x 1) := by

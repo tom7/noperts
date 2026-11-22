@@ -1366,6 +1366,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.t16_13_of_region
 #assert_standard_axioms Minimality.T24.A1.a1TieSample_of_small
 #assert_standard_axioms Minimality.T24.A1.a1_tie_rupert_small
+#assert_standard_axioms Minimality.T24.A1.hu3_of_region
+#assert_standard_axioms Minimality.T24.A1.a1E25Sample_of_small
+#assert_standard_axioms Minimality.T24.A1.a1_e25_small
+#assert_standard_axioms Minimality.T24.A1.a1_e25_lt_small
+#assert_standard_axioms Minimality.T24.A1.a1_closed
 #assert_standard_axioms Minimality.T24.A20.w02_u27_noA
 #assert_standard_axioms Minimality.T24.A20.z_core_neg_z3
 #assert_standard_axioms Minimality.T24.A20.w02_neg_false
