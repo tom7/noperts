@@ -414,7 +414,7 @@ theorem w26'_diag_band {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : Cbar
 /-! ### Part 2: `lexAny_or_split_E05P5U` and `isRupert_of_E05P5U` -/
 
 theorem nC_pos_of {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (ha4 : oblX0 x 4 < 1) (ha5 : 1 < oblX0 x 5) : 0 < nC x := by
+    (ha4 : oblX0 x 4 ≤ 1) (ha5 : 1 < oblX0 x 5) : 0 < nC x := by
   have T := type24OfFac F
   have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
@@ -422,7 +422,7 @@ theorem nC_pos_of {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   nlinarith
 
 theorem R04_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (ha4 : oblX0 x 4 < 1) (ha5 : 1 < oblX0 x 5) : R04 x < 0 := by
+    (ha4 : oblX0 x 4 ≤ 1) (ha5 : 1 < oblX0 x 5) : R04 x < 0 := by
   have T := type24OfFac F
   have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
   have hc4 : 0 < oblX6 x 4 := T.X6_pos (v := 4) (by decide)
@@ -569,7 +569,7 @@ private theorem e05p5u_split {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         rw [h1]; exact mul_pos hd2 (sub_pos.mpr ha5)
 
 theorem lexAny_or_split_E05P5U {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : 1 < oblX0 x 5) (ha4 : oblX0 x 4 < 1)
+    (hC : CbarIn x) (ha5 : 1 < oblX0 x 5) (ha4 : oblX0 x 4 ≤ 1)
     (hL : 0 ≤ Lam5 x) (h346 : F.f 8 (x 0) ≤ F.f 8 (x 5))
     (hz : ⟪x 4, x 5 - x 0⟫ < ⟪x 5, x 5 - x 0⟫ ∧
           ⟪x 5, x 5 - x 0⟫ < ⟪x 2, x 5 - x 0⟫) :
@@ -770,7 +770,7 @@ theorem isRupert_of_E05P5U {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hz : ⟪x 4, x 5 - x 0⟫ < ⟪x 5, x 5 - x 0⟫ ∧
           ⟪x 5, x 5 - x 0⟫ < ⟪x 2, x 5 - x 0⟫) :
     IsRupert (univ.image x) := by
-  rcases lexAny_or_split_E05P5U F hC ha5 ha4 hL h346 hz with hL' | hS'
+  rcases lexAny_or_split_E05P5U F hC ha5 ha4.le hL h346 hz with hL' | hS'
   · exact lexAny_isRupert F hL'
   · exact splitAny24_isRupert F hS'
 

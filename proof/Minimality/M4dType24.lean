@@ -1031,7 +1031,7 @@ theorem lexAny_or_split_E04P4U {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
             ⟪(x ∘ pi24) 5, (x ∘ pi24) 5 - (x ∘ pi24) 0⟫ <
               ⟪(x ∘ pi24) 2, (x ∘ pi24) 5 - (x ∘ pi24) 0⟫ := by
     simpa [pi24] using hz
-  rcases Minimality.T24.A8.lexAny_or_split_E05P5U (sym24 F) hC' ha5' ha4' hL' h346' hz' with
+  rcases Minimality.T24.A8.lexAny_or_split_E05P5U (sym24 F) hC' ha5' ha4'.le hL' h346' hz' with
     hL | hS
   · exact Or.inl (lexAny_sym F hL)
   · exact Or.inr (splitAny24_sym F hS)

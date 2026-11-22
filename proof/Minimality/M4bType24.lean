@@ -180,7 +180,7 @@ theorem lemmaM_coords {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     exact mul_right_cancel₀ hd h
   exact ⟨s, t, hs, ht, hdec, ha3, hb3, hc3⟩
 
-private theorem fac3_lin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+theorem fac3_lin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     (-F.f 3 (x 1)) * nC x = (F.f 3 (x 6) - F.f 3 (x 1)) * D45 x ∧
     (-F.f 3 (x 1)) * nB x = (F.f 3 (x 2) - F.f 3 (x 1)) * D45 x := by
   have f3_0 : F.f 3 (x 0) = 0 := F.zero 3 0 (by decide)
