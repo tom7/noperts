@@ -84,21 +84,17 @@ theorem e25_dom_0536 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ
   obtain ⟨⟨u1, -⟩, -, -, -⟩ := notClause hk
   exact e25_le_of_inner_nonneg (by rw [inner_sub_left]; linarith)
 
-/-- `e25_dom` on rim `01635` (`0 < ⟪F.N 1, bT25 x⟫`, `0 ≤ ⟪F.N 8, bT25 x⟫`). -/
-theorem e25_dom_01635 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³) {γ δ : ℝ}
-    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
-    (hnLex : ¬ LexAny F) {c61 c62 c63 : ℝ}
+/-- Core `e25_dom` bound on rim `01635` given a contradiction from the 5 shared `LexClause`s. -/
+private theorem e25_dom_01635_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    {c61 c62 c63 : ℝ}
     (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
     (hc61 : 0 < c61) (hc62 : 0 < c62) (hc63 : 1 ≤ c63)
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
-    (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
-    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
-    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
-    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
-    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
-    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
-    (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x)) :
+    (d1 d2 : ℝ³)
+    (hcontra : GenQuad.LexClause (x 1) (x 3) (x 0) (x 6) (bT25 x) d1 d2 →
+      GenQuad.LexClause (x 1) (x 5) (x 0) (x 6) (bT25 x) d1 d2 →
+      GenQuad.LexClause (x 1) (x 5) (x 0) (x 3) (bT25 x) d1 d2 →
+      GenQuad.LexClause (x 6) (x 5) (x 0) (x 3) (bT25 x) d1 d2 →
+      GenQuad.LexClause (x 1) (x 3) (x 6) (x 5) (bT25 x) d1 d2 → False) :
     ⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫ := by
   refine e25_le_of_inner_nonneg ?_
   have E11 := e11_pos F
@@ -152,8 +148,71 @@ theorem e25_dom_01635 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : �
       nlinarith [mul_pos hc61 E11, mul_nonneg (sub_nonneg.2 hc63) h53_nonneg]
     have hmul : 0 < c62 * ⟪x 0 - x 5, bT25 x⟫ := by linarith
     exact (mul_pos_iff_of_pos_left hc62).1 hmul |>.le
-  exact absurd (lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
-    k1 k5 k3 k4 k2) hnLex
+  exact absurd (hcontra k1 k5 k3 k4 k2) id
+
+private theorem ob1_1465_aux {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha5 : 1 < oblX0 x 5) (h1 : 0 < ⟪F.N 1, bT25 x⟫) (hO : H24K.SAT.OB1 x)
+    (h15 : 0 ≤ ⟪x 1 - x 5, bT25 x⟫) (h16 : 0 ≤ ⟪x 1 - x 6, bT25 x⟫) :
+    0 ≤ ⟪x 0 - x 5, bT25 x⟫ := by
+  have T := type24OfFac F
+  have hb5_pos : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
+  have hc5_pos : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  have h21_pos := ob1_x21_bT25_neg F ha5 h1 hO
+  have hid : x 5 - x 1 = oblX0 x 5 • (x 0 - x 1) + oblX2 x 5 • (x 2 - x 1) +
+      oblX6 x 5 • (x 6 - x 1) := by rw [T.rep 5]; abel
+  have hx05_eq : oblX0 x 5 • (x 0 - x 5) =
+      (oblX0 x 5 - 1) • (x 1 - x 5) + oblX2 x 5 • (-(x 2 - x 1)) + oblX6 x 5 • (x 1 - x 6) := by
+    linear_combination (norm := module) -hid
+  have hdot := congrArg (fun w => ⟪w, bT25 x⟫) hx05_eq
+  simp only [inner_add_left, real_inner_smul_left, inner_neg_left] at hdot
+  have hrhs : 0 ≤ (oblX0 x 5 - 1) * ⟪x 1 - x 5, bT25 x⟫ +
+      oblX2 x 5 * (-⟪x 2 - x 1, bT25 x⟫) + oblX6 x 5 * ⟪x 1 - x 6, bT25 x⟫ := by
+    nlinarith [mul_nonneg (sub_pos.2 ha5).le h15, mul_pos hb5_pos h21_pos, mul_nonneg hc5_pos.le h16]
+  nlinarith
+
+/-- `e25_dom` on rim `01635` (`0 < ⟪F.N 1, bT25 x⟫`, `0 ≤ ⟪F.N 8, bT25 x⟫`). -/
+theorem e25_dom_01635 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³) {γ δ : ℝ}
+    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (hnLex : ¬ LexAny F) {c61 c62 c63 : ℝ}
+    (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+    (hc61 : 0 < c61) (hc62 : 0 < c62) (hc63 : 1 ≤ c63)
+    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
+    (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x)) :
+    ⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫ :=
+  e25_dom_01635_core F hx6 hc61 hc62 hc63 d1 d2 fun k1 k5 k3 k4 k2 =>
+    hnLex (lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6
+      f0613 f0615 f0315 f0365 f6513 k1 k5 k3 k4 k2)
+
+/-- `e25_dom` on rim `01635` with flipped `(1, 3; 6, 5)` front (`0 < ⟪F.N 1, bT25 x⟫`, `0 ≤ ⟪F.N 8, bT25 x⟫`). -/
+theorem e25_dom_01635_flip {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³) {γ δ : ℝ}
+    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (hnLex : ¬ LexAny F) (ha5 : 1 < oblX0 x 5) (hO : H24K.SAT.OB1 x) {c61 c62 c63 : ℝ}
+    (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+    (hc61 : 0 < c61) (hc62 : 0 < c62) (hc63 : 1 ≤ c63)
+    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
+    (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x)) :
+    ⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫ := by
+  by_cases k6 : GenQuad.LexClause (x 6) (x 5) (x 1) (x 3) (bT25 x) d1 d2
+  · exact e25_dom_01635_core F hx6 hc61 hc62 hc63 d1 d2 fun k1 k5 k3 k4 _ =>
+      hnLex (lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6
+        f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6)
+  · obtain ⟨⟨u1, -⟩, -, ⟨u3, -⟩, -⟩ := notClause k6
+    exact e25_le_of_inner_nonneg
+      (ob1_1465_aux F ha5 h1 hO (by rw [inner_sub_left]; linarith) (by rw [inner_sub_left]; linarith))
 
 /-- `e25_dom` on rim `05346` (`⟪F.N 1, bT25 x⟫ < 0`, `⟪F.N 8, bT25 x⟫ < 0`). -/
 theorem e25_dom_05346 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
@@ -448,7 +507,7 @@ structure A1E25Sample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop wher
     FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x) ∧
-    FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x)
+    (FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x) ∨ FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
   t25_016435 : 0 < ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
     (∀ {p4 q4 c61 c62 c63 : ℝ},
       x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5) →
@@ -477,7 +536,9 @@ theorem A1TieSample.toE25Sample {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   h4 := hS.h4
   t25_fronts_0536 := hS.t25_fronts_0536
   t25_fronts_05346 := hS.t25_fronts_05346
-  t25_fronts_01635 := hS.t25_fronts_01635
+  t25_fronts_01635 := fun h1 h8 =>
+    let ⟨a, b, c, d, e⟩ := hS.t25_fronts_01635 h1 h8
+    ⟨a, b, c, d, e.elim Or.inl (fun h => Or.inr h.1)⟩
   t25_016435 := fun h1 h8 =>
     let ⟨hfr, rest⟩ := hS.t25_016435 h1 h8
     ⟨fun hx4 hx6 =>
@@ -522,9 +583,12 @@ theorem a1_e25 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         hx6 hc61_pos hc62_pos hc63 (hq4_63_fn hx4 hx6) hdet25
         h1_gt h3 (hS.h4 (Or.inr h8_lt)) h0 h5 h7 h8_lt t2 t6 (crossOf_0345_of_x4 hx4 hp4 hq4_gt)
         f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
-    · obtain ⟨f0613, f0615, f0315, f0365, f6513⟩ := hS.t25_fronts_01635 h1_gt h8_ge
-      exact e25_dom_01635 F (x 3 - x 5) (x 0 - x 5) hd1 hδ hnLex hx6 hc61_pos hc62_pos hc63
-        h1_gt h3 h8_ge h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+    · obtain ⟨f0613, f0615, f0315, f0365, h6513⟩ := hS.t25_fronts_01635 h1_gt h8_ge
+      rcases h6513 with f6513 | f1365
+      · exact e25_dom_01635 F (x 3 - x 5) (x 0 - x 5) hd1 hδ hnLex hx6 hc61_pos hc62_pos hc63
+          h1_gt h3 h8_ge h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+      · exact e25_dom_01635_flip F (x 3 - x 5) (x 0 - x 5) hd1 hδ hnLex hA1.1 hO hx6 hc61_pos
+          hc62_pos hc63 h1_gt h3 h8_ge h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f1365
 
 /-- Strict off-tie form of `a1_e25`: `⟪x 2 - x 5, x 5 - x 0⟫ ≠ 0` yields `⟪x 5, x 5 - x 0⟫ < ⟪x 2, x 5 - x 0⟫`. -/
 theorem a1_e25_lt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)

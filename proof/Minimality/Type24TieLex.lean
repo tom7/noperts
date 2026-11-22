@@ -658,4 +658,208 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
       f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
       k0614 k0613 k0615 k0413 k0415 k0315 k0463 k0465 k0365 k1463 k1465 k6513 k4513 k4563
 
+/-! ### 4. Rim `01635` with flipped `(6, 5; 1, 3)` front (`≤`-variants, Task CO) -/
+
+/-- `lexAny_T25_01635_tilt_flip` with `0 ≤ ⟪F.N 8, bT25 x⟫`. -/
+theorem lexAny_T25_01635_tilt_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
+    {γ δ : ℝ} (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
+    (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
+    (m0613 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 6) (bT25 x) d1 d2)
+    (m0615 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 6) (bT25 x) d1 d2)
+    (m0315 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 3) (bT25 x) d1 d2)
+    (m0365 : GenQuad.LexClause (x 6) (x 5) (x 0) (x 3) (bT25 x) d1 d2)
+    (m1365 : GenQuad.LexClause (x 6) (x 5) (x 1) (x 3) (bT25 x) d1 d2) :
+    LexAny F := by
+  have hb : bT25 x ≠ 0 := fun h => by rw [h, inner_zero_right] at h1; exact lt_irrefl _ h1
+  refine GenQuad.lexAny_of_clauses F (k := 5) (by norm_num) c25b_le_inj c25b_le_cyc (bT25 x) d1 d2 ?_ ?_ ?_
+  · intro t ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl
+    · exact Or.inl h1
+    · exact Or.inl h3
+    · exact lexPos3_N8_T25 F hd1 hδ h8
+  · intro t ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl | rfl | rfl
+    · exact Or.inl (by linarith)
+    · exact t2
+    · exact Or.inl (by linarith)
+    · exact t6
+    · exact Or.inl (by linarith)
+  · exact GenQuad.clauses_five (p := fun i => x (c25b_le i)) (b := bT25 x) (d1 := d1) (d2 := d2)
+      m0613 (lexClause_of_det hb f0613)
+      m0615 (lexClause_of_det hb f0615)
+      m0315 (lexClause_of_det hb f0315)
+      m0365 (lexClause_of_det hb f0365)
+      m1365 (lexClause_of_det hb f1365)
+
+/-- `tieCover_01635_flip` with `0 ≤ ⟪F.N 8, bT25 x⟫` and `0 ≤ ⟪F.N 8, bT26 x⟫`. -/
+theorem tieCover_01635_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
+    {μ a δ γ p4 q4 c11 c12 c13 c61 c62 c63 : ℝ}
+    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (hb26 : bT26 x = μ • ((a - 1) • (x 2 - x 5) - a • (x 0 - x 5))) (hμ : 0 < μ) (ha : 1 < a)
+    (hx4 : x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5)) (hp4 : 0 < p4) (hq4 : 0 ≤ q4)
+    (hx1 : x 1 - x 5 = c11 • (x 2 - x 5) + c12 • (x 0 - x 5) + c13 • (x 3 - x 5))
+    (hc13 : 0 ≤ c13)
+    (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+    (hc61 : 0 < c61) (hc63 : 1 ≤ c63) (hc13_63 : c13 ≤ c63) (h16 : 0 < c63 * c11 - c13 * c61)
+    (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
+    (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
+    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
+    (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
+    (g6 : 0 < ⟪F.N 6, bT26 x⟫) (g7 : 0 < ⟪F.N 7, bT26 x⟫) (g8 : 0 ≤ ⟪F.N 8, bT26 x⟫)
+    (g3 : ⟪F.N 3, bT26 x⟫ < 0) (g4 : ⟪F.N 4, bT26 x⟫ < 0)
+    (f2354 : FrontDet (x 2) (x 3) (x 5) (x 4) (bT26 x))
+    (f2356 : FrontDet (x 2) (x 3) (x 5) (x 6) (bT26 x))
+    (f2456 : FrontDet (x 2) (x 4) (x 5) (x 6) (bT26 x))
+    (f3624 : FrontDet (x 3) (x 6) (x 2) (x 4) (bT26 x))
+    (f3654 : FrontDet (x 3) (x 6) (x 5) (x 4) (bT26 x)) :
+    LexAny F := by
+  have hb25 : bT25 x = x 5 - x 2 := rfl
+  have hinj := inj_of_fac F
+  have hne2 : x 2 - x 5 ≠ 0 := sub_ne_zero.2 (fun h => absurd (hinj h) (by decide))
+  have E11 : 0 < ⟪x 2 - x 5, x 2 - x 5⟫ := real_inner_self_pos.mpr hne2
+  have kill := kill26_le F hb26 hμ ha hx4 hp4 hq4 tie g6 g7 g8 g3 g4 f2354 f2356 f2456 f3624 f3654
+  have iS : ∀ u v : Fin 7, ⟪x u - x v, bT25 x⟫ = ⟪x u, bT25 x⟫ - ⟪x v, bT25 x⟫ :=
+    fun u v => inner_sub_left _ _ _
+  by_cases k1 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 6) (bT25 x) d1 d2
+  swap
+  · exfalso
+    obtain ⟨-, -, ⟨u3, -⟩, ⟨u4, -⟩⟩ := notClause k1
+    have l := line06_13 hb25 hx6 tie
+    have e1 := iS 0 3; have e2 := iS 6 3
+    nlinarith [mul_nonneg (sub_nonneg.2 hc63) (sub_nonneg.2 u3), mul_pos hc61 E11]
+  by_cases k2 : GenQuad.LexClause (x 1) (x 3) (x 6) (x 5) (bT25 x) d1 d2
+  swap
+  · exfalso
+    obtain ⟨-, -, ⟨u3, -⟩, ⟨u4, -⟩⟩ := notClause k2
+    have l := line56_13 hb25 hx6 tie
+    have e1 := iS 5 3; have e2 := iS 6 3
+    nlinarith [mul_nonneg (sub_nonneg.2 hc63) (sub_nonneg.2 u4), mul_pos hc61 E11]
+  by_cases k3 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 3) (bT25 x) d1 d2
+  swap
+  · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k3
+    have hB := levelB hb25 tie u1 u1'
+    have hA : 0 ≤ ⟪x 3 - x 5, bT25 x⟫ := by rw [iS 3 5]; linarith
+    rcases T_dich hb25 hd1 hb26 tie hμ hδ ha hA hB with h | h
+    · exact kill h
+    · exact absurd h hW
+  by_cases k4 : GenQuad.LexClause (x 6) (x 5) (x 0) (x 3) (bT25 x) d1 d2
+  swap
+  · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k4
+    have hB := levelB hb25 tie u1 u1'
+    have hA : 0 ≤ ⟪x 3 - x 5, bT25 x⟫ := by rw [iS 3 5]; linarith
+    rcases T_dich hb25 hd1 hb26 tie hμ hδ ha hA hB with h | h
+    · exact kill h
+    · exact absurd h hW
+  by_cases k5 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 6) (bT25 x) d1 d2
+  swap
+  · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k5
+    have hB := levelB hb25 tie u1 u1'
+    have hA : 0 ≤ ⟪x 6 - x 5, bT25 x⟫ := by rw [iS 6 5]; linarith
+    exact kill (T6_strict hb25 hd1 hb26 hx6 tie hμ hδ ha hc61 (by linarith) E11 hA hB)
+  by_cases k6 : GenQuad.LexClause (x 6) (x 5) (x 1) (x 3) (bT25 x) d1 d2
+  swap
+  · exfalso
+    obtain ⟨⟨u1, -⟩, -, ⟨u3, -⟩, -⟩ := notClause k6
+    have l := line13_56 hb25 hx1 hx6 tie
+    have e1 := iS 1 5; have e2 := iS 1 6; rw [e1, e2] at l
+    nlinarith only [l, mul_nonneg (sub_nonneg.2 hc13_63) (sub_nonneg.2 u3),
+      mul_nonneg hc13 (sub_nonneg.2 u1), mul_pos h16 E11]
+  exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6
+    f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6
+
+/-- `tieCover_01635_2536` with flipped `(6, 5; 1, 3)` front and `0 ≤ ⟪F.N 8, bT25 x⟫`. -/
+theorem tieCover_01635_2536_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
+    {μ a δ γ c11 c12 c13 c61 c62 c63 : ℝ}
+    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (hb26 : bT26 x = μ • ((a - 1) • (x 2 - x 5) - a • (x 0 - x 5))) (hμ : 0 < μ) (ha : 1 < a)
+    (hx1 : x 1 - x 5 = c11 • (x 2 - x 5) + c12 • (x 0 - x 5) + c13 • (x 3 - x 5))
+    (hc13 : 0 ≤ c13)
+    (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+    (hc61 : 0 < c61) (hc63 : 1 ≤ c63) (hc13_63 : c13 ≤ c63) (h16 : 0 < c63 * c11 - c13 * c61)
+    (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
+    (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
+    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
+    (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
+    (g6 : 0 < ⟪F.N 6, bT26 x⟫) (g7 : 0 < ⟪F.N 7, bT26 x⟫)
+    (g3 : ⟪F.N 3, bT26 x⟫ < 0) (g8 : ⟪F.N 8, bT26 x⟫ < 0)
+    (f2356 : FrontDet (x 2) (x 3) (x 5) (x 6) (bT26 x)) :
+    LexAny F := by
+  have hb25 : bT25 x = x 5 - x 2 := rfl
+  have hinj := inj_of_fac F
+  have hne2 : x 2 - x 5 ≠ 0 := sub_ne_zero.2 (fun h => absurd (hinj h) (by decide))
+  have E11 : 0 < ⟪x 2 - x 5, x 2 - x 5⟫ := real_inner_self_pos.mpr hne2
+  have kill := kill26_2536 F g6 g7 g3 g8 f2356
+  have iS : ∀ u v : Fin 7, ⟪x u - x v, bT25 x⟫ = ⟪x u, bT25 x⟫ - ⟪x v, bT25 x⟫ :=
+    fun u v => inner_sub_left _ _ _
+  by_cases k1 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 6) (bT25 x) d1 d2
+  swap
+  · exfalso
+    obtain ⟨-, -, ⟨u3, -⟩, ⟨u4, -⟩⟩ := notClause k1
+    have l := line06_13 hb25 hx6 tie
+    have e1 := iS 0 3; have e2 := iS 6 3
+    nlinarith [mul_nonneg (sub_nonneg.2 hc63) (sub_nonneg.2 u3), mul_pos hc61 E11]
+  by_cases k2 : GenQuad.LexClause (x 1) (x 3) (x 6) (x 5) (bT25 x) d1 d2
+  swap
+  · exfalso
+    obtain ⟨-, -, ⟨u3, -⟩, ⟨u4, -⟩⟩ := notClause k2
+    have l := line56_13 hb25 hx6 tie
+    have e1 := iS 5 3; have e2 := iS 6 3
+    nlinarith [mul_nonneg (sub_nonneg.2 hc63) (sub_nonneg.2 u4), mul_pos hc61 E11]
+  by_cases k3 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 3) (bT25 x) d1 d2
+  swap
+  · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k3
+    have hB := levelB hb25 tie u1 u1'
+    have hA : 0 ≤ ⟪x 3 - x 5, bT25 x⟫ := by rw [iS 3 5]; linarith
+    rcases T_dich hb25 hd1 hb26 tie hμ hδ ha hA hB with h | h
+    · exact kill h
+    · exact absurd h hW
+  by_cases k4 : GenQuad.LexClause (x 6) (x 5) (x 0) (x 3) (bT25 x) d1 d2
+  swap
+  · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k4
+    have hB := levelB hb25 tie u1 u1'
+    have hA : 0 ≤ ⟪x 3 - x 5, bT25 x⟫ := by rw [iS 3 5]; linarith
+    rcases T_dich hb25 hd1 hb26 tie hμ hδ ha hA hB with h | h
+    · exact kill h
+    · exact absurd h hW
+  by_cases k5 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 6) (bT25 x) d1 d2
+  swap
+  · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k5
+    have hB := levelB hb25 tie u1 u1'
+    have hA : 0 ≤ ⟪x 6 - x 5, bT25 x⟫ := by rw [iS 6 5]; linarith
+    exact kill (T6_strict hb25 hd1 hb26 hx6 tie hμ hδ ha hc61 (by linarith) E11 hA hB)
+  by_cases k6 : GenQuad.LexClause (x 6) (x 5) (x 1) (x 3) (bT25 x) d1 d2
+  swap
+  · exfalso
+    obtain ⟨⟨u1, -⟩, -, ⟨u3, -⟩, -⟩ := notClause k6
+    have l := line13_56 hb25 hx1 hx6 tie
+    have e1 := iS 1 5; have e2 := iS 1 6; rw [e1, e2] at l
+    nlinarith only [l, mul_nonneg (sub_nonneg.2 hc13_63) (sub_nonneg.2 u3),
+      mul_nonneg hc13 (sub_nonneg.2 u1), mul_pos h16 E11]
+  exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6
+    f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6
+
 end Minimality.T24.Q24
