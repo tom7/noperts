@@ -56,6 +56,7 @@ import Minimality.Type24A1Z54
 import Minimality.Type24A1Closed
 import Minimality.Type24BUstar
 import Minimality.Type24BUstar2
+import Minimality.Type24BCertW26
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1405,3 +1406,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.q_quadrant_II
 #assert_standard_axioms Minimality.NF29.q_quadrant_IV
 #assert_standard_axioms Minimality.NF29.qpencil_depth_split
+#assert_standard_axioms Minimality.T24.A10.cert_w26_alg
+#assert_standard_axioms Minimality.T24.A10.cert_w26_geom
+#assert_standard_axioms Minimality.T24.A10.hu3_of_a5
+#assert_standard_axioms Minimality.T24.A10.hu8_of_c3
+#assert_standard_axioms Minimality.T24.A10.ustar_closed_W26
+#assert_standard_axioms Minimality.T24.A10.ustar_closed_W26_z6
