@@ -518,7 +518,7 @@ theorem lexAny_or_split_E3426_full {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
   have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
-  have hnc : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4 ha5)
+  have hnc : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4.le ha5)
   obtain ⟨s, t, hs, ht, hdec, hda, hdb, hdc⟩ := lemmaM_coords F
   have hs1 : 1 < s := by
     have ev8 := congrArg (fun v => ⟪F.N 8, v⟫) hdec

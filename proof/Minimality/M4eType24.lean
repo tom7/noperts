@@ -110,7 +110,7 @@ private theorem tie1_tilt_exists {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     rw [M4.det3_frame x (oblX0 x 5 - 1) (oblX2 x 5) (oblX6 x 5)
       (oblX0 x 4 - 1) (oblX2 x 4) (oblX6 x 4) 0 (-1) 1]
     dsimp [nC, nB]; ring
-  have hnc : 0 < nC x := nC_pos_of F ha4 ha5
+  have hnc : 0 < nC x := nC_pos_of F ha4.le ha5
   have hnb : nB x < 0 := by
     have hc4 : 0 < oblX6 x 4 := T.X6_pos (v := 4) (by decide)
     have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
@@ -256,10 +256,10 @@ theorem tie1_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
   have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
-  have hnc : 0 < nC x := nC_pos_of F ha4 ha5
+  have hnc : 0 < nC x := nC_pos_of F ha4.le ha5
   have hnb : nB x < 0 := by dsimp [nB]; nlinarith
   have hR46 : R46 x < 0 := R46_neg F ha5 hL
-  have hR04 : R04 x < 0 := R04_neg F ha4 ha5
+  have hR04 : R04 x < 0 := R04_neg F ha4.le ha5
   let w05 : ℝ³ := x 5 - x 0
   let d1 : ℝ³ := lam1 • (x 4 - x 0) + lam2 • (x 6 - x 2)
   let d2 : ℝ³ := x 6 - x 1
@@ -635,8 +635,8 @@ theorem lexAny_or_split_E3426 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
   have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
-  have hnc : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4 ha5)
-  have hR04 : R04 x < 0 := R04_neg F ha4 ha5
+  have hnc : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4.le ha5)
+  have hR04 : R04 x < 0 := R04_neg F ha4.le ha5
   obtain ⟨s, t, hs, ht, hdec, hda, hdb, hdc⟩ := lemmaM_coords F
   have hs1 : 1 < s := by
     have ev8 := congrArg (fun v => ⟪F.N 8, v⟫) hdec
@@ -1041,7 +1041,7 @@ theorem splitAny24_E3412 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
-  have hnc : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4 ha5)
+  have hnc : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4.le ha5)
   have hnb : nB x < 0 := by dsimp [nB]; nlinarith
   obtain ⟨s, t, hs, ht, hdec, hda, hdb, hdc⟩ := lemmaM_coords F
   have hs1 : 1 < s := by

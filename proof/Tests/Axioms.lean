@@ -43,6 +43,7 @@ import Minimality.Type24A1Frame
 import Minimality.Type24ROff
 import Minimality.Type24A2Lam
 import Minimality.Type24A1Tie
+import Minimality.Type24A1E25
 import Minimality.Type24Wlog
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
@@ -1255,7 +1256,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.a5_gt_one_iff_N5
 #assert_standard_axioms Minimality.T24.A1.lam5_pos_of_sigma
 #assert_standard_axioms Minimality.T24.A1.lam5_nonneg_A1
-#assert_standard_axioms Minimality.T24.A1.E05P5U_le
+#assert_standard_axioms Minimality.T24.A1.E05P5U_A1
 #assert_standard_axioms Minimality.T24.A1.E05P5U_A1
 #assert_standard_axioms Minimality.T24.A1.t25_facets
 #assert_standard_axioms Minimality.T24.A1.t25_016
@@ -1312,6 +1313,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.csl24_hq_of_frame
 #assert_standard_axioms Minimality.T24.A1.a1_tie_rupert
 #print axioms Minimality.T24.A1.a1_tie_rupert
+#assert_standard_axioms Minimality.T24.A1.e25_dom_0536
+#assert_standard_axioms Minimality.T24.A1.e25_dom_01635
+#assert_standard_axioms Minimality.T24.A1.e25_dom_05346
+#assert_standard_axioms Minimality.T24.A1.e25_dom_016435
+#assert_standard_axioms Minimality.T24.A1.a1_e25
+#assert_standard_axioms Minimality.T24.A1.a1_e25_lt
+#print axioms Minimality.T24.A1.a1_e25
 #assert_standard_axioms Minimality.T24.Reg.hole24R_wlog
 #assert_standard_axioms Minimality.T24.Reg.hole24R_comp_pi24
 #assert_standard_axioms Minimality.T24.Reg.a1_to_b

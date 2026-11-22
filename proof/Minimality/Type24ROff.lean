@@ -64,24 +64,11 @@ theorem resid24_b1245 {x : Fin 7 → ℝ³} (h : Resid24 x) (hO : ¬ H24K.SAT.OB
     rw [frame1245 hD.ne]
     exact div_pos_of_neg_of_neg e hD
 
-/-- `nB`-twin of `fac3_lin` (private in `M4bType24`). -/
-theorem fac3_linB {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
-    (-F.f 3 (x 1)) * nB x = (F.f 3 (x 2) - F.f 3 (x 1)) * D45 x := by
-  have f3_0 : F.f 3 (x 0) = 0 := F.zero 3 0 (by decide)
-  have f3_4 : F.f 3 (x 4) = 0 := F.zero 3 4 (by decide)
-  have f3_5 : F.f 3 (x 5) = 0 := F.zero 3 5 (by decide)
-  have ev4 := fac_eval F 3 4
-  have ev5 := fac_eval F 3 5
-  rw [f3_4, f3_0] at ev4
-  rw [f3_5, f3_0] at ev5
-  dsimp [nB, D45]
-  linear_combination oblX6 x 4 * ev5 - oblX6 x 5 * ev4
-
 theorem nB_neg_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     nB x < 0 ↔ F.f 3 (x 2) < F.f 3 (x 1) := by
   have h1 : 0 < -F.f 3 (x 1) := by linarith [F.neg 3 1 (by decide)]
   have hD : 0 < D45 x := d45_pos F
-  have hlin := fac3_linB F
+  have hlin := (fac3_lin F).2
   constructor
   · intro h
     have : (-F.f 3 (x 1)) * nB x < 0 := mul_neg_of_pos_of_neg h1 h
