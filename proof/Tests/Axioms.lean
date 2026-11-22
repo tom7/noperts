@@ -18,6 +18,7 @@ import Minimality.M4cType24
 import Minimality.M4dType24
 import Minimality.Type29Leaves
 import Minimality.Type29LeavesA16
+import Minimality.Type29Quad
 import Minimality.GenQuad
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
@@ -1014,6 +1015,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.NF29.u2346_eq
 #print axioms Minimality.NF29.lexAny29_U2346
 #print axioms Minimality.NF29.lexAny29_W14t1
+#assert_standard_axioms Minimality.NF29.lexAny29_F015_023_pmm
+#assert_standard_axioms Minimality.NF29.lexAny29_F015_023_pmp
+#assert_standard_axioms Minimality.NF29.lexAny29_F035_234_ppp
+#assert_standard_axioms Minimality.NF29.lexAny29_F023_346_pmm
+#assert_standard_axioms Minimality.NF29.lexAny29_F124_1456_pmm
+#print axioms Minimality.NF29.lexAny29_F015_023_pmm
+#print axioms Minimality.NF29.lexAny29_F015_023_pmp
+#print axioms Minimality.NF29.lexAny29_F035_234_ppp
+#print axioms Minimality.NF29.lexAny29_F023_346_pmm
+#print axioms Minimality.NF29.lexAny29_F124_1456_pmm
 #assert_standard_axioms Minimality.GenQuad.clauses_four
 #assert_standard_axioms Minimality.GenQuad.clauses_five
 #assert_standard_axioms Minimality.GenQuad.clauses_six
