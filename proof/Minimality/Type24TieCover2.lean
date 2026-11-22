@@ -108,7 +108,7 @@ theorem lexAny_T25_016435_tilt_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 4) (x 5))
     (f0614 : FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0413 : FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x))
     (f0415 : FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x))
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
@@ -158,7 +158,7 @@ theorem lexAny_T25_016435_tilt_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
   · exact GenQuad.clauses_six (p := fun i => x (c25d' i)) (b := bT25 x) (d1 := d1) (d2 := d2)
       m0614 (lexClause_of_det hb f0614)
       m0613 (lexClause_of_det hb f0613)
-      m0615 (lexClause_of_det hb f0615)
+      m0615 m0615_r
       m0413 (lexClause_of_det hb f0413)
       m0415 (lexClause_of_det hb f0415)
       m0315 (lexClause_of_det hb f0315)
@@ -184,7 +184,7 @@ theorem lexAny_T25_016435_tilt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 4) (x 5))
     (f0614 : FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0413 : FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x))
     (f0415 : FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x))
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
@@ -212,7 +212,7 @@ theorem lexAny_T25_016435_tilt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d
     (m4563 : GenQuad.LexClause (x 6) (x 3) (x 4) (x 5) (bT25 x) d1 d2) :
     LexAny F :=
   lexAny_T25_016435_tilt_lex F d1 d2 hdet (Or.inl h1) h3 h4 h0 h5 h7 h8 t2 t6 hX
-    f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
+    f0614 f0613 m0615_r f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
     m0614 m0613 m0615 m0413 m0415 m0315 m0463 m0465 m0365 m1463 m1465 m6513 m4513 m4563
 
 /-! ### 3. Tie cover, rim 016435 -/
@@ -241,7 +241,7 @@ theorem tieCover_016435 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : 
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 4) (x 5))
     (f0614 : FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0413 : FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x))
     (f0415 : FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x))
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
@@ -396,7 +396,7 @@ theorem tieCover_016435 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : 
       rw [e2] at l; linarith only [l, hpos, u3]
     exact viaW'53 hz (u4' (by rw [e1] at hz; linarith))
   exact lexAny_T25_016435_tilt_lex F d1 d2 hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX
-    f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
+    f0614 f0613 m0615_r f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
     k0614 k0613 k0615 k0413 k0415 k0315 k0463 k0465 k0365 k1463 k1465 k6513 k4513 k4563
 
 /-! ### 4. Rim `01635` with flipped `(6, 5; 1, 3)` front (`H_adv_s7206_r246`, Task CO) -/

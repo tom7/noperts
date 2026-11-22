@@ -181,14 +181,14 @@ theorem e25_dom_01635 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : �
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x)) :
     ⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫ :=
   e25_dom_01635_core F hx6 hc61 hc62 hc63 d1 d2 fun k1 k5 k3 k4 k2 =>
     hnLex (lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6
-      f0613 f0615 f0315 f0365 f6513 k1 k5 k3 k4 k2)
+      f0613 m0615_r f0315 f0365 f6513 k1 k5 k3 k4 k2)
 
 /-- `e25_dom` on rim `01635` with flipped `(1, 3; 6, 5)` front (`0 < ⟪F.N 1, bT25 x⟫`, `0 ≤ ⟪F.N 8, bT25 x⟫`). -/
 theorem e25_dom_01635_flip {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³) {γ δ : ℝ}
@@ -202,7 +202,7 @@ theorem e25_dom_01635_flip {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x)) :
@@ -210,7 +210,7 @@ theorem e25_dom_01635_flip {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2
   by_cases k6 : GenQuad.LexClause (x 6) (x 5) (x 1) (x 3) (bT25 x) d1 d2
   · exact e25_dom_01635_core F hx6 hc61 hc62 hc63 d1 d2 fun k1 k5 k3 k4 _ =>
       hnLex (lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6
-        f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6)
+        f0613 m0615_r f0315 f0365 f1365 k1 k5 k3 k4 k6)
   · obtain ⟨⟨u1, -⟩, -, ⟨u3, -⟩, -⟩ := notClause k6
     exact e25_le_of_inner_nonneg
       (ob1_1465_aux F ha5 h1 hO (by rw [inner_sub_left]; linarith) (by rw [inner_sub_left]; linarith))
@@ -291,7 +291,7 @@ theorem e25_dom_016435 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : �
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 4) (x 5))
     (f0614 : FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0413 : FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x))
     (f0415 : FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x))
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
@@ -486,7 +486,7 @@ theorem e25_dom_016435 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : �
       linarith
     exact absurd (ob1_1465 h15 h16) (not_le.2 hneg)
   exact absurd (lexAny_T25_016435_tilt_lex F d1 d2 hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX
-    f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
+    f0614 f0613 m0615_r f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
     m0614 m0613 m0615 m0413 m0415 m0315 m0463 m0465 m0365 m1463 m1465 m6513 m4513 m4563) hnLex
 
 /-! ### Top-level `A1E25Sample` and `a1_e25` -/
@@ -505,7 +505,8 @@ structure A1E25Sample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop wher
     FrontDet (x 5) (x 4) (x 3) (x 6) (bT25 x)
   t25_fronts_01635 : 0 ≤ ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
     FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x) ∧
-    FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x) ∧
+    (∀ d2 : ℝ³, (⟪F.N 1, bT25 x⟫ = 0 → 0 ≤ ⟪F.N 1, x 3 - x 5⟫) →
+      GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) (x 3 - x 5) d2) ∧
     FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x) ∧
     (FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x) ∨ FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
@@ -516,7 +517,8 @@ structure A1E25Sample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop wher
       q4 ≤ c63) ∧
     FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x) ∧
     FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x) ∧
-    FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x) ∧
+    (∀ d2 : ℝ³, (⟪F.N 1, bT25 x⟫ = 0 → 0 ≤ ⟪F.N 1, x 3 - x 5⟫) →
+      GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) (x 3 - x 5) d2) ∧
     FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x) ∧
     FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
@@ -590,13 +592,13 @@ theorem a1_e25_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       exact e25_dom_016435 F (x 3 - x 5) (x 0 - x 5) hnLex hA1.1 hO hx4 hp4 hq4_gt
         hx6 hc61_pos hc62_pos hc63 (hq4_63_fn hx4 hx6) hdet25
         h1_ge t1 h3 (hS.h4 (Or.inr h8_lt)) h0 h5 h7 h8_lt t2 t6 (crossOf_0345_of_x4 hx4 hp4 hq4_gt)
-        f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
+        f0614 f0613 (f0615 (x 0 - x 5) h1_eq) f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
     · obtain ⟨f0613, f0615, f0315, f0365, h6513⟩ := hS.t25_fronts_01635 h1_ge h8_ge
       rcases h6513 with f6513 | f1365
       · exact e25_dom_01635 F (x 3 - x 5) (x 0 - x 5) hd1 hδ hnLex hx6 hc61_pos hc62_pos hc63
-          t1 h3 h8_ge h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+          t1 h3 h8_ge h0 h5 h7 t2 t6 f0613 (f0615 (x 0 - x 5) h1_eq) f0315 f0365 f6513
       · exact e25_dom_01635_flip F (x 3 - x 5) (x 0 - x 5) hd1 hδ hnLex hA1.1 hO hx6 hc61_pos
-          hc62_pos hc63 h1_ge t1 h3 h8_ge h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f1365
+          hc62_pos hc63 h1_ge t1 h3 h8_ge h0 h5 h7 t2 t6 f0613 (f0615 (x 0 - x 5) h1_eq) f0315 f0365 f1365
 
 /-- **Step T1 (`a1_e25`)**: `Hole24R x F`, `Reg.A1 x F`, `H24K.SAT.OB1 x`, and `A1E25Sample x F`
 force `⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫` (`z5(w05) ≤ z2(w05)`). Orientation-free (no `det24`). -/

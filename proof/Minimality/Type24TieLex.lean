@@ -143,7 +143,7 @@ theorem lexAny_T25_01635_tilt_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) 
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x))
@@ -171,7 +171,7 @@ theorem lexAny_T25_01635_tilt_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) 
     · exact Or.inl (by linarith)
   · exact GenQuad.clauses_five (p := fun i => x (c25b_le i)) (b := bT25 x) (d1 := d1) (d2 := d2)
       m0613 (lexClause_of_det hb f0613)
-      m0615 (lexClause_of_det hb f0615)
+      m0615 m0615_r
       m0315 (lexClause_of_det hb f0315)
       m0365 (lexClause_of_det hb f0365)
       (lexClause_of_det hb f6513) m6513
@@ -296,7 +296,7 @@ theorem tieCover_01635_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x))
@@ -344,7 +344,7 @@ theorem tieCover_01635_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 
   · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k5
     exact kill (T6_strict hb25 hd1 hb26 hx6 tie hμ hδ ha hc61 (by linarith) E11
       (by rw [iS 6 5]; linarith) (levelB hb25 tie u1 u1'))
-  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6 f0613 m0615_r f0315 f0365 f6513
     k1 k5 k3 k4 k2
 
 /-- `tieCover_0536_2536` with `0 ≤ ⟪F.N 8, bT25 x⟫`. -/
@@ -385,7 +385,7 @@ theorem tieCover_01635_2536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x))
@@ -429,7 +429,7 @@ theorem tieCover_01635_2536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
   · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k5
     exact kill (T6_strict hb25 hd1 hb26 hx6 tie hμ hδ ha hc61 (by linarith) E11
       (by rw [iS 6 5]; linarith) (levelB hb25 tie u1 u1'))
-  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6 f0613 m0615_r f0315 f0365 f6513
     k1 k5 k3 k4 k2
 
 /-- `tieCover_05346W` with `0 ≤ ⟪F.N 8, bT26 x⟫` (covering `h26 = 0`) and `1 ≤ c63`. -/
@@ -539,7 +539,7 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 4) (x 5))
     (f0614 : FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0413 : FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x))
     (f0415 : FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x))
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
@@ -561,7 +561,7 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
     LexAny F := by
   rcases lt_or_eq_of_le g8 with g8lt | g8eq
   · exact tieCover_016435 F hd1 hδ hb26 hμ ha hx4 hp4 hq4 hx1 hc11 hc13 hc13_1 hx6 hc61 hc13_63 hq4_63
-      h16 tie hW hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465
+      h16 tie hW hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX f0614 f0613 m0615_r f0413 f0415 f0315 f0463 f0465
       f0365 f1463 f1465 f6513 f4513 f4563 g6 g7 g8lt g3 g4 f2354 f2356 f2456 f3624 f3654
   · -- On `⟪F.N 8, bT26 x⟫ = 0`, `kill26_le` handles `z3 < z5` at `T26` identically to `kill26`.
     have hb25 : bT25 x = x 5 - x 2 := rfl
@@ -693,7 +693,7 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
         rw [e2] at l; linarith only [l, hpos, u3]
       exact viaW'53 hz (u4' (by rw [e1] at hz; linarith))
     exact lexAny_T25_016435_tilt_lex F d1 d2 hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX
-      f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
+      f0614 f0613 m0615_r f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
       k0614 k0613 k0615 k0413 k0415 k0315 k0463 k0465 k0365 k1463 k1465 k6513 k4513 k4563
 
 /-! ### 4. Rim `01635` with flipped `(6, 5; 1, 3)` front (`≤`-variants, Task CO) -/
@@ -706,7 +706,7 @@ theorem lexAny_T25_01635_tilt_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S2
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
@@ -734,7 +734,7 @@ theorem lexAny_T25_01635_tilt_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S2
     · exact Or.inl (by linarith)
   · exact GenQuad.clauses_five (p := fun i => x (c25b_le i)) (b := bT25 x) (d1 := d1) (d2 := d2)
       m0613 (lexClause_of_det hb f0613)
-      m0615 (lexClause_of_det hb f0615)
+      m0615 m0615_r
       m0315 (lexClause_of_det hb f0315)
       m0365 (lexClause_of_det hb f0365)
       m1365 (lexClause_of_det hb f1365)
@@ -756,7 +756,7 @@ theorem tieCover_01635_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
@@ -820,7 +820,7 @@ theorem tieCover_01635_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
     nlinarith only [l, mul_nonneg (sub_nonneg.2 hc13_63) (sub_nonneg.2 u3),
       mul_nonneg hc13 (sub_nonneg.2 u1), mul_pos h16 E11]
   exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6
-    f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6
+    f0613 m0615_r f0315 f0365 f1365 k1 k5 k3 k4 k6
 
 /-- `tieCover_01635_2536` with flipped `(6, 5; 1, 3)` front and `0 ≤ ⟪F.N 8, bT25 x⟫`. -/
 theorem tieCover_01635_2536_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
@@ -838,7 +838,7 @@ theorem tieCover_01635_2536_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
-    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (m0615_r : GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) d1 d2)
     (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
     (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
     (f1365 : FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
@@ -898,6 +898,6 @@ theorem tieCover_01635_2536_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 
     nlinarith only [l, mul_nonneg (sub_nonneg.2 hc13_63) (sub_nonneg.2 u3),
       mul_nonneg hc13 (sub_nonneg.2 u1), mul_pos h16 E11]
   exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6
-    f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6
+    f0613 m0615_r f0315 f0365 f1365 k1 k5 k3 k4 k6
 
 end Minimality.T24.Q24

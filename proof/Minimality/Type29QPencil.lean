@@ -41,12 +41,14 @@ theorem q_quadrant_II (x4 x5 x6 : ℝ³) {u4 u5 : ℝ}
     ⟪x4 - x6, u⟫ < 0 ∧ 0 < ⟪x5 - x6, u⟫ := by
   have h44 : 0 < ⟪x4 - x6, x4 - x6⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr hx4)
   have h55 : 0 < ⟪x5 - x6, x5 - x6⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr hx5)
-  dsimp
+  have hg54 : ⟪x5 - x6, x4 - x6⟫ ≤ 0 := by rwa [real_inner_comm]
+  change ⟪x4 - x6, u4 • (x4 - x6) + u5 • (x5 - x6)⟫ < 0 ∧ 0 < ⟪x5 - x6, u4 • (x4 - x6) + u5 • (x5 - x6)⟫
   simp only [inner_add_right, real_inner_smul_right]
-  rw [real_inner_comm (x5 - x6) (x4 - x6)]
-  constructor
-  · linarith [mul_neg_of_neg_of_pos hu4 h44, mul_nonpos_of_nonneg_of_nonpos hu5.le hg45]
-  · linarith [mul_nonneg_of_nonpos_of_nonpos hu4.le hg45, mul_pos hu5 h55]
+  have p1 : u4 * ⟪x4 - x6, x4 - x6⟫ < 0 := mul_neg_of_neg_of_pos hu4 h44
+  have p2 : u5 * ⟪x4 - x6, x5 - x6⟫ ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hu5.le hg45
+  have p3 : 0 ≤ u4 * ⟪x5 - x6, x4 - x6⟫ := mul_nonneg_of_nonpos_of_nonpos hu4.le hg54
+  have p4 : 0 < u5 * ⟪x5 - x6, x5 - x6⟫ := mul_pos hu5 h55
+  exact ⟨by linarith, by linarith⟩
 
 /-- `L5` (quadrant IV): on weak `OB6`, `u5 < 0 < u4` gives `0 < ⟪x4 - x6, u⟫` and `⟪x5 - x6, u⟫ < 0`. -/
 theorem q_quadrant_IV (x4 x5 x6 : ℝ³) {u4 u5 : ℝ}
@@ -56,12 +58,14 @@ theorem q_quadrant_IV (x4 x5 x6 : ℝ³) {u4 u5 : ℝ}
     0 < ⟪x4 - x6, u⟫ ∧ ⟪x5 - x6, u⟫ < 0 := by
   have h44 : 0 < ⟪x4 - x6, x4 - x6⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr hx4)
   have h55 : 0 < ⟪x5 - x6, x5 - x6⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr hx5)
-  dsimp
+  have hg54 : ⟪x5 - x6, x4 - x6⟫ ≤ 0 := by rwa [real_inner_comm]
+  change 0 < ⟪x4 - x6, u4 • (x4 - x6) + u5 • (x5 - x6)⟫ ∧ ⟪x5 - x6, u4 • (x4 - x6) + u5 • (x5 - x6)⟫ < 0
   simp only [inner_add_right, real_inner_smul_right]
-  rw [real_inner_comm (x5 - x6) (x4 - x6)]
-  constructor
-  · linarith [mul_pos hu4 h44, mul_nonneg_of_nonpos_of_nonpos hu5.le hg45]
-  · linarith [mul_nonpos_of_nonneg_of_nonpos hu4.le hg45, mul_neg_of_neg_of_pos hu5 h55]
+  have p1 : 0 < u4 * ⟪x4 - x6, x4 - x6⟫ := mul_pos hu4 h44
+  have p2 : 0 ≤ u5 * ⟪x4 - x6, x5 - x6⟫ := mul_nonneg_of_nonpos_of_nonpos hu5.le hg45
+  have p3 : u4 * ⟪x5 - x6, x4 - x6⟫ ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hu4.le hg54
+  have p4 : u5 * ⟪x5 - x6, x5 - x6⟫ < 0 := mul_neg_of_neg_of_pos hu5 h55
+  exact ⟨by linarith, by linarith⟩
 
 /-- `L1`: Q-pencil depth split for any vector `v` and any Q-plane view `u`. -/
 theorem qpencil_depth_split (x3 x4 x5 x6 : ℝ³) (α v4 v5 u4 u5 : ℝ) :
