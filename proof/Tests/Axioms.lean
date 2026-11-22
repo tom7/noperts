@@ -40,6 +40,7 @@ import Minimality.Type24Regions
 import Minimality.Type24A1Bridge
 import Minimality.M4jType24
 import Minimality.Type24A1Frame
+import Minimality.Type24ROff
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1289,3 +1290,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.T24.Q24.tieCover_01635_2536_le
 #print axioms Minimality.T24.Q24.tieCover_05346W_le
 #print axioms Minimality.T24.Q24.tieCover_016435_le
+#assert_standard_axioms Minimality.T24.A19.rOff_closed'
+#assert_standard_axioms Minimality.T24.A19.rOff_core
+#assert_standard_axioms Minimality.T24.A19.frame1245
+#assert_standard_axioms Minimality.T24.A19.resid24_b1245
+#assert_standard_axioms Minimality.T24.A19.nB_neg_iff
+#assert_standard_axioms Minimality.T24.A19.ob1_comp_pi24
