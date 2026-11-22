@@ -43,6 +43,7 @@ import Minimality.Type24A1Frame
 import Minimality.Type24ROff
 import Minimality.Type24A2Lam
 import Minimality.Type24A1Tie
+import Minimality.Type24Wlog
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1311,3 +1312,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.csl24_hq_of_frame
 #assert_standard_axioms Minimality.T24.A1.a1_tie_rupert
 #print axioms Minimality.T24.A1.a1_tie_rupert
+#assert_standard_axioms Minimality.T24.Reg.hole24R_wlog
+#assert_standard_axioms Minimality.T24.Reg.hole24R_comp_pi24
+#assert_standard_axioms Minimality.T24.Reg.a1_to_b
+#assert_standard_axioms Minimality.T24.Reg.a2_to_b
+#assert_standard_axioms Minimality.T24.Reg.ba4_to_a
+#assert_standard_axioms Minimality.T24.Reg.be0416_to_b
+#assert_standard_axioms Minimality.T24.Reg.cflip_to_brest
