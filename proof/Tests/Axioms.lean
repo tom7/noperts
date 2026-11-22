@@ -174,6 +174,7 @@ import Minimality.M4Type24
 import Minimality.M4bType24
 import Minimality.M4Sym24
 import ProofOfMainTheorem
+import Minimality.SVC
 
 /-!
 # The headline theorems use only the standard axioms
@@ -1599,3 +1600,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.e23_closes_wall
 #assert_standard_axioms Minimality.T24.hole24R4_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
+
+-- Single-view closure (SVC; GENERALIZE-1122B section 1)
+#assert_standard_axioms Minimality.SVC.radon_no_sep
+#assert_standard_axioms Minimality.SVC.dep_sign_of_facet
+#assert_standard_axioms Minimality.SVC.exists_order
+#assert_standard_axioms Minimality.SVC.single_view_closure
