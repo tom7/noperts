@@ -135,4 +135,454 @@ end S3
 
 end SubPencil
 
+/-! ### `S2`: `C_Q1 × W14 × F-B` certificate on `G*`
+
+Reference point: all depths are relative to `x 6`, using the `q`-table
+`(S q_i, Y_i)` (`i = 0..6`):
+- `i = 0`: `(D035, P0, h0)`
+- `i = 1`: `(s, t, 0)`
+- `i = 2`: `(P2, D234, h2)`
+- `i = 3`: `(0, 0, 1)`
+- `i = 4`: `(S, 0, 0)`
+- `i = 5`: `(0, S, 0)`
+- `i = 6`: `(0, 0, 0)`
+
+For `v = v4 • (x 4 - x 6) + v5 • (x 5 - x 6)` in plane `Q`,
+`Row_sp (q4_i - q4_j) (q5_i - q5_j) (Y_i - Y_j) v4 v5 G44 G55 g45 g34 g35 S = S * ⟪x i - x j, v⟫`.
+(`del12 < 0` occurs on 0 of the 310 data shapes in `A32-REFEREE`, so `cert_FB_CQ1_lt`
+is included for completeness of the general algebraic statement.) -/
+
+section S2
+
+variable {R : Type*} [CommRing R]
+
+def Row_sp (dq4 dq5 dY v4 v5 G44 G55 g45 g34 g35 S : R) : R :=
+  dq4 * v4 * G44 + dq5 * v5 * G55 + (dq4 * v5 + dq5 * v4) * g45 +
+    S * dY * (v4 * g34 + v5 * g35)
+
+def del12_sp (a0 b0 h0 a2 b2 h2 s t : R) : R :=
+  (h2 - h0) * D0_sp a0 b0 a2 b2 * qA4_sp a2 b2 s t -
+    (h2 - 1) * P4C_sp b0 h0 b2 h2 * U4_sp a0 b0 h0 a2 b2 h2 s t
+
+set_option maxHeartbeats 400000 in
+/-- **`S2` (`del12 ≥ 0`)**: `C_Q1 × W14 × F-B` polynomial identity. -/
+theorem cert_FB_CQ1_ge (a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35 : R) :
+    let S := S_sp s t
+    let D0 := D0_sp a0 b0 a2 b2
+    let G4 := G4_sp b0 h0 b2 h2
+    let P4 := P4C_sp b0 h0 b2 h2
+    let P5 := P5C_sp a0 h0 a2 h2
+    let U4 := U4_sp a0 b0 h0 a2 b2 h2 s t
+    let U5 := U5_sp a0 b0 h0 a2 b2 h2 s t
+    let qA4 := qA4_sp a2 b2 s t
+    let P2 := P2_sp a2 b2 h2 s t
+    let D234 := D234_sp a2 b2 h2 s t
+    let R24 := Row_sp (P2 - S) D234 h2 (-U4) (-U5) G44 G55 g45 g34 g35 S
+    let Q5n := Row_sp 0 (-S) 0 (-U4) (-U5) G44 G55 g45 g34 g35 S
+    let R21 := Row_sp (P2 - s) (D234 - t) h2 (1 - t) t G44 G55 g45 g34 g35 S
+    let R23 := Row_sp P2 D234 (h2 - 1) (1 - t) t G44 G55 g45 g34 g35 S
+    let R12 := Row_sp (s - P2) (t - D234) (-h2) ((1 - t) * P5 - s * P4)
+      (t * P5 + (s - 1) * P4) G44 G55 g45 g34 g35 S
+    let del12 := del12_sp a0 b0 h0 a2 b2 h2 s t
+    P4 * U4 * qA4 * R24 + (h2 - 1) * D0 * P4 * (1 - t) * Q5n +
+      U4 * del12 * R21 + h2 * P4 * U4 ^ 2 * R23 + G4 * U4 * qA4 * R12 =
+      -S ^ 2 * (h2 - 1) * D0 * P4 * G4 * G55 := by
+  intro S D0 G4 P4 P5 U4 U5 qA4 P2 D234 R24 Q5n R21 R23 R12 del12
+  have cG44 : P4 * U4 * qA4 * ((P2 - S) * (-U4)) + U4 * del12 * ((P2 - s) * (1 - t)) +
+      h2 * P4 * U4 ^ 2 * (P2 * (1 - t)) +
+      G4 * U4 * qA4 * ((s - P2) * ((1 - t) * P5 - s * P4)) = 0 := by
+    dsimp only [S, D0, G4, P4, P5, U4, qA4, P2, del12, del12_sp, S_sp, D0_sp, G4_sp, G5_sp,
+      DG5_sp, D023_sp, P4C_sp, P5C_sp, U4_sp, qA4_sp, P2_sp]; ring
+  have cG55 : P4 * U4 * qA4 * (D234 * (-U5)) + (h2 - 1) * D0 * P4 * (1 - t) * ((-S) * (-U5)) +
+      U4 * del12 * ((D234 - t) * t) + h2 * P4 * U4 ^ 2 * (D234 * t) +
+      G4 * U4 * qA4 * ((t - D234) * (t * P5 + (s - 1) * P4)) =
+      -S ^ 2 * (h2 - 1) * D0 * P4 * G4 := by
+    dsimp only [S, D0, G4, P4, P5, U4, U5, qA4, D234, del12, del12_sp, S_sp, D0_sp, G4_sp, G5_sp,
+      DG4_sp, DG5_sp, D023_sp, P4C_sp, P5C_sp, U4_sp, U5_sp, qA4_sp, D234_sp]; ring
+  have cg45 : P4 * U4 * qA4 * ((P2 - S) * (-U5) + D234 * (-U4)) +
+      (h2 - 1) * D0 * P4 * (1 - t) * ((-S) * (-U4)) +
+      U4 * del12 * ((P2 - s) * t + (D234 - t) * (1 - t)) +
+      h2 * P4 * U4 ^ 2 * (P2 * t + D234 * (1 - t)) +
+      G4 * U4 * qA4 * ((s - P2) * (t * P5 + (s - 1) * P4) +
+        (t - D234) * ((1 - t) * P5 - s * P4)) = 0 := by
+    dsimp only [S, D0, G4, P4, P5, U4, U5, qA4, P2, D234, del12, del12_sp, S_sp, D0_sp, G4_sp,
+      G5_sp, DG4_sp, DG5_sp, D023_sp, P4C_sp, P5C_sp, U4_sp, U5_sp, qA4_sp, P2_sp, D234_sp]; ring
+  have cg34 : P4 * U4 * qA4 * (S * h2 * (-U4)) + U4 * del12 * (S * h2 * (1 - t)) +
+      h2 * P4 * U4 ^ 2 * (S * (h2 - 1) * (1 - t)) +
+      G4 * U4 * qA4 * (S * (-h2) * ((1 - t) * P5 - s * P4)) = 0 := by
+    dsimp only [S, D0, G4, P4, P5, U4, qA4, del12, del12_sp, S_sp, D0_sp, G4_sp, G5_sp,
+      DG5_sp, D023_sp, P4C_sp, P5C_sp, U4_sp, qA4_sp]; ring
+  have cg35 : P4 * U4 * qA4 * (S * h2 * (-U5)) + U4 * del12 * (S * h2 * t) +
+      h2 * P4 * U4 ^ 2 * (S * (h2 - 1) * t) +
+      G4 * U4 * qA4 * (S * (-h2) * (t * P5 + (s - 1) * P4)) = 0 := by
+    dsimp only [S, D0, G4, P4, P5, U4, U5, qA4, del12, del12_sp, S_sp, D0_sp, G4_sp, G5_sp,
+      DG4_sp, DG5_sp, D023_sp, P4C_sp, P5C_sp, U4_sp, U5_sp, qA4_sp]; ring
+  dsimp only [R24, Q5n, R21, R23, R12, Row_sp]
+  linear_combination G44 * cG44 + G55 * cG55 + g45 * cg45 + g34 * cg34 + g35 * cg35
+
+/-- **`S2` (`del12 < 0` variant)**: eliminates `R21` via `S B1 = -P4 [(1 - t) Q4n + t Q5n]`,
+with `m = -U4 * del12` and `K = S * (h2 - h0) * D0`. -/
+theorem cert_FB_CQ1_lt (a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35 : R) :
+    let S := S_sp s t
+    let D0 := D0_sp a0 b0 a2 b2
+    let G4 := G4_sp b0 h0 b2 h2
+    let P4 := P4C_sp b0 h0 b2 h2
+    let P5 := P5C_sp a0 h0 a2 h2
+    let U4 := U4_sp a0 b0 h0 a2 b2 h2 s t
+    let U5 := U5_sp a0 b0 h0 a2 b2 h2 s t
+    let qA4 := qA4_sp a2 b2 s t
+    let P2 := P2_sp a2 b2 h2 s t
+    let D234 := D234_sp a2 b2 h2 s t
+    let R24 := Row_sp (P2 - S) D234 h2 (-U4) (-U5) G44 G55 g45 g34 g35 S
+    let Q4n := Row_sp (-S) 0 0 (-U4) (-U5) G44 G55 g45 g34 g35 S
+    let Q5n := Row_sp 0 (-S) 0 (-U4) (-U5) G44 G55 g45 g34 g35 S
+    let R23 := Row_sp P2 D234 (h2 - 1) (1 - t) t G44 G55 g45 g34 g35 S
+    let R12 := Row_sp (s - P2) (t - D234) (-h2) ((1 - t) * P5 - s * P4)
+      (t * P5 + (s - 1) * P4) G44 G55 g45 g34 g35 S
+    let del12 := del12_sp a0 b0 h0 a2 b2 h2 s t
+    let m := -U4 * del12
+    let K := S * (h2 - h0) * D0
+    (K * P4 * U4 * qA4 + S * P4 * m) * R24 +
+      (m * P4 * (1 - t)) * Q4n +
+      (K * (h2 - 1) * D0 * P4 * (1 - t) + m * P4 * t) * Q5n +
+      (K * h2 * P4 * U4 ^ 2) * R23 +
+      (K * G4 * U4 * qA4 + S * G4 * m) * R12 =
+      -K * S ^ 2 * (h2 - 1) * D0 * P4 * G4 * G55 := by
+  intro S D0 G4 P4 P5 U4 U5 qA4 P2 D234 R24 Q4n Q5n R23 R12 del12 m K
+  let R21 := Row_sp (P2 - s) (D234 - t) h2 (1 - t) t G44 G55 g45 g34 g35 S
+  have hge := cert_FB_CQ1_ge a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35
+  have hB1 : S * P4 * R24 + P4 * (1 - t) * Q4n + P4 * t * Q5n + S * G4 * R12 + K * R21 = 0 := by
+    have bG44 : S * P4 * ((P2 - S) * (-U4)) + P4 * (1 - t) * ((-S) * (-U4)) +
+        S * G4 * ((s - P2) * ((1 - t) * P5 - s * P4)) + K * ((P2 - s) * (1 - t)) = 0 := by
+      dsimp only [S, K, D0, G4, P4, P5, U4, P2, S_sp, D0_sp, G4_sp, G5_sp, DG5_sp, D023_sp,
+        P4C_sp, P5C_sp, U4_sp, P2_sp]; ring
+    have bG55 : S * P4 * (D234 * (-U5)) + P4 * t * ((-S) * (-U5)) +
+        S * G4 * ((t - D234) * (t * P5 + (s - 1) * P4)) + K * ((D234 - t) * t) = 0 := by
+      dsimp only [S, K, D0, G4, P4, P5, U5, D234, S_sp, D0_sp, G4_sp, G5_sp, DG4_sp, DG5_sp,
+        D023_sp, P4C_sp, P5C_sp, U5_sp, D234_sp]; ring
+    have bg45 : S * P4 * ((P2 - S) * (-U5) + D234 * (-U4)) + P4 * (1 - t) * ((-S) * (-U5)) +
+        P4 * t * ((-S) * (-U4)) +
+        S * G4 * ((s - P2) * (t * P5 + (s - 1) * P4) + (t - D234) * ((1 - t) * P5 - s * P4)) +
+        K * ((P2 - s) * t + (D234 - t) * (1 - t)) = 0 := by
+      dsimp only [S, K, D0, G4, P4, P5, U4, U5, P2, D234, S_sp, D0_sp, G4_sp, G5_sp, DG4_sp,
+        DG5_sp, D023_sp, P4C_sp, P5C_sp, U4_sp, U5_sp, P2_sp, D234_sp]; ring
+    have bg34 : S * P4 * (S * h2 * (-U4)) + S * G4 * (S * (-h2) * ((1 - t) * P5 - s * P4)) +
+        K * (S * h2 * (1 - t)) = 0 := by
+      dsimp only [S, K, D0, G4, P4, P5, U4, S_sp, D0_sp, G4_sp, G5_sp, DG5_sp, D023_sp,
+        P4C_sp, P5C_sp, U4_sp]; ring
+    have bg35 : S * P4 * (S * h2 * (-U5)) + S * G4 * (S * (-h2) * (t * P5 + (s - 1) * P4)) +
+        K * (S * h2 * t) = 0 := by
+      dsimp only [S, K, D0, G4, P4, P5, U5, S_sp, D0_sp, G4_sp, G5_sp, DG4_sp, DG5_sp, D023_sp,
+        P4C_sp, P5C_sp, U5_sp]; ring
+    dsimp only [R24, Q4n, Q5n, R12, R21, Row_sp]
+    linear_combination G44 * bG44 + G55 * bG55 + g45 * bg45 + g34 * bg34 + g35 * bg35
+  linear_combination K * hge + m * hB1
+
+end S2
+
+section S2Close
+
+/-- **`S2` closing `Prop` (`del12 ≥ 0`)** on `G*`. -/
+theorem cert_FB_CQ1_ge_false
+    {a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35 : ℝ}
+    (hh2 : 1 < h2) (_ht0 : 0 < t) (ht1 : t < 1)
+    (hU4 : 0 < U4_sp a0 b0 h0 a2 b2 h2 s t)
+    (hG4 : 0 < G4_sp b0 h0 b2 h2)
+    (hqA4 : 0 < qA4_sp a2 b2 s t)
+    (hD0 : 0 < D0_sp a0 b0 a2 b2)
+    (hP4 : 0 < P4C_sp b0 h0 b2 h2)
+    (hS : 0 < S_sp s t) (hG55 : 0 < G55)
+    (hdel : 0 ≤ del12_sp a0 b0 h0 a2 b2 h2 s t)
+    (hR24 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t - S_sp s t) (D234_sp a2 b2 h2 s t) h2
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hQ5n : 0 ≤ Row_sp 0 (-S_sp s t) 0
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hR21 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t - s) (D234_sp a2 b2 h2 s t - t) h2
+      (1 - t) t G44 G55 g45 g34 g35 (S_sp s t))
+    (hR23 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t) (D234_sp a2 b2 h2 s t) (h2 - 1)
+      (1 - t) t G44 G55 g45 g34 g35 (S_sp s t))
+    (hR12 : 0 ≤ Row_sp (s - P2_sp a2 b2 h2 s t) (t - D234_sp a2 b2 h2 s t) (-h2)
+      ((1 - t) * P5C_sp a0 h0 a2 h2 - s * P4C_sp b0 h0 b2 h2)
+      (t * P5C_sp a0 h0 a2 h2 + (s - 1) * P4C_sp b0 h0 b2 h2) G44 G55 g45 g34 g35 (S_sp s t)) :
+    False := by
+  have hid := cert_FB_CQ1_ge a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35
+  dsimp only at hid
+  have c1 : 0 ≤ P4C_sp b0 h0 b2 h2 * U4_sp a0 b0 h0 a2 b2 h2 s t * qA4_sp a2 b2 s t :=
+    by positivity
+  have c2 : 0 ≤ (h2 - 1) * D0_sp a0 b0 a2 b2 * P4C_sp b0 h0 b2 h2 * (1 - t) :=
+    mul_nonneg (mul_nonneg (mul_nonneg (sub_nonneg.mpr hh2.le) hD0.le) hP4.le) (sub_nonneg.mpr ht1.le)
+  have c3 : 0 ≤ U4_sp a0 b0 h0 a2 b2 h2 s t * del12_sp a0 b0 h0 a2 b2 h2 s t :=
+    mul_nonneg hU4.le hdel
+  have c4 : 0 ≤ h2 * P4C_sp b0 h0 b2 h2 * U4_sp a0 b0 h0 a2 b2 h2 s t ^ 2 := by positivity
+  have c5 : 0 ≤ G4_sp b0 h0 b2 h2 * U4_sp a0 b0 h0 a2 b2 h2 s t * qA4_sp a2 b2 s t :=
+    by positivity
+  have hrhs : -(S_sp s t ^ 2 * (h2 - 1) * D0_sp a0 b0 a2 b2 * P4C_sp b0 h0 b2 h2 *
+      G4_sp b0 h0 b2 h2 * G55) < 0 := by
+    have hp : 0 < S_sp s t ^ 2 * (h2 - 1) * D0_sp a0 b0 a2 b2 * P4C_sp b0 h0 b2 h2 *
+        G4_sp b0 h0 b2 h2 * G55 :=
+      mul_pos (mul_pos (mul_pos (mul_pos (mul_pos (sq_pos_of_pos hS) (sub_pos.mpr hh2)) hD0) hP4) hG4) hG55
+    linarith
+  have h1 := mul_nonneg c1 hR24
+  have h2' := mul_nonneg c2 hQ5n
+  have h3 := mul_nonneg c3 hR21
+  have h4 := mul_nonneg c4 hR23
+  have h5 := mul_nonneg c5 hR12
+  linarith
+
+/-- **`S2` closing `Prop` (`del12 < 0`)** on `G*`. -/
+theorem cert_FB_CQ1_lt_false
+    {a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35 : ℝ}
+    (hh2 : 1 < h2) (hh0 : h0 < 1) (ht0 : 0 < t) (ht1 : t < 1)
+    (hU4 : 0 < U4_sp a0 b0 h0 a2 b2 h2 s t)
+    (hG4 : 0 < G4_sp b0 h0 b2 h2)
+    (hqA4 : 0 < qA4_sp a2 b2 s t)
+    (hD0 : 0 < D0_sp a0 b0 a2 b2)
+    (hP4 : 0 < P4C_sp b0 h0 b2 h2)
+    (hS : 0 < S_sp s t) (hG55 : 0 < G55)
+    (hdel : del12_sp a0 b0 h0 a2 b2 h2 s t < 0)
+    (hR24 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t - S_sp s t) (D234_sp a2 b2 h2 s t) h2
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hQ4n : 0 ≤ Row_sp (-S_sp s t) 0 0
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hQ5n : 0 ≤ Row_sp 0 (-S_sp s t) 0
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hR23 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t) (D234_sp a2 b2 h2 s t) (h2 - 1)
+      (1 - t) t G44 G55 g45 g34 g35 (S_sp s t))
+    (hR12 : 0 ≤ Row_sp (s - P2_sp a2 b2 h2 s t) (t - D234_sp a2 b2 h2 s t) (-h2)
+      ((1 - t) * P5C_sp a0 h0 a2 h2 - s * P4C_sp b0 h0 b2 h2)
+      (t * P5C_sp a0 h0 a2 h2 + (s - 1) * P4C_sp b0 h0 b2 h2) G44 G55 g45 g34 g35 (S_sp s t)) :
+    False := by
+  have hid := cert_FB_CQ1_lt a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35
+  dsimp only at hid
+  have hm : 0 < -U4_sp a0 b0 h0 a2 b2 h2 s t * del12_sp a0 b0 h0 a2 b2 h2 s t := by
+    nlinarith
+  have hh20 : 0 < h2 - h0 := by linarith
+  have hh21 : 0 < h2 - 1 := by linarith
+  have ht1' : 0 < 1 - t := by linarith
+  have hK : 0 < S_sp s t * (h2 - h0) * D0_sp a0 b0 a2 b2 := by positivity
+  have c1 : 0 ≤ S_sp s t * (h2 - h0) * D0_sp a0 b0 a2 b2 * P4C_sp b0 h0 b2 h2 *
+      U4_sp a0 b0 h0 a2 b2 h2 s t * qA4_sp a2 b2 s t +
+      S_sp s t * P4C_sp b0 h0 b2 h2 * (-U4_sp a0 b0 h0 a2 b2 h2 s t * del12_sp a0 b0 h0 a2 b2 h2 s t) := by
+    positivity
+  have c2 : 0 ≤ -U4_sp a0 b0 h0 a2 b2 h2 s t * del12_sp a0 b0 h0 a2 b2 h2 s t *
+      P4C_sp b0 h0 b2 h2 * (1 - t) := by
+    positivity
+  have c3 : 0 ≤ S_sp s t * (h2 - h0) * D0_sp a0 b0 a2 b2 * (h2 - 1) * D0_sp a0 b0 a2 b2 *
+      P4C_sp b0 h0 b2 h2 * (1 - t) +
+      -U4_sp a0 b0 h0 a2 b2 h2 s t * del12_sp a0 b0 h0 a2 b2 h2 s t * P4C_sp b0 h0 b2 h2 * t := by
+    positivity
+  have c4 : 0 ≤ S_sp s t * (h2 - h0) * D0_sp a0 b0 a2 b2 * h2 * P4C_sp b0 h0 b2 h2 *
+      U4_sp a0 b0 h0 a2 b2 h2 s t ^ 2 := by
+    positivity
+  have c5 : 0 ≤ S_sp s t * (h2 - h0) * D0_sp a0 b0 a2 b2 * G4_sp b0 h0 b2 h2 *
+      U4_sp a0 b0 h0 a2 b2 h2 s t * qA4_sp a2 b2 s t +
+      S_sp s t * G4_sp b0 h0 b2 h2 * (-U4_sp a0 b0 h0 a2 b2 h2 s t * del12_sp a0 b0 h0 a2 b2 h2 s t) := by
+    positivity
+  have hrhs : -(S_sp s t * (h2 - h0) * D0_sp a0 b0 a2 b2 * S_sp s t ^ 2 * (h2 - 1) *
+      D0_sp a0 b0 a2 b2 * P4C_sp b0 h0 b2 h2 * G4_sp b0 h0 b2 h2 * G55) < 0 := by
+    have hp : 0 < (S_sp s t * (h2 - h0) * D0_sp a0 b0 a2 b2) * S_sp s t ^ 2 * (h2 - 1) *
+        D0_sp a0 b0 a2 b2 * P4C_sp b0 h0 b2 h2 * G4_sp b0 h0 b2 h2 * G55 :=
+      mul_pos (mul_pos (mul_pos (mul_pos (mul_pos (mul_pos hK (sq_pos_of_pos hS))
+        (sub_pos.mpr hh2)) hD0) hP4) hG4) hG55
+    linarith
+  have h1 := mul_nonneg c1 hR24
+  have h2' := mul_nonneg c2 hQ4n
+  have h3 := mul_nonneg c3 hQ5n
+  have h4 := mul_nonneg c4 hR23
+  have h5 := mul_nonneg c5 hR12
+  linarith
+
+/-- **`S2` combined closing `Prop`** on `G*` for both signs of `del12`. -/
+theorem cert_FB_CQ1_false
+    {a0 b0 h0 a2 b2 h2 s t G44 G55 g45 g34 g35 : ℝ}
+    (hh2 : 1 < h2) (hh0 : h0 < 1) (ht0 : 0 < t) (ht1 : t < 1)
+    (hU4 : 0 < U4_sp a0 b0 h0 a2 b2 h2 s t)
+    (_hU5 : 0 < U5_sp a0 b0 h0 a2 b2 h2 s t)
+    (hG4 : 0 < G4_sp b0 h0 b2 h2)
+    (_hb0h0 : 0 < 1 - b0 - h0)
+    (hqA4 : 0 < qA4_sp a2 b2 s t)
+    (hD0 : 0 < D0_sp a0 b0 a2 b2)
+    (hP4 : 0 < P4C_sp b0 h0 b2 h2)
+    (hS : 0 < S_sp s t) (hG55 : 0 < G55)
+    (hR24 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t - S_sp s t) (D234_sp a2 b2 h2 s t) h2
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hQ4n : 0 ≤ Row_sp (-S_sp s t) 0 0
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hQ5n : 0 ≤ Row_sp 0 (-S_sp s t) 0
+      (-U4_sp a0 b0 h0 a2 b2 h2 s t) (-U5_sp a0 b0 h0 a2 b2 h2 s t) G44 G55 g45 g34 g35 (S_sp s t))
+    (hR21 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t - s) (D234_sp a2 b2 h2 s t - t) h2
+      (1 - t) t G44 G55 g45 g34 g35 (S_sp s t))
+    (hR23 : 0 ≤ Row_sp (P2_sp a2 b2 h2 s t) (D234_sp a2 b2 h2 s t) (h2 - 1)
+      (1 - t) t G44 G55 g45 g34 g35 (S_sp s t))
+    (hR12 : 0 ≤ Row_sp (s - P2_sp a2 b2 h2 s t) (t - D234_sp a2 b2 h2 s t) (-h2)
+      ((1 - t) * P5C_sp a0 h0 a2 h2 - s * P4C_sp b0 h0 b2 h2)
+      (t * P5C_sp a0 h0 a2 h2 + (s - 1) * P4C_sp b0 h0 b2 h2) G44 G55 g45 g34 g35 (S_sp s t)) :
+    False := by
+  by_cases hdel : 0 ≤ del12_sp a0 b0 h0 a2 b2 h2 s t
+  · exact cert_FB_CQ1_ge_false hh2 ht0 ht1 hU4 hG4 hqA4 hD0 hP4 hS hG55 hdel hR24 hQ5n hR21 hR23 hR12
+  · exact cert_FB_CQ1_lt_false hh2 hh0 ht0 ht1 hU4 hG4 hqA4 hD0 hP4 hS hG55 (lt_of_not_ge hdel)
+      hR24 hQ4n hQ5n hR23 hR12
+
+end S2Close
+
+section S2Geometry
+
+open scoped RealInnerProductSpace
+
+private theorem nf29_q_coords {x : Fin 7 → ℝ³} (N : NF29 x) :
+    let S := S_sp N.s N.t
+    (S • (x 0 - x 6) = D035_sp N.a0 N.b0 N.h0 N.s N.t • (x 4 - x 6) +
+      P0_sp N.a0 N.b0 N.h0 N.s N.t • (x 5 - x 6) + (S * N.h0) • (x 3 - x 6)) ∧
+    (S • (x 1 - x 6) = N.s • (x 4 - x 6) + N.t • (x 5 - x 6)) ∧
+    (S • (x 2 - x 6) = P2_sp N.a2 N.b2 N.h2 N.s N.t • (x 4 - x 6) +
+      D234_sp N.a2 N.b2 N.h2 N.s N.t • (x 5 - x 6) + (S * N.h2) • (x 3 - x 6)) := by
+  dsimp only [S_sp, D035_sp, P0_sp, P2_sp, D234_sp]
+  rw [N.x0, N.x1, N.x2, N.x3, N.x4, N.x5, N.x6]
+  simp only [nfP]
+  refine ⟨?_, ?_, ?_⟩ <;> module
+
+/-- **Geometry bridge**: for `v = v4 • (x 4 - x 6) + v5 • (x 5 - x 6)` in plane `Q`,
+`Row_sp` equals `S * ⟪x i - x j, v⟫` via `qpencil_depth_split`. -/
+theorem nf29_row_eq_inner {x : Fin 7 → ℝ³} (N : NF29 x) (v4 v5 : ℝ)
+    {i j : Fin 7} {q4i q5i Yi q4j q5j Yj : ℝ}
+    (hi : S_sp N.s N.t • (x i - x 6) = q4i • (x 4 - x 6) + q5i • (x 5 - x 6) +
+      (S_sp N.s N.t * Yi) • (x 3 - x 6))
+    (hj : S_sp N.s N.t • (x j - x 6) = q4j • (x 4 - x 6) + q5j • (x 5 - x 6) +
+      (S_sp N.s N.t * Yj) • (x 3 - x 6)) :
+    let v := v4 • (x 4 - x 6) + v5 • (x 5 - x 6)
+    Row_sp (q4i - q4j) (q5i - q5j) (Yi - Yj) v4 v5
+      ⟪x 4 - x 6, x 4 - x 6⟫ ⟪x 5 - x 6, x 5 - x 6⟫ ⟪x 4 - x 6, x 5 - x 6⟫
+      ⟪x 3 - x 6, x 4 - x 6⟫ ⟪x 3 - x 6, x 5 - x 6⟫ (S_sp N.s N.t) =
+      S_sp N.s N.t * ⟪x i - x j, v⟫ := by
+  intro v
+  have hsub : S_sp N.s N.t • (x i - x j) =
+      (S_sp N.s N.t * (Yi - Yj)) • (x 3 - x 6) +
+      (q4i - q4j) • (x 4 - x 6) + (q5i - q5j) • (x 5 - x 6) := by
+    have h0 : S_sp N.s N.t • (x i - x j) =
+        S_sp N.s N.t • (x i - x 6) - S_sp N.s N.t • (x j - x 6) := by module
+    rw [h0, hi, hj]; module
+  have hsp := qpencil_depth_split (x 3) (x 4) (x 5) (x 6)
+    (S_sp N.s N.t * (Yi - Yj)) (q4i - q4j) (q5i - q5j) v4 v5
+  dsimp only at hsp
+  have h1 : S_sp N.s N.t * ⟪x i - x j, v⟫ = ⟪S_sp N.s N.t • (x i - x j), v⟫ := by
+    rw [real_inner_smul_left]
+  rw [h1, hsub]
+  change _ = ⟪(S_sp N.s N.t * (Yi - Yj)) • (x 3 - x 6) + (q4i - q4j) • (x 4 - x 6) +
+      (q5i - q5j) • (x 5 - x 6), v⟫
+  rw [hsp]
+  dsimp only [Row_sp]
+  simp only [inner_add_left, inner_add_right, real_inner_smul_left, real_inner_smul_right,
+    real_inner_comm (x 5 - x 6) (x 4 - x 6)]
+  ring
+
+/-- **Geometric `C_Q1 × W14 × F-B` closure on `G*`** for `NF29 x` (`K1a` branch `N.a2 < 0`). -/
+theorem cert_FB_CQ1_NF29_false {x : Fin 7 → ℝ³} (N : NF29 x) (ha2 : N.a2 < 0)
+    (hh2 : 1 < N.h2) (hh0 : N.h0 < 1) (ht1 : N.t < 1)
+    (hU4 : 0 < U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+    (hU5 : 0 < U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+    (hG4 : 0 < G4_sp N.b0 N.h0 N.b2 N.h2)
+    (hb0h0 : 0 < 1 - N.b0 - N.h0)
+    (hQ24 : ⟪x 4 - x 6, (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 4 - x 6) +
+        (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 5 - x 6)⟫ ≤
+      ⟪x 2 - x 6, (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 4 - x 6) +
+        (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 5 - x 6)⟫)
+    (hQ40 : ⟪x 4 - x 6, (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 4 - x 6) +
+        (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 5 - x 6)⟫ ≤ 0)
+    (hQ50 : ⟪x 5 - x 6, (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 4 - x 6) +
+        (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) • (x 5 - x 6)⟫ ≤ 0)
+    (hW12 : ⟪x 1 - x 6, (1 - N.t) • (x 4 - x 6) + N.t • (x 5 - x 6)⟫ ≤
+      ⟪x 2 - x 6, (1 - N.t) • (x 4 - x 6) + N.t • (x 5 - x 6)⟫)
+    (hW32 : ⟪x 3 - x 6, (1 - N.t) • (x 4 - x 6) + N.t • (x 5 - x 6)⟫ ≤
+      ⟪x 2 - x 6, (1 - N.t) • (x 4 - x 6) + N.t • (x 5 - x 6)⟫)
+    (hFB : ⟪x 2 - x 6, ((1 - N.t) * P5C_sp N.a0 N.h0 N.a2 N.h2 - N.s * P4C_sp N.b0 N.h0 N.b2 N.h2) • (x 4 - x 6) +
+        (N.t * P5C_sp N.a0 N.h0 N.a2 N.h2 + (N.s - 1) * P4C_sp N.b0 N.h0 N.b2 N.h2) • (x 5 - x 6)⟫ ≤
+      ⟪x 1 - x 6, ((1 - N.t) * P5C_sp N.a0 N.h0 N.a2 N.h2 - N.s * P4C_sp N.b0 N.h0 N.b2 N.h2) • (x 4 - x 6) +
+        (N.t * P5C_sp N.a0 N.h0 N.a2 N.h2 + (N.s - 1) * P4C_sp N.b0 N.h0 N.b2 N.h2) • (x 5 - x 6)⟫) :
+    False := by
+  have hS : 0 < S_sp N.s N.t := sub_pos.mpr N.hst
+  have hD0 : 0 < D0_sp N.a0 N.b0 N.a2 N.b2 := N.hDD
+  have hP4 : 0 < P4C_sp N.b0 N.h0 N.b2 N.h2 := by
+    dsimp [P4C_sp]; linarith [N.hF4]
+  have hqA4 : 0 < qA4_sp N.a2 N.b2 N.s N.t := by
+    dsimp [qA4_sp]
+    have ht1' : 0 < 1 - N.t := sub_pos.mpr ht1
+    nlinarith [mul_pos (neg_pos.mpr ha2) ht1', mul_pos (neg_pos.mpr N.hb2) N.hs]
+  have hG55 : 0 < ⟪x 5 - x 6, x 5 - x 6⟫ :=
+    real_inner_self_pos.mpr (sub_ne_zero.mpr (fun h => absurd (N.inj h) (by decide)))
+  have hqc := nf29_q_coords N
+  dsimp only at hqc
+  have h3c : S_sp N.s N.t • (x 3 - x 6) =
+      (0 : ℝ) • (x 4 - x 6) + (0 : ℝ) • (x 5 - x 6) + (S_sp N.s N.t * 1) • (x 3 - x 6) := by module
+  have h6c : S_sp N.s N.t • (x 6 - x 6) =
+      (0 : ℝ) • (x 4 - x 6) + (0 : ℝ) • (x 5 - x 6) + (S_sp N.s N.t * 0) • (x 3 - x 6) := by module
+  have h1c : S_sp N.s N.t • (x 1 - x 6) =
+      N.s • (x 4 - x 6) + N.t • (x 5 - x 6) + (S_sp N.s N.t * 0) • (x 3 - x 6) := by
+    rw [hqc.2.1]; module
+  have h4c : S_sp N.s N.t • (x 4 - x 6) =
+      S_sp N.s N.t • (x 4 - x 6) + (0 : ℝ) • (x 5 - x 6) + (S_sp N.s N.t * 0) • (x 3 - x 6) := by
+    module
+  have h5c : S_sp N.s N.t • (x 5 - x 6) =
+      (0 : ℝ) • (x 4 - x 6) + S_sp N.s N.t • (x 5 - x 6) + (S_sp N.s N.t * 0) • (x 3 - x 6) := by
+    module
+  have h2c : S_sp N.s N.t • (x 2 - x 6) =
+      P2_sp N.a2 N.b2 N.h2 N.s N.t • (x 4 - x 6) +
+      D234_sp N.a2 N.b2 N.h2 N.s N.t • (x 5 - x 6) + (S_sp N.s N.t * N.h2) • (x 3 - x 6) := hqc.2.2
+  have e24 := nf29_row_eq_inner N (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+    (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) (i := 2) (j := 4)
+    (q4j := S_sp N.s N.t) (q5j := 0) (Yj := 0) h2c h4c
+  have e64 := nf29_row_eq_inner N (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+    (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) (i := 6) (j := 4)
+    (q4i := 0) (q5i := 0) (Yi := 0) (q4j := S_sp N.s N.t) (q5j := 0) (Yj := 0) h6c h4c
+  have e65 := nf29_row_eq_inner N (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+    (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) (i := 6) (j := 5)
+    (q4i := 0) (q5i := 0) (Yi := 0) (q4j := 0) (q5j := S_sp N.s N.t) (Yj := 0) h6c h5c
+  have e21 := nf29_row_eq_inner N (1 - N.t) N.t (i := 2) (j := 1)
+    (q4j := N.s) (q5j := N.t) (Yj := 0) h2c h1c
+  have e23 := nf29_row_eq_inner N (1 - N.t) N.t (i := 2) (j := 3)
+    (q4j := 0) (q5j := 0) (Yj := 1) h2c h3c
+  have e12 := nf29_row_eq_inner N
+    ((1 - N.t) * P5C_sp N.a0 N.h0 N.a2 N.h2 - N.s * P4C_sp N.b0 N.h0 N.b2 N.h2)
+    (N.t * P5C_sp N.a0 N.h0 N.a2 N.h2 + (N.s - 1) * P4C_sp N.b0 N.h0 N.b2 N.h2)
+    (i := 1) (j := 2) (q4i := N.s) (q5i := N.t) (Yi := 0) h1c h2c
+  simp only [sub_zero, zero_sub] at e24 e64 e65 e21 e23 e12
+  have r24 : 0 ≤ Row_sp (P2_sp N.a2 N.b2 N.h2 N.s N.t - S_sp N.s N.t) (D234_sp N.a2 N.b2 N.h2 N.s N.t) N.h2
+      (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+      ⟪x 4 - x 6, x 4 - x 6⟫ ⟪x 5 - x 6, x 5 - x 6⟫ ⟪x 4 - x 6, x 5 - x 6⟫
+      ⟪x 3 - x 6, x 4 - x 6⟫ ⟪x 3 - x 6, x 5 - x 6⟫ (S_sp N.s N.t) := by
+    rw [e24, show x 2 - x 4 = (x 2 - x 6) - (x 4 - x 6) by abel, inner_sub_left]
+    exact mul_nonneg hS.le (sub_nonneg.mpr hQ24)
+  have q4n : 0 ≤ Row_sp (-S_sp N.s N.t) 0 0
+      (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+      ⟪x 4 - x 6, x 4 - x 6⟫ ⟪x 5 - x 6, x 5 - x 6⟫ ⟪x 4 - x 6, x 5 - x 6⟫
+      ⟪x 3 - x 6, x 4 - x 6⟫ ⟪x 3 - x 6, x 5 - x 6⟫ (S_sp N.s N.t) := by
+    rw [e64, show x 6 - x 4 = -(x 4 - x 6) by abel, inner_neg_left]
+    exact mul_nonneg hS.le (neg_nonneg.mpr hQ40)
+  have q5n : 0 ≤ Row_sp 0 (-S_sp N.s N.t) 0
+      (-U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) (-U5_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t)
+      ⟪x 4 - x 6, x 4 - x 6⟫ ⟪x 5 - x 6, x 5 - x 6⟫ ⟪x 4 - x 6, x 5 - x 6⟫
+      ⟪x 3 - x 6, x 4 - x 6⟫ ⟪x 3 - x 6, x 5 - x 6⟫ (S_sp N.s N.t) := by
+    rw [e65, show x 6 - x 5 = -(x 5 - x 6) by abel, inner_neg_left]
+    exact mul_nonneg hS.le (neg_nonneg.mpr hQ50)
+  have r21 : 0 ≤ Row_sp (P2_sp N.a2 N.b2 N.h2 N.s N.t - N.s) (D234_sp N.a2 N.b2 N.h2 N.s N.t - N.t) N.h2
+      (1 - N.t) N.t ⟪x 4 - x 6, x 4 - x 6⟫ ⟪x 5 - x 6, x 5 - x 6⟫ ⟪x 4 - x 6, x 5 - x 6⟫
+      ⟪x 3 - x 6, x 4 - x 6⟫ ⟪x 3 - x 6, x 5 - x 6⟫ (S_sp N.s N.t) := by
+    rw [e21, show x 2 - x 1 = (x 2 - x 6) - (x 1 - x 6) by abel, inner_sub_left]
+    exact mul_nonneg hS.le (sub_nonneg.mpr hW12)
+  have r23 : 0 ≤ Row_sp (P2_sp N.a2 N.b2 N.h2 N.s N.t) (D234_sp N.a2 N.b2 N.h2 N.s N.t) (N.h2 - 1)
+      (1 - N.t) N.t ⟪x 4 - x 6, x 4 - x 6⟫ ⟪x 5 - x 6, x 5 - x 6⟫ ⟪x 4 - x 6, x 5 - x 6⟫
+      ⟪x 3 - x 6, x 4 - x 6⟫ ⟪x 3 - x 6, x 5 - x 6⟫ (S_sp N.s N.t) := by
+    rw [e23, show x 2 - x 3 = (x 2 - x 6) - (x 3 - x 6) by abel, inner_sub_left]
+    exact mul_nonneg hS.le (sub_nonneg.mpr hW32)
+  have r12 : 0 ≤ Row_sp (N.s - P2_sp N.a2 N.b2 N.h2 N.s N.t) (N.t - D234_sp N.a2 N.b2 N.h2 N.s N.t) (-N.h2)
+      ((1 - N.t) * P5C_sp N.a0 N.h0 N.a2 N.h2 - N.s * P4C_sp N.b0 N.h0 N.b2 N.h2)
+      (N.t * P5C_sp N.a0 N.h0 N.a2 N.h2 + (N.s - 1) * P4C_sp N.b0 N.h0 N.b2 N.h2)
+      ⟪x 4 - x 6, x 4 - x 6⟫ ⟪x 5 - x 6, x 5 - x 6⟫ ⟪x 4 - x 6, x 5 - x 6⟫
+      ⟪x 3 - x 6, x 4 - x 6⟫ ⟪x 3 - x 6, x 5 - x 6⟫ (S_sp N.s N.t) := by
+    rw [e12, show x 1 - x 2 = (x 1 - x 6) - (x 2 - x 6) by abel, inner_sub_left]
+    exact mul_nonneg hS.le (sub_nonneg.mpr hFB)
+  exact cert_FB_CQ1_false hh2 hh0 N.ht ht1 hU4 hU5 hG4 hb0h0 hqA4 hD0 hP4 hS hG55
+    r24 q4n q5n r21 r23 r12
+
+end S2Geometry
+
 end Minimality.NF29

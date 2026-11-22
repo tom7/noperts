@@ -1448,6 +1448,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.t1_D_closed
 #print axioms Minimality.NF29.syz_012_14_Q
 #print axioms Minimality.NF29.cert_FB_CQ5_pos_eta5_pos
+#print axioms Minimality.NF29.cert_FB_CQ1_ge
+#print axioms Minimality.NF29.cert_FB_CQ1_lt
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ1_ge_false
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ1_lt_false
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ1_false
+#assert_standard_axioms Minimality.NF29.nf29_row_eq_inner
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ1_NF29_false
 #assert_standard_axioms Minimality.T24.A20.w63_syzygy
 #assert_standard_axioms Minimality.T24.A20.u07_alphaBound_id
 #assert_standard_axioms Minimality.T24.A20.z2_w63_eq
