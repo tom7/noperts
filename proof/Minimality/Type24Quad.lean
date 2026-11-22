@@ -24,7 +24,8 @@ open Finset
 namespace Minimality.T24.Q24
 
 open Minimality Minimality.H21 Minimality.H24.SAT Minimality.T24.SAT Minimality.T24.RCell
-  Minimality.LexCell Minimality.Split Minimality.T24.A15 Minimality.NF29
+  Minimality.LexCell Minimality.Split Minimality.T24.A15
+open Minimality.GenQuad (FrontDet)
 
 /-! ### Clause helpers -/
 

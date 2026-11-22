@@ -24,26 +24,11 @@ set_option relaxedAutoImplicit false
 open scoped RealInnerProductSpace
 open Finset
 open Minimality Minimality.Gen Minimality.LexCell Minimality.H21 Minimality.H29
+open Minimality.GenQuad (FrontDet)
 
 namespace Minimality.NF29
 
 variable {x : Fin 7 → ℝ³}
-
-/-- `p q` in front of `r s` along `b`, as sign conditions on four `det3` values (either orientation). -/
-def FrontDet (p q r s b : ℝ³) : Prop :=
-  (0 < Split.det3 (p - q) (r - s) b ∧ 0 ≤ Split.det3 (s - q) (r - s) b ∧
-    Split.det3 (s - q) (r - s) b ≤ Split.det3 (p - q) (r - s) b ∧
-    0 ≤ -Split.det3 (p - q) (s - q) b ∧ -Split.det3 (p - q) (s - q) b ≤ Split.det3 (p - q) (r - s) b ∧
-    Split.det3 (p - q) (r - s) (s - q) < 0) ∨
-  (Split.det3 (p - q) (r - s) b < 0 ∧ Split.det3 (s - q) (r - s) b ≤ 0 ∧
-    Split.det3 (p - q) (r - s) b ≤ Split.det3 (s - q) (r - s) b ∧
-    -Split.det3 (p - q) (s - q) b ≤ 0 ∧ Split.det3 (p - q) (r - s) b ≤ -Split.det3 (p - q) (s - q) b ∧
-    0 < Split.det3 (p - q) (r - s) (s - q))
-
-theorem FrontDet.frontOf {p q r s b : ℝ³} (h : FrontDet p q r s b) : GenQuad.FrontOf p q r s b := by
-  rcases h with ⟨h1, h2, h3, h4, h5, h6⟩ | ⟨h1, h2, h3, h4, h5, h6⟩
-  · exact GenQuad.frontOf_of_det h1 h2 h3 h4 h5 h6
-  · exact GenQuad.frontOf_of_det_neg h1 h2 h3 h4 h5 h6
 
 /-! ## U023Q'-exact -/
 local macro "u023x_fac_val " N:term:max : tactic =>

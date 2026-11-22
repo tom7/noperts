@@ -277,4 +277,20 @@ theorem clauses_six {p : ZMod 6 → ℝ³} {b d1 d2 : ℝ³}
     interval_cases a <;> interval_cases b <;> interval_cases c <;> interval_cases d <;>
       first | omega | (simpa using hA0123) | (simpa using hB0123) | (simpa using hA0124) | (simpa using hB0124) | (simpa using hA0125) | (simpa using hB0125) | (simpa using hA0134) | (simpa using hB0134) | (simpa using hA0135) | (simpa using hB0135) | (simpa using hA0145) | (simpa using hB0145) | (simpa using hA0234) | (simpa using hB0234) | (simpa using hA0235) | (simpa using hB0235) | (simpa using hA0245) | (simpa using hB0245) | (simpa using hA0345) | (simpa using hB0345) | (simpa using hA1234) | (simpa using hB1234) | (simpa using hA1235) | (simpa using hB1235) | (simpa using hA1245) | (simpa using hB1245) | (simpa using hA1345) | (simpa using hB1345) | (simpa using hA2345) | (simpa using hB2345)
 
+/-- `p q` in front of `r s` along `b`, as sign conditions on four `det3` values (either orientation). -/
+def FrontDet (p q r s b : ℝ³) : Prop :=
+  (0 < Split.det3 (p - q) (r - s) b ∧ 0 ≤ Split.det3 (s - q) (r - s) b ∧
+    Split.det3 (s - q) (r - s) b ≤ Split.det3 (p - q) (r - s) b ∧
+    0 ≤ -Split.det3 (p - q) (s - q) b ∧ -Split.det3 (p - q) (s - q) b ≤ Split.det3 (p - q) (r - s) b ∧
+    Split.det3 (p - q) (r - s) (s - q) < 0) ∨
+  (Split.det3 (p - q) (r - s) b < 0 ∧ Split.det3 (s - q) (r - s) b ≤ 0 ∧
+    Split.det3 (p - q) (r - s) b ≤ Split.det3 (s - q) (r - s) b ∧
+    -Split.det3 (p - q) (s - q) b ≤ 0 ∧ Split.det3 (p - q) (r - s) b ≤ -Split.det3 (p - q) (s - q) b ∧
+    0 < Split.det3 (p - q) (r - s) (s - q))
+
+theorem FrontDet.frontOf {p q r s b : ℝ³} (h : FrontDet p q r s b) : FrontOf p q r s b := by
+  rcases h with ⟨h1, h2, h3, h4, h5, h6⟩ | ⟨h1, h2, h3, h4, h5, h6⟩
+  · exact frontOf_of_det h1 h2 h3 h4 h5 h6
+  · exact frontOf_of_det_neg h1 h2 h3 h4 h5 h6
+
 end Minimality.GenQuad
