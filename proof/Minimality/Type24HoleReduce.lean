@@ -388,6 +388,66 @@ theorem hole24R'''_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   have hR := hole24R_of_hole24R' h.1.1
   exact hR.2.2.2.2.1 (A20.e23_closes_mu23_pos F hR.1 hb3 hmu hgen)
 
+/-- Further shrunken residual of `Hole24R''''` removing generic wall points
+`{1 < oblX6 x 3, mustar x = 0}` via `A20.w63_closes_wall` and
+`{1 < oblX2 x 3, mu23 x = 0}` via `A20.e23_closes_wall`. -/
+def Hole24R5 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R'''' x F ∧
+    ¬ (1 < oblX6 x 3 ∧ A20.mustar x = 0 ∧
+      ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+        ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) ∧
+    ¬ (1 < oblX2 x 3 ∧ A20.mu23 x = 0 ∧
+      ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+        ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫)
+
+/-- Every point of `Hole24R''''` reduces to `Hole24R5`. -/
+theorem hole24R4_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R'''' x F) : Hole24R5 x F := by
+  refine ⟨h, ?_, ?_⟩
+  · rintro ⟨hc3, hmu, hgen⟩
+    have hR := hole24R_of_hole24R' h.1.1.1
+    exact hR.2.2.2.2.1 (A20.w63_closes_wall F hR.1 hc3 hmu hgen)
+  · rintro ⟨hb3, hmu, hgen⟩
+    have hR := hole24R_of_hole24R' h.1.1.1
+    exact hR.2.2.2.2.1 (A20.e23_closes_wall F hR.1 hb3 hmu hgen)
+
+/-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, be ≤ 1, al ≤ 1}` (where `al, be` are the `par2546_quad`
+coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`), any point of
+`Hole24 x fs (mkFac24 fs hh)` (with `Hole24R5`) off `Hole24Q45Special` lies in the `w63` or `E23`
+tie locus on `{0, 2, 3, 4, 5, 6}`.
+Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R''''`, `Hole24R'''`, and `Hole24R5`. -/
+theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
+    (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
+    (hH : Hole24Flags x fs ∧ (Hole24Q45Special x (mkFac24 fs hh) ∨ Hole24R5 x (mkFac24 fs hh)))
+    (hb3 : 1 < oblX2 x 3) (hc3 : 1 < oblX6 x 3)
+    {al be : ℝ} (halp : 0 < al) (hbep : 0 < be)
+    (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
+    (hbe : be ≤ 1) (hal : al ≤ 1)
+    (hnotQ : ¬ Hole24Q45Special x (mkFac24 fs hh)) :
+    (∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
+    (∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
+  rcases hH with ⟨hflags, hQ | hR5⟩
+  · exact absurd hQ hnotQ
+  · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
+    · left
+      by_contra hno
+      push Not at hno
+      rcases eq_or_lt_of_le hmu with hzero | hpos
+      · exact hR5.2.1 ⟨hc3, hzero.symm, hno⟩
+      · exact hR5.1.1.1.2 ⟨hc3, hpos, fun i hi j hj hij =>
+          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
+    · right
+      by_contra hno
+      push Not at hno
+      rcases eq_or_lt_of_le hmu23 with hzero | hpos
+      · exact hR5.2.2 ⟨hb3, hzero.symm, hno⟩
+      · exact hR5.1.2 ⟨hb3, hpos, fun i hi j hj hij =>
+          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
+
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, be < 1, al < 1}` (where `al, be` are the `par2546_quad`
 coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`), any point of
 `Hole24 x fs (mkFac24 fs hh)` off `Hole24Q45Special` lies in the `w63` or `E23` tie locus.
@@ -395,7 +455,7 @@ Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R''''.2 : ¬(1 < b3 ∧ 0 < mu2
 and `Hole24R'''.1.2 : ¬(1 < c3 ∧ 0 < mustar ∧ hgen_w63)`. -/
 theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
-    (hH : Hole24Flags x fs ∧ (Hole24Q45Special x (mkFac24 fs hh) ∨ Hole24R'''' x (mkFac24 fs hh)))
+    (hH : Hole24Flags x fs ∧ (Hole24Q45Special x (mkFac24 fs hh) ∨ Hole24R5 x (mkFac24 fs hh)))
     (hb3 : 1 < oblX2 x 3) (hc3 : 1 < oblX6 x 3)
     {al be : ℝ} (halp : 0 < al) (hbep : 0 < be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
@@ -405,23 +465,23 @@ theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
       i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
     (∃ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
       i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
-  rcases hH with ⟨hflags, hQ | hR4⟩
+  rcases hH with ⟨hflags, hQ | hR5⟩
   · exact absurd hQ hnotQ
   · rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · left
       by_contra hno
       push Not at hno
-      exact hR4.1.1.2 ⟨hc3, hmu, hno⟩
+      exact hR5.1.1.1.2 ⟨hc3, hmu, hno⟩
     · right
       by_contra hno
       push Not at hno
-      exact hR4.2 ⟨hb3, hmu23, hno⟩
+      exact hR5.1.2 ⟨hb3, hmu23, hno⟩
 
-/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24R` shrunk to `Hole24R''''`. -/
+/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24R` shrunk to `Hole24R5`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R'''' x F)
+  Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R5 x F)
 
-/-- Main Type-24 reduction leaving `Hole24` (with `Hole24R''''`). -/
+/-- Main Type-24 reduction leaving `Hole24` (with `Hole24R5`). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -453,6 +513,6 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
   · exact Or.inr ⟨hh, hflags, Or.inl hQ⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
-    · exact Or.inr ⟨hh, hflags, Or.inr (hole24R'''_reduce (hole24R''_reduce (hole24R'_reduce hR')))⟩
+    · exact Or.inr ⟨hh, hflags, Or.inr (hole24R4_reduce (hole24R'''_reduce (hole24R''_reduce (hole24R'_reduce hR'))))⟩
 
 end Minimality.T24
