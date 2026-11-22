@@ -33,6 +33,7 @@ import Minimality.CSLCorner
 import Minimality.Type24QuadW02
 import Minimality.Type24TieCover
 import Minimality.Type24TieCover2
+import Minimality.Type24TieSigma
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1213,6 +1214,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Q24.lexAny_T25_0536_tilt
 #assert_standard_axioms Minimality.T24.Q24.lexAny_T25_01635_tilt
 #assert_standard_axioms Minimality.T24.Q24.lexAny_T25_05346_tilt
+#assert_standard_axioms Minimality.T24.Q24.lexAny_T26_2536
+#assert_standard_axioms Minimality.T24.Q24.kill26_2536
+#assert_standard_axioms Minimality.T24.Q24.tieCover_0536_2536
+#assert_standard_axioms Minimality.T24.Q24.tieCover_01635_2536
+#assert_standard_axioms Minimality.T24.Q24.facet8_T25
+#assert_standard_axioms Minimality.T24.Q24.facet8_T26
+#assert_standard_axioms Minimality.T24.Q24.a4_le_of_not_half
+#assert_standard_axioms Minimality.T24.Q24.c1_lt_one
 #print axioms Minimality.T24.Q24.lexAny_w02_ppp
 #print axioms Minimality.T24.Q24.lexAny_w02_pmm
 #print axioms Minimality.T24.Q24.lexAny_w02_pmp
