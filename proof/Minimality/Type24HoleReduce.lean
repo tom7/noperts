@@ -9,6 +9,7 @@ public import Minimality.Type24Wlog
 public import Minimality.Type24BSharp
 public import Minimality.Type24BUstar2
 public import Minimality.Type24W63Radon
+public import Minimality.Type24C3One
 
 @[expose] public section
 
@@ -349,11 +350,31 @@ theorem hole24R'_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   have hR := hole24R_of_hole24R' h
   exact hR.2.2.2.2.1 (A20.w63_closes_mustar_pos F hR.1 hc3 hmu hgen)
 
-/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24R` shrunk to `Hole24R''`. -/
-def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R'' x F)
+/-- Further shrunken residual of `Hole24R''` removing generic `{c3 = 1}` stratum points satisfying
+the four sample inequalities (`hc4`, `hh4_bd`, `hs_B`, `h1234`) via `A20.c3eq1_closed`. -/
+def Hole24R''' (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R'' x F ∧
+    ¬ (oblX6 x 3 = 1 ∧ oblX6 x 4 ≤ 1 ∧
+      0 ≤ (oblX6 x 4 - 1) * (omega3 x + 1) + A20.h236 x 4 ∧
+      0 ≤ (omega3 x + 1) * (oblX0 x 3 * oblX6 x 4 - oblX0 x 4) + A20.h236 x 4 ∧
+      oblX0 x 3 * oblX6 x 4 ≤ oblX0 x 4 ∧
+      ∀ i ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
+        ∀ j ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫)
 
-/-- Main Type-24 reduction leaving `Hole24` (with `Hole24R''`). -/
+/-- Every point of `Hole24R''` reduces to `Hole24R'''`. -/
+theorem hole24R''_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R'' x F) : Hole24R''' x F := by
+  refine ⟨h, ?_⟩
+  rintro ⟨hc3, hc4, hh4_bd, hs_B, h1234, hgen⟩
+  have hR := hole24R_of_hole24R' h.1
+  exact hR.2.2.2.2.1 (A20.c3eq1_closed F hR.1 hc3 hc4 hh4_bd hs_B h1234 hgen)
+
+/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24R` shrunk to `Hole24R'''`. -/
+def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R''' x F)
+
+/-- Main Type-24 reduction leaving `Hole24` (with `Hole24R'''`). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -385,6 +406,6 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
   · exact Or.inr ⟨hh, hflags, Or.inl hQ⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
-    · exact Or.inr ⟨hh, hflags, Or.inr (hole24R'_reduce hR')⟩
+    · exact Or.inr ⟨hh, hflags, Or.inr (hole24R''_reduce (hole24R'_reduce hR'))⟩
 
 end Minimality.T24
