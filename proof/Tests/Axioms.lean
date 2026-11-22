@@ -38,6 +38,7 @@ import Minimality.M4iType24
 import Minimality.Type24Regions
 import Minimality.Type24A1Bridge
 import Minimality.M4jType24
+import Minimality.Type24A1Frame
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1257,3 +1258,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.t25_tilt_frame
 #assert_standard_axioms Minimality.T24.A19.e12_neg6
 #assert_standard_axioms Minimality.T24.A19.e12_neg6_fo
+#assert_standard_axioms Minimality.T24.A1.frame5_exists
+#assert_standard_axioms Minimality.T24.A1.x6_frame
+#assert_standard_axioms Minimality.T24.A1.x1_frame
+#assert_standard_axioms Minimality.T24.A1.x4_frame
+#assert_standard_axioms Minimality.T24.A1.rim_pair_lemma
+#assert_standard_axioms Minimality.T24.A1.u07_front
+#assert_standard_axioms Minimality.T24.A1.csl24_h16
+#assert_standard_axioms Minimality.T24.A1.csl24_h16_of_region
+#assert_standard_axioms Minimality.T24.A1.bT26_frame_gen
+#assert_standard_axioms Minimality.T24.A1.bT26_frame
+#assert_standard_axioms Minimality.T24.A1.c1_frame_link
+#assert_standard_axioms Minimality.T24.A1.frame_c1_lt_one
