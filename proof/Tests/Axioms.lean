@@ -22,6 +22,7 @@ import Minimality.Type29Quad
 import Minimality.GenQuad
 import Minimality.Type29Exact
 import Minimality.Chi29
+import Minimality.M4fType24
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1138,6 +1139,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A12.isRupert_of_E3426
 #assert_standard_axioms Minimality.T24.A12.splitAny24_E3412
 #assert_standard_axioms Minimality.T24.A12.isRupert_of_E3412
+#assert_standard_axioms Minimality.T24.A15.u37_eq
+#assert_standard_axioms Minimality.T24.A15.u37_e37b
+#assert_standard_axioms Minimality.T24.A15.u37_bound
+#assert_standard_axioms Minimality.T24.A15.u37_tie
+#assert_standard_axioms Minimality.T24.A15.lexAny_or_split_E3426_full
 #print axioms Minimality.T24.A12.tie1_bound
 #print axioms Minimality.T24.A12.lexAny_or_split_E3426
 #print axioms Minimality.T24.A12.isRupert_of_E3426
