@@ -2,7 +2,6 @@ module
 
 public import Minimality.Type24ROff
 public import Minimality.Type24ROffTieA
-public import Minimality.Type24ROffTieB
 
 @[expose] public section
 

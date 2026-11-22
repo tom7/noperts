@@ -1354,5 +1354,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.t26c_of_region
 #assert_standard_axioms Minimality.T24.A1.t26d_of_region
 #assert_standard_axioms Minimality.T24.A1.c13_c63_pos_of_region
+#assert_standard_axioms Minimality.T24.A1.t25_01635b_of_region
+#assert_standard_axioms Minimality.T24.A1.t16_04_of_region
+#assert_standard_axioms Minimality.T24.A1.t16_06_of_region
+#assert_standard_axioms Minimality.T24.A1.t16_07_of_region
+#assert_standard_axioms Minimality.T24.A1.t16_13_of_region
 #assert_standard_axioms Minimality.T24.A1.a1TieSample_of_small
 #assert_standard_axioms Minimality.T24.A1.a1_tie_rupert_small
