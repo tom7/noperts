@@ -1436,6 +1436,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.H29.hole29_of_hole29'
 #assert_standard_axioms Minimality.H29.hole29_reduce
 #assert_standard_axioms Minimality.H29.type29_rupert_or_hole'
+#assert_standard_axioms Minimality.H29.gstar_FB_residual
+#assert_standard_axioms Minimality.H29.hole29_of_hole29''
+#assert_standard_axioms Minimality.H29.hole29'_reduce
+#assert_standard_axioms Minimality.H29.type29_rupert_or_hole''
 #assert_standard_axioms Minimality.T24.A10.ustar_sharp
 #assert_standard_axioms Minimality.T24.A10.ustar_closed_W26_full
 #assert_standard_axioms Minimality.T24.A10.v31_frontDiag
