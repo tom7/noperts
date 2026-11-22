@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type29TSAT.TTop
 public import Minimality.LevelCorner
+public import Minimality.CSLCorner
 public import Minimality.Oct9Par
 public import Minimality.BadViews
 public import Minimality.Type29SAT.Nf
@@ -22,7 +23,7 @@ lists `unitsK1a`, `clausesK1` and the reduction `nf29_K1_Z_of_core` of the strat
 set_option autoImplicit false
 open scoped RealInnerProductSpace
 open Finset
-open Minimality Minimality.H21 Minimality.H29.SAT
+open Minimality Minimality.H21 Minimality.H29.SAT Minimality.CSLCorner
 
 namespace Minimality.H29K1
 open Minimality.H29T.SAT
@@ -34,61 +35,6 @@ def CornerZ (x : Fin 7 → ℝ³) : Prop :=
   ⟪x 3 - x 6, x 4 - x 6⟫ = 0 ∧ ⟪x 3 - x 6, x 5 - x 6⟫ = 0 ∧ ⟪x 4 - x 6, x 5 - x 6⟫ = 0
 
 /-! ### Part 1: geometry -/
-
-theorem cross_ne_zero_of_orth {a b : ℝ³} (ha : a ≠ 0) (hb : b ≠ 0) (hab : ⟪a, b⟫ = 0) :
-    cross a b ≠ 0 := by
-  intro h
-  have hb' := eq_smul_of_cross_eq_zero ha h
-  have hba : ⟪b, a⟫ = 0 := by rw [real_inner_comm]; exact hab
-  rw [hba, zero_div, zero_smul] at hb'
-  exact hb hb'
-
-/-- Two vectors orthogonal to the same independent pair are parallel, in the form of an identity. -/
-theorem par_id {a b e N : ℝ³} (hc : cross a b ≠ 0) (he1 : ⟪e, a⟫ = 0) (he2 : ⟪e, b⟫ = 0)
-    (hN1 : ⟪N, a⟫ = 0) (hN2 : ⟪N, b⟫ = 0) (y : ℝ³) :
-    ⟪y, e⟫ * ⟪e, N⟫ = ⟪e, e⟫ * ⟪y, N⟫ := by
-  obtain ⟨s, rfl⟩ := eq_smul_cross_of_perp hc he1 he2
-  obtain ⟨t, rfl⟩ := eq_smul_cross_of_perp hc hN1 hN2
-  simp only [real_inner_smul_left, real_inner_smul_right]; ring
-
-theorem fac_zero (F : S0xFac 9 s0x_S29 x) {t : Fin 9} {i j : Fin 7} (hi : i ∈ s0x_S29 t)
-    (hj : j ∈ s0x_S29 t) : ⟪F.N t, x i - x j⟫ = 0 := by
-  rw [F.inner_sub, F.zero t i hi, F.zero t j hj]; ring
-
-theorem fac_neg (F : S0xFac 9 s0x_S29 x) {t : Fin 9} {i j : Fin 7} (hi : i ∉ s0x_S29 t)
-    (hj : j ∈ s0x_S29 t) : ⟪F.N t, x i - x j⟫ < 0 := by
-  rw [F.inner_sub, F.zero t j hj]; have := F.neg t i hi; linarith
-
-theorem fac_le (F : S0xFac 9 s0x_S29 x) {t : Fin 9} (i : Fin 7) {j : Fin 7}
-    (hj : j ∈ s0x_S29 t) : ⟪F.N t, x i - x j⟫ ≤ 0 := by
-  rw [F.inner_sub, F.zero t j hj]; have := F.le t i; linarith
-
-theorem sub_ne_of_ne (F : S0xFac 9 s0x_S29 x) {i j : Fin 7} (h : i ≠ j) : x i - x j ≠ 0 :=
-  sub_ne_zero.2 (fun e => h (inj_of_fac F e))
-
-/-- The edge `x J - x 6` of the corner is parallel to the normal of a facet `t` through `6, M, K` that misses `J`:
-signs transfer (`⟪y, e⟫` has the sign opposite to `⟪N t, y⟫`). -/
-theorem edge_par (F : S0xFac 9 s0x_S29 x) (J M K : Fin 7) (t : Fin 9) (hM6 : M ≠ 6) (hK6 : K ≠ 6)
-    (hJK : ⟪x J - x 6, x K - x 6⟫ = 0) (hJM : ⟪x J - x 6, x M - x 6⟫ = 0)
-    (hMK : ⟪x M - x 6, x K - x 6⟫ = 0)
-    (hM : M ∈ s0x_S29 t) (hK : K ∈ s0x_S29 t) (h6 : (6 : Fin 7) ∈ s0x_S29 t) (hJ : J ∉ s0x_S29 t) :
-    ⟪x J - x 6, F.N t⟫ < 0 ∧
-      ∀ y : ℝ³, ⟪y, x J - x 6⟫ * ⟪x J - x 6, F.N t⟫ = ⟪x J - x 6, x J - x 6⟫ * ⟪y, F.N t⟫ := by
-  have hc := cross_ne_zero_of_orth (sub_ne_of_ne F hM6) (sub_ne_of_ne F hK6) hMK
-  have hlt : ⟪x J - x 6, F.N t⟫ < 0 := by rw [real_inner_comm]; exact fac_neg F hJ h6
-  refine ⟨hlt, par_id hc hJM hJK ?_ ?_⟩
-  · exact fac_zero F hM h6
-  · exact fac_zero F hK h6
-
-/-- Sign transfer, in the three forms used. -/
-theorem sign_tr {a b c d : ℝ} (h : a * b = c * d) (hb : b < 0) (hc : 0 < c) :
-    (d ≤ 0 → 0 ≤ a) ∧ (d < 0 → 0 < a) ∧ (d = 0 → a = 0) := by
-  refine ⟨fun hd => ?_, fun hd => ?_, fun hd => ?_⟩
-  · by_contra ha; rw [not_le] at ha; nlinarith [mul_pos_of_neg_of_neg ha hb, mul_nonpos_of_nonneg_of_nonpos hc.le hd]
-  · by_contra ha; rw [not_lt] at ha; nlinarith [mul_nonneg_of_nonpos_of_nonpos ha hb.le, mul_neg_of_pos_of_neg hc hd]
-  · rw [hd, mul_zero] at h; rcases mul_eq_zero.1 h with h | h
-    · exact h
-    · exact absurd h hb.ne
 
 /-- **The Corner Slide Lemma at the trirectangular corner `6` of a type 29 shape.**  `J, M, K` are the three
 corner neighbours, `tg` the triangular facet `6 J M`, `te` a facet through `6, M, K` missing `J` (so its normal is
@@ -105,44 +51,11 @@ theorem csl29 (F : S0xFac 9 s0x_S29 x) (J M K : Fin 7) (tg te tf : Fin 9)
     (hNj : ∀ i : Fin 7, i.val < 3 → i ∉ s0x_S29 te → ⟪x i - x J, x J - x 6⟫ < 0)
     (q : Fin 7) (hOm : 0 < ⟪x q - x M, x M - x 6⟫) :
     IsRupert (univ.image x) := by
-  obtain ⟨heN, hepar⟩ := edge_par F J M K te hM6 hK6 hJK hJM hMK hte.1 hte.2.1 hte.2.2.1 hte.2.2.2
-  have hMJ : ⟪x M - x 6, x J - x 6⟫ = 0 := by rw [real_inner_comm]; exact hJM
-  obtain ⟨hfN, hfpar⟩ := edge_par F M J K tf hJ6 hK6 hMK hMJ hJK htf.1 htf.2.1 htf.2.2.1 htf.2.2.2
-  have hee : 0 < ⟪x J - x 6, x J - x 6⟫ := real_inner_self_pos.2 (sub_ne_of_ne F hJ6)
-  have hff : 0 < ⟪x M - x 6, x M - x 6⟫ := real_inner_self_pos.2 (sub_ne_of_ne F hM6)
-  have hgJ : J ∈ s0x_S29 tg := (hg J).2 (Or.inl rfl)
-  have hgM : M ∈ s0x_S29 tg := (hg M).2 (Or.inr (Or.inl rfl))
-  have hg6 : (6 : Fin 7) ∈ s0x_S29 tg := (hg 6).2 (Or.inr (Or.inr rfl))
-  refine Minimality.Split.Corner.corner_euclid x 6 J M (x J - x 6) (x M - x 6) (-F.N tg) rfl rfl
-    (sub_ne_of_ne F hJ6) (sub_ne_of_ne F hM6) ?_ hJM ?_ ?_ ?_ ?_ ?_ ⟨q, ?_⟩
-  · intro h
-    have := fac_neg F hKg hg6
-    rw [neg_eq_zero.1 h, inner_zero_left] at this
-    exact lt_irrefl 0 this
-  · rw [inner_neg_right, real_inner_comm, fac_zero F hgJ hg6, neg_zero]
-  · rw [inner_neg_right, real_inner_comm, fac_zero F hgM hg6, neg_zero]
-  · intro i h1 h2 h3
-    have hi : i ∉ s0x_S29 tg := by
-      rw [hg]; rintro (h | h | h)
-      exacts [h2 h, h3 h, h1 h]
-    rw [inner_neg_right, real_inner_comm]; linarith [fac_neg F hi hg6]
-  · intro i
-    refine ⟨(sign_tr (hepar _) heN hee).1 ?_, (sign_tr (hfpar _) hfN hff).1 ?_⟩
-    · rw [real_inner_comm]; exact fac_le F i hte.2.2.1
-    · rw [real_inner_comm]; exact fac_le F i htf.2.2.1
-  · intro i hiJ
-    have key : ⟪x i - x 6, x J - x 6⟫ - ⟪x J - x 6, x J - x 6⟫ = ⟪x i - x J, x J - x 6⟫ := by
-      rw [← inner_sub_left]; congr 1; abel
-    by_cases hi : i ∈ s0x_S29 te
-    · have : ⟪x i - x 6, x J - x 6⟫ = 0 := (sign_tr (hepar _) heN hee).2.2 (by
-        rw [real_inner_comm]; exact fac_zero F hi hte.2.2.1)
-      linarith
-    · by_cases h3 : i.val < 3
-      · linarith [hNj i h3 hi]
-      · exact absurd (hte3 i (by omega) hi) hiJ
-  · have key : ⟪x q - x 6, x M - x 6⟫ - ⟪x M - x 6, x M - x 6⟫ = ⟪x q - x M, x M - x 6⟫ := by
-      rw [← inner_sub_left]; congr 1; abel
-    linarith
+  refine csl_corner F (inj_of_fac F) 6 J M K tg te tf hJ6 hM6 hK6 hJM hJK hMK hg hKg hte htf ?_ q hOm
+  intro i hi hiJ
+  by_cases h3 : i.val < 3
+  · exact hNj i h3 hi
+  · exact absurd (hte3 i (by omega) hi) hiJ
 
 /-- **The Level Corner Slide Lemma at the trirectangular corner `6`.**  As `csl29`, and: the wall facet `te` is
 exactly `{Wv, M, K, 6}`; the deep vertex `P < 3` (off `te` and off `tf`) is level with `J` (`⟪N te, x P - x J⟫ = 0`);
@@ -164,16 +77,16 @@ theorem lcsl29 (F : S0xFac 9 s0x_S29 x) (J M K P Wv : Fin 7) (tg te tf : Fin 9)
   have hteK : K ∈ s0x_S29 te := (hte K).2 (Or.inr (Or.inr (Or.inl rfl)))
   have hte6 : (6 : Fin 7) ∈ s0x_S29 te := (hte 6).2 (Or.inr (Or.inr (Or.inr rfl)))
   have hteW : Wv ∈ s0x_S29 te := (hte Wv).2 (Or.inl rfl)
-  obtain ⟨heN, hepar⟩ := edge_par F J M K te hM6 hK6 hJK hJM hMK hteM hteK hte6 hJte
+  obtain ⟨heN, hepar⟩ := edge_par F (inj_of_fac F) 6 J M K te hM6 hK6 hJK hJM hMK hteM hteK hte6 hJte
   have hMJ : ⟪x M - x 6, x J - x 6⟫ = 0 := by rw [real_inner_comm]; exact hJM
-  obtain ⟨hfN, hfpar⟩ := edge_par F M J K tf hJ6 hK6 hMK hMJ hJK htf.1 htf.2.1 htf.2.2.1 htf.2.2.2
-  have hee : 0 < ⟪x J - x 6, x J - x 6⟫ := real_inner_self_pos.2 (sub_ne_of_ne F hJ6)
-  have hff : 0 < ⟪x M - x 6, x M - x 6⟫ := real_inner_self_pos.2 (sub_ne_of_ne F hM6)
+  obtain ⟨hfN, hfpar⟩ := edge_par F (inj_of_fac F) 6 M J K tf hJ6 hK6 hMK hMJ hJK htf.1 htf.2.1 htf.2.2.1 htf.2.2.2
+  have hee : 0 < ⟪x J - x 6, x J - x 6⟫ := real_inner_self_pos.2 (sub_ne_of_ne (inj_of_fac F) hJ6)
+  have hff : 0 < ⟪x M - x 6, x M - x 6⟫ := real_inner_self_pos.2 (sub_ne_of_ne (inj_of_fac F) hM6)
   have hgJ : J ∈ s0x_S29 tg := (hg J).2 (Or.inl rfl)
   have hgM : M ∈ s0x_S29 tg := (hg M).2 (Or.inr (Or.inl rfl))
   have hg6 : (6 : Fin 7) ∈ s0x_S29 tg := (hg 6).2 (Or.inr (Or.inr rfl))
   refine Minimality.Split.LevelCorner.level_corner_euclid x 6 J M P Wv (x J - x 6) (x M - x 6) (-F.N tg)
-    rfl rfl (sub_ne_of_ne F hJ6) (sub_ne_of_ne F hM6) ?_ hJM ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    rfl rfl (sub_ne_of_ne (inj_of_fac F) hJ6) (sub_ne_of_ne (inj_of_fac F) hM6) ?_ hJM ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
   · intro h
     have := fac_neg F hKg hg6
     rw [neg_eq_zero.1 h, inner_zero_left] at this

@@ -800,14 +800,55 @@ theorem wp_k4 {x : Fin 7 → ℝ³} {d1 : ℝ³} {δ γ : ℝ}
   rw [E13] at h'
   nlinarith [mul_pos hδ E33]
 
+/-- SIGMA1 §1: on `rim 05346 / 016435` (`⟪F.N 8, bT25 x⟫ < 0`), `c63 ≥ 1` with `p4, c61, c62 > 0` implies `1 < q4`. -/
+theorem q4_gt_one_of_facet8 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    {p4 q4 c61 c62 c63 : ℝ}
+    (hx4 : x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5))
+    (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+    (hp4 : 0 < p4) (hc61 : 0 < c61) (hc62 : 0 < c62) (hc63 : 1 ≤ c63)
+    (h8 : ⟪F.N 8, bT25 x⟫ < 0) : 1 < q4 := by
+  have z4 : ⟪F.N 8, x 4 - x 3⟫ = 0 := by
+    rw [F.inner_sub, F.zero 8 4 (by decide), F.zero 8 3 (by decide)]; ring
+  have z6 : ⟪F.N 8, x 6 - x 3⟫ = 0 := by
+    rw [F.inner_sub, F.zero 8 6 (by decide), F.zero 8 3 (by decide)]; ring
+  have n5 : ⟪F.N 8, x 5 - x 3⟫ < 0 := by
+    rw [F.inner_sub, F.zero 8 3 (by decide)]; have := F.neg 8 5 (by decide); linarith
+  have e53 : x 5 - x 3 = -(x 3 - x 5) := by abel
+  have e43 : x 4 - x 3 = (x 4 - x 5) - (x 3 - x 5) := by abel
+  have e63 : x 6 - x 3 = (x 6 - x 5) - (x 3 - x 5) := by abel
+  have hb : bT25 x = -(x 2 - x 5) := by simp only [bT25]; abel
+  rw [e53, inner_neg_right] at n5
+  rw [e43, hx4] at z4
+  rw [e63, hx6] at z6
+  rw [hb, inner_neg_right] at h8
+  generalize x 2 - x 5 = e1 at *
+  generalize x 0 - x 5 = e2 at *
+  generalize x 3 - x 5 = e3 at *
+  simp only [inner_add_right, inner_sub_right, inner_smul_right] at z4 z6
+  generalize ⟪F.N 8, e1⟫ = A at *
+  generalize ⟪F.N 8, e2⟫ = B at *
+  generalize ⟪F.N 8, e3⟫ = C at *
+  have h1 : p4 * (c61 * A + c62 * B + (c63 - 1) * C) - c62 * (p4 * B + (q4 - 1) * C) = 0 := by
+    linear_combination p4 * z6 - c62 * z4
+  have h2 : c62 * (q4 - 1) * C = p4 * c61 * A + p4 * (c63 - 1) * C := by linarith
+  have hpos : 0 < c62 * (q4 - 1) * C := by
+    nlinarith [mul_pos hp4 hc61, mul_nonneg hp4.le (mul_nonneg (sub_nonneg.2 hc63) (by linarith : 0 ≤ C))]
+  by_contra hle
+  rw [not_lt] at hle
+  have hle' : q4 - 1 ≤ 0 := by linarith
+  nlinarith [mul_nonpos_of_nonneg_of_nonpos (mul_pos hc62 (by linarith : 0 < C)).le hle']
+
 /-- **Tie cover, rim 05346, W' discharged.** As `tieCover_05346` but without `hW'`: the W' sub-tie
 `E13 = 0` is settled inside (T25 clause `04>36` forces `E23 > 0`, then `z3 < z5` at T26; clause `45>36` is
-contradictory), and only the corner `W = {E13 = E23 = 0}` is excluded by `hW` (the Corner Slide Lemma). -/
+contradictory), and only the corner `W = {E13 = E23 = 0}` is excluded by `hW` (the Corner Slide Lemma).
+Here `1 < q4` is deduced from `h8` and `1 ≤ c63` via `q4_gt_one_of_facet8`. -/
 theorem tieCover_05346W {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
-    {μ a δ γ p4 q4 : ℝ}
+    {μ a δ γ p4 q4 c61 c62 c63 : ℝ}
     (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
     (hb26 : bT26 x = μ • ((a - 1) • (x 2 - x 5) - a • (x 0 - x 5))) (hμ : 0 < μ) (ha : 1 < a)
-    (hx4 : x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5)) (hp4 : 0 < p4) (hq4 : 1 < q4)
+    (hx4 : x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5)) (hp4 : 0 < p4)
+    (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+    (hc61 : 0 < c61) (hc62 : 0 < c62) (hc63 : 1 ≤ c63)
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
     -- T25 leaf hypotheses
@@ -830,6 +871,7 @@ theorem tieCover_05346W {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : 
     (f3624 : FrontDet (x 3) (x 6) (x 2) (x 4) (bT26 x))
     (f3654 : FrontDet (x 3) (x 6) (x 5) (x 4) (bT26 x)) :
     LexAny F := by
+  have hq4 : 1 < q4 := q4_gt_one_of_facet8 F hx4 hx6 hp4 hc61 hc62 hc63 h8
   have hb25 : bT25 x = x 5 - x 2 := rfl
   have kill := kill26 F hb26 hμ ha hx4 hp4 (by linarith) tie g6 g7 g8 g3 g4 f2354 f2356 f2456 f3624 f3654
   have iS : ∀ u v : Fin 7, ⟪x u - x v, bT25 x⟫ = ⟪x u, bT25 x⟫ - ⟪x v, bT25 x⟫ :=

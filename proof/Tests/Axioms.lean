@@ -33,6 +33,7 @@ import Minimality.CSLCorner
 import Minimality.Type24QuadW02
 import Minimality.Type24TieCover
 import Minimality.Type24TieCover2
+import Minimality.Type24TieLex
 import Minimality.Type24TieSigma
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
@@ -1226,3 +1227,21 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.T24.Q24.lexAny_w02_pmm
 #print axioms Minimality.T24.Q24.lexAny_w02_pmp
 #print axioms Minimality.T24.Q24.lexAny_w02_ppm
+#assert_standard_axioms Minimality.T24.Q24.q4_gt_one_of_facet8
+#assert_standard_axioms Minimality.T24.Q24.lexPos3_N8_T25
+#assert_standard_axioms Minimality.T24.Q24.lexPos3_N8_T26
+#assert_standard_axioms Minimality.T24.Q24.tieCover_0536_le
+#assert_standard_axioms Minimality.T24.Q24.tieCover_01635_le
+#assert_standard_axioms Minimality.T24.Q24.tieCover_0536_2536_le
+#assert_standard_axioms Minimality.T24.Q24.tieCover_01635_2536_le
+#assert_standard_axioms Minimality.T24.Q24.tieCover_05346W_le
+#assert_standard_axioms Minimality.T24.Q24.tieCover_016435_le
+#print axioms Minimality.T24.Q24.q4_gt_one_of_facet8
+#print axioms Minimality.T24.Q24.lexPos3_N8_T25
+#print axioms Minimality.T24.Q24.lexPos3_N8_T26
+#print axioms Minimality.T24.Q24.tieCover_0536_le
+#print axioms Minimality.T24.Q24.tieCover_01635_le
+#print axioms Minimality.T24.Q24.tieCover_0536_2536_le
+#print axioms Minimality.T24.Q24.tieCover_01635_2536_le
+#print axioms Minimality.T24.Q24.tieCover_05346W_le
+#print axioms Minimality.T24.Q24.tieCover_016435_le
