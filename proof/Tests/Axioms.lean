@@ -30,6 +30,7 @@ import Minimality.M4gType24
 import Minimality.M4hType24
 import Minimality.Type24Quad
 import Minimality.CSLCorner
+import Minimality.Type24QuadW02
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1055,14 +1056,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.GenQuad.lexClause_of_frontOf
 #print axioms Minimality.GenQuad.lexClause_of_notM
 #print axioms Minimality.GenQuad.robUniLex_of_clauses
-#assert_standard_axioms Minimality.NF29.FrontDet.frontOf
+#assert_standard_axioms Minimality.GenQuad.FrontDet.frontOf
 #assert_standard_axioms Minimality.NF29.lexAny29_U023Qx_clauses
 #assert_standard_axioms Minimality.NF29.lexAny29_U023Qx
 #assert_standard_axioms Minimality.NF29.lexAny29_U023Qx8
 #assert_standard_axioms Minimality.NF29.lexAny29_W14x5
 #assert_standard_axioms Minimality.NF29.lexAny29_W14x5'
 #assert_standard_axioms Minimality.NF29.lexAny29_F012F1456
-#print axioms Minimality.NF29.FrontDet.frontOf
+#print axioms Minimality.GenQuad.FrontDet.frontOf
 #print axioms Minimality.NF29.lexAny29_U023Qx_clauses
 #print axioms Minimality.NF29.lexAny29_U023Qx
 #print axioms Minimality.NF29.lexAny29_U023Qx8
@@ -1183,3 +1184,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.T24.A12.isRupert_of_E3426
 #print axioms Minimality.T24.A12.splitAny24_E3412
 #print axioms Minimality.T24.A12.isRupert_of_E3412
+#assert_standard_axioms Minimality.T24.Q24.lexAny_w02_ppp
+#assert_standard_axioms Minimality.T24.Q24.lexAny_w02_pmm
+#assert_standard_axioms Minimality.T24.Q24.lexAny_w02_pmp
+#assert_standard_axioms Minimality.T24.Q24.lexAny_w02_ppm
+#print axioms Minimality.T24.Q24.lexAny_w02_ppp
+#print axioms Minimality.T24.Q24.lexAny_w02_pmm
+#print axioms Minimality.T24.Q24.lexAny_w02_pmp
+#print axioms Minimality.T24.Q24.lexAny_w02_ppm
