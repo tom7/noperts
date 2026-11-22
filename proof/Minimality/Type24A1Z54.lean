@@ -346,7 +346,6 @@ the `226/227` residual `4 PAh PBh >= max(0, Qalh)^2` (fails only at `r391`), plu
 `c3 < 1`, `0 < <N8, u27>` (`227/227`) that the weak-shadow bounds need. -/
 structure A1Z54Sample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
   hc3 : oblX6 x 3 < 1
-  hu8 : 0 < ⟪F.N 8, u27 x⟫
   hc45 : oblX6 x 5 < oblX6 x 4
   hQg : (z54Shape x).Qgah ≤ 0
   hQ : max 0 (z54Shape x).Qalh ^ 2 ≤ 4 * (z54Shape x).PAh * (z54Shape x).PBh
@@ -370,7 +369,7 @@ theorem z54_A1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
   have hU07 : 0 ≤ (z54Shape x).U07 (gA x) (gB x) (gal x) (gbe x) (gga x) := by
     rw [← u07_geom F]; exact u07_z40_bound F hC hS.hc3 hL
   have hU27 : 0 ≤ (z54Shape x).U27 (gB x) (gC x) (gal x) (gbe x) (gga x) := by
-    rw [← u27_geom]; exact u27_z26_bound F hC (hu3_of_region F hA1) hS.hu8 hL
+    rw [← u27_geom]; exact u27_z26_bound F hC (hu3_of_region F hA1) (hu8_of_c3 F hC hS.hc3) hL
   -- W26
   have hnC : F.f 3 (x 1) < F.f 3 (x 6) := (nC_pos_iff F).mp (nC_pos_of F ha4 ha5)
   have hnB : F.f 3 (x 2) < F.f 3 (x 1) := by
