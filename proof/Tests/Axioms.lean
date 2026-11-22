@@ -1428,5 +1428,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A10.nB_lt_nC_of_wallA5_a4lt
 #assert_standard_axioms Minimality.T24.A20.a2_band_closed_gen
 #assert_standard_axioms Minimality.T24.A20.a2_lam5_closed_of_band_gen
+#assert_standard_axioms Minimality.H29.hole29_of_hole29'
+#assert_standard_axioms Minimality.H29.hole29_reduce
+#assert_standard_axioms Minimality.H29.type29_rupert_or_hole'
 #assert_standard_axioms Minimality.T24.A10.ustar_sharp
 #assert_standard_axioms Minimality.T24.A10.ustar_closed_W26_full

@@ -41,7 +41,7 @@ public import Minimality.Type24Adj
 public import Minimality.Type24Face
 public import Minimality.Type24Hole
 public import Minimality.Type24HoleReduce
-public import Minimality.Type29Hole
+public import Minimality.Type29HoleReduce
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -1244,7 +1244,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         exact hnR (N.isRupert_K1_Z hK1 hZ)
       · by_cases hOB : inner ℝ (x 3 - x 6) (x 4 - x 6) ≤ 0 ∧ inner ℝ (x 3 - x 6) (x 5 - x 6) ≤ 0 ∧
             inner ℝ (x 4 - x 6) (x 5 - x 6) ≤ 0
-        · rcases Minimality.H29.type29_rupert_or_hole N hK1 hZ hOB with hRup | hHole
+        · rcases Minimality.H29.type29_rupert_or_hole' N hK1 hZ hOB with hRup | hHole
           · exact hnR hRup
           · exact byThm5Faces hx hN _ h3 (fun _ => sorry)
         · -- some face angle at vertex 6 is acute: the SAT route (`NF29.isRupert_K1_offOB6`)
