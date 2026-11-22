@@ -1,4 +1,5 @@
 import Minimality.Type24A1Tie
+import Minimality.Type24A1E25
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
@@ -829,5 +830,86 @@ theorem a1_tie_rupert_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       · rw [oblX0_neg']; exact hA1.1
       · simpa [facNeg] using hA1.2
     exact a1TieSample_of_small (facNeg F) hA1' hpos' hS
+
+/-- Reduced off-tie `A1E25Sample` bundle: `A1E25Sample` without the 7 T25 region front occurrences
+(`t25_01635b`, `t16_02`, `t16_04`, `t16_06`, `t16_07`, `t16_13`), proved from `Reg.A1` and `0 < det24`. -/
+structure A1E25Small (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
+  hb5_ne : ⟪F.N 1, bT25 x⟫ ≠ 0
+  hc63 : F.f 2 (x 6) ≤ F.f 2 (x 3)
+  h4 : ⟪F.N 1, bT25 x⟫ < 0 ∨ ⟪F.N 8, bT25 x⟫ < 0 → 0 < ⟪F.N 4, bT25 x⟫
+  t25_fronts_0536 : ⟪F.N 1, bT25 x⟫ < 0 → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+    FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x)
+  t25_fronts_05346 : ⟪F.N 1, bT25 x⟫ < 0 → ⟪F.N 8, bT25 x⟫ < 0 →
+    FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x) ∧
+    FrontDet (x 0) (x 4) (x 5) (x 6) (bT25 x) ∧
+    FrontDet (x 0) (x 4) (x 3) (x 6) (bT25 x) ∧
+    FrontDet (x 5) (x 4) (x 3) (x 6) (bT25 x)
+  t25_fronts_01635 : 0 < ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+    FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x) ∧
+    FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
+    FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x) ∧
+    (FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x) ∨ FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
+  t25_016435 : 0 < ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
+    (∀ {p4 q4 c61 c62 c63 : ℝ},
+      x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5) →
+      x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5) →
+      q4 ≤ c63) ∧
+    FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x) ∧
+    FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x) ∧
+    FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x) ∧
+    FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
+    FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x) ∧
+    FrontDet (x 1) (x 4) (x 6) (x 3) (bT25 x) ∧
+    FrontDet (x 1) (x 4) (x 6) (x 5) (bT25 x) ∧
+    FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x) ∧
+    FrontDet (x 4) (x 5) (x 1) (x 3) (bT25 x)
+
+theorem a1E25Sample_of_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
+    (hdet : 0 < det24 x) (hS : A1E25Small x F) : A1E25Sample x F where
+  hb5_ne := hS.hb5_ne
+  hc63 := hS.hc63
+  h4 := hS.h4
+  t25_fronts_0536 := hS.t25_fronts_0536
+  t25_fronts_05346 := hS.t25_fronts_05346
+  t25_fronts_01635 := fun h1 h8 =>
+    let ⟨a, c, d, e⟩ := hS.t25_fronts_01635 h1 h8
+    ⟨a, t25_01635b_of_region F hA1 hdet h1, c, d, e⟩
+  t25_016435 := fun h1 h8 =>
+    let ⟨hfr, f00, f01, f03, f05, f08, f09, f10, f11, f12⟩ := hS.t25_016435 h1 h8
+    ⟨hfr, f00, f01, t25_01635b_of_region F hA1 hdet h1,
+      f03, t16_04_of_region F hA1 hdet h1 h8, f05,
+      t16_06_of_region F hA1 hdet h1 h8, t16_07_of_region F hA1 hdet h1 h8,
+      f08, f09, f10, f11, f12, t16_13_of_region F hA1 hdet h1 h8⟩
+
+theorem a1_e25_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hR : Hole24R x F) (hA1 : Reg.A1 x F) (hO : H24K.SAT.OB1 x)
+    (hS : if 0 < det24 x then A1E25Small x F else A1E25Small (fun i => -x i) (facNeg F)) :
+    ⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫ := by
+  by_cases hpos : 0 < det24 x
+  · simp only [hpos, ite_true] at hS
+    exact a1_e25 F hR hA1 hO (a1E25Sample_of_small F hA1 hpos hS)
+  · simp only [hpos, ite_false] at hS
+    have hne : det24 x ≠ 0 := (type24OfFac F).det_ne
+    have hneg : det24 x < 0 := lt_of_le_of_ne (not_lt.1 hpos) hne
+    have hpos' : 0 < det24 (fun i => -x i) := by rw [det24_neg']; linarith
+    have hA1' : Reg.A1 (fun i => -x i) (facNeg F) := ⟨by rw [oblX0_neg']; exact hA1.1, by simpa [facNeg] using hA1.2⟩
+    have hO' : H24K.SAT.OB1 (fun i => -x i) := by
+      rcases hO with ⟨h02, h06, h26⟩
+      refine ⟨?_, ?_, ?_⟩ <;>
+      · simp only [show ∀ a b : Fin 7, (-x a) - (-x b) = -(x a - x b) by intro a b; abel,
+          inner_neg_left, inner_neg_right, neg_neg]
+        assumption
+    have hnLex' : ¬ LexAny (facNeg F) := fun h => hR.2.2.2.2.1 (lexAny_of_neg F h)
+    have hle := a1_e25_core (facNeg F) hnLex' hA1' hO' (a1E25Sample_of_small (facNeg F) hA1' hpos' hS)
+    simpa only [show (-x 5) - (-x 0) = -(x 5 - x 0) by abel, inner_neg_left, inner_neg_right,
+      neg_neg] using hle
+
+theorem a1_e25_lt_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hR : Hole24R x F) (hA1 : Reg.A1 x F) (hO : H24K.SAT.OB1 x)
+    (hS : if 0 < det24 x then A1E25Small x F else A1E25Small (fun i => -x i) (facNeg F))
+    (hntie : ⟪x 2 - x 5, x 5 - x 0⟫ ≠ 0) :
+    ⟪x 5, x 5 - x 0⟫ < ⟪x 2, x 5 - x 0⟫ := by
+  refine lt_of_le_of_ne (a1_e25_small F hR hA1 hO hS) ?_
+  intro heq; apply hntie; rw [inner_sub_left, heq, sub_self]
 
 end Minimality.T24.A1

@@ -425,7 +425,7 @@ private theorem q45HalfPred_of_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
   simp only [hi, neg_mul_neg, neg_eq_zero] at hq
   exact hq
 
-private theorem lexAny_of_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+theorem lexAny_of_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (h : LexAny (facNeg F)) : LexAny F := by
   rcases h with ⟨k, hk, c, U, Dn, b, d1, d2, h4, hc, hcyc, hU, hD, hR⟩
   refine ⟨k, hk, c, U, Dn, -b, -d1, -d2, h4, hc, hcyc, ?_, ?_, ?_⟩

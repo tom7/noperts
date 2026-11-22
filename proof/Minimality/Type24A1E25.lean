@@ -546,12 +546,10 @@ theorem A1TieSample.toE25Sample {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
       (hfr hx4 hx1 hx6).2.2.1,
      rest⟩
 
-/-- **Step T1 (`a1_e25`)**: `Hole24R x F`, `Reg.A1 x F`, `H24K.SAT.OB1 x`, and `A1E25Sample x F`
-force `⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫` (`z5(w05) ≤ z2(w05)`). Orientation-free (no `det24`). -/
-theorem a1_e25 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hR : Hole24R x F) (hA1 : Reg.A1 x F) (hO : H24K.SAT.OB1 x) (hS : A1E25Sample x F) :
+/-- Core of `a1_e25` taking `hnLex : ¬ LexAny F` directly. -/
+theorem a1_e25_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hnLex : ¬ LexAny F) (hA1 : Reg.A1 x F) (hO : H24K.SAT.OB1 x) (hS : A1E25Sample x F) :
     ⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫ := by
-  have hnLex := hR.2.2.2.2.1
   obtain ⟨h0, h5, h7, h3⟩ := t25_facets F
   obtain ⟨t2, t6⟩ := t25_tilt_frame F
   have hdet25 := t25_det_ne_zero F
@@ -589,6 +587,13 @@ theorem a1_e25 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
           h1_gt h3 h8_ge h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
       · exact e25_dom_01635_flip F (x 3 - x 5) (x 0 - x 5) hd1 hδ hnLex hA1.1 hO hx6 hc61_pos
           hc62_pos hc63 h1_gt h3 h8_ge h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f1365
+
+/-- **Step T1 (`a1_e25`)**: `Hole24R x F`, `Reg.A1 x F`, `H24K.SAT.OB1 x`, and `A1E25Sample x F`
+force `⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫` (`z5(w05) ≤ z2(w05)`). Orientation-free (no `det24`). -/
+theorem a1_e25 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hR : Hole24R x F) (hA1 : Reg.A1 x F) (hO : H24K.SAT.OB1 x) (hS : A1E25Sample x F) :
+    ⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫ :=
+  a1_e25_core F hR.2.2.2.2.1 hA1 hO hS
 
 /-- Strict off-tie form of `a1_e25`: `⟪x 2 - x 5, x 5 - x 0⟫ ≠ 0` yields `⟪x 5, x 5 - x 0⟫ < ⟪x 2, x 5 - x 0⟫`. -/
 theorem a1_e25_lt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
