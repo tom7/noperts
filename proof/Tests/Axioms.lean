@@ -50,6 +50,7 @@ import Minimality.Type24ROffTie
 import Minimality.Type29T1Pair
 import Minimality.Type29T1Close
 import Minimality.Type24A1Small
+import Minimality.Type24A2Band
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1356,3 +1357,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.c13_c63_pos_of_region
 #assert_standard_axioms Minimality.T24.A1.a1TieSample_of_small
 #assert_standard_axioms Minimality.T24.A1.a1_tie_rupert_small
+#assert_standard_axioms Minimality.T24.A20.w02_u27_noA
+#assert_standard_axioms Minimality.T24.A20.z_core_neg_z3
+#assert_standard_axioms Minimality.T24.A20.w02_neg_false
+#assert_standard_axioms Minimality.T24.A20.a2_band_closed
+#assert_standard_axioms Minimality.T24.A20.a2_lam5_closed_of_band
