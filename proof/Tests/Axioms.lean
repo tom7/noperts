@@ -15,6 +15,7 @@ import Minimality.Type16VW
 import Minimality.Type16Arc3B
 import Minimality.SilS0XD
 import Minimality.M4cType24
+import Minimality.M4dType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
 import Minimality.Type08S.C2K5AI
@@ -953,3 +954,23 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.T24.A8.e05q4_bound
 #print axioms Minimality.T24.A8.splitAny24_E0416
 #print axioms Minimality.T24.A8.isRupert_of_E0416
+#assert_standard_axioms Minimality.T24.A10.ustar_facings
+#assert_standard_axioms Minimality.T24.A10.splitAny24_Ustar
+#assert_standard_axioms Minimality.T24.A10.isRupert_of_Ustar
+#assert_standard_axioms Minimality.T24.A10.splitAny24_Ustar_twin
+#assert_standard_axioms Minimality.T24.A10.e25_bound
+#assert_standard_axioms Minimality.T24.A10.e25_w05
+#assert_standard_axioms Minimality.T24.A10.e25b
+#assert_standard_axioms Minimality.T24.A10.u27_bound
+#assert_standard_axioms Minimality.T24.A10.z5_gt_z4_w05
+#assert_standard_axioms Minimality.T24.A10.lexAny_or_split_E04P4U
+#print axioms Minimality.T24.A10.ustar_facings
+#print axioms Minimality.T24.A10.splitAny24_Ustar
+#print axioms Minimality.T24.A10.isRupert_of_Ustar
+#print axioms Minimality.T24.A10.splitAny24_Ustar_twin
+#print axioms Minimality.T24.A10.e25_bound
+#print axioms Minimality.T24.A10.e25_w05
+#print axioms Minimality.T24.A10.e25b
+#print axioms Minimality.T24.A10.u27_bound
+#print axioms Minimality.T24.A10.z5_gt_z4_w05
+#print axioms Minimality.T24.A10.lexAny_or_split_E04P4U
