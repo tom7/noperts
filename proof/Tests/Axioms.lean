@@ -23,6 +23,7 @@ import Minimality.GenQuad
 import Minimality.GenQuadCross
 import Minimality.Type29Exact
 import Minimality.Chi29
+import Minimality.Type29ExactFront
 import Minimality.M4fType24
 import Minimality.M4gType24
 import Minimality.M4hType24
@@ -1160,6 +1161,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Q24.lexAny_T25_0536
 #assert_standard_axioms Minimality.T24.Q24.lexAny_T25_01635
 #assert_standard_axioms Minimality.T24.Q24.lexAny_T25_05346
+#assert_standard_axioms Minimality.NF29.lexAny29_U023Qx'
+#assert_standard_axioms Minimality.NF29.lexAny29_U023Qx8'
+#assert_standard_axioms Minimality.NF29.h0256_iff_chi
+#assert_standard_axioms Minimality.NF29.hq_pos_eta
+#assert_standard_axioms Minimality.GenQuad.frontOf_of_scaled
 #print axioms Minimality.T24.A12.tie1_bound
 #print axioms Minimality.T24.A12.lexAny_or_split_E3426
 #print axioms Minimality.T24.A12.isRupert_of_E3426
