@@ -186,7 +186,7 @@ private theorem close_A2_band {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hR
     (hO : H24K.SAT.OB1 x) (hB : A2BandHyp x F) : False := by
   obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, u3, u8⟩ := hB
   rcases A20.a2_band_closed_gen F hR.1 hO b1 b2 b3 b4 b5 b6 b7 b8 b9
-      f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 u3 u8 with hL | hS
+      ⟨f1, f2, f3, f4, f5, f6, f7, f8, f9, f10⟩ u3 u8 with hL | hS
   · exact hR.2.2.2.2.1 hL
   · exact hR.2.2.2.2.2 hS
 
@@ -219,8 +219,8 @@ private theorem close_wallA5_a4lt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       by_contra hnb
       exact hnot ⟨hR, hO, h5, h4, hnu, hnb⟩
     exact close_A2_band F hR hO hB
-  rcases A10.ustar_closed_W26_full F hR.1 h5.le hU.1 (A10.dl_neg_of_wallA5 F h5) hU.2.1
-      hO.1 hO.2.1 hO.2.2 (A10.nB_lt_nC_of_wallA5_a4lt F h5 h4) hU.2.2 with hL | hS
+  rcases A10.ustar_closed_W26_full F ⟨hR.1, h5.le, hU.1, A10.dl_neg_of_wallA5 F h5, hU.2.1,
+      hO.1, hO.2.1⟩ hO.2.2 (A10.nB_lt_nC_of_wallA5_a4lt F h5 h4) hU.2.2 with hL | hS
   · exact hR.2.2.2.2.1 hL
   · exact hR.2.2.2.2.2 hS
 
@@ -228,10 +228,11 @@ private theorem close_B_ustar {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hR
     (hO : H24K.SAT.OB1 x) (ha5 : oblX0 x 5 ≤ 1)
     (hB : UstarW26Hyp x F ∨ UstarHyp x F ∨ Ustar2Hyp x F) : False := by
   rcases hB with ⟨hc3, hD, h8, hn, hz5⟩ | ⟨hc3, hD, h8, hz⟩ | ⟨hc4, hD4, hΔ, hnu, hQ, hz⟩
-  · rcases A10.ustar_closed_W26_full F hR.1 ha5 hc3 hD h8 hO.1 hO.2.1 hO.2.2 hn hz5 with hL | hS
+  · rcases A10.ustar_closed_W26_full F ⟨hR.1, ha5, hc3, hD, h8, hO.1, hO.2.1⟩
+        hO.2.2 hn hz5 with hL | hS
     · exact hR.2.2.2.2.1 hL
     · exact hR.2.2.2.2.2 hS
-  · rcases A10.ustar_collapse F hR.1 ha5 hc3 hD h8 hO.1 hO.2.1 hz with hL | hS
+  · rcases A10.ustar_collapse F ⟨hR.1, ha5, hc3, hD, h8, hO.1, hO.2.1⟩ hz with hL | hS
     · exact hR.2.2.2.2.1 hL
     · exact hR.2.2.2.2.2 hS
   · rcases A10.ustar2_collapse F hR.1 ha5 hc4 hD4 hΔ hnu hQ hO.1 hO.2.1 hz with hL | hS

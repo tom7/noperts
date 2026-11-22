@@ -484,11 +484,8 @@ theorem ustar2_z0_nonpos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hD4 : D
   have hA2 : 0 ≤ -Dl4 x + (1 - oblX6 x 4) * oblX2 x 5 := by
     nlinarith [mul_pos hc4_pos hb5]
   have hA6 : 0 ≤ (1 - oblX6 x 4) * oblX6 x 5 := (mul_pos hc4_pos hc5).le
-  rw [hus_rep, inner_add_right, inner_add_right, inner_smul_right, inner_smul_right,
-    inner_smul_right]
-  have hself : 0 ≤ ⟪x 0 - x 1, x 0 - x 1⟫ := real_inner_self_nonneg
-  nlinarith [mul_nonpos_of_nonneg_of_nonpos hself hA0n, mul_nonpos_of_nonneg_of_nonpos hA2 hab,
-    mul_nonpos_of_nonneg_of_nonpos hA6 hac]
+  rw [hus_rep]
+  exact Minimality.GenQuad.obtuse_frame hab hac hA0n hA2 hA6
 
 set_option maxHeartbeats 4000000 in
 theorem ustar2_collapse {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)

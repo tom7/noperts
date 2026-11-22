@@ -99,16 +99,70 @@ theorem ustar_z0_nonpos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hD : Dl 
   have hA2 : 0 ≤ -Dl x + (1 - oblX6 x 3) * oblX2 x 5 := by
     nlinarith [mul_pos hc3_pos hb5]
   have hA6 : 0 ≤ (1 - oblX6 x 3) * oblX6 x 5 := (mul_pos hc3_pos hc5).le
-  rw [hus_rep, inner_add_right, inner_add_right, inner_smul_right, inner_smul_right,
-    inner_smul_right]
-  have hself : 0 ≤ ⟪x 0 - x 1, x 0 - x 1⟫ := real_inner_self_nonneg
-  nlinarith [mul_nonpos_of_nonneg_of_nonpos hself hA0n, mul_nonpos_of_nonneg_of_nonpos hA2 hab,
-    mul_nonpos_of_nonneg_of_nonpos hA6 hac]
+  rw [hus_rep]
+  exact Minimality.GenQuad.obtuse_frame hab hac hA0n hA2 hA6
 
-theorem ustar_collapse {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
-    (h8 : ⟪F.N 8, ustar x⟫ < 0)
-    (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
+/-- Shared `U*` hypothesis bundle for `ustar_collapse`, `ustar_sharp`, and `ustar_closed_W26*`. -/
+structure UStarArgs (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
+  hC : CbarIn x
+  ha5 : oblX0 x 5 ≤ 1
+  hc3 : oblX6 x 3 < 1
+  hD : Dl x < 0
+  h8 : ⟪F.N 8, ustar x⟫ < 0
+  hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0
+  hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0
+
+/-- Shared `ustar` 5-rim `![1, 6, 3, 5, 2]` clause scaffolding for `ustar_collapse` and `ustar_sharp`. -/
+theorem ustar_lexAny_of_clauses {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hU : UStarArgs x F)
+    (hA0123 : Minimality.GenQuad.LexClause (x 6) (x 5) (x 1) (x 3) (ustar x) (dstar x) (x 6 - x 1))
+    (hB0123 : Minimality.GenQuad.LexClause (x 1) (x 3) (x 6) (x 5) (ustar x) (dstar x) (x 6 - x 1))
+    (hA0124 : Minimality.GenQuad.LexClause (x 6) (x 2) (x 1) (x 3) (ustar x) (dstar x) (x 6 - x 1))
+    (hB0124 : Minimality.GenQuad.LexClause (x 1) (x 3) (x 6) (x 2) (ustar x) (dstar x) (x 6 - x 1))
+    (hA0134 : Minimality.GenQuad.LexClause (x 6) (x 2) (x 1) (x 5) (ustar x) (dstar x) (x 6 - x 1))
+    (hB0134 : Minimality.GenQuad.LexClause (x 1) (x 5) (x 6) (x 2) (ustar x) (dstar x) (x 6 - x 1))
+    (hA0234 : Minimality.GenQuad.LexClause (x 3) (x 2) (x 1) (x 5) (ustar x) (dstar x) (x 6 - x 1))
+    (hB0234 : Minimality.GenQuad.LexClause (x 1) (x 5) (x 3) (x 2) (ustar x) (dstar x) (x 6 - x 1))
+    (hA1234 : Minimality.GenQuad.LexClause (x 3) (x 2) (x 6) (x 5) (ustar x) (dstar x) (x 6 - x 1))
+    (hB1234 : Minimality.GenQuad.LexClause (x 6) (x 5) (x 3) (x 2) (ustar x) (dstar x) (x 6 - x 1)) :
+    Minimality.Gen.LexAny F := by
+  have hfac := ustar_facings F hU.hC hU.ha5 hU.hc3 hU.hD
+  have hd2_0 : ⟪F.N 2, dstar x⟫ < 0 := by
+    dsimp [dstar]
+    rw [inner_sub_right, inner_smul_right, ← F.hN 2 (x 2) (x 0), ← F.hN 2 (x 0) (x 1)]
+    have h22 : F.f 2 (x 2) = 0 := F.zero 2 2 (by decide)
+    have h20 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
+    have h21 : F.f 2 (x 1) < 0 := F.neg 2 1 (by decide)
+    linarith
+  let c : ZMod 5 → Fin 7 := ![1, 6, 3, 5, 2]
+  have hc_inj : Function.Injective c := by
+    intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)
+  have hcyc : S0xCycUD s0x_S24 c ({5, 6, 7} : Finset (Fin 9)) ({0, 1, 2, 3, 4, 8} : Finset (Fin 9)) := by
+    unfold S0xCycUD; decide
+  have hUset : ∀ t ∈ ({5, 6, 7} : Finset (Fin 9)),
+      LexPos3 ⟪F.N t, ustar x⟫ ⟪F.N t, dstar x⟫ ⟪F.N t, x 6 - x 1⟫ := by
+    intro t ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl
+    · exact Or.inl hfac.2.2.2.2.2.1
+    · exact Or.inl hfac.2.2.2.2.2.2.1
+    · exact Or.inl hfac.2.2.2.2.2.2.2
+  have hD' : ∀ t ∈ ({0, 1, 2, 3, 4, 8} : Finset (Fin 9)),
+      LexPos3 (-⟪F.N t, ustar x⟫) (-⟪F.N t, dstar x⟫) (-⟪F.N t, x 6 - x 1⟫) := by
+    intro t ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl | rfl | rfl | rfl
+    · exact Or.inl (by linarith [hfac.1])
+    · exact Or.inl (by linarith [hfac.2.1])
+    · exact Or.inr ⟨by simp [hfac.2.2.1], Or.inl (by linarith [hd2_0])⟩
+    · exact Or.inl (by linarith [hfac.2.2.2.1])
+    · exact Or.inl (by linarith [hfac.2.2.2.2.1])
+    · exact Or.inl (by linarith [hU.h8])
+  refine Minimality.GenQuad.lexAny_of_clauses F (k := 5) (by norm_num) hc_inj hcyc
+    (ustar x) (dstar x) (x 6 - x 1) hUset hD' ?_
+  refine Minimality.GenQuad.clauses_five (p := fun i => x (c i))
+    hA0123 hB0123 hA0124 hB0124 hA0134 hB0134 hA0234 hB0234 hA1234 hB1234
+
+theorem ustar_collapse {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hU : UStarArgs x F)
     (hz : max 0 ⟪x 6 - x 1, ustar x⟫ < min ⟪x 3 - x 1, ustar x⟫ ⟪x 5 - x 1, ustar x⟫) :
     Minimality.Gen.LexAny F ∨ SplitAny24 F := by
   have T := type24OfFac F
@@ -116,10 +170,10 @@ theorem ustar_collapse {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   by_cases h2 : max 0 ⟪x 6 - x 1, ustar x⟫ < ⟪x 2 - x 1, ustar x⟫
-  · exact Or.inr (splitAny24_Ustar F hC ha5 hc3 hD h8 (lt_min h2 hz))
+  · exact Or.inr (splitAny24_Ustar F hU.hC hU.ha5 hU.hc3 hU.hD hU.h8 (lt_min h2 hz))
   left
   push Not at h2
-  have hz0 := ustar_z0_nonpos F hD hc3 hab hac
+  have hz0 := ustar_z0_nonpos F hU.hD hU.hc3 hU.hab hU.hac
   have hz3 : max 0 ⟪x 6 - x 1, ustar x⟫ < ⟪x 3 - x 1, ustar x⟫ := lt_of_lt_of_le hz (min_le_left _ _)
   have hz5 : max 0 ⟪x 6 - x 1, ustar x⟫ < ⟪x 5 - x 1, ustar x⟫ := lt_of_lt_of_le hz (min_le_right _ _)
   have hrep : ∀ v : Fin 7, x v - x 1 =
@@ -138,57 +192,12 @@ theorem ustar_collapse {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       mul_nonpos_of_nonneg_of_nonpos hb5.le h2, mul_nonpos_of_nonneg_of_nonpos hc5.le hn]
   have hm : max 0 ⟪x 6 - x 1, ustar x⟫ = ⟪x 6 - x 1, ustar x⟫ := max_eq_right hz6.le
   rw [hm] at h2 hz3 hz5
-  have hfac := ustar_facings F hC ha5 hc3 hD
-  have hd2_0 : ⟪F.N 2, dstar x⟫ < 0 := by
-    dsimp [dstar]
-    rw [inner_sub_right, inner_smul_right, ← F.hN 2 (x 2) (x 0), ← F.hN 2 (x 0) (x 1)]
-    have h22 : F.f 2 (x 2) = 0 := F.zero 2 2 (by decide)
-    have h20 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
-    have h21 : F.f 2 (x 1) < 0 := F.neg 2 1 (by decide)
-    linarith
-  let c : ZMod 5 → Fin 7 := ![1, 6, 3, 5, 2]
-  have hc_inj : Function.Injective c := by
-    intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)
-  have hcyc : S0xCycUD s0x_S24 c ({5, 6, 7} : Finset (Fin 9)) ({0, 1, 2, 3, 4, 8} : Finset (Fin 9)) := by
-    unfold S0xCycUD; decide
-  have hU : ∀ t ∈ ({5, 6, 7} : Finset (Fin 9)),
-      LexPos3 ⟪F.N t, ustar x⟫ ⟪F.N t, dstar x⟫ ⟪F.N t, x 6 - x 1⟫ := by
-    intro t ht
-    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
-    rcases ht with rfl | rfl | rfl
-    · exact Or.inl hfac.2.2.2.2.2.1
-    · exact Or.inl hfac.2.2.2.2.2.2.1
-    · exact Or.inl hfac.2.2.2.2.2.2.2
-  have hD' : ∀ t ∈ ({0, 1, 2, 3, 4, 8} : Finset (Fin 9)),
-      LexPos3 (-⟪F.N t, ustar x⟫) (-⟪F.N t, dstar x⟫) (-⟪F.N t, x 6 - x 1⟫) := by
-    intro t ht
-    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
-    rcases ht with rfl | rfl | rfl | rfl | rfl | rfl
-    · exact Or.inl (by linarith [hfac.1])
-    · exact Or.inl (by linarith [hfac.2.1])
-    · exact Or.inr ⟨by simp [hfac.2.2.1], Or.inl (by linarith [hd2_0])⟩
-    · exact Or.inl (by linarith [hfac.2.2.2.1])
-    · exact Or.inl (by linarith [hfac.2.2.2.2.1])
-    · exact Or.inl (by linarith [h8])
-  have w6 : ⟪x 6, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 6 - x 1, ustar x⟫ := by
-    rw [inner_sub_left]; ring
-  have w3 : ⟪x 3, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 3 - x 1, ustar x⟫ := by
-    rw [inner_sub_left]; ring
-  have w5 : ⟪x 5, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 5 - x 1, ustar x⟫ := by
-    rw [inner_sub_left]; ring
-  have w2 : ⟪x 2, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 2 - x 1, ustar x⟫ := by
-    rw [inner_sub_left]; ring
-  have cl : ∀ (i j k l : Fin 7),
-      (⟪x i, ustar x⟫ < ⟪x k, ustar x⟫ ∨ ⟪x i, ustar x⟫ < ⟪x l, ustar x⟫ ∨
-        ⟪x j, ustar x⟫ < ⟪x k, ustar x⟫ ∨ ⟪x j, ustar x⟫ < ⟪x l, ustar x⟫) →
-      Minimality.GenQuad.LexClause (x k) (x l) (x i) (x j) (ustar x) (dstar x) (x 6 - x 1) :=
-    fun i j k l h => clause_of_gt h
-  refine Minimality.GenQuad.lexAny_of_clauses F (k := 5) (by norm_num) hc_inj hcyc
-    (ustar x) (dstar x) (x 6 - x 1) hU hD' ?_
-  refine Minimality.GenQuad.clauses_five (p := fun i => x (c i)) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
-  · simp only [c, Matrix.cons_val]
-    first
-      | exact cl _ _ _ _ (by first | (left; linarith) | (right; left; linarith) | (right; right; right; linarith))
+  have w6 : ⟪x 6, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 6 - x 1, ustar x⟫ := by rw [inner_sub_left]; ring
+  have w3 : ⟪x 3, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 3 - x 1, ustar x⟫ := by rw [inner_sub_left]; ring
+  have w5 : ⟪x 5, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 5 - x 1, ustar x⟫ := by rw [inner_sub_left]; ring
+  have w2 : ⟪x 2, ustar x⟫ = ⟪x 1, ustar x⟫ + ⟪x 2 - x 1, ustar x⟫ := by rw [inner_sub_left]; ring
+  refine ustar_lexAny_of_clauses F hU ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    exact clause_of_gt (by first | (left; linarith) | (right; left; linarith) | (right; right; right; linarith))
 
 /-! ### nu346b form of `h8` -/
 
