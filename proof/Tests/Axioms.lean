@@ -34,6 +34,7 @@ import Minimality.Type24QuadW02
 import Minimality.Type24TieCover
 import Minimality.Type24TieCover2
 import Minimality.Type24TieSigma
+import Minimality.M4iType24
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1222,6 +1223,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Q24.facet8_T26
 #assert_standard_axioms Minimality.T24.Q24.a4_le_of_not_half
 #assert_standard_axioms Minimality.T24.Q24.c1_lt_one
+#assert_standard_axioms Minimality.T24.A19.nBC_pos
+#assert_standard_axioms Minimality.T24.A19.nu235c_pos
+#assert_standard_axioms Minimality.T24.A19.nu346b_pos
+#assert_standard_axioms Minimality.T24.A19.e16_sym
+#assert_standard_axioms Minimality.T24.A19.e12_sym
+#assert_standard_axioms Minimality.T24.A19.v53_bound
 #print axioms Minimality.T24.Q24.lexAny_w02_ppp
 #print axioms Minimality.T24.Q24.lexAny_w02_pmm
 #print axioms Minimality.T24.Q24.lexAny_w02_pmp
