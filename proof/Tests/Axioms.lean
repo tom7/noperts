@@ -62,6 +62,7 @@ import Minimality.Type24BUstar2
 import Minimality.Type24BCertW26
 import Minimality.Type24BSharp
 import Minimality.Type24BV3031
+import Minimality.Type24A2Chain
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1446,3 +1447,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.t1_D_closed
 #print axioms Minimality.NF29.syz_012_14_Q
 #print axioms Minimality.NF29.cert_FB_CQ5_pos_eta5_pos
+#assert_standard_axioms Minimality.T24.A20.w63_syzygy
+#assert_standard_axioms Minimality.T24.A20.u07_alphaBound_id
+#assert_standard_axioms Minimality.T24.A20.z2_w63_eq
+#assert_standard_axioms Minimality.T24.A20.w63_z2gtz0_id
+#assert_standard_axioms Minimality.T24.A20.z2_pos_w63
+#assert_standard_axioms Minimality.T24.A20.z2_gt_z0_w63
+#assert_standard_axioms Minimality.T24.A20.w63_facings
+#assert_standard_axioms Minimality.T24.A20.w63_collapse_z0_neg
+#assert_standard_axioms Minimality.T24.A20.w63_collapse_z0_nonpos

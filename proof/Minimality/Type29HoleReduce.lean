@@ -38,7 +38,9 @@ def T1Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
       lam • x 1 + (1 - lam) • x 3 = mu • x 0 + (1 - mu) • x 4 + eta • N.u2346 x
 
 /-- The `t = 1` pair-D (`W14 x F124xF346`) closing hypothesis bundle on `NF29 x` (excluding `g34 ≤ 0`
-and `¬ LexAny29`, which `Hole29` already carries). -/
+and `¬ LexAny29`, which `Hole29` already carries). The three shape inequalities `0 < N.b2 + N.h2`,
+`N.b2 + N.h2 < 1`, and `0 < -N.a2 + N.b2 * N.s - N.b2 - N.h2 + 1` are sample facts (true on
+`93 / 93` `t = 1` shapes, not implied by `NF29`). -/
 def TDHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.t = 1 ∧ 0 < N.dG4 ∧ 0 < 1 - N.b0 - N.h0 ∧
     0 < N.b2 + N.h2 ∧ N.b2 + N.h2 < 1 ∧ 0 < -N.a2 + N.b2 * N.s - N.b2 - N.h2 + 1 ∧
