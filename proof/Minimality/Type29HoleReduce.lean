@@ -17,10 +17,10 @@ open Minimality Minimality.Gen Minimality.H21 Minimality.H29K1 Minimality.H29S M
 namespace Minimality.H29
 
 /-!
-# Type 29: Reduction of `Hole29` to `Hole29'`
+# Type 29: Reduction of `Hole29` to `Hole29R1`
 
 Excludes the `t = 1` K1a cell closed by `NF29.t1_closed` (`T1Hyp`) from `Hole29`, yielding
-`Hole29' x N := Hole29 x N ∧ ¬ T1Hyp x N`.
+`Hole29R1 x N := Hole29 x N ∧ ¬ T1Hyp x N`.
 -/
 
 /-- Hypothesis bundle for `NF29.t1_closed` (excluding `OB6`'s `hg35, hg45` and `¬ LexAny29`,
@@ -66,16 +66,16 @@ def TDHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
     0 < N.f035.f (x 3 + N.u124_346 x) - N.f035.f (x 3)
 
 /-- Shrunken Type-29 open hole proposition, excluding `T1Hyp` and `TDHyp`. -/
-def Hole29' (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+def Hole29R1 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   Hole29 x N ∧ ¬ (T1Hyp x N ∨ TDHyp x N)
 
-/-- Every point of `Hole29'` lies in `Hole29`. -/
-theorem hole29_of_hole29' {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29' x N) : Hole29 x N :=
+/-- Every point of `Hole29R1` lies in `Hole29`. -/
+theorem hole29_of_hole29R1 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R1 x N) : Hole29 x N :=
   h.1
 
-/-- **Reduction of `Hole29` to `Hole29'`**: `NF29.t1_closed` and `NF29.t1_D_closed` rule out
+/-- **Reduction of `Hole29` to `Hole29R1`**: `NF29.t1_closed` and `NF29.t1_D_closed` rule out
 `T1Hyp ∨ TDHyp` inside `Hole29`. -/
-theorem hole29_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29 x N) : Hole29' x N := by
+theorem hole29_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29 x N) : Hole29R1 x N := by
   refine ⟨h, fun hTD => ?_⟩
   rcases hTD with hT | hD
   · rcases hT with ⟨ht, hdG4, hA, hU5, hsD, h012, h015, h035, h124, h1456, h234, h356,
@@ -89,10 +89,10 @@ theorem hole29_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29 x N) : Hole
       hF1235 hF1265 hF1365 hF2365 hM1235 hM1265 hM1365 hF1236 h012 h015 h023 h035
       h.2.2.2.2.2.1
 
-/-- Main Type-29 reduction leaving `Hole29'`. -/
+/-- Main Type-29 reduction leaving `Hole29R1`. -/
 theorem type29_rupert_or_hole' {x : Fin 7 → ℝ³} (N : NF29 x)
     (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
-    IsRupert (univ.image x) ∨ Hole29' x N :=
+    IsRupert (univ.image x) ∨ Hole29R1 x N :=
   (type29_rupert_or_hole N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29_reduce h))
 
 private theorem row_of_dir_le' {x : Fin 7 → ℝ³} {N : NF29 x} {i j : Fin 7}
@@ -229,17 +229,17 @@ def GFBHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
     ¬ (⟪x 0, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 0, N.u23Q x⟫ ≤ ⟪x 5, N.u23Q x⟫ ∧
        ⟪x 6, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 6, N.u23Q x⟫ ≤ ⟪x 5, N.u23Q x⟫)
 
-/-- Shrunken Type-29 open hole proposition, excluding `GFBHyp` from `Hole29'`. -/
-def Hole29'' (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
-  Hole29' x N ∧ ¬ GFBHyp x N
+/-- Shrunken Type-29 open hole proposition, excluding `GFBHyp` from `Hole29R1`. -/
+def Hole29R2 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  Hole29R1 x N ∧ ¬ GFBHyp x N
 
-/-- Every point of `Hole29''` lies in `Hole29`. -/
-theorem hole29_of_hole29'' {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29'' x N) : Hole29 x N :=
-  hole29_of_hole29' h.1
+/-- Every point of `Hole29R2` lies in `Hole29`. -/
+theorem hole29_of_hole29R2 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R2 x N) : Hole29 x N :=
+  hole29_of_hole29R1 h.1
 
-/-- **Reduction of `Hole29'` to `Hole29''`**: `gstar_FB_residual` rules out `GFBHyp` inside
-`Hole29'`. -/
-theorem hole29'_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29' x N) : Hole29'' x N := by
+/-- **Reduction of `Hole29R1` to `Hole29R2`**: `gstar_FB_residual` rules out `GFBHyp` inside
+`Hole29R1`. -/
+theorem hole29R1_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R1 x N) : Hole29R2 x N := by
   refine ⟨h, fun hG => ?_⟩
   rcases hG with ⟨hk, hh2, hh0, ht1, hU4, hU5, hG4, hb0h0, hm21,
     hF0123Q, hF0124Q, hF0134Q, hF0234Q, hF1234Q,
@@ -253,10 +253,10 @@ theorem hole29'_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29' x N) : Ho
   · exact hnotQ5 hQ5
   · exact hnotm21 hm21
 
-/-- Main Type-29 reduction leaving `Hole29''`. -/
+/-- Main Type-29 reduction leaving `Hole29R2`. -/
 theorem type29_rupert_or_hole'' {x : Fin 7 → ℝ³} (N : NF29 x)
     (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
-    IsRupert (univ.image x) ∨ Hole29'' x N :=
-  (type29_rupert_or_hole' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29'_reduce h))
+    IsRupert (univ.image x) ∨ Hole29R2 x N :=
+  (type29_rupert_or_hole' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R1_reduce h))
 
 end Minimality.H29

@@ -25,11 +25,11 @@ open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.NC Minimality.T
 namespace Minimality.T24
 
 /-!
-# Type 24: Reduction of `Hole24R` to `Hole24R'`
+# Type 24: Reduction of `Hole24R` to `Hole24R1`
 
 Combines `Reg.hole24R_cases`, `A19.rOff_closed`, `A1.a1_closed`, `A20.a2_band_closed`, and
 `Reg.ba4_to_a` / `ca_to_a1` / `ca2_to_a2` / `cflip_to_brest` to shrink `Hole24R` inside
-`Hole24` to `Hole24R'`.
+`Hole24` to `Hole24R1`.
 -/
 
 /-- Conjunction of the 19 shape, front, and facing hypotheses of `A20.a2_band_closed`. -/
@@ -121,7 +121,7 @@ def CCSelfRes (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24R x F ∧ H24K.SAT.OB1 x ∧ Reg.CC x F ∧ oblX0 x 4 < 1 ∧ F.f 6 (x 4) ≤ F.f 6 (x 0)
 
 /-- Shrunken residual of `Hole24R` after `rOff_closed`, `a1_closed`, `a2_band_closed`, `wall` reductions, and `pi24` wlog. -/
-def Hole24R' (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+def Hole24R1 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   OffWallRes x F ∨
   A1Res x F ∨ A2Res x F ∨ WallA45Res x F ∨ WallA5BRes x F ∨
   BE0416Res x F ∨ BRestRes x F ∨
@@ -158,9 +158,9 @@ private theorem hole24R_of_comp_pi24 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24
   · intro hl; exact hL (transport_sym24_invol F (fun G => RCell.LexAny G) hl)
   · intro hs; exact hS (transport_sym24_invol F (fun G => RCell.SplitAny24 G) hs)
 
-/-- Every point of `Hole24R'` lies in `Hole24R`. -/
-theorem hole24R_of_hole24R' {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24R' x F) : Hole24R x F := by
+/-- Every point of `Hole24R1` lies in `Hole24R`. -/
+theorem hole24R_of_hole24R1 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R1 x F) : Hole24R x F := by
   rcases h with h | h | h | h | h | h | h | h | h | h | h | h
   · exact h.1
   · exact h.1
@@ -266,11 +266,11 @@ private theorem close_BRest {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hR :
   · exact close_B_ustar F hR hO hBR.1.le (Or.inr (Or.inr h3))
   exact hnot ⟨hR, hO, hBR, h1, h2, h3⟩
 
-/-- **Reduction of `Hole24R` to `Hole24R'`**: closes `ROff`, `A1` (modulo its 3 sample bundles),
+/-- **Reduction of `Hole24R` to `Hole24R1`**: closes `ROff`, `A1` (modulo its 3 sample bundles),
 `A2` (modulo `A2BandHyp`), `WallA5`/`WallA4C` (via `pi24`, `ustar_closed_W26_full`, and `a2_band_closed_gen`),
 and transports `BA4`, `CA`, `CA2`, `CFlip` via `pi24`. -/
 theorem hole24R_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hR : Hole24R x F) :
-    IsRupert (univ.image x) ∨ Hole24R' x F := by
+    IsRupert (univ.image x) ∨ Hole24R1 x F := by
   rcases Reg.hole24R_cases hR with hRo | hOW | ⟨hO, hreg⟩
   · exact (A19.rOff_closed hR hRo).elim
   · exact Or.inr (Or.inl ⟨hR, hOW⟩)
@@ -335,26 +335,26 @@ theorem hole24R_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hR : Hole
         exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
           (close_wallA5_a4lt (Sym.sym24 F) hR' hO' hw.1 hw.2.1))))))))))))
 
-/-- Further shrunken residual of `Hole24R'` removing generic `{1 < oblX6 x 3, 0 < mustar x}` points
+/-- Further shrunken residual of `Hole24R1` removing generic `{1 < oblX6 x 3, 0 < mustar x}` points
 via `A20.w63_closes_mustar_pos`. -/
-def Hole24R'' (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R' x F ∧
+def Hole24R2 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R1 x F ∧
     ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x ∧
       ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
         i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫)
 
-/-- Every point of `Hole24R'` reduces to `Hole24R''`. -/
-theorem hole24R'_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24R' x F) : Hole24R'' x F := by
+/-- Every point of `Hole24R1` reduces to `Hole24R2`. -/
+theorem hole24R1_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R1 x F) : Hole24R2 x F := by
   refine ⟨h, ?_⟩
   rintro ⟨hc3, hmu, hgen⟩
-  have hR := hole24R_of_hole24R' h
+  have hR := hole24R_of_hole24R1 h
   exact hR.2.2.2.2.1 (A20.w63_closes_mustar_pos F hR.1 hc3 hmu hgen)
 
-/-- Further shrunken residual of `Hole24R''` removing generic `{c3 = 1}` stratum points satisfying
+/-- Further shrunken residual of `Hole24R2` removing generic `{c3 = 1}` stratum points satisfying
 the four sample inequalities (`hc4`, `hh4_bd`, `hs_B`, `h1234`) via `A20.c3eq1_closed`. -/
-def Hole24R''' (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R'' x F ∧
+def Hole24R3 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R2 x F ∧
     ¬ (oblX6 x 3 = 1 ∧ oblX6 x 4 ≤ 1 ∧
       0 ≤ (oblX6 x 4 - 1) * (omega3 x + 1) + A20.h236 x 4 ∧
       0 ≤ (omega3 x + 1) * (oblX0 x 3 * oblX6 x 4 - oblX0 x 4) + A20.h236 x 4 ∧
@@ -363,36 +363,36 @@ def Hole24R''' (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
         ∀ j ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
         i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫)
 
-/-- Every point of `Hole24R''` reduces to `Hole24R'''`. -/
-theorem hole24R''_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24R'' x F) : Hole24R''' x F := by
+/-- Every point of `Hole24R2` reduces to `Hole24R3`. -/
+theorem hole24R2_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R2 x F) : Hole24R3 x F := by
   refine ⟨h, ?_⟩
   rintro ⟨hc3, hc4, hh4_bd, hs_B, h1234, hgen⟩
-  have hR := hole24R_of_hole24R' h.1
+  have hR := hole24R_of_hole24R1 h.1
   exact hR.2.2.2.2.1 (A20.c3eq1_closed F hR.1 hc3 hc4 hh4_bd hs_B h1234 hgen)
 
-/-- Further shrunken residual of `Hole24R'''` removing generic `{1 < oblX2 x 3, 0 < mu23 x}` points
+/-- Further shrunken residual of `Hole24R3` removing generic `{1 < oblX2 x 3, 0 < mu23 x}` points
 via `A20.e23_closes_mu23_pos`. -/
-def Hole24R'''' (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R''' x F ∧
+def Hole24R4 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R3 x F ∧
     ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x ∧
       ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
         ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
         i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫)
 
-/-- Every point of `Hole24R'''` reduces to `Hole24R''''`. -/
-theorem hole24R'''_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24R''' x F) : Hole24R'''' x F := by
+/-- Every point of `Hole24R3` reduces to `Hole24R4`. -/
+theorem hole24R3_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R3 x F) : Hole24R4 x F := by
   refine ⟨h, ?_⟩
   rintro ⟨hb3, hmu, hgen⟩
-  have hR := hole24R_of_hole24R' h.1.1
+  have hR := hole24R_of_hole24R1 h.1.1
   exact hR.2.2.2.2.1 (A20.e23_closes_mu23_pos F hR.1 hb3 hmu hgen)
 
-/-- Further shrunken residual of `Hole24R''''` removing generic wall points
+/-- Further shrunken residual of `Hole24R4` removing generic wall points
 `{1 < oblX6 x 3, mustar x = 0}` via `A20.w63_closes_wall` and
 `{1 < oblX2 x 3, mu23 x = 0}` via `A20.e23_closes_wall`. -/
 def Hole24R5 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R'''' x F ∧
+  Hole24R4 x F ∧
     ¬ (1 < oblX6 x 3 ∧ A20.mustar x = 0 ∧
       ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
         ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
@@ -402,22 +402,22 @@ def Hole24R5 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
         ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
         i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫)
 
-/-- Every point of `Hole24R''''` reduces to `Hole24R5`. -/
+/-- Every point of `Hole24R4` reduces to `Hole24R5`. -/
 theorem hole24R4_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24R'''' x F) : Hole24R5 x F := by
+    (h : Hole24R4 x F) : Hole24R5 x F := by
   refine ⟨h, ?_, ?_⟩
   · rintro ⟨hc3, hmu, hgen⟩
-    have hR := hole24R_of_hole24R' h.1.1.1
+    have hR := hole24R_of_hole24R1 h.1.1.1
     exact hR.2.2.2.2.1 (A20.w63_closes_wall F hR.1 hc3 hmu hgen)
   · rintro ⟨hb3, hmu, hgen⟩
-    have hR := hole24R_of_hole24R' h.1.1.1
+    have hR := hole24R_of_hole24R1 h.1.1.1
     exact hR.2.2.2.2.1 (A20.e23_closes_wall F hR.1 hb3 hmu hgen)
 
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, be ≤ 1, al ≤ 1}` (where `al, be` are the `par2546_quad`
 coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`), any point of
 `Hole24 x fs (mkFac24 fs hh)` (with `Hole24R5`) off `Hole24Q45Special` lies in the `w63` or `E23`
 tie locus on `{0, 2, 3, 4, 5, 6}`.
-Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R''''`, `Hole24R'''`, and `Hole24R5`. -/
+Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R4`, `Hole24R3`, and `Hole24R5`. -/
 theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hH : Hole24Flags x fs ∧ (Hole24Q45Special x (mkFac24 fs hh) ∨ Hole24R5 x (mkFac24 fs hh)))
@@ -451,8 +451,8 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, be < 1, al < 1}` (where `al, be` are the `par2546_quad`
 coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`), any point of
 `Hole24 x fs (mkFac24 fs hh)` off `Hole24Q45Special` lies in the `w63` or `E23` tie locus.
-Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R''''.2 : ¬(1 < b3 ∧ 0 < mu23 ∧ hgen_E23)`,
-and `Hole24R'''.1.2 : ¬(1 < c3 ∧ 0 < mustar ∧ hgen_w63)`. -/
+Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R4.2 : ¬(1 < b3 ∧ 0 < mu23 ∧ hgen_E23)`,
+and `Hole24R3.1.2 : ¬(1 < c3 ∧ 0 < mustar ∧ hgen_w63)`. -/
 theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hH : Hole24Flags x fs ∧ (Hole24Q45Special x (mkFac24 fs hh) ∨ Hole24R5 x (mkFac24 fs hh)))
@@ -513,6 +513,6 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
   · exact Or.inr ⟨hh, hflags, Or.inl hQ⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
-    · exact Or.inr ⟨hh, hflags, Or.inr (hole24R4_reduce (hole24R'''_reduce (hole24R''_reduce (hole24R'_reduce hR'))))⟩
+    · exact Or.inr ⟨hh, hflags, Or.inr (hole24R4_reduce (hole24R3_reduce (hole24R2_reduce (hole24R1_reduce hR'))))⟩
 
 end Minimality.T24
