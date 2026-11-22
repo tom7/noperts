@@ -351,14 +351,11 @@ theorem hole24R1_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   have hR := hole24R_of_hole24R1 h
   exact hR.2.2.2.2.1 (A20.w63_closes_mustar_pos F hR.1 hc3 hmu hgen)
 
-/-- Further shrunken residual of `Hole24R2` removing generic `{c3 = 1}` stratum points satisfying
-the four sample inequalities (`hc4`, `hh4_bd`, `hs_B`, `h1234`) via `A20.c3eq1_closed`. -/
+/-- Further shrunken residual of `Hole24R2` removing the `{c3 = 1}` stratum off the depth ties on
+`{0,1,2,3,4,6}` at `w63`, via `A20.c3eq1_closed` (no sample facts since C3FACTS). -/
 def Hole24R3 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24R2 x F ∧
-    ¬ (oblX6 x 3 = 1 ∧ oblX6 x 4 ≤ 1 ∧
-      0 ≤ (oblX6 x 4 - 1) * (omega3 x + 1) + A20.h236 x 4 ∧
-      0 ≤ (omega3 x + 1) * (oblX0 x 3 * oblX6 x 4 - oblX0 x 4) + A20.h236 x 4 ∧
-      oblX0 x 3 * oblX6 x 4 ≤ oblX0 x 4 ∧
+    ¬ (oblX6 x 3 = 1 ∧
       ∀ i ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
         ∀ j ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
         i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫)
@@ -367,9 +364,9 @@ def Hole24R3 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
 theorem hole24R2_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     (h : Hole24R2 x F) : Hole24R3 x F := by
   refine ⟨h, ?_⟩
-  rintro ⟨hc3, hc4, hh4_bd, hs_B, h1234, hgen⟩
+  rintro ⟨hc3, hgen⟩
   have hR := hole24R_of_hole24R1 h.1
-  exact hR.2.2.2.2.1 (A20.c3eq1_closed F hR.1 hc3 hc4 hh4_bd hs_B h1234 hgen)
+  exact hR.2.2.2.2.1 (A20.c3eq1_closed F hR.1 hc3 hgen)
 
 /-- Further shrunken residual of `Hole24R3` removing generic `{1 < oblX2 x 3, 0 < mu23 x}` points
 via `A20.e23_closes_mu23_pos`. -/

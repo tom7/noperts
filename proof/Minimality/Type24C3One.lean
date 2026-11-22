@@ -11,12 +11,13 @@ Formalizes the `P236` pencil normal form, syzygies, `leaf_O2`, and the `c3 = 1` 
 `c3eq1_closed` in `Minimality.T24.A20`:
 1. `h236`, `pencil236_decomp`, `pencil236_depth`, `syz_E23`, `syz_u27`, `syz_u27_coef_pos`,
    `sign_u07_of_w63_u27`, `sign_u07_of_E23_w63`, `sign_u27_of_u07_E23`, `leaf_O2`,
-   `strat_A`..`strat_D` (from `P236.lean`).
+   `strat_A`..`strat_C` (from `P236.lean`).
 2. `w63_eq_smul_u07` and `w63_facings_c3eq1`: at `c3 = 1`, `w63` and `u07` are positive scalar
    multiples of each other, with facets `0, 7, 8` edge-on (`= 0`).
-3. `c3eq1_closed`: on `{CbarIn x, oblX6 x 3 = 1}` together with the four `A2 band > 1` stratum
-   sample inequalities (`hc4`, `hh4_bd`, `hs_B`, `h1234`) and non-tie genericity `hgen` on
+3. `c3eq1_closed`: on `{CbarIn x, oblX6 x 3 = 1}` with non-tie genericity `hgen` on
    `{0, 1, 2, 3, 4, 6}` at `w63`, the single view `w63 = x 3 - x 6` gives `Minimality.Gen.LexAny F`.
+   No sample facts (C3FACTS): `hh4_of_cbar` and `hsB_of_facets` derive two former sample facts, cones A and
+   B split at `c4 = 1` (`strat_A2`, `strat_B2` for `c4 >= 1`), and cone D dies by `strat_C` (it lies inside cone C's `z1 > z2 > z0`; no `h1234`).
 -/
 
 set_option autoImplicit false
@@ -169,7 +170,7 @@ theorem leaf_O2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
   have hw' : 0 < ⟪x 0 - x 6, x 3 - x 6⟫ := by rw [e, inner_add_left]; linarith
   linarith [sign_u07_of_w63_u27 F hC hc3 (x 0 - x 6) hw' h27]
 
-/-! ### Stratum `c3 = 1` case lemmas (`strat_A`..`strat_D`) -/
+/-! ### Stratum `c3 = 1` case lemmas (`strat_A`..`strat_C`, `strat_A2`, `strat_B2`) -/
 
 /-- Stratum case A (`min(z0, z6) > max(z2, z4)` part used: `z0 > z2, z0 > z4, z6 > z4`). -/
 theorem strat_A (a3 om3 a4 c4 h4 W D k : ℝ) (ha3 : 0 < a3) (hom : 0 < om3 + 1)
@@ -197,14 +198,6 @@ theorem strat_B (a3 om3 a4 c4 h4 W D k : ℝ) (ha3 : 0 < a3) (hom : 0 < om3 + 1)
 theorem strat_C (a3 om3 W k : ℝ) (ha3 : 0 < a3) (hom : 0 < om3 + 1) (hW : 0 < W)
     (h12 : 0 < k) (h20 : W + a3 * (1 + om3) * k < 0) : False := by
   nlinarith [mul_pos (mul_pos ha3 hom) h12]
-
-/-- Stratum case D (`z1 > z2 > z4 > z6`, `z3 > z2`). -/
-theorem strat_D (a3 a4 c4 h4 W D k : ℝ) (ha3 : 0 < a3) (hh4 : 0 < h4)
-    (h1 : 0 ≤ a3 * (1 - c4) + a4) (h2 : 0 ≤ a4 - a3 * c4) (ha4 : 0 < a4)
-    (h12 : 0 < k) (h24 : a4 * W + a3 * c4 * D + a3 * h4 * k < 0) (h32 : 0 < D + W)
-    (h46 : a3 * D < a4 * W + a3 * c4 * D + a3 * h4 * k) : False := by
-  nlinarith [mul_pos (mul_pos ha3 hh4) (mul_pos ha3 h12), mul_nonneg h1 (neg_pos.mpr h24).le,
-    mul_pos ha4 (mul_pos ha3 h32), mul_nonneg h2 (sub_pos.mpr h46).le]
 
 /-! ### Rim / fail-set bridge at `c3 = 1` -/
 
@@ -549,22 +542,135 @@ private theorem close_k6 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       hA0234 hB0234 hA0235 hB0235 hA0245 hB0245 hA0345 hB0345 hA1234 hB1234 hA1235 hB1235
       hA1245 hB1245 hA1345 hB1345 hA2345 hB2345)
 
+
+/-- strat A for c4 >= 1 (replaces the case c4 <= 1 of the old sample fact `hc4`). -/
+theorem strat_A2 (a3 om3 a4 c4 h4 W D k : ℝ) (ha3 : 0 < a3) (hom : 0 < om3 + 1)
+    (hc4 : 1 ≤ c4) (hh4 : 0 < h4) (hs : 0 ≤ a4 * (om3 + 1) - h4) (hW : 0 < W) (hD : 0 < D)
+    (h02 : 0 < W + a3 * (1 + om3) * k)
+    (h64 : a4 * W + a3 * c4 * D + a3 * h4 * k < a3 * D) : False := by
+  nlinarith [mul_pos hh4 h02, mul_nonneg (mul_nonneg ha3.le (sub_nonneg.mpr hc4)) (mul_nonneg hom.le hD.le),
+    mul_pos hom (sub_pos.mpr h64), mul_nonneg hs hW.le]
+
+/-- strat B for c4 >= 1: rows z2>z0, z2>z3, z4>z3. -/
+theorem strat_B2 (a3 om3 a4 c4 h4 W D k : ℝ) (ha3 : 0 < a3) (hom : 0 < om3 + 1)
+    (hc4 : 1 ≤ c4) (hh4 : 0 < h4) (hs : 0 ≤ (om3 + 1) * (a3 * c4 - a4) + h4) (hW : 0 < W)
+    (h20 : W + a3 * (1 + om3) * k < 0) (h32 : D + W < 0)
+    (h43 : a3 * (D + W) < a4 * W + a3 * c4 * D + a3 * h4 * k) : False := by
+  nlinarith [mul_pos hh4 (neg_pos.mpr h20), mul_nonneg (mul_nonneg ha3.le (sub_nonneg.mpr hc4)) (mul_nonneg hom.le (neg_pos.mpr h32).le),
+    mul_pos hom (sub_pos.mpr h43), mul_nonneg hs hW.le]
+
+/-- hh4_bd from CbarIn: (c4-1)(om3+1)+h4 = b4 (om3 om4 - 1) > 0. -/
+theorem hh4_of_cbar {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x) :
+    0 < (oblX6 x 4 - 1) * (omega3 x + 1) + h236 x 4 := by
+  have T := Minimality.T24.M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
+  have e4 := Minimality.T24.M4.eq4 F
+  obtain ⟨h3, h4, h5, hD⟩ := hC
+  have hD' : 0 ≤ omega3 x * omega4 x * omega5 x - omega3 x - omega4 x - omega5 x - 2 := by
+    unfold Delta24 at hD; linarith
+  have hprod : 1 < omega3 x * omega4 x := by
+    by_contra hcon; push Not at hcon
+    nlinarith [mul_nonneg h5.le (sub_nonneg.mpr hcon), mul_pos h3 h4]
+  have : (oblX6 x 4 - 1) * (omega3 x + 1) + h236 x 4 = oblX2 x 4 * (omega3 x * omega4 x - 1) := by
+    unfold h236; nlinarith [e4]
+  rw [this]; exact mul_pos hb4 (by linarith)
+
+
+/-- Facet 025 at vertex 4 (extracted from the proof of `cross35_pos`): `a4 + b4 - om5 c4 < 1`. -/
+theorem f025_x4_lt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    oblX0 x 4 + oblX2 x 4 - omega5 x * oblX6 x 4 < 1 := by
+  have T := Minimality.T24.M4.type24OfFac F
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  have hneg : F.f 2 (x 4) < 0 := F.neg 2 4 (by decide)
+  have h1 : F.f 2 (x 1) < 0 := F.neg 2 1 (by decide)
+  have h0 : F.f 2 (x 0) = 0 := F.zero 2 0 (by decide)
+  have h2 : F.f 2 (x 2) = 0 := F.zero 2 2 (by decide)
+  have h5' : F.f 2 (x 5) = 0 := F.zero 2 5 (by decide)
+  have ev24 := Minimality.T24.M4.fac_eval F 2 4
+  have ev25 := Minimality.T24.M4.fac_eval F 2 5
+  rw [h0, h2] at ev24
+  rw [h5', h0, h2] at ev25
+  have h6_eq : F.f 2 (x 6) - F.f 2 (x 1) = F.f 2 (x 1) * omega5 x := by
+    have := Minimality.T24.M4.eq5 F
+    have hc5' : oblX6 x 5 ≠ 0 := hc5.ne'
+    have h1' : F.f 2 (x 1) * (1 - oblX0 x 5 - oblX2 x 5) +
+        oblX6 x 5 * (F.f 2 (x 6) - F.f 2 (x 1)) = 0 := by
+      linear_combination -ev25
+    have h2' : oblX6 x 5 * ((F.f 2 (x 6) - F.f 2 (x 1)) - F.f 2 (x 1) * omega5 x) = 0 := by
+      linear_combination h1' + F.f 2 (x 1) * this
+    exact sub_eq_zero.mp ((mul_eq_zero.mp h2').resolve_left hc5')
+  have e24 : (-F.f 2 (x 1)) * (oblX0 x 4 + oblX2 x 4 - omega5 x * oblX6 x 4 - 1) = F.f 2 (x 4) := by
+    rw [ev24, h6_eq]; ring
+  have hpos1 : 0 < -F.f 2 (x 1) := by linarith
+  nlinarith
+
+/-- `hs_B` is a region fact on `c3 = 1`: `(om3+1)(a3 c4 - a4) + h4 = t c5 (om5 c4 - a4 - b4 + 1) > 0`
+(`t` the weight of `x5 - x0` in `x3 - x0 = s (x4 - x0) + t (x5 - x0)`, facet 025 at vertex 4). -/
+theorem hsB_of_facets {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc3 : oblX6 x 3 = 1) :
+    0 < (omega3 x + 1) * (oblX0 x 3 * oblX6 x 4 - oblX0 x 4) + h236 x 4 := by
+  have T := Minimality.T24.M4.type24OfFac F
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+  have hd : det24 x ≠ 0 := T.det_ne
+  obtain ⟨s, t, hs, ht, -, hdec⟩ := Minimality.T24.RimFromSigns.lemmaM_quad_decomp F
+  have hdec1 : x 3 - x 1 = (1 - s - t) • (x 0 - x 1) + s • (x 4 - x 1) + t • (x 5 - x 1) := by
+    calc x 3 - x 1 = (x 0 - x 1) + (x 3 - x 0) := by abel
+      _ = (x 0 - x 1) + (s • (x 4 - x 0) + t • (x 5 - x 0)) := by rw [hdec]
+      _ = (1 - s - t) • (x 0 - x 1) + s • (x 4 - x 1) + t • (x 5 - x 1) := by
+          rw [show x 4 - x 0 = (x 4 - x 1) - (x 0 - x 1) from by abel,
+              show x 5 - x 0 = (x 5 - x 1) - (x 0 - x 1) from by abel]
+          module
+  have hb3 : oblX2 x 3 = s * oblX2 x 4 + t * oblX2 x 5 := by
+    simp only [oblX2]
+    have hv : vol3 (x 0 - x 1) (x 3 - x 1) (x 6 - x 1) =
+        s * vol3 (x 0 - x 1) (x 4 - x 1) (x 6 - x 1) +
+        t * vol3 (x 0 - x 1) (x 5 - x 1) (x 6 - x 1) := by
+      rw [hdec1]; simp only [vol3, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
+    rw [hv]; ring
+  have hc3' : oblX6 x 3 = s * oblX6 x 4 + t * oblX6 x 5 := by
+    simp only [oblX6]
+    have hv : vol3 (x 0 - x 1) (x 2 - x 1) (x 3 - x 1) =
+        s * vol3 (x 0 - x 1) (x 2 - x 1) (x 4 - x 1) +
+        t * vol3 (x 0 - x 1) (x 2 - x 1) (x 5 - x 1) := by
+      rw [hdec1]; simp only [vol3, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
+    rw [hv]; ring
+  have ha3' : oblX0 x 3 = (1 - s - t) + s * oblX0 x 4 + t * oblX0 x 5 := by
+    simp only [oblX0]
+    have hv : vol3 (x 3 - x 1) (x 2 - x 1) (x 6 - x 1) =
+        (1 - s - t) * det24 x + s * vol3 (x 4 - x 1) (x 2 - x 1) (x 6 - x 1) +
+        t * vol3 (x 5 - x 1) (x 2 - x 1) (x 6 - x 1) := by
+      rw [hdec1]; simp only [det24, vol3, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
+    rw [hv]; field_simp
+  have hY := f025_x4_lt F
+  have e5 := Minimality.T24.M4.eq5 F
+  have hom3 : omega3 x * oblX0 x 3 = oblX2 x 3 + oblX6 x 3 - 1 := by
+    simp only [omega3]; field_simp
+  have hY' : 0 < omega5 x * oblX6 x 4 - (oblX0 x 4 + oblX2 x 4 - 1) := by linarith
+  have key : ((omega3 x + 1) * (oblX0 x 3 * oblX6 x 4 - oblX0 x 4) + h236 x 4) =
+      t * oblX6 x 5 * (omega5 x * oblX6 x 4 - (oblX0 x 4 + oblX2 x 4 - 1)) := by
+    unfold h236
+    rw [hc3] at hc3' hom3
+    have h1 : s * oblX6 x 4 = 1 - t * oblX6 x 5 := by linarith
+    linear_combination oblX6 x 4 * hom3 + oblX6 x 4 * hb3 + oblX6 x 4 * ha3' +
+      (oblX0 x 4 + oblX2 x 4 - 1) * h1 + t * oblX6 x 4 * e5
+  rw [key]; exact mul_pos (mul_pos ht hc5) hY'
+
+
+
 /-- **Stratum `c3 = 1` closure** via `{w63}` (coinciding with `u07`).
 Hypotheses `hc4`, `hh4_bd`, `hs_B`, `h1234` are sample facts on the `A2 band > 1 ∩ {c3 = 1}`
 stratum (not provable from `F`, `CbarIn`, `hc3` alone; `h1234` is the `c3 = 1` specialization of
 the `Resid24` bracket `[1234]`). `hgen` is the non-tie hypothesis on `{0, 1, 2, 3, 4, 6}` at `w63`. -/
 theorem c3eq1_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     (hc3 : oblX6 x 3 = 1)
-    (hc4 : oblX6 x 4 ≤ 1)
-    (hh4_bd : 0 ≤ (oblX6 x 4 - 1) * (omega3 x + 1) + h236 x 4)
-    (hs_B : 0 ≤ (omega3 x + 1) * (oblX0 x 3 * oblX6 x 4 - oblX0 x 4) + h236 x 4)
-    (h1234 : oblX0 x 3 * oblX6 x 4 ≤ oblX0 x 4)
     (hgen : ∀ i ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
       ∀ j ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
       i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) :
     Minimality.Gen.LexAny F := by
   classical
   have T := type24OfFac F
+  have hh4_bd := (hh4_of_cbar F hC).le
+  have hs_B := (hsB_of_facets F hc3).le
   have hfac := w63_facings_c3eq1 F hC hc3
   let w : ℝ³ := x 3 - x 6
   obtain ⟨r, hinj, hmono⟩ : ∃ r : Fin 6 → Fin 6,
@@ -709,8 +815,16 @@ theorem c3eq1_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn
           oblX0 x 3 * D := by
         have h := hlt_z 4 5 h45; change oblX0 x 3 * ⟪x 4 - x 2, w⟫ < oblX0 x 3 * ⟪x 6 - x 2, w⟫ at h
         rw [hz4, hz6] at h; exact h
-      exact strat_A (oblX0 x 3) (omega3 x) (oblX0 x 4) (oblX6 x 4) (h236 x 4) W D k
-        ha3 hom hc4 hc4p hh4_bd hs4 hW p02 p04 p64
+      rcases le_or_gt (oblX6 x 4) 1 with hc4 | hc4
+      · exact strat_A (oblX0 x 3) (omega3 x) (oblX0 x 4) (oblX6 x 4) (h236 x 4) W D k
+          ha3 hom hc4 hc4p hh4_bd hs4 hW p02 p04 p64
+      · have hD : 0 < D := by
+          have h := hlt_z 2 5 h25
+          change oblX0 x 3 * ⟪x 2 - x 2, w⟫ < oblX0 x 3 * ⟪x 6 - x 2, w⟫ at h
+          rw [sub_self, inner_zero_left, mul_zero, hz6] at h
+          exact (mul_pos_iff_of_pos_left ha3).mp h
+        exact strat_A2 (oblX0 x 3) (omega3 x) (oblX0 x 4) (oblX6 x 4) (h236 x 4) W D k
+          ha3 hom hc4.le hh4 hs4 hW hD p02 p64
     · have p20 : W + oblX0 x 3 * (1 + omega3 x) * k < 0 := by
         have h := hlt_z 0 2 h02; change oblX0 x 3 * ⟪x 0 - x 2, w⟫ < oblX0 x 3 * ⟪x 2 - x 2, w⟫ at h
         rw [sub_self, inner_zero_left, mul_zero, hz0] at h; exact h
@@ -722,8 +836,16 @@ theorem c3eq1_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn
           oblX0 x 4 * W + oblX0 x 3 * oblX6 x 4 * D + oblX0 x 3 * h236 x 4 * k := by
         have h := hlt_z 3 4 h34; change oblX0 x 3 * ⟪x 3 - x 2, w⟫ < oblX0 x 3 * ⟪x 4 - x 2, w⟫ at h
         rw [hz3, hz4] at h; exact h
-      exact strat_B (oblX0 x 3) (omega3 x) (oblX0 x 4) (oblX6 x 4) (h236 x 4) W D k
-        ha3 hom hc4 hc4p hh4_bd hs_B hW p20 p40 p43
+      rcases le_or_gt (oblX6 x 4) 1 with hc4 | hc4
+      · exact strat_B (oblX0 x 3) (omega3 x) (oblX0 x 4) (oblX6 x 4) (h236 x 4) W D k
+          ha3 hom hc4 hc4p hh4_bd hs_B hW p20 p40 p43
+      · have p32 : D + W < 0 := by
+          have h := hlt_z 3 2 h32
+          change oblX0 x 3 * ⟪x 3 - x 2, w⟫ < oblX0 x 3 * ⟪x 2 - x 2, w⟫ at h
+          rw [sub_self, inner_zero_left, mul_zero, hz3] at h
+          exact neg_of_mul_neg_right h ha3.le
+        exact strat_B2 (oblX0 x 3) (omega3 x) (oblX0 x 4) (oblX6 x 4) (h236 x 4) W D k
+          ha3 hom hc4.le hh4 hs_B hW p20 p32 p43
     · have p12 : 0 < k := by
         have h := hlt_z 2 1 h21; change oblX0 x 3 * ⟪x 2 - x 2, w⟫ < oblX0 x 3 * ⟪x 1 - x 2, w⟫ at h
         rw [sub_self, inner_zero_left, mul_zero] at h
@@ -747,12 +869,11 @@ theorem c3eq1_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn
           oblX0 x 4 * W + oblX0 x 3 * oblX6 x 4 * D + oblX0 x 3 * h236 x 4 * k := by
         have h := hlt_z 5 4 h54; change oblX0 x 3 * ⟪x 6 - x 2, w⟫ < oblX0 x 3 * ⟪x 4 - x 2, w⟫ at h
         rw [hz6, hz4] at h; exact h
-      have h1 : 0 ≤ oblX0 x 3 * (1 - oblX6 x 4) + oblX0 x 4 := by
-        have : 0 ≤ 1 - oblX6 x 4 := sub_nonneg.mpr hc4
-        positivity
-      have h2 : 0 ≤ oblX0 x 4 - oblX0 x 3 * oblX6 x 4 := sub_nonneg.mpr h1234
-      exact strat_D (oblX0 x 3) (oblX0 x 4) (oblX6 x 4) (h236 x 4) W D k
-        ha3 hh4 h1 h2 ha4 p12 p24 p32 p46
+      have p04 : W + oblX0 x 3 * (1 + omega3 x) * k <
+          oblX0 x 4 * W + oblX0 x 3 * oblX6 x 4 * D + oblX0 x 3 * h236 x 4 * k := by
+        have h := hlt_z 0 4 h04; change oblX0 x 3 * ⟪x 0 - x 2, w⟫ < oblX0 x 3 * ⟪x 4 - x 2, w⟫ at h
+        rw [hz0, hz4] at h; exact h
+      exact strat_C (oblX0 x 3) (omega3 x) W k ha3 hom hW p12 (lt_trans p04 p24)
   have hfin := c3eq1_finite (r 0) (r 1) (r 2) (r 3) (r 4) (r 5)
     (hinj 0 1 (by decide)) (hinj 0 2 (by decide)) (hinj 0 3 (by decide))
     (hinj 0 4 (by decide)) (hinj 0 5 (by decide)) (hinj 1 2 (by decide))
