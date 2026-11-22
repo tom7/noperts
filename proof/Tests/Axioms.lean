@@ -46,6 +46,7 @@ import Minimality.Type24A1Tie
 import Minimality.Type24Wlog
 import Minimality.GenQuadLex
 import Minimality.Type24ROffTie
+import Minimality.Type29T1Pair
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1327,3 +1328,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A19.tieA_lexAny
 #assert_standard_axioms Minimality.T24.A17.e12_A2_tie
 #assert_standard_axioms Minimality.T24.A19.Tilt.tilt_neg6
+#assert_standard_axioms Minimality.NF29.t1_par
+#assert_standard_axioms Minimality.NF29.V46_depth_t1
+#assert_standard_axioms Minimality.NF29.g35_g45_zero_of_V46
+#assert_standard_axioms Minimality.NF29.W14_depths_t1
+#assert_standard_axioms Minimality.NF29.lexAny29_W14_of_V46
