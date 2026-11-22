@@ -30,7 +30,7 @@ Combines `Reg.hole24R_cases`, `A19.rOff_closed`, `A1.a1_closed`, `A20.a2_band_cl
 /-- Conjunction of the 19 shape, front, and facing hypotheses of `A20.a2_band_closed`. -/
 def A2BandHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   omega5 x * (omega3 x - A7.Lam5 x) < 1 ∧
-  oblX0 x 3 < oblX0 x 5 ∧
+  oblX0 x 3 ≤ oblX0 x 5 ∧
   oblX6 x 3 < 1 ∧
   oblX6 x 5 < oblX6 x 3 ∧
   A7.Lam5 x < 1 + omega3 x ∧

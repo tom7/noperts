@@ -53,6 +53,7 @@ import Minimality.Type29T1Close
 import Minimality.Type24A1Small
 import Minimality.Type24A2Band
 import Minimality.Type24A1Z54
+import Minimality.Type24F4
 import Minimality.Type24A1Closed
 import Minimality.Type24BUstar
 import Minimality.Type24BUstar2
@@ -1405,3 +1406,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.q_quadrant_II
 #assert_standard_axioms Minimality.NF29.q_quadrant_IV
 #assert_standard_axioms Minimality.NF29.qpencil_depth_split
+#assert_standard_axioms Minimality.T24.M4.weak_shadow_of_frontDiag
+#assert_standard_axioms Minimality.T24.M4.u07_facings
+#assert_standard_axioms Minimality.T24.M4.u07_frontDiag
+#assert_standard_axioms Minimality.T24.A10.u27_facings
+#assert_standard_axioms Minimality.T24.lemma_f4_id
+#assert_standard_axioms Minimality.T24.lemma_f4_alg
+#assert_standard_axioms Minimality.T24.lemma_f4_A2

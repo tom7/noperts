@@ -1041,11 +1041,74 @@ theorem w02_dichotomy {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
 /-! ### L9: U-Q4 bound at `u07 = (x 0 - x 1) + omega3 x • (x 2 - x 1)` -/
 
-theorem u07_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (hc3 : oblX6 x 3 < 1) (hL : ¬ LexAny F) :
-    0 ≤ omega3 x * ⟪x 2 - x 1, x 2 - x 0⟫ - (-⟪x 0 - x 1, x 2 - x 0⟫) := by
+theorem weak_shadow_of_frontDiag {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (c : ZMod 4 → Fin 7) (hc : Function.Injective c)
+    (U Dn : Finset (Fin 9)) (hcyc : S0xCycUD s0x_S24 c U Dn)
+    (u d1 d2 : ℝ³)
+    (hU : ∀ t ∈ U, LexPos3 ⟪F.N t, u⟫ ⟪F.N t, d1⟫ ⟪F.N t, d2⟫)
+    (hD : ∀ t ∈ Dn, LexPos3 (-⟪F.N t, u⟫) (-⟪F.N t, d1⟫) (-⟪F.N t, d2⟫))
+    (hdiag : FrontDiag (x (c 1)) (x (c 3)) (x (c 0)) (x (c 2)) u)
+    {i j : ZMod 4} (hij : (j, i) ∈ Minimality.RimCell.diagPairs)
+    (hL : ¬ LexAny F) :
+    0 ≤ ⟪x (c i) - x (c j), u⟫ := by
   by_contra hcon
   push Not at hcon
+  have hu_ne : u ≠ 0 := by
+    intro h0; rw [h0, inner_zero_right] at hcon; exact lt_irrefl _ hcon
+  obtain ⟨s, t, γ, hs0, hs1, ht0, ht1, hγ0, hdiag_vec⟩ := hdiag
+  have hdiag_pos : 0 < (1 - s) * (1 - t) * (⟪x (c 1), u⟫ - ⟪x (c 0), u⟫) +
+      (1 - s) * t * (⟪x (c 1), u⟫ - ⟪x (c 2), u⟫) +
+      s * (1 - t) * (⟪x (c 3), u⟫ - ⟪x (c 0), u⟫) +
+      s * t * (⟪x (c 3), u⟫ - ⟪x (c 2), u⟫) := by
+    have hinner := congrArg (fun w => ⟪w, u⟫) hdiag_vec
+    have hrhs : 0 < ⟪γ • u, u⟫ := by
+      rw [real_inner_smul_left]
+      exact mul_pos hγ0 (real_inner_self_pos.mpr hu_ne)
+    rw [← hinner] at hrhs
+    have hlhs : ⟪(x (c 1) + s • (x (c 3) - x (c 1))) -
+        (x (c 0) + t • (x (c 2) - x (c 0))), u⟫ =
+        (1 - s) * (1 - t) * (⟪x (c 1), u⟫ - ⟪x (c 0), u⟫) +
+        (1 - s) * t * (⟪x (c 1), u⟫ - ⟪x (c 2), u⟫) +
+        s * (1 - t) * (⟪x (c 3), u⟫ - ⟪x (c 0), u⟫) +
+        s * t * (⟪x (c 3), u⟫ - ⟪x (c 2), u⟫) := by
+      simp only [inner_sub_left, inner_add_left, real_inner_smul_left]; ring
+    linarith
+  have hex_pos : ∃ q ∈ Minimality.RimCell.diagPairs,
+      LexLt3 (⟪x (c q.1), u⟫, ⟪x (c q.1), d1⟫, ⟪x (c q.1), d2⟫)
+             (⟪x (c q.2), u⟫, ⟪x (c q.2), d1⟫, ⟪x (c q.2), d2⟫) := by
+    by_contra hno
+    push Not at hno
+    have h01 : ⟪x (c 1), u⟫ - ⟪x (c 0), u⟫ ≤ 0 := by
+      by_contra h; push Not at h
+      exact hno (0, 1) (by decide) (Or.inl (by dsimp only; linarith))
+    have h21 : ⟪x (c 1), u⟫ - ⟪x (c 2), u⟫ ≤ 0 := by
+      by_contra h; push Not at h
+      exact hno (2, 1) (by decide) (Or.inl (by dsimp only; linarith))
+    have h03 : ⟪x (c 3), u⟫ - ⟪x (c 0), u⟫ ≤ 0 := by
+      by_contra h; push Not at h
+      exact hno (0, 3) (by decide) (Or.inl (by dsimp only; linarith))
+    have h23 : ⟪x (c 3), u⟫ - ⟪x (c 2), u⟫ ≤ 0 := by
+      by_contra h; push Not at h
+      exact hno (2, 3) (by decide) (Or.inl (by dsimp only; linarith))
+    nlinarith [mul_nonneg (sub_nonneg.mpr hs1) (sub_nonneg.mpr ht1),
+      mul_nonneg (sub_nonneg.mpr hs1) ht0, mul_nonneg hs0 (sub_nonneg.mpr ht1), mul_nonneg hs0 ht0]
+  have hex_neg : ∃ p ∈ Minimality.RimCell.diagPairs,
+      LexLt3 (⟪x (c p.2), u⟫, ⟪x (c p.2), d1⟫, ⟪x (c p.2), d2⟫)
+             (⟪x (c p.1), u⟫, ⟪x (c p.1), d1⟫, ⟪x (c p.1), d2⟫) := by
+    refine ⟨(j, i), hij, Or.inl ?_⟩
+    dsimp only
+    rw [← sub_pos, ← inner_sub_left, show x (c j) - x (c i) = -(x (c i) - x (c j)) from by abel,
+      inner_neg_left]
+    linarith
+  apply hL
+  exact ⟨4, inferInstance, c, U, Dn, u, d1, d2, by decide, hc, hcyc, hU, hD,
+    robUniLex_four_of_mixed hex_pos hex_neg⟩
+
+theorem u07_facings {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hC : CbarIn x) (hc3 : oblX6 x 3 < 1) :
+    let u07 : ℝ³ := (x 0 - x 1) + omega3 x • (x 2 - x 1)
+    (∀ t ∈ ({2, 3, 7, 8} : Finset (Fin 9)), LexPos3 ⟪F.N t, u07⟫ ⟪F.N t, x 6 - x 1⟫ 0) ∧
+    (∀ t ∈ ({0, 4, 5} : Finset (Fin 9)), LexPos3 (-⟪F.N t, u07⟫) (-⟪F.N t, x 6 - x 1⟫) (-0)) := by
   have T := type24OfFac F
   have hom3 : 0 < omega3 x := hC.1
   have hom4 : 0 < omega4 x := hC.2.1
@@ -1054,18 +1117,7 @@ theorem u07_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
   have hc3_pos : 0 < oblX6 x 3 := T.X6_pos (v := 3) (by decide)
   have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
-  have hc4 : 0 < oblX6 x 4 := T.X6_pos (v := 4) (by decide)
   let u07 : ℝ³ := (x 0 - x 1) + omega3 x • (x 2 - x 1)
-  have hz20 : ⟪x 2 - x 0, u07⟫ < 0 := by
-    have e : ⟪x 2 - x 0, u07⟫ = omega3 x * ⟪x 2 - x 1, x 2 - x 0⟫ - (-⟪x 0 - x 1, x 2 - x 0⟫) := by
-      dsimp [u07]
-      rw [inner_add_right, inner_smul_right,
-        real_inner_comm (x 2 - x 0) (x 0 - x 1), real_inner_comm (x 2 - x 0) (x 2 - x 1)]
-      ring
-    linarith
-  have hu07_ne : u07 ≠ 0 := by
-    intro h0; rw [h0, inner_zero_right] at hz20; exact lt_irrefl _ hz20
-  -- Facings at `(u07, x 6 - x 1, 0)` on `c := ![0, 2, 6, 4]`, `U := {2, 3, 7, 8}`, `Dn := {0, 4, 5}`:
   have hu0 : ⟪F.N 0, u07⟫ = 0 := by
     dsimp [u07]
     rw [inner_add_right, inner_smul_right, ← F.hN 0 (x 0) (x 1), ← F.hN 0 (x 2) (x 1),
@@ -1135,7 +1187,36 @@ theorem u07_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     rw [inner_add_right, inner_smul_right, ← F.hN 5 (x 0) (x 1), ← F.hN 5 (x 2) (x 1),
       F.zero 5 1 (by decide), F.zero 5 2 (by decide), sub_zero, sub_self, mul_zero, add_zero]
     exact F.neg 5 0 (by decide)
-  -- Front diagonal `24` over `06` at `u07`:
+  constructor
+  · intro tf ht
+    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
+    · exact Or.inl (show 0 < ⟪F.N ⟨2, by decide⟩, u07⟫ from hu2)
+    · exact Or.inl (show 0 < ⟪F.N ⟨3, by decide⟩, u07⟫ from hu3)
+    · refine Or.inr ⟨show ⟪F.N ⟨7, by decide⟩, u07⟫ = 0 from hu7, Or.inl ?_⟩
+      change 0 < ⟪F.N 7, x 6 - x 1⟫
+      rw [← F.hN 7 (x 6) (x 1), F.zero 7 6 (by decide), zero_sub, neg_pos]
+      exact F.neg 7 1 (by decide)
+    · exact Or.inl (show 0 < ⟪F.N ⟨8, by decide⟩, u07⟫ from hu8)
+  · intro tf ht
+    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
+    · refine Or.inr ⟨by linarith [show ⟪F.N ⟨0, by decide⟩, u07⟫ = 0 from hu0], Or.inl ?_⟩
+      change 0 < -⟪F.N 0, x 6 - x 1⟫
+      rw [← F.hN 0 (x 6) (x 1), F.zero 0 1 (by decide), sub_zero, neg_pos]
+      exact F.neg 0 6 (by decide)
+    · exact Or.inl (by linarith [show ⟪F.N ⟨4, by decide⟩, u07⟫ < 0 from hu4])
+    · exact Or.inl (by linarith [show ⟪F.N ⟨5, by decide⟩, u07⟫ < 0 from hu5])
+
+theorem u07_frontDiag {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x) :
+    FrontDiag (x 2) (x 4) (x 0) (x 6) ((x 0 - x 1) + omega3 x • (x 2 - x 1)) := by
+  have T := type24OfFac F
+  have hom3 : 0 < omega3 x := hC.1
+  have hom4 : 0 < omega4 x := hC.2.1
+  have hom34 : 1 < omega3 x * omega4 x :=
+    Minimality.omega_prod_gt_one hC.1 hC.2.1 hC.2.2.1 hC.2.2.2
+  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+  have hc3_pos : 0 < oblX6 x 3 := T.X6_pos (v := 3) (by decide)
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (v := 4) (by decide)
   set den : ℝ := (1 + omega3 x) + oblX2 x 4 * (omega3 x * omega4 x - 1)
   have hden_pos : 0 < den := by
     dsimp [den]; nlinarith [mul_pos hb4 (show 0 < omega3 x * omega4 x - 1 by linarith)]
@@ -1162,7 +1243,6 @@ theorem u07_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       have hprod : (-F.f 7 (x 1)) * (oblX2 x 4 + oblX6 x 4 - omega3 x * oblX0 x 4 - 1) = F.f 7 (x 4) := by
         rw [ev, h70]; ring
       nlinarith [F.neg 7 4 (by decide)]
-    -- From `h236_4` and `eq4 F`: `(1 + omega3) * c4 < (1 + omega3) + b4 * (omega3 * omega4 - 1) = den`!
     have hlt_den : (1 + omega3 x) * oblX6 x 4 < den := by
       have := eq4 F
       dsimp [den]
@@ -1171,106 +1251,54 @@ theorem u07_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     rw [div_mul_eq_mul_div, div_lt_one hden_pos]
     exact hlt_den
   have hγ0 : 0 < γ := div_pos (mul_pos hb4 (by linarith)) hden_pos
-  have hdiag_vec : (x 2 + s • (x 4 - x 2)) - (x 0 + t • (x 6 - x 0)) = γ • u07 := by
-    have hrep4 : x 4 - x 1 = oblX0 x 4 • (x 0 - x 1) + oblX2 x 4 • (x 2 - x 1) +
-        oblX6 x 4 • (x 6 - x 1) := by rw [T.rep 4]; abel
-    have hshift : (x 2 + s • (x 4 - x 2)) - (x 0 + t • (x 6 - x 0)) =
-        (1 - s) • (x 2 - x 1) + s • (x 4 - x 1) - (1 - t) • (x 0 - x 1) - t • (x 6 - x 1) := by
-      simp only [sub_smul, one_smul, smul_sub]; abel
-    rw [hshift, hrep4]
-    have e4 := eq4 F
-    have hden_ne : den ≠ 0 := hden_pos.ne'
-    have c0 : s * oblX0 x 4 - (1 - t) = γ := by
-      dsimp [s, t, γ]
-      field_simp [hden_ne]
-      dsimp [den]
-      linear_combination (1 + omega3 x) * e4
-    have c2 : (1 - s) + s * oblX2 x 4 = γ * omega3 x := by
-      dsimp [s, γ]
-      field_simp [hden_ne]
-      dsimp [den]; ring
-    have c6 : s * oblX6 x 4 - t = 0 := by dsimp [t]; ring
-    dsimp [u07]
-    calc (1 - s) • (x 2 - x 1) +
-          s • (oblX0 x 4 • (x 0 - x 1) + oblX2 x 4 • (x 2 - x 1) + oblX6 x 4 • (x 6 - x 1)) -
-          (1 - t) • (x 0 - x 1) - t • (x 6 - x 1)
-        = (s * oblX0 x 4 - (1 - t)) • (x 0 - x 1) + ((1 - s) + s * oblX2 x 4) • (x 2 - x 1) +
-          (s * oblX6 x 4 - t) • (x 6 - x 1) := by
-          simp only [smul_add, smul_smul, add_smul, sub_smul]; abel
-      _ = γ • (x 0 - x 1) + (γ * omega3 x) • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) := by
-          rw [c0, c2, c6]
-      _ = γ • ((x 0 - x 1) + omega3 x • (x 2 - x 1)) := by
-          simp only [zero_smul, add_zero, smul_add, smul_smul]
-  -- Take inner product with `u07`:
-  have hdiag_pos : 0 < (1 - s) * (1 - t) * (⟪x 2, u07⟫ - ⟪x 0, u07⟫) +
-      (1 - s) * t * (⟪x 2, u07⟫ - ⟪x 6, u07⟫) +
-      s * (1 - t) * (⟪x 4, u07⟫ - ⟪x 0, u07⟫) +
-      s * t * (⟪x 4, u07⟫ - ⟪x 6, u07⟫) := by
-    have hinner := congrArg (fun w => ⟪w, u07⟫) hdiag_vec
-    have hrhs : 0 < ⟪γ • u07, u07⟫ := by
-      rw [real_inner_smul_left]
-      exact mul_pos hγ0 (real_inner_self_pos.mpr hu07_ne)
-    rw [← hinner] at hrhs
-    have hlhs : ⟪(x 2 + s • (x 4 - x 2)) - (x 0 + t • (x 6 - x 0)), u07⟫ =
-        (1 - s) * (1 - t) * (⟪x 2, u07⟫ - ⟪x 0, u07⟫) +
-        (1 - s) * t * (⟪x 2, u07⟫ - ⟪x 6, u07⟫) +
-        s * (1 - t) * (⟪x 4, u07⟫ - ⟪x 0, u07⟫) +
-        s * t * (⟪x 4, u07⟫ - ⟪x 6, u07⟫) := by
-      simp only [inner_sub_left, inner_add_left, real_inner_smul_left]; ring
-    linarith
-  have hex_pos : ∃ q ∈ Minimality.RimCell.diagPairs,
-      LexLt3 (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.1), u07⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.1), x 6 - x 1⟫, (0 : ℝ))
-             (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.2), u07⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.2), x 6 - x 1⟫, (0 : ℝ)) := by
-    by_contra hno
-    push Not at hno
-    have h01 : ⟪x 2, u07⟫ - ⟪x 0, u07⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (0, 1) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    have h21 : ⟪x 2, u07⟫ - ⟪x 6, u07⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (2, 1) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    have h03 : ⟪x 4, u07⟫ - ⟪x 0, u07⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (0, 3) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    have h23 : ⟪x 4, u07⟫ - ⟪x 6, u07⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (2, 3) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    nlinarith [mul_pos (sub_pos.mpr hs1) (sub_pos.mpr ht1),
-      mul_pos (sub_pos.mpr hs1) ht0, mul_pos hs0 (sub_pos.mpr ht1), mul_pos hs0 ht0]
-  have hex_neg : ∃ p ∈ Minimality.RimCell.diagPairs,
-      LexLt3 (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.2), u07⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.2), x 6 - x 1⟫, (0 : ℝ))
-             (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.1), u07⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.1), x 6 - x 1⟫, (0 : ℝ)) := by
-    refine ⟨(0, 1), by decide, Or.inl ?_⟩
-    simp only [Matrix.cons_val]
-    rw [← sub_pos, ← inner_sub_left, show x 0 - x 2 = -(x 2 - x 0) from by abel, inner_neg_left]
-    linarith [hz20]
-  apply hL
-  refine ⟨4, inferInstance, (![0, 2, 6, 4] : ZMod 4 → Fin 7), {2, 3, 7, 8}, {0, 4, 5},
-    u07, x 6 - x 1, 0, by decide,
-    (by intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)),
-    (by unfold S0xCycUD; decide), ?_, ?_,
-    by simpa [inner_zero_right] using robUniLex_four_of_mixed hex_pos hex_neg⟩
-  · intro tf ht
-    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
-    · exact Or.inl (show 0 < ⟪F.N ⟨2, by decide⟩, u07⟫ from hu2)
-    · exact Or.inl (show 0 < ⟪F.N ⟨3, by decide⟩, u07⟫ from hu3)
-    · refine Or.inr ⟨show ⟪F.N ⟨7, by decide⟩, u07⟫ = 0 from hu7, Or.inl ?_⟩
-      change 0 < ⟪F.N 7, x 6 - x 1⟫
-      rw [← F.hN 7 (x 6) (x 1), F.zero 7 6 (by decide), zero_sub, neg_pos]
-      exact F.neg 7 1 (by decide)
-    · exact Or.inl (show 0 < ⟪F.N ⟨8, by decide⟩, u07⟫ from hu8)
-  · intro tf ht
-    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
-    · refine Or.inr ⟨by linarith [show ⟪F.N ⟨0, by decide⟩, u07⟫ = 0 from hu0], Or.inl ?_⟩
-      change 0 < -⟪F.N 0, x 6 - x 1⟫
-      rw [← F.hN 0 (x 6) (x 1), F.zero 0 1 (by decide), sub_zero, neg_pos]
-      exact F.neg 0 6 (by decide)
-    · exact Or.inl (by linarith [show ⟪F.N ⟨4, by decide⟩, u07⟫ < 0 from hu4])
-    · exact Or.inl (by linarith [show ⟪F.N ⟨5, by decide⟩, u07⟫ < 0 from hu5])
+  refine ⟨s, t, γ, hs0.le, hs1.le, ht0.le, ht1.le, hγ0, ?_⟩
+  have hrep4 : x 4 - x 1 = oblX0 x 4 • (x 0 - x 1) + oblX2 x 4 • (x 2 - x 1) +
+      oblX6 x 4 • (x 6 - x 1) := by rw [T.rep 4]; abel
+  have hshift : (x 2 + s • (x 4 - x 2)) - (x 0 + t • (x 6 - x 0)) =
+      (1 - s) • (x 2 - x 1) + s • (x 4 - x 1) - (1 - t) • (x 0 - x 1) - t • (x 6 - x 1) := by
+    simp only [sub_smul, one_smul, smul_sub]; abel
+  rw [hshift, hrep4]
+  have e4 := eq4 F
+  have hden_ne : den ≠ 0 := hden_pos.ne'
+  have c0 : s * oblX0 x 4 - (1 - t) = γ := by
+    dsimp [s, t, γ]
+    field_simp [hden_ne]
+    dsimp [den]
+    linear_combination (1 + omega3 x) * e4
+  have c2 : (1 - s) + s * oblX2 x 4 = γ * omega3 x := by
+    dsimp [s, γ]
+    field_simp [hden_ne]
+    dsimp [den]; ring
+  have c6 : s * oblX6 x 4 - t = 0 := by dsimp [t]; ring
+  calc (1 - s) • (x 2 - x 1) +
+        s • (oblX0 x 4 • (x 0 - x 1) + oblX2 x 4 • (x 2 - x 1) + oblX6 x 4 • (x 6 - x 1)) -
+        (1 - t) • (x 0 - x 1) - t • (x 6 - x 1)
+      = (s * oblX0 x 4 - (1 - t)) • (x 0 - x 1) + ((1 - s) + s * oblX2 x 4) • (x 2 - x 1) +
+        (s * oblX6 x 4 - t) • (x 6 - x 1) := by
+        simp only [smul_add, smul_smul, add_smul, sub_smul]; abel
+    _ = γ • (x 0 - x 1) + (γ * omega3 x) • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) := by
+        rw [c0, c2, c6]
+    _ = γ • ((x 0 - x 1) + omega3 x • (x 2 - x 1)) := by
+        simp only [zero_smul, add_zero, smul_add, smul_smul]
+
+theorem u07_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hC : CbarIn x) (hc3 : oblX6 x 3 < 1) (hL : ¬ LexAny F) :
+    0 ≤ omega3 x * ⟪x 2 - x 1, x 2 - x 0⟫ - (-⟪x 0 - x 1, x 2 - x 0⟫) := by
+  obtain ⟨hU, hD⟩ := u07_facings F hC hc3
+  have hw := weak_shadow_of_frontDiag F ![0, 2, 6, 4]
+    (by intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide))
+    {2, 3, 7, 8} {0, 4, 5} (by unfold S0xCycUD; decide)
+    ((x 0 - x 1) + omega3 x • (x 2 - x 1)) (x 6 - x 1) 0
+    (by simpa [inner_zero_right] using hU)
+    (by simpa [inner_zero_right] using hD)
+    (u07_frontDiag F hC) (i := 1) (j := 0) (by decide) hL
+  simp only [Matrix.cons_val] at hw
+  have e : ⟪x 2 - x 0, (x 0 - x 1) + omega3 x • (x 2 - x 1)⟫ =
+      omega3 x * ⟪x 2 - x 1, x 2 - x 0⟫ - (-⟪x 0 - x 1, x 2 - x 0⟫) := by
+    rw [inner_add_right, inner_smul_right,
+      real_inner_comm (x 2 - x 0) (x 0 - x 1), real_inner_comm (x 2 - x 0) (x 2 - x 1)]
+    ring
+  linarith
 
 /-! ### L10: `m4half` (Steps 1–3) and `isRupert_of_m4half` -/
 
