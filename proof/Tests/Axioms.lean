@@ -53,6 +53,7 @@ import Minimality.Type24A1Small
 import Minimality.Type24A2Band
 import Minimality.Type24A1Z54
 import Minimality.Type24A1Closed
+import Minimality.Type24BUstar
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1375,3 +1376,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.u07_z40_bound
 #assert_standard_axioms Minimality.T24.A1.u27_z26_bound
 #assert_standard_axioms Minimality.T24.A1.a1_closed
+#assert_standard_axioms Minimality.T24.A10.e0416_hrow
+#assert_standard_axioms Minimality.T24.A10.dl_sigma
+#assert_standard_axioms Minimality.T24.A10.ustar_collapse
+#assert_standard_axioms Minimality.T24.A10.nu346_ustar
+#assert_standard_axioms Minimality.T24.A10.ustar_z0_nonpos
