@@ -20,6 +20,7 @@ import Minimality.Type29Leaves
 import Minimality.Type29LeavesA16
 import Minimality.Type29Quad
 import Minimality.GenQuad
+import Minimality.GenQuadCross
 import Minimality.Type29Exact
 import Minimality.Chi29
 import Minimality.M4fType24
@@ -1144,6 +1145,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A15.u37_bound
 #assert_standard_axioms Minimality.T24.A15.u37_tie
 #assert_standard_axioms Minimality.T24.A15.lexAny_or_split_E3426_full
+#assert_standard_axioms Minimality.GenQuad.lexClause_of_crossOf
 #print axioms Minimality.T24.A12.tie1_bound
 #print axioms Minimality.T24.A12.lexAny_or_split_E3426
 #print axioms Minimality.T24.A12.isRupert_of_E3426
