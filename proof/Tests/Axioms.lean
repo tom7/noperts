@@ -16,6 +16,7 @@ import Minimality.Type16Arc3B
 import Minimality.SilS0XD
 import Minimality.M4cType24
 import Minimality.M4dType24
+import Minimality.Type29Leaves
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
 import Minimality.Type08S.C2K5AI
@@ -974,3 +975,29 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.T24.A10.u27_bound
 #print axioms Minimality.T24.A10.z5_gt_z4_w05
 #print axioms Minimality.T24.A10.lexAny_or_split_E04P4U
+#assert_standard_axioms Minimality.NF29.e023quad
+#assert_standard_axioms Minimality.NF29.f012_u23Q
+#assert_standard_axioms Minimality.NF29.f015_u23Q
+#assert_standard_axioms Minimality.NF29.f023_u23Q
+#assert_standard_axioms Minimality.NF29.f035_u23Q
+#assert_standard_axioms Minimality.NF29.f124_u23Q
+#assert_standard_axioms Minimality.NF29.f1456_u23Q
+#assert_standard_axioms Minimality.NF29.f234_u23Q
+#assert_standard_axioms Minimality.NF29.f346_u23Q
+#assert_standard_axioms Minimality.NF29.f356_u23Q
+#assert_standard_axioms Minimality.NF29.lexAny29_W14
+#assert_standard_axioms Minimality.NF29.fhat_1456_u35
+#assert_standard_axioms Minimality.NF29.front3524
+#print axioms Minimality.NF29.e023quad
+#print axioms Minimality.NF29.f012_u23Q
+#print axioms Minimality.NF29.f015_u23Q
+#print axioms Minimality.NF29.f023_u23Q
+#print axioms Minimality.NF29.f035_u23Q
+#print axioms Minimality.NF29.f124_u23Q
+#print axioms Minimality.NF29.f1456_u23Q
+#print axioms Minimality.NF29.f234_u23Q
+#print axioms Minimality.NF29.f346_u23Q
+#print axioms Minimality.NF29.f356_u23Q
+#print axioms Minimality.NF29.lexAny29_W14
+#print axioms Minimality.NF29.fhat_1456_u35
+#print axioms Minimality.NF29.front3524
