@@ -45,7 +45,7 @@ noncomputable def Qu2 (x : Fin 7 → ℝ³) : ℝ :=
   (oblX0 x 3 - oblX0 x 5) * (1 - oblX6 x 4) + oblX0 x 4 * (oblX6 x 3 - oblX6 x 5)
 
 theorem ustar2_facings {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc4 : oblX6 x 4 < 1) (hD4 : Dl4 x < 0) :
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc4 : oblX6 x 4 < 1) (hD4 : Dl4 x < 0) :
     ⟪F.N 0, ustar2 x⟫ < 0 ∧ ⟪F.N 1, ustar2 x⟫ < 0 ∧ ⟪F.N 2, ustar2 x⟫ = 0 ∧
     ⟪F.N 3, ustar2 x⟫ < 0 ∧ ⟪F.N 4, ustar2 x⟫ < 0 ∧ 0 < ⟪F.N 5, ustar2 x⟫ ∧
     0 < ⟪F.N 6, ustar2 x⟫ ∧ 0 < ⟪F.N 7, ustar2 x⟫ := by
@@ -85,8 +85,8 @@ theorem ustar2_facings {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       rw [ev5]; ring
     rw [h52, zero_sub, h55]
     have t1 : 0 < (-Dl4 x) * (-F.f 5 (x 0)) := mul_pos hD4_pos (neg_pos.mpr h50)
-    have t2 : 0 < (1 - oblX6 x 4) * ((oblX0 x 5 - 1) * F.f 5 (x 0)) :=
-      mul_pos hc4_pos (mul_pos_of_neg_of_neg (sub_neg.mpr ha5) h50)
+    have t2 : 0 ≤ (1 - oblX6 x 4) * ((oblX0 x 5 - 1) * F.f 5 (x 0)) :=
+      mul_nonneg hc4_pos.le (mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr ha5) h50.le)
     linarith
   · rw [hus 6, F.zero 6 2 (by decide), F.zero 6 5 (by decide), zero_sub]
     have h60 : 0 < -F.f 6 (x 0) := by linarith [F.neg 6 0 (by decide)]
@@ -159,7 +159,7 @@ theorem nu346_ustar2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn
         oblX0 x 3 - (-(oblX0 x 4 * oblX6 x 5)) * oblX2 x 3)) * hE4
 
 theorem splitAny24_Ustar2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc4 : oblX6 x 4 < 1) (hD4 : Dl4 x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc4 : oblX6 x 4 < 1) (hD4 : Dl4 x < 0)
     (hΔ : 0 < oblX0 x 4 * oblX2 x 3 - oblX0 x 3 * oblX2 x 4)
     (hnu : 0 < nu346b x) (hQ : 0 < Qu2 x)
     (hz : max 0 ⟪x 6 - x 1, ustar2 x⟫ <
@@ -492,7 +492,7 @@ theorem ustar2_z0_nonpos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hD4 : D
 
 set_option maxHeartbeats 4000000 in
 theorem ustar2_collapse {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc4 : oblX6 x 4 < 1) (hD4 : Dl4 x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc4 : oblX6 x 4 < 1) (hD4 : Dl4 x < 0)
     (hΔ : 0 < oblX0 x 4 * oblX2 x 3 - oblX0 x 3 * oblX2 x 4)
     (hnu : 0 < nu346b x) (hQ : 0 < Qu2 x)
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)

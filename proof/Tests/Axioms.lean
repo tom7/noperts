@@ -1422,6 +1422,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.lemma_f4_id
 #assert_standard_axioms Minimality.T24.lemma_f4_alg
 #assert_standard_axioms Minimality.T24.lemma_f4_A2
+#assert_standard_axioms Minimality.T24.Reg.wallA4C_to_wallA5
+#assert_standard_axioms Minimality.T24.Reg.wallA5_a4gt_to_a
+#assert_standard_axioms Minimality.T24.A10.dl_neg_of_wallA5
+#assert_standard_axioms Minimality.T24.A10.dl4_neg_of_wallA5
+#assert_standard_axioms Minimality.T24.A10.nB_lt_nC_of_wallA5_a4lt
+#assert_standard_axioms Minimality.T24.A20.a2_band_closed_gen
+#assert_standard_axioms Minimality.T24.A20.a2_lam5_closed_of_band_gen
 #assert_standard_axioms Minimality.T24.A10.ustar_sharp
 #assert_standard_axioms Minimality.T24.A10.ustar_closed_W26_full
 #assert_standard_axioms Minimality.T24.A10.v31_frontDiag

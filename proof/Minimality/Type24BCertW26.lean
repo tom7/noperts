@@ -123,7 +123,7 @@ theorem nrm_geom {x : Fin 7 → ℝ³} :
 
 /-- Region fact: `0 < ⟪N3, u27⟫` for `a5 < 1` (only `CbarIn` for `om3, om5 > 0` is used). -/
 theorem hu3_of_a5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    (ha5 : oblX0 x 5 < 1) : 0 < ⟪F.N 3, u27 x⟫ := by
+    (ha5 : oblX0 x 5 ≤ 1) : 0 < ⟪F.N 3, u27 x⟫ := by
   have T := type24OfFac F
   have hom3 : 0 < omega3 x := hC.1
   have hom5 : 0 < omega5 x := hC.2.2.1
@@ -160,7 +160,7 @@ theorem hu3_of_a5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     have : 0 < (-F.f 3 (x 1)) * (D45 x - nB x) := by rw [h]; exact mul_pos (by linarith) hD
     exact pos_of_mul_pos_right this hα.le
   have hK : 0 < omega3 x * (1 - oblX0 x 5) + oblX2 x 5 + oblX6 x 5 := by
-    have : 0 < omega3 x * (1 - oblX0 x 5) := mul_pos hom3 (by linarith)
+    have : 0 ≤ omega3 x * (1 - oblX0 x 5) := mul_nonneg hom3.le (by linarith)
     linarith
   have hpos : 0 < oblX6 x 5 * (D45 x * ⟪F.N 3, u27 x⟫) := by
     rw [hid]; exact mul_pos hα (mul_pos hK hDn)
@@ -207,7 +207,7 @@ theorem f3_lt_of_nB_lt_nC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : nB
 /-- **Cert_W26, geometric version**: in region B with `nB < nC`, `z3(u*) <= z6(u*)` is impossible
 (away from `LexAny`). -/
 theorem cert_w26_geom {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1)
+    (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1)
     (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) (hn : nB x < nC x) (hU : ¬ Minimality.Gen.LexAny F)
     (hz3 : ⟪x 3 - x 1, ustar x⟫ ≤ ⟪x 6 - x 1, ustar x⟫) : False := by
   have T := type24OfFac F
@@ -247,7 +247,7 @@ theorem cert_w26_geom {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarI
 /-- **`ustar_collapse` without the `z6 < z3` part of its depth condition** (when `nB < nC`): only
 `0 < z3(u*)` and `max 0 z6(u*) < z5(u*)` remain. -/
 theorem ustar_closed_W26 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
     (h8 : ⟪F.N 8, ustar x⟫ < 0)
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
     (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) (hn : nB x < nC x)
@@ -264,7 +264,7 @@ theorem ustar_closed_W26 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
 /-- Variant: when `0 ≤ z6(u*)` the whole `z3` condition is dropped. -/
 theorem ustar_closed_W26_z6 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
     (h8 : ⟪F.N 8, ustar x⟫ < 0)
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
     (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) (hn : nB x < nC x)

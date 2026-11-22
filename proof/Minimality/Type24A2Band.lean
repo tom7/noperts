@@ -62,8 +62,8 @@ theorem w02_neg_false {x : Fin 7 → ℝ³} {a3 b3 c3 a5 b5 c5 : ℝ}
   nlinarith [mul_pos hp0 (neg_pos.mpr hz2), mul_nonneg hr0 (neg_nonneg.mpr h6.le),
     mul_nonneg ha3.le (sub_nonneg.mpr h53), mul_nonneg (sub_nonneg.mpr ha35) (h50.trans h53)]
 
-theorem a2_band_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (hA2 : Minimality.T24.Reg.A2 x F) (hOB : H24K.SAT.OB1 x)
+theorem a2_band_closed_gen {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hC : CbarIn x) (hOB : H24K.SAT.OB1 x)
     (hband : omega5 x * (omega3 x - Lam5 x) < 1) (ha35 : oblX0 x 3 ≤ oblX0 x 5)
     (hc3 : oblX6 x 3 < 1) (hc53 : oblX6 x 5 < oblX6 x 3) (hLam1 : Lam5 x < 1 + omega3 x)
     (hp : oblX0 x 3 * oblX2 x 5 < oblX0 x 5 * oblX2 x 3)
@@ -94,7 +94,7 @@ theorem a2_band_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hb3 : 0 < oblX2 x 3 := T.X2_pos (v := 3) (by decide)
   have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
-  have ha5 : 1 < oblX0 x 5 := hA2.1
+  have ha5 : 0 < oblX0 x 5 := T.X0_pos (v := 5) (by decide)
   have hom3 : 0 < omega3 x := hC.1
   -- z2 < 0 from OB1
   have hz2 : z x (bW02 x) 2 < 0 := by
@@ -178,12 +178,36 @@ theorem a2_band_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         (by rw [h60]; exact max_lt hz2 (max_lt hz5 hz3)) h60.le hCB)
   · -- `0 < z6`
     have S2 : ¬ (max (z x (bW02 x) 2) (max (z x (bW02 x) 5) (z x (bW02 x) 3)) < 0) :=
-      fun hlt => hnS (splitAny_w02_ppp_e36 F h1 h3 h4 h8 h5 h6 h7 hc5 hc3 (by linarith)
-        (by linarith) hconv hlt h6p)
+      fun hlt => hnS (splitAny_w02_ppp_e36 F h1 h3 h4 h8 h5 h6 h7 hc5 hc3
+        (by linarith) (by nlinarith [mul_pos hc5 hC.2.2.1]) hconv hlt h6p)
     exact hz5_false h6p.le (z_core_pos _ _ _ _ _ hz2 h6p P1 P2 S2)
-/-- `a2_lam5_closed` as a corollary (it needs the extra region fact `a3 < a5`; `hu07`-type inputs are not used). -/
-theorem a2_lam5_closed_of_band {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (hA2 : Minimality.T24.Reg.A2 x F) (hOB : H24K.SAT.OB1 x)
+
+theorem a2_band_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hC : CbarIn x) (_hA2 : Minimality.T24.Reg.A2 x F) (hOB : H24K.SAT.OB1 x)
+    (hband : omega5 x * (omega3 x - Lam5 x) < 1) (ha35 : oblX0 x 3 ≤ oblX0 x 5)
+    (hc3 : oblX6 x 3 < 1) (hc53 : oblX6 x 5 < oblX6 x 3) (hLam1 : Lam5 x < 1 + omega3 x)
+    (hp : oblX0 x 3 * oblX2 x 5 < oblX0 x 5 * oblX2 x 3)
+    (hr : oblX0 x 3 * oblX6 x 5 ≤ oblX0 x 5 * oblX6 x 3)
+    (hconv : (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5) < (1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3))
+    (h8 : 0 < ⟪F.N 8, bW02 x⟫)
+    (f1523 : FrontDet (x 1) (x 5) (x 2) (x 3) (bW02 x))
+    (f1526 : FrontDet (x 1) (x 5) (x 2) (x 6) (bW02 x))
+    (f1326 : FrontDet (x 1) (x 3) (x 2) (x 6) (bW02 x))
+    (f5613 : FrontDet (x 5) (x 6) (x 1) (x 3) (bW02 x))
+    (f5623 : FrontDet (x 5) (x 6) (x 2) (x 3) (bW02 x))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bW02 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bW02 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bW02 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bW02 x))
+    (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bW02 x))
+    (hu3 : 0 < ⟪F.N 3, u27 x⟫) (hu8 : 0 < ⟪F.N 8, u27 x⟫) :
+    LexAny F ∨ SplitAny24 F :=
+  a2_band_closed_gen F hC hOB hband ha35 hc3 hc53 hLam1 hp hr hconv h8
+    f1523 f1526 f1326 f5613 f5623 f0613 f0615 f0315 f0365 f6513 hu3 hu8
+
+/-- `a2_lam5_closed` without `Reg.A2` (valid on `WallA5` too). -/
+theorem a2_lam5_closed_of_band_gen {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hC : CbarIn x) (hOB : H24K.SAT.OB1 x)
     (hL : omega3 x < Lam5 x) (ha35 : oblX0 x 3 ≤ oblX0 x 5)
     (hc3 : oblX6 x 3 < 1) (hc53 : oblX6 x 5 < oblX6 x 3) (hLam1 : Lam5 x < 1 + omega3 x)
     (hp : oblX0 x 3 * oblX2 x 5 < oblX0 x 5 * oblX2 x 3)
@@ -202,8 +226,32 @@ theorem a2_lam5_closed_of_band {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bW02 x))
     (hu3 : 0 < ⟪F.N 3, u27 x⟫) (hu8 : 0 < ⟪F.N 8, u27 x⟫) :
     LexAny F ∨ SplitAny24 F :=
-  a2_band_closed F hC hA2 hOB
+  a2_band_closed_gen F hC hOB
     (by nlinarith [hC.2.2.1, mul_pos hC.2.2.1 (sub_pos.mpr hL)]) ha35 hc3 hc53 hLam1 hp hr hconv h8
+    f1523 f1526 f1326 f5613 f5623 f0613 f0615 f0315 f0365 f6513 hu3 hu8
+
+/-- `a2_lam5_closed` as a corollary (it needs the extra region fact `a3 < a5`; `hu07`-type inputs are not used). -/
+theorem a2_lam5_closed_of_band {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (hC : CbarIn x) (_hA2 : Minimality.T24.Reg.A2 x F) (hOB : H24K.SAT.OB1 x)
+    (hL : omega3 x < Lam5 x) (ha35 : oblX0 x 3 ≤ oblX0 x 5)
+    (hc3 : oblX6 x 3 < 1) (hc53 : oblX6 x 5 < oblX6 x 3) (hLam1 : Lam5 x < 1 + omega3 x)
+    (hp : oblX0 x 3 * oblX2 x 5 < oblX0 x 5 * oblX2 x 3)
+    (hr : oblX0 x 3 * oblX6 x 5 ≤ oblX0 x 5 * oblX6 x 3)
+    (hconv : (1 - oblX6 x 3) * (oblX0 x 5 + oblX2 x 5) < (1 - oblX6 x 5) * (oblX0 x 3 + oblX2 x 3))
+    (h8 : 0 < ⟪F.N 8, bW02 x⟫)
+    (f1523 : FrontDet (x 1) (x 5) (x 2) (x 3) (bW02 x))
+    (f1526 : FrontDet (x 1) (x 5) (x 2) (x 6) (bW02 x))
+    (f1326 : FrontDet (x 1) (x 3) (x 2) (x 6) (bW02 x))
+    (f5613 : FrontDet (x 5) (x 6) (x 1) (x 3) (bW02 x))
+    (f5623 : FrontDet (x 5) (x 6) (x 2) (x 3) (bW02 x))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bW02 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bW02 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bW02 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bW02 x))
+    (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bW02 x))
+    (hu3 : 0 < ⟪F.N 3, u27 x⟫) (hu8 : 0 < ⟪F.N 8, u27 x⟫) :
+    LexAny F ∨ SplitAny24 F :=
+  a2_lam5_closed_of_band_gen F hC hOB hL ha35 hc3 hc53 hLam1 hp hr hconv h8
     f1523 f1526 f1326 f5613 f5623 f0613 f0615 f0315 f0365 f6513 hu3 hu8
 
 end Minimality.T24.A20
