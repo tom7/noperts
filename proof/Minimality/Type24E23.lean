@@ -886,7 +886,7 @@ private theorem tilt_ppm_signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     exact mul_pos hf26 (by linarith)
   · simp only [sub_zero, mul_zero, add_zero]
     exact mul_pos hf26 (neg_pos.mpr hf74)
-  · simp only [sub_self, mul_zero, zero_add, sub_zero]
+  · simp only [sub_self, neg_zero, mul_zero, zero_add, sub_zero]
     exact mul_neg_of_pos_of_neg (by linarith [abs_nonneg (F.f 2 (x 4) - F.f 2 (x 6))]) hf82
 
 private def c_w0234 : ZMod 4 → Fin 7 := ![0, 2, 3, 4]
@@ -1099,11 +1099,13 @@ theorem w63_closes_wall {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : Cba
   have h52 : (r 5).val < (r 2).val := by
     have hw52 : ⟪x (v023456 5), w⟫ < ⟪x (v023456 2), w⟫ := by
       change ⟪x 6, x 3 - x 6⟫ < ⟪x 3, x 3 - x 6⟫
-      have hnorm : 0 < ⟪w, w⟫ := by
-        refine (@real_inner_self_pos ℝ³ _ _ w).mpr (fun h => ?_)
+      have hne : w ≠ 0 := fun h => by
         have hf : ⟪F.N 3, w⟫ = 0 := by rw [h, inner_zero_right]
         linarith [hfac.2.2.2.1]
-      linarith [inner_sub_left (x 3) (x 6) (x 3 - x 6)]
+      have hnorm : 0 < ⟪w, w⟫ := real_inner_self_pos.mpr hne
+      have hsub : ⟪x 3 - x 6, w⟫ = ⟪x 3, w⟫ - ⟪x 6, w⟫ := inner_sub_left (x 3) (x 6) w
+      change ⟪x 6, w⟫ < ⟪x 3, w⟫
+      linarith
     by_contra hle; push Not at hle
     rcases eq_or_lt_of_le hle with heq | hlt
     · exact hinj 2 5 (by decide) (Fin.ext heq)
