@@ -349,7 +349,7 @@ theorem hole24R1_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   refine ⟨h, ?_⟩
   rintro ⟨hc3, hmu, hgen⟩
   have hR := hole24R_of_hole24R1 h
-  exact hR.2.2.2.2.1 (A20.w63_closes_mustar_pos F hR.1 hc3 hmu hgen)
+  exact hR.2.2.2.2.1 (A20.w63_closes_mustar_pos F hc3 hmu hgen)
 
 /-- Further shrunken residual of `Hole24R2` removing the `{c3 = 1}` stratum off the depth ties on
 `{0,1,2,3,4,6}` at `w63`, via `A20.c3eq1_closed` (no sample facts since C3FACTS). -/
@@ -383,7 +383,7 @@ theorem hole24R3_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   refine ⟨h, ?_⟩
   rintro ⟨hb3, hmu, hgen⟩
   have hR := hole24R_of_hole24R1 h.1.1
-  exact hR.2.2.2.2.1 (A20.e23_closes_mu23_pos F hR.1 hb3 hmu hgen)
+  exact hR.2.2.2.2.1 (A20.e23_closes_mu23_pos F hb3 hmu hgen)
 
 /-- Further shrunken residual of `Hole24R4` removing generic wall points
 `{1 < oblX6 x 3, mustar x = 0}` via `A20.w63_closes_wall` and
@@ -405,30 +405,82 @@ theorem hole24R4_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   refine ⟨h, ?_, ?_⟩
   · rintro ⟨hc3, hmu, hgen⟩
     have hR := hole24R_of_hole24R1 h.1.1.1
-    exact hR.2.2.2.2.1 (A20.w63_closes_wall F hR.1 hc3 hmu hgen)
+    exact hR.2.2.2.2.1 (A20.w63_closes_wall F hc3 hmu hgen)
   · rintro ⟨hb3, hmu, hgen⟩
     have hR := hole24R_of_hole24R1 h.1.1.1
-    exact hR.2.2.2.2.1 (A20.e23_closes_wall F hR.1 hb3 hmu hgen)
+    exact hR.2.2.2.2.1 (A20.e23_closes_wall F hb3 hmu hgen)
 
-/-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, be ≤ 1, al ≤ 1}` (where `al, be` are the `par2546_quad`
-coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`), any point of
-`Hole24 x fs (mkFac24 fs hh)` (with `Hole24R5`) off `Hole24Q45Special` lies in the `w63` or `E23`
-tie locus on `{0, 2, 3, 4, 5, 6}`.
-Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R4`, `Hole24R3`, and `Hole24R5`. -/
+/-- Shrunken `Q45` residual removing the same five A20/DI loci as `Hole24R2..R5`:
+`w63` (`1 < c3, 0 < mu*`), `c3 = 1`, `E23` (`1 < b3, 0 < mu23`), and the two walls
+(`1 < c3, mu* = 0` and `1 < b3, mu23 = 0`). -/
+def Hole24Q45R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24Q45Special x F ∧
+    ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x ∧
+      ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) ∧
+    ¬ (oblX6 x 3 = 1 ∧
+      ∀ i ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) ∧
+    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x ∧
+      ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫) ∧
+    ¬ (1 < oblX6 x 3 ∧ A20.mustar x = 0 ∧
+      ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) ∧
+    ¬ (1 < oblX2 x 3 ∧ A20.mu23 x = 0 ∧
+      ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+        i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫)
+
+/-- Every point of `Hole24Q45Special` reduces to `Hole24Q45R`. -/
+theorem hole24Q45_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (hQ : Hole24Q45Special x F) : Hole24Q45R x F := by
+  refine ⟨hQ, ?_, ?_, ?_, ?_, ?_⟩
+  · rintro ⟨hc3, hmu, hgen⟩
+    exact hQ.2.2.2.2.2.1 (A20.w63_closes_mustar_pos F hc3 hmu hgen)
+  · rintro ⟨hc3, hgen⟩
+    exact hQ.2.2.2.2.2.1 (A20.c3eq1_closed F hQ.1 hc3 hgen)
+  · rintro ⟨hb3, hmu, hgen⟩
+    exact hQ.2.2.2.2.2.1 (A20.e23_closes_mu23_pos F hb3 hmu hgen)
+  · rintro ⟨hc3, hmu, hgen⟩
+    exact hQ.2.2.2.2.2.1 (A20.w63_closes_wall F hc3 hmu hgen)
+  · rintro ⟨hb3, hmu, hgen⟩
+    exact hQ.2.2.2.2.2.1 (A20.e23_closes_wall F hb3 hmu hgen)
+
+/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24Q45Special`
+shrunk to `Hole24Q45R` and `Hole24R` shrunk to `Hole24R5`. -/
+def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24Flags x fs ∧ (Hole24Q45R x F ∨ Hole24R5 x F)
+
+/-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be ≤ 1, al ≤ 1}` (where `al, be` are the
+`par2546_quad` coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`),
+any point of `Hole24 x fs (mkFac24 fs hh)` lies in the `w63` or `E23` tie locus on `{0, 2, 3, 4, 5, 6}`. -/
 theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
-    (hH : Hole24Flags x fs ∧ (Hole24Q45Special x (mkFac24 fs hh) ∨ Hole24R5 x (mkFac24 fs hh)))
+    (hH : Hole24 x fs (mkFac24 fs hh))
     (hb3 : 1 < oblX2 x 3) (hc3 : 1 < oblX6 x 3)
-    {al be : ℝ} (halp : 0 < al) (hbep : 0 < be)
+    {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
-    (hbe : be ≤ 1) (hal : al ≤ 1)
-    (hnotQ : ¬ Hole24Q45Special x (mkFac24 fs hh)) :
+    (hbe : be ≤ 1) (hal : al ≤ 1) :
     (∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
     (∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
   rcases hH with ⟨hflags, hQ | hR5⟩
-  · exact absurd hQ hnotQ
+  · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
+    · left
+      by_contra hno
+      push Not at hno
+      rcases eq_or_lt_of_le hmu with hzero | hpos
+      · exact hQ.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
+      · exact hQ.2.1 ⟨hc3, hpos, fun i hi j hj hij =>
+          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
+    · right
+      by_contra hno
+      push Not at hno
+      rcases eq_or_lt_of_le hmu23 with hzero | hpos
+      · exact hQ.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
+      · exact hQ.2.2.2.1 ⟨hb3, hpos, fun i hi j hj hij =>
+          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · left
       by_contra hno
@@ -445,25 +497,29 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
       · exact hR5.1.2 ⟨hb3, hpos, fun i hi j hj hij =>
           hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
 
-/-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, be < 1, al < 1}` (where `al, be` are the `par2546_quad`
-coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`), any point of
-`Hole24 x fs (mkFac24 fs hh)` off `Hole24Q45Special` lies in the `w63` or `E23` tie locus.
-Uses `Hole24Flags.1 : ¬ FacetCell24 fs`, `Hole24R4.2 : ¬(1 < b3 ∧ 0 < mu23 ∧ hgen_E23)`,
-and `Hole24R3.1.2 : ¬(1 < c3 ∧ 0 < mustar ∧ hgen_w63)`. -/
+/-- Strict version on `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be < 1, al < 1}`:
+any point of `Hole24 x fs (mkFac24 fs hh)` lies in the `w63` or `E23` tie locus. -/
 theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
-    (hH : Hole24Flags x fs ∧ (Hole24Q45Special x (mkFac24 fs hh) ∨ Hole24R5 x (mkFac24 fs hh)))
+    (hH : Hole24 x fs (mkFac24 fs hh))
     (hb3 : 1 < oblX2 x 3) (hc3 : 1 < oblX6 x 3)
-    {al be : ℝ} (halp : 0 < al) (hbep : 0 < be)
+    {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
-    (hbe : be < 1) (hal : al < 1)
-    (hnotQ : ¬ Hole24Q45Special x (mkFac24 fs hh)) :
+    (hbe : be < 1) (hal : al < 1) :
     (∃ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
       i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
     (∃ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
       i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
   rcases hH with ⟨hflags, hQ | hR5⟩
-  · exact absurd hQ hnotQ
+  · rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
+    · left
+      by_contra hno
+      push Not at hno
+      exact hQ.2.1 ⟨hc3, hmu, hno⟩
+    · right
+      by_contra hno
+      push Not at hno
+      exact hQ.2.2.2.1 ⟨hb3, hmu23, hno⟩
   · rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · left
       by_contra hno
@@ -474,11 +530,7 @@ theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
       push Not at hno
       exact hR5.1.2 ⟨hb3, hmu23, hno⟩
 
-/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24R` shrunk to `Hole24R5`. -/
-def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R5 x F)
-
-/-- Main Type-24 reduction leaving `Hole24` (with `Hole24R5`). -/
+/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R` and `Hole24R5`). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -507,7 +559,7 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
   rcases type24_rupert_or_holeR fA fB fC fD fE fF fG fH fI hA hB hC hD hE hF hG hH hI with
     hRup | ⟨hh, hflags, hQ | hR⟩
   · exact Or.inl hRup
-  · exact Or.inr ⟨hh, hflags, Or.inl hQ⟩
+  · exact Or.inr ⟨hh, hflags, Or.inl (hole24Q45_reduce hQ)⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
     · exact Or.inr ⟨hh, hflags, Or.inr (hole24R4_reduce (hole24R3_reduce (hole24R2_reduce (hole24R1_reduce hR'))))⟩
