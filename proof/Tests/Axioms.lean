@@ -24,6 +24,8 @@ import Minimality.GenQuadCross
 import Minimality.Type29Exact
 import Minimality.Chi29
 import Minimality.M4fType24
+import Minimality.M4gType24
+import Minimality.M4hType24
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1146,6 +1148,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A15.u37_tie
 #assert_standard_axioms Minimality.T24.A15.lexAny_or_split_E3426_full
 #assert_standard_axioms Minimality.GenQuad.lexClause_of_crossOf
+#assert_standard_axioms Minimality.T24.A17.e16_gbc
+#assert_standard_axioms Minimality.T24.A17.e12_gbc
+#assert_standard_axioms Minimality.T24.A17.gac_pos_famA
+#assert_standard_axioms Minimality.T24.A17.chord_e16
+#assert_standard_axioms Minimality.T24.A17.e10_sym
+#assert_standard_axioms Minimality.T24.A17.e12_A2
+#assert_standard_axioms Minimality.T24.A17.famA_rev
 #print axioms Minimality.T24.A12.tie1_bound
 #print axioms Minimality.T24.A12.lexAny_or_split_E3426
 #print axioms Minimality.T24.A12.isRupert_of_E3426
