@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type24A1Tie
 public import Minimality.Type24A1E25
+public import Minimality.GenQuadLex
 
 @[expose] public section
 
@@ -516,9 +517,9 @@ private theorem f1_t25_facts {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hx1 : x 1 - x 5 = c11 • (x 2 - x 5) + c12 • (x 0 - x 5) + c13 • (x 3 - x 5))
     (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
     (h11 : 0 < c11) (h13 : 0 < c13) (h61 : 0 < c61) (h63 : 0 < c63) (hq4 : 0 < q4)
-    (hpos : 0 < c63 * c11 - c13 * c61) (h1 : 0 < ⟪F.N 1, bT25 x⟫) :
+    (hpos : 0 < c63 * c11 - c13 * c61) (h1 : 0 ≤ ⟪F.N 1, bT25 x⟫) :
     (1 - c62 - c63 < 0) ∧ (1 - c12 - c13 < 0) ∧
-      (-c12 * c63 + c13 * c62 - c13 + c63 < 0) ∧
+      (-c12 * c63 + c13 * c62 - c13 + c63 ≤ 0) ∧
       (0 < c11 * (c62 + c63 - 1) - c61 * (c12 + c13 - 1)) ∧
       (-c12 * q4 + c13 * p4 - c13 + q4 < 0) ∧
       (-c62 * q4 + c63 * p4 - c63 + q4 < 0) := by
@@ -540,19 +541,19 @@ private theorem f1_t25_facts {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     linear_combination -e6 - c61 * hb
   have hc6 : 1 - c62 - c63 < 0 := by
     by_contra hK; push Not at hK
-    nlinarith [mul_nonpos_of_nonneg_of_nonpos hK w5.le, mul_pos h61 h1, mul_pos h63 (neg_pos.2 w3)]
+    nlinarith [mul_nonpos_of_nonneg_of_nonpos hK w5.le, mul_nonneg h61.le h1, mul_pos h63 (neg_pos.2 w3)]
   have k1 : (1 - c12 - c13) * F.f 1 (x 5) = c11 * ⟪F.N 1, bT25 x⟫ + c13 * (-F.f 1 (x 3)) := by
     linear_combination -e1 - c11 * hb
   have hc1 : 1 - c12 - c13 < 0 := by
     by_contra hK; push Not at hK
-    nlinarith [mul_nonpos_of_nonneg_of_nonpos hK w5.le, mul_pos h11 h1, mul_pos h13 (neg_pos.2 w3)]
+    nlinarith [mul_nonpos_of_nonneg_of_nonpos hK w5.le, mul_nonneg h11.le h1, mul_pos h13 (neg_pos.2 w3)]
   have kN1 : (-c12 * c63 + c13 * c62 - c13 + c63) * F.f 1 (x 5) =
       (c63 * c11 - c13 * c61) * ⟪F.N 1, bT25 x⟫ := by
     linear_combination c13 * e6 - c63 * e1 - (c63 * c11 - c13 * c61) * hb
-  have hN1 : -c12 * c63 + c13 * c62 - c13 + c63 < 0 := by
+  have hN1 : -c12 * c63 + c13 * c62 - c13 + c63 ≤ 0 := by
     by_contra hK; push Not at hK
-    have p1 := mul_nonpos_of_nonneg_of_nonpos hK w5.le
-    have p2 := mul_pos hpos h1
+    have p1 := mul_neg_of_pos_of_neg hK w5
+    have p2 := mul_nonneg hpos.le h1
     linarith
   have kD : (c11 * (c62 + c63 - 1) - c61 * (c12 + c13 - 1)) * (-F.f 1 (x 5)) =
       (c63 * c11 - c13 * c61) * (-F.f 1 (x 3)) := by
@@ -569,7 +570,7 @@ private theorem f1_t25_facts {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     by_contra hK; push Not at hK
     have p1 := mul_nonneg hK (neg_nonneg.2 w5.le)
     have p2 := mul_pos h13 (neg_pos.2 w4)
-    have p3 := mul_pos (mul_pos hq4 h11) h1
+    have p3 := mul_nonneg (mul_pos hq4 h11).le h1
     linarith
   have k46 : (-c62 * q4 + c63 * p4 - c63 + q4) * (-F.f 1 (x 5)) =
       c63 * F.f 1 (x 4) - q4 * c61 * ⟪F.N 1, bT25 x⟫ := by
@@ -578,7 +579,7 @@ private theorem f1_t25_facts {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     by_contra hK; push Not at hK
     have p1 := mul_nonneg hK (neg_nonneg.2 w5.le)
     have p2 := mul_pos h63 (neg_pos.2 w4)
-    have p3 := mul_pos (mul_pos hq4 h61) h1
+    have p3 := mul_nonneg (mul_pos hq4 h61).le h1
     linarith
   exact ⟨hc6, hc1, hN1, hD, h41, h46⟩
 
@@ -658,15 +659,79 @@ theorem t25_01635b_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1
   obtain ⟨c11, c12, c13, hx1, h11, h12, h13⟩ := x1_frame F
   have hΔ := delta_pos F hdet
   obtain ⟨hle, hpos⟩ := c13_c63_pos_of_region F hA1 hdet hx1 hx6
-  obtain ⟨-, -, hN1, -, -, -⟩ := f1_t25_facts F hx4 hx1 hx6 h11 h13 h61 h63 (by linarith) hpos h1
+  have hN1 : -c12 * c63 + c13 * c62 - c13 + c63 < 0 := by
+    have e1 := fval F 1 hx1
+    have e6 := fval F 1 hx6
+    rw [F.zero 1 1 (by decide), F.zero 1 0 (by decide)] at e1
+    rw [F.zero 1 6 (by decide), F.zero 1 0 (by decide)] at e6
+    have hb : F.f 1 (x 2) - F.f 1 (x 5) = -⟪F.N 1, bT25 x⟫ := by
+      have hbT : bT25 x = -(x 2 - x 5) := by unfold bT25; abel
+      rw [hbT, inner_neg_right, F.inner_sub]; ring
+    have kN1 : (-c12 * c63 + c13 * c62 - c13 + c63) * F.f 1 (x 5) =
+        (c63 * c11 - c13 * c61) * ⟪F.N 1, bT25 x⟫ := by
+      linear_combination c13 * e6 - c63 * e1 - (c63 * c11 - c13 * c61) * hb
+    by_contra hK; push Not at hK
+    have p1 := mul_nonpos_of_nonneg_of_nonpos hK (F.neg 1 5 (by decide)).le
+    have p2 := mul_pos hpos h1
+    linarith
   exact frontDet_of_coords (z := x 5) (e1 := x 2 - x 5) (e2 := x 0 - x 5) (e3 := x 3 - x 5) hΔ one_pos
     (P := V0) (Q := V6 c61 c62 c63) (R := V1 c11 c12 c13) (S := V5) (B := B25)
     (eq_of_frame V0 (by simp [V0])) (eq_of_frame _ (by simp only [V6]; exact hx6))
     (eq_of_frame _ (by simp only [V1]; exact hx1)) (eq_of_frame V5 (by simp [V5]))
     bT25_eq_phi (fd_0615 h13 h63 hle hpos hN1)
 
+theorem t25_01635b_lex_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
+    (hdet : 0 < det24 x) (h1 : 0 ≤ ⟪F.N 1, bT25 x⟫)
+    (_h1eq : ⟪F.N 1, bT25 x⟫ = 0 → 0 ≤ ⟪F.N 1, x 3 - x 5⟫) (d2 : ℝ³) :
+    GenQuad.LexClause (x 0) (x 6) (x 1) (x 5) (bT25 x) (x 3 - x 5) d2 := by
+  have hb : bT25 x ≠ 0 := by
+    have := (type24OfFac F).inj
+    exact sub_ne_zero.2 fun h => absurd (this h) (by decide)
+  rcases lt_or_eq_of_le h1 with hlt | heq
+  · exact lexClause_of_det hb (t25_01635b_of_region F hA1 hdet hlt)
+  · obtain ⟨p4, q4, c61, c62, c63, hx4, hx6, hp4, hq4, h61, h62, h63, -, -, -⟩ := frame_data F hA1
+    obtain ⟨c11, c12, c13, hx1, h11, h12, h13⟩ := x1_frame F
+    obtain ⟨hle, hpos⟩ := c13_c63_pos_of_region F hA1 hdet hx1 hx6
+    have e1 := fval F 1 hx1
+    have e6 := fval F 1 hx6
+    rw [F.zero 1 1 (by decide), F.zero 1 0 (by decide)] at e1
+    rw [F.zero 1 6 (by decide), F.zero 1 0 (by decide)] at e6
+    have hb2 : F.f 1 (x 2) - F.f 1 (x 5) = 0 := by
+      have hbT : bT25 x = x 5 - x 2 := rfl
+      have := F.inner_sub 1 5 2
+      rw [← hbT, ← heq] at this; linarith
+    rw [hb2, mul_zero] at e1 e6
+    have hN1_zero : -c12 * c63 + c13 * c62 - c13 + c63 = 0 := by
+      have kN1 : (-c12 * c63 + c13 * c62 - c13 + c63) * F.f 1 (x 5) = 0 := by
+        linear_combination c13 * e6 - c63 * e1
+      exact (mul_eq_zero.mp kN1).resolve_right (F.neg 1 5 (by decide)).ne
+    have hbb : 0 < ⟪bT25 x, bT25 x⟫ := real_inner_self_pos.mpr hb
+    refine Minimality.GenQuad.frontOf_lex (v := bT25 x) ?_ (Or.inl hbb)
+    refine ⟨1 - c13 / c63, 1, (c63 * c11 - c13 * c61) / c63,
+      sub_nonneg.2 ((div_le_one h63).2 hle), by linarith [div_pos h13 h63],
+      zero_le_one, le_rfl, div_pos hpos h63, ?_⟩
+    have hvec : (1 - c13 / c63) • (x 0 - x 5) + (c13 / c63) • (x 6 - x 5) =
+        (x 1 - x 5) + ((c63 * c11 - c13 * c61) / c63) • bT25 x := by
+      rw [hx6, hx1, show bT25 x = -(x 2 - x 5) from by unfold bT25; abel]
+      have hc63_ne : c63 ≠ 0 := h63.ne'
+      have hcoef0 : (1 - c13 / c63) + (c13 / c63) * c62 - c12 = 0 := by
+        field_simp [hc63_ne]; linarith [hN1_zero]
+      calc (1 - c13 / c63) • (x 0 - x 5) + (c13 / c63) • (c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+          = ((c13 / c63) * c61) • (x 2 - x 5) + ((1 - c13 / c63) + (c13 / c63) * c62) • (x 0 - x 5) +
+              ((c13 / c63) * c63) • (x 3 - x 5) := by module
+        _ = (c11 - (c63 * c11 - c13 * c61) / c63) • (x 2 - x 5) + c12 • (x 0 - x 5) +
+              c13 • (x 3 - x 5) := by
+            congr 1
+            · congr 1
+              · congr 1; field_simp [hc63_ne]; ring
+              · rw [show (1 - c13 / c63) + c13 / c63 * c62 = c12 by linarith]
+            · congr 1; field_simp [hc63_ne]
+        _ = (c11 • (x 2 - x 5) + c12 • (x 0 - x 5) + c13 • (x 3 - x 5)) +
+              ((c63 * c11 - c13 * c61) / c63) • (-(x 2 - x 5)) := by module
+    linear_combination (norm := module) hvec
+
 theorem t16_04_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
-    (hdet : 0 < det24 x) (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
+    (hdet : 0 < det24 x) (h1 : 0 ≤ ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
     FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x) := by
   obtain ⟨p4, q4, c61, c62, c63, hx4, hx6, hp4, hq4, h61, h62, h63, -, -, -⟩ := frame_data F hA1
   obtain ⟨c11, c12, c13, hx1, h11, h12, h13⟩ := x1_frame F
@@ -688,7 +753,7 @@ theorem t16_04_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : R
     bT25_eq_phi (fd_0415 h11 h13 hq4 hA1.1 hc5 hs hs12 hs13 hB h41)
 
 theorem t16_06_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
-    (hdet : 0 < det24 x) (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
+    (hdet : 0 < det24 x) (h1 : 0 ≤ ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
     FrontDet (x 0) (x 4) (x 6) (x 3) (bT25 x) := by
   obtain ⟨p4, q4, c61, c62, c63, hx4, hx6, hp4, hq4, h61, h62, h63, -, hpq, -⟩ := frame_data F hA1
   obtain ⟨c11, c12, c13, hx1, h11, h12, h13⟩ := x1_frame F
@@ -703,7 +768,7 @@ theorem t16_06_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : R
     bT25_eq_phi (fd_0463 h61 hpq hc6 hN8 h46)
 
 theorem t16_07_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
-    (hdet : 0 < det24 x) (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
+    (hdet : 0 < det24 x) (h1 : 0 ≤ ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
     FrontDet (x 0) (x 4) (x 6) (x 5) (bT25 x) := by
   obtain ⟨p4, q4, c61, c62, c63, hx4, hx6, hp4, hq4, h61, h62, h63, -, -, -⟩ := frame_data F hA1
   obtain ⟨c11, c12, c13, hx1, h11, h12, h13⟩ := x1_frame F
@@ -719,7 +784,7 @@ theorem t16_07_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : R
     bT25_eq_phi (fd_0465 h61 h63 hq4 hB h46)
 
 theorem t16_13_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
-    (hdet : 0 < det24 x) (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
+    (hdet : 0 < det24 x) (h1 : 0 ≤ ⟪F.N 1, bT25 x⟫) (h8 : ⟪F.N 8, bT25 x⟫ < 0) :
     FrontDet (x 4) (x 5) (x 6) (x 3) (bT25 x) := by
   obtain ⟨p4, q4, c61, c62, c63, hx4, hx6, hp4, hq4, h61, h62, h63, -, -, -⟩ := frame_data F hA1
   obtain ⟨c11, c12, c13, hx1, h11, h12, h13⟩ := x1_frame F
@@ -787,7 +852,7 @@ theorem a1TieSample_of_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1
   t25_fronts_05346 := hS.t25_fronts_05346
   t25_fronts_01635 := fun h1 h8 => by
     obtain ⟨a, c, d, e⟩ := hS.t25_fronts_01635 h1 h8
-    refine ⟨a, t25_01635b_of_region F hA1 hdet h1, c, d, ?_⟩
+    refine ⟨a, fun d2 h1eq => t25_01635b_lex_of_region F hA1 hdet h1 h1eq d2, c, d, ?_⟩
     rcases e with e | e
     · exact Or.inl e
     · exact Or.inr ⟨e, fun {_ _ _ _ _ _} hx1 hx6 => c13_c63_pos_of_region F hA1 hdet hx1 hx6⟩
@@ -798,7 +863,7 @@ theorem a1TieSample_of_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1
         (c13_c63_pos_of_region F hA1 hdet hx1 hx6).1,
         (hfr hx4 hx1 hx6).2,
         (c13_c63_pos_of_region F hA1 hdet hx1 hx6).2⟩,
-      f00, f01, t25_01635b_of_region F hA1 hdet h1,
+      f00, f01, fun d2 h1eq => t25_01635b_lex_of_region F hA1 hdet h1 h1eq d2,
       f03, t16_04_of_region F hA1 hdet h1 h8, f05,
       t16_06_of_region F hA1 hdet h1 h8, t16_07_of_region F hA1 hdet h1 h8,
       f08, f09, f10, f11, f12, t16_13_of_region F hA1 hdet h1 h8⟩
@@ -873,10 +938,10 @@ theorem a1E25Sample_of_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1
   t25_fronts_05346 := hS.t25_fronts_05346
   t25_fronts_01635 := fun h1 h8 =>
     let ⟨a, c, d, e⟩ := hS.t25_fronts_01635 h1 h8
-    ⟨a, t25_01635b_of_region F hA1 hdet h1, c, d, e⟩
+    ⟨a, fun d2 h1eq => t25_01635b_lex_of_region F hA1 hdet h1 h1eq d2, c, d, e⟩
   t25_016435 := fun h1 h8 =>
     let ⟨hfr, f00, f01, f03, f05, f08, f09, f10, f11, f12⟩ := hS.t25_016435 h1 h8
-    ⟨hfr, f00, f01, t25_01635b_of_region F hA1 hdet h1,
+    ⟨hfr, f00, f01, fun d2 h1eq => t25_01635b_lex_of_region F hA1 hdet h1 h1eq d2,
       f03, t16_04_of_region F hA1 hdet h1 h8, f05,
       t16_06_of_region F hA1 hdet h1 h8, t16_07_of_region F hA1 hdet h1 h8,
       f08, f09, f10, f11, f12, t16_13_of_region F hA1 hdet h1 h8⟩
