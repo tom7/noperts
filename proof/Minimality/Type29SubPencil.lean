@@ -40,8 +40,8 @@ def P4C_sp (b0 h0 b2 h2 : R) : R := b0 * h2 - b2 * h0
 def P5C_sp (a0 h0 a2 h2 : R) : R := a2 * h0 - a0 * h2
 def qA4_sp (a2 b2 s t : R) : R := -a2 * (1 - t) - b2 * s
 def qA5_sp (a2 b2 s t : R) : R := -a2 * t - b2 * (1 - s)
-def D035_sp (a0 b0 h0 s t : R) : R := a0 * (1 - s) + b0 * t - (1 - h0) * t
-def D234_sp (a2 b2 h2 s t : R) : R := -a2 * s - b2 * (1 - t) + (1 - h2) * s
+def D035_sp (a0 b0 h0 s t : R) : R := -((b0 - 1 + h0) * s - a0 * t + a0)
+def D234_sp (a2 b2 h2 s t : R) : R := b2 * s + (1 - h2 - a2) * t - b2
 def P0_sp (a0 b0 h0 s t : R) : R := b0 * (s - 1) + (1 - a0 - h0) * t
 def P2_sp (a2 b2 h2 s t : R) : R := a2 * t - a2 - b2 * s - h2 * s + s
 

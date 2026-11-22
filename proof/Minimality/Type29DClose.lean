@@ -65,7 +65,7 @@ theorem d3_identity (N : NF29 x) (ht : N.t = 1) :
   rw [real_inner_comm N.E₂ N.E₁, real_inner_comm N.E₃ N.E₁, real_inner_comm N.E₃ N.E₂]
   ring
 
-local macro "u124_fac_val " N:term:max f:ident ht:term:max : tactic =>
+local macro "u124_fac_val " N:term:max f:ident : tactic =>
   `(tactic| (
     rw [($f $N).hN (x 3 + u124_346 $N x) (x 3), add_sub_cancel_left]
     dsimp only [u124_346]
@@ -73,34 +73,32 @@ local macro "u124_fac_val " N:term:max f:ident ht:term:max : tactic =>
       ← ($f $N).hN (x 4) (x 6), ← ($f $N).hN (x 3) (x 6)]
     dsimp only [f012, f015, f023, f035, f124, f1456, f234, f346, f356, Face16.ofPoly]
     nf29_simp $N
-    rw [$ht]
-    simp only [det3c, NF29.D]
-    ring))
+    simp only [det3c, NF29.D]))
 
-private def c_D : ZMod 4 → Fin 7 := ![3, 4, 6, 5]
-private def U_D : Finset (Fin 9) := {0, 2, 3, 5, 6}
-private def Dn_D : Finset (Fin 9) := {1, 4, 7, 8}
+private def c_D : ZMod 4 → Fin 7 := ![1, 4, 6, 5]
+private def U_D : Finset (Fin 9) := {0, 2, 3, 5}
+private def Dn_D : Finset (Fin 9) := {1, 4, 6, 7, 8}
 
 private theorem c_D_inj : Function.Injective c_D := by decide
 private theorem cyc_D : S0xCycUD s0x_S29 c_D U_D Dn_D := by decide
 
-/-- Clause-form `F124xF346` leaf on the 4-rim `![3, 4, 6, 5]` at `u124_346`, with `d1 = x 1 - x 4`. -/
+/-- Clause-form `F124xF346` leaf on the 4-rim `![1, 4, 6, 5]` at `u124_346`, with `d1 = x 5 - x 4`. -/
 theorem lexAny29_F124xF346_clauses (N : NF29 x) (ht : N.t = 1)
     (hb2h2 : 0 < N.b2 + N.h2) (hpos : 0 < -N.a2 + N.b2 * N.s - N.b2 - N.h2 + 1)
     (h012 : 0 < N.f012.f (x 3 + N.u124_346 x) - N.f012.f (x 3))
     (h015 : N.f015.f (x 3 + N.u124_346 x) - N.f015.f (x 3) < 0)
     (h023 : 0 < N.f023.f (x 3 + N.u124_346 x) - N.f023.f (x 3))
     (h035 : 0 < N.f035.f (x 3 + N.u124_346 x) - N.f035.f (x 3))
-    (hA0123 : GenQuad.LexClause (x 4) (x 5) (x 3) (x 6) (N.u124_346 x) (x 1 - x 4) 0)
-    (hB0123 : GenQuad.LexClause (x 3) (x 6) (x 4) (x 5) (N.u124_346 x) (x 1 - x 4) 0) :
+    (hA0123 : GenQuad.LexClause (x 4) (x 5) (x 1) (x 6) (N.u124_346 x) (x 5 - x 4) 0)
+    (hB0123 : GenQuad.LexClause (x 1) (x 6) (x 4) (x 5) (N.u124_346 x) (x 5 - x 4) 0) :
     Minimality.H29.LexAny29 (s0x_fac29 N.facets) := by
   let F := s0x_fac29 N.facets
   have hnb : ∀ t : Fin 9, ⟪F.N t, N.u124_346 x⟫ = F.f t (x 3 + N.u124_346 x) - F.f t (x 3) := by
     intro t; rw [F.hN t (x 3 + N.u124_346 x) (x 3), add_sub_cancel_left]
-  have hnd : ∀ t : Fin 9, ⟪F.N t, x 1 - x 4⟫ = F.f t (x 1) - F.f t (x 4) :=
-    fun t => (F.hN t (x 1) (x 4)).symm
+  have hnd : ∀ t : Fin 9, ⟪F.N t, x 5 - x 4⟫ = F.f t (x 5) - F.f t (x 4) :=
+    fun t => (F.hN t (x 5) (x 4)).symm
   have hD2 : 0 < N.D ^ 2 := sq_pos_of_ne_zero N.hD
-  refine GenQuad.lexAny_of_clauses F (le_refl 4) c_D_inj cyc_D (N.u124_346 x) (x 1 - x 4) 0
+  refine GenQuad.lexAny_of_clauses F (le_refl 4) c_D_inj cyc_D (N.u124_346 x) (x 5 - x 4) 0
     ?_ ?_ (GenQuad.clauses_four (p := fun i => x (c_D i)) hA0123 hB0123)
   · intro t ht_mem
     rw [hnb t]
@@ -110,43 +108,45 @@ theorem lexAny29_F124xF346_clauses (N : NF29 x) (ht : N.t = 1)
     · exact Or.inl h035
     · refine Or.inl ?_
       change 0 < N.f1456.f (x 3 + N.u124_346 x) - N.f1456.f (x 3)
-      have hv : N.f1456.f (x 3 + N.u124_346 x) - N.f1456.f (x 3) = (N.h2 * N.s) * N.D ^ 2 := by
-        u124_fac_val N f1456 ht
+      have hv : N.f1456.f (x 3 + N.u124_346 x) - N.f1456.f (x 3) = N.h2 * N.D ^ 2 := by
+        u124_fac_val N f1456; rw [ht]; ring
       rw [hv]
-      exact mul_pos (mul_pos N.hh2 N.hs) hD2
-    · refine Or.inl ?_
-      change 0 < N.f234.f (x 3 + N.u124_346 x) - N.f234.f (x 3)
-      have hv : N.f234.f (x 3 + N.u124_346 x) - N.f234.f (x 3) = N.b2 ^ 2 * N.D ^ 2 := by
-        u124_fac_val N f234 ht
-      rw [hv]
-      exact mul_pos (sq_pos_of_ne_zero N.hb2.ne) hD2
+      exact mul_pos N.hh2 hD2
   · intro t ht_mem
     rw [hnb t, hnd t]
     fin_cases t <;> try exact absurd ht_mem (by decide)
     · exact Or.inl (neg_pos.mpr h015)
-    · refine Or.inl ?_
-      change 0 < -(N.f124.f (x 3 + N.u124_346 x) - N.f124.f (x 3))
-      have hv : N.f124.f (x 3 + N.u124_346 x) - N.f124.f (x 3) =
-          (-N.h2 * (-N.a2 + N.b2 * N.s - 2 * N.b2 - N.h2 + 1)) * N.D ^ 2 := by
-        u124_fac_val N f124 ht
-      rw [hv]
-      have hfac : 0 < -N.a2 + N.b2 * N.s - 2 * N.b2 - N.h2 + 1 := by linarith [N.hb2]
-      have hprod : 0 < N.h2 * (-N.a2 + N.b2 * N.s - 2 * N.b2 - N.h2 + 1) * N.D ^ 2 :=
-        mul_pos (mul_pos N.hh2 hfac) hD2
-      linarith
-    · have hb0 : N.f346.f (x 3 + N.u124_346 x) - N.f346.f (x 3) = 0 := by
-        u124_fac_val N f346 ht
-      have hd1 : N.f346.f (x 1) - N.f346.f (x 4) = -N.t * N.D ^ 2 := by
-        dsimp only [f346, Face16.ofPoly]
+    · have hb0 : N.f124.f (x 3 + N.u124_346 x) - N.f124.f (x 3) = 0 := by
+        u124_fac_val N f124; rw [ht]; ring
+      have hd1 : N.f124.f (x 5) - N.f124.f (x 4) = -N.h2 * N.D ^ 2 := by
+        dsimp only [f124, Face16.ofPoly]
         nf29_simp N; simp only [det3c, NF29.D]; ring
       refine Or.inr ⟨neg_eq_zero.mpr hb0, Or.inl ?_⟩
-      change 0 < -(N.f346.f (x 1) - N.f346.f (x 4))
+      change 0 < -(N.f124.f (x 5) - N.f124.f (x 4))
       rw [hd1, neg_mul_eq_neg_mul, neg_neg]
-      exact mul_pos N.ht hD2
+      exact mul_pos N.hh2 hD2
+    · refine Or.inl ?_
+      change 0 < -(N.f234.f (x 3 + N.u124_346 x) - N.f234.f (x 3))
+      have hv : N.f234.f (x 3 + N.u124_346 x) - N.f234.f (x 3) =
+          N.b2 * (-N.a2 + N.b2 * N.s - N.b2 - N.h2 + 1) * N.D ^ 2 := by
+        u124_fac_val N f234; rw [ht]; ring
+      rw [hv]
+      have hprod : 0 < (-N.b2) * (-N.a2 + N.b2 * N.s - N.b2 - N.h2 + 1) * N.D ^ 2 :=
+        mul_pos (mul_pos (neg_pos.mpr N.hb2) hpos) hD2
+      linarith
+    · have hb0 : N.f346.f (x 3 + N.u124_346 x) - N.f346.f (x 3) = 0 := by
+        u124_fac_val N f346; rw [ht]; ring
+      have hd1 : N.f346.f (x 5) - N.f346.f (x 4) = -N.s * N.D ^ 2 := by
+        dsimp only [f346, Face16.ofPoly]
+        nf29_simp N; rw [ht]; simp only [det3c, NF29.D]; ring
+      refine Or.inr ⟨neg_eq_zero.mpr hb0, Or.inl ?_⟩
+      change 0 < -(N.f346.f (x 5) - N.f346.f (x 4))
+      rw [hd1, neg_mul_eq_neg_mul, neg_neg]
+      exact mul_pos N.hs hD2
     · refine Or.inl ?_
       change 0 < -(N.f356.f (x 3 + N.u124_346 x) - N.f356.f (x 3))
       have hv : N.f356.f (x 3 + N.u124_346 x) - N.f356.f (x 3) = -((N.b2 + N.h2) * N.s) * N.D ^ 2 := by
-        u124_fac_val N f356 ht
+        u124_fac_val N f356; rw [ht]; ring
       rw [hv, neg_mul_eq_neg_mul, neg_neg]
       exact mul_pos (mul_pos hb2h2 N.hs) hD2
 
@@ -195,12 +195,12 @@ theorem t1_D_closed (N : NF29 x) (ht : N.t = 1) (hdG4 : 0 < N.dG4) (hA : 0 < 1 -
     by_contra hneg
     push Not at hneg
     apply hnf
-    have hA0123 : GenQuad.LexClause (x 4) (x 5) (x 3) (x 6) (N.u124_346 x) (x 1 - x 4) 0 :=
+    have hA0123 : GenQuad.LexClause (x 4) (x 5) (x 1) (x 6) (N.u124_346 x) (x 5 - x 4) 0 :=
       GenQuad.lexClause_of_notM (by
         rintro ⟨-, h2, -, -⟩
         rw [inner_sub_left] at hz4_pos
         linarith)
-    have hB0123 : GenQuad.LexClause (x 3) (x 6) (x 4) (x 5) (N.u124_346 x) (x 1 - x 4) 0 :=
+    have hB0123 : GenQuad.LexClause (x 1) (x 6) (x 4) (x 5) (N.u124_346 x) (x 5 - x 4) 0 :=
       GenQuad.lexClause_of_notM (by
         rintro ⟨-, -, -, h4⟩
         rw [inner_sub_left] at hneg

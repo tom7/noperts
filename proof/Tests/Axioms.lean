@@ -1439,5 +1439,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.d3_identity
 #assert_standard_axioms Minimality.NF29.lexAny29_F124xF346_clauses
 #assert_standard_axioms Minimality.NF29.t1_D_closed
-#assert_standard_axioms Minimality.NF29.syz_012_14_Q
-#assert_standard_axioms Minimality.NF29.cert_FB_CQ5_pos_eta5_pos
+#print axioms Minimality.NF29.syz_012_14_Q
+#print axioms Minimality.NF29.cert_FB_CQ5_pos_eta5_pos
