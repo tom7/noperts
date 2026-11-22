@@ -3,6 +3,7 @@ module
 public import Minimality.M4hType24
 public import Minimality.Type24Quad
 public import Minimality.GenQuadCross
+public import Minimality.GenQuadLex
 
 @[expose] public section
 
@@ -178,7 +179,7 @@ set_option maxHeartbeats 4000000 in
 set_option linter.unusedSimpArgs false in
 set_option linter.unusedTactic false in
 /-- The 14 front pairs of the 6-rim `1 0 5 3 4 6` at `eb`, from facet data and the two brackets (`nB < 0`). -/
-theorem neg6_fronts {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+theorem neg6_fronts {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hω4 : 0 < omega4 x)
     (hnb : F.f 3 (x 2) < F.f 3 (x 1)) (h346 : F.f 8 (x 1) < F.f 8 (x 2))
     (h1356 : 0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3)
     (h1456 : 0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4) :
@@ -219,7 +220,6 @@ theorem neg6_fronts {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn 
     rw [F.zero 4 4 (by decide), F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at e
     have h1 := F.neg 4 1 (by decide)
     have hω := T.eq4
-    have hω4 := hC.2.1
     have key : (F.f 4 (x 2) - F.f 4 (x 1)) * oblX2 x 4 =
         F.f 4 (x 1) * (omega4 x * oblX2 x 4) := by
       linear_combination (-1 : ℝ) * e + F.f 4 (x 1) * hω
@@ -514,25 +514,26 @@ theorem lexAny_neg6_leaf {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hN0 : ⟪F.N 0, x 2 - x 1⟫ = 0) (hN0d : 0 < ⟪F.N 0, -(x 0 - x 1) - (x 6 - x 1)⟫)
     (hN5 : ⟪F.N 5, x 2 - x 1⟫ = 0) (hN5d : 0 < ⟪F.N 5, -(x 0 - x 1) - (x 6 - x 1)⟫)
     (hN2 : 0 < ⟪F.N 2, x 2 - x 1⟫) (hN6 : 0 < ⟪F.N 6, x 2 - x 1⟫)
-    (hN7 : 0 < ⟪F.N 7, x 2 - x 1⟫) (hN8 : 0 < ⟪F.N 8, x 2 - x 1⟫)
+    (hN7 : 0 < ⟪F.N 7, x 2 - x 1⟫)
+    (hN8 : LexPos3 ⟪F.N 8, x 2 - x 1⟫ ⟪F.N 8, -(x 0 - x 1) - (x 6 - x 1)⟫ ⟪F.N 8, x 0 - x 1⟫)
     (hN1 : ⟪F.N 1, x 2 - x 1⟫ < 0) (hN4 : ⟪F.N 4, x 2 - x 1⟫ < 0)
     (hN3 : LexPos3 (-⟪F.N 3, x 2 - x 1⟫) (-⟪F.N 3, -(x 0 - x 1) - (x 6 - x 1)⟫)
       (-⟪F.N 3, x 0 - x 1⟫))
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 5) (x 4))
-    (f15_03 : GenQuad.FrontOf (x 1) (x 5) (x 0) (x 3) (x 2 - x 1))
-    (f15_04 : GenQuad.FrontOf (x 1) (x 5) (x 0) (x 4) (x 2 - x 1))
-    (f15_06 : GenQuad.FrontOf (x 1) (x 5) (x 0) (x 6) (x 2 - x 1))
-    (f13_04 : GenQuad.FrontOf (x 1) (x 3) (x 0) (x 4) (x 2 - x 1))
-    (f13_06 : GenQuad.FrontOf (x 1) (x 3) (x 0) (x 6) (x 2 - x 1))
-    (f14_06 : GenQuad.FrontOf (x 1) (x 4) (x 0) (x 6) (x 2 - x 1))
-    (f13_54 : GenQuad.FrontOf (x 1) (x 3) (x 5) (x 4) (x 2 - x 1))
-    (f56_13 : GenQuad.FrontOf (x 5) (x 6) (x 1) (x 3) (x 2 - x 1))
-    (f56_14 : GenQuad.FrontOf (x 5) (x 6) (x 1) (x 4) (x 2 - x 1))
-    (f36_14 : GenQuad.FrontOf (x 3) (x 6) (x 1) (x 4) (x 2 - x 1))
-    (f56_03 : GenQuad.FrontOf (x 5) (x 6) (x 0) (x 3) (x 2 - x 1))
-    (f56_04 : GenQuad.FrontOf (x 5) (x 6) (x 0) (x 4) (x 2 - x 1))
-    (f36_04 : GenQuad.FrontOf (x 3) (x 6) (x 0) (x 4) (x 2 - x 1))
-    (f36_54 : GenQuad.FrontOf (x 3) (x 6) (x 5) (x 4) (x 2 - x 1))
+    (f15_03 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 3) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f15_04 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f15_06 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 6) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f13_04 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f13_06 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 6) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f14_06 : GenQuad.LexClause (x 1) (x 4) (x 0) (x 6) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f13_54 : GenQuad.LexClause (x 1) (x 3) (x 5) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_13 : GenQuad.LexClause (x 5) (x 6) (x 1) (x 3) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_14 : GenQuad.LexClause (x 5) (x 6) (x 1) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f36_14 : GenQuad.LexClause (x 3) (x 6) (x 1) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_03 : GenQuad.LexClause (x 5) (x 6) (x 0) (x 3) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_04 : GenQuad.LexClause (x 5) (x 6) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f36_04 : GenQuad.LexClause (x 3) (x 6) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f36_54 : GenQuad.LexClause (x 3) (x 6) (x 5) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
     (m0123 : ¬ (max (z x (x 2 - x 1) 0) (z x (x 2 - x 1) 3) ≤ min (z x (x 2 - x 1) 1) (z x (x 2 - x 1) 5)))
     (m0124 : ¬ (max (z x (x 2 - x 1) 0) (z x (x 2 - x 1) 4) ≤ min (z x (x 2 - x 1) 1) (z x (x 2 - x 1) 5)))
     (m0125 : ¬ (max (z x (x 2 - x 1) 0) (z x (x 2 - x 1) 6) ≤ min (z x (x 2 - x 1) 1) (z x (x 2 - x 1) 5)))
@@ -548,7 +549,6 @@ theorem lexAny_neg6_leaf {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (m1345 : ¬ (max (z x (x 2 - x 1) 0) (z x (x 2 - x 1) 4) ≤ min (z x (x 2 - x 1) 3) (z x (x 2 - x 1) 6)))
     (m2345 : ¬ (max (z x (x 2 - x 1) 5) (z x (x 2 - x 1) 4) ≤ min (z x (x 2 - x 1) 3) (z x (x 2 - x 1) 6))) :
     LexAny F := by
-  have hb : x 2 - x 1 ≠ 0 := fun h => by rw [h, inner_zero_right] at hN2; exact lt_irrefl _ hN2
   have hinj := inj_of_fac F
   have h05 : x 0 ≠ x 5 := fun h => absurd (hinj h) (by decide)
   obtain ⟨cB, cA⟩ := GenQuad.lexClause_of_crossOf hX hdet h05
@@ -562,7 +562,7 @@ theorem lexAny_neg6_leaf {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · exact Or.inr ⟨hN5, Or.inl hN5d⟩
     · exact Or.inl hN6
     · exact Or.inl hN7
-    · exact Or.inl hN8
+    · exact hN8
   · intro t ht
     simp only [Finset.mem_insert, Finset.mem_singleton] at ht
     rcases ht with rfl | rfl | rfl
@@ -571,21 +571,21 @@ theorem lexAny_neg6_leaf {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · exact Or.inl (by linarith)
   · exact GenQuad.clauses_six (p := fun i => x (cN6 i)) (b := x 2 - x 1)
       (d1 := -(x 0 - x 1) - (x 6 - x 1)) (d2 := x 0 - x 1)
-      (lexClause_of_z m0123) (GenQuad.lexClause_of_frontOf hb f15_03)
-      (lexClause_of_z m0124) (GenQuad.lexClause_of_frontOf hb f15_04)
-      (lexClause_of_z m0125) (GenQuad.lexClause_of_frontOf hb f15_06)
-      (lexClause_of_z m0134) (GenQuad.lexClause_of_frontOf hb f13_04)
-      (lexClause_of_z m0135) (GenQuad.lexClause_of_frontOf hb f13_06)
-      (lexClause_of_z m0145) (GenQuad.lexClause_of_frontOf hb f14_06)
-      (lexClause_of_z m0234) (GenQuad.lexClause_of_frontOf hb f13_54)
-      (GenQuad.lexClause_of_frontOf hb f56_13) (lexClause_of_z m0235)
-      (GenQuad.lexClause_of_frontOf hb f56_14) (lexClause_of_z m0245)
-      (GenQuad.lexClause_of_frontOf hb f36_14) (lexClause_of_z m0345)
+      (lexClause_of_z m0123) f15_03
+      (lexClause_of_z m0124) f15_04
+      (lexClause_of_z m0125) f15_06
+      (lexClause_of_z m0134) f13_04
+      (lexClause_of_z m0135) f13_06
+      (lexClause_of_z m0145) f14_06
+      (lexClause_of_z m0234) f13_54
+      f56_13 (lexClause_of_z m0235)
+      f56_14 (lexClause_of_z m0245)
+      f36_14 (lexClause_of_z m0345)
       cA cB
-      (GenQuad.lexClause_of_frontOf hb f56_03) (lexClause_of_z m1235)
-      (GenQuad.lexClause_of_frontOf hb f56_04) (lexClause_of_z m1245)
-      (GenQuad.lexClause_of_frontOf hb f36_04) (lexClause_of_z m1345)
-      (GenQuad.lexClause_of_frontOf hb f36_54) (lexClause_of_z m2345)
+      f56_03 (lexClause_of_z m1235)
+      f56_04 (lexClause_of_z m1245)
+      f36_04 (lexClause_of_z m1345)
+      f36_54 (lexClause_of_z m2345)
 
 /-- Depth facts of the six vertices at `eb` and Lemma M: the bundle used by the 14 not-`M` clauses. -/
 theorem neg6_depth {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
@@ -679,25 +679,25 @@ theorem neg6_depth {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       mul_nonneg ht.le (sub_nonneg.2 (h5'.trans hbc))]
 
 
-/-- **E12-Neg6** with the 14 front facts as hypotheses (`FrontOf`); `nB = 0` allowed when `nC > 0`. -/
-theorem e12_neg6_fo {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+/-- **E12-Neg6** with the 14 front clauses as hypotheses (`LexClause`); `nB = 0` allowed when `nC > 0`. -/
+theorem e12_neg6_fo {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hω4 : 0 < omega4 x)
     (hnb : F.f 3 (x 2) < F.f 3 (x 1) ∨ (F.f 3 (x 2) = F.f 3 (x 1) ∧ F.f 3 (x 1) < F.f 3 (x 6)))
-    (h346 : F.f 8 (x 1) < F.f 8 (x 2))
+    (hN8 : LexPos3 ⟪F.N 8, x 2 - x 1⟫ ⟪F.N 8, -(x 0 - x 1) - (x 6 - x 1)⟫ ⟪F.N 8, x 0 - x 1⟫)
     (hab : 0 < ⟪x 0 - x 1, x 2 - x 1⟫) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
-    (f15_03 : GenQuad.FrontOf (x 1) (x 5) (x 0) (x 3) (x 2 - x 1))
-    (f15_04 : GenQuad.FrontOf (x 1) (x 5) (x 0) (x 4) (x 2 - x 1))
-    (f15_06 : GenQuad.FrontOf (x 1) (x 5) (x 0) (x 6) (x 2 - x 1))
-    (f13_04 : GenQuad.FrontOf (x 1) (x 3) (x 0) (x 4) (x 2 - x 1))
-    (f13_06 : GenQuad.FrontOf (x 1) (x 3) (x 0) (x 6) (x 2 - x 1))
-    (f14_06 : GenQuad.FrontOf (x 1) (x 4) (x 0) (x 6) (x 2 - x 1))
-    (f13_54 : GenQuad.FrontOf (x 1) (x 3) (x 5) (x 4) (x 2 - x 1))
-    (f56_13 : GenQuad.FrontOf (x 5) (x 6) (x 1) (x 3) (x 2 - x 1))
-    (f56_14 : GenQuad.FrontOf (x 5) (x 6) (x 1) (x 4) (x 2 - x 1))
-    (f36_14 : GenQuad.FrontOf (x 3) (x 6) (x 1) (x 4) (x 2 - x 1))
-    (f56_03 : GenQuad.FrontOf (x 5) (x 6) (x 0) (x 3) (x 2 - x 1))
-    (f56_04 : GenQuad.FrontOf (x 5) (x 6) (x 0) (x 4) (x 2 - x 1))
-    (f36_04 : GenQuad.FrontOf (x 3) (x 6) (x 0) (x 4) (x 2 - x 1))
-    (f36_54 : GenQuad.FrontOf (x 3) (x 6) (x 5) (x 4) (x 2 - x 1)) :
+    (f15_03 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 3) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f15_04 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f15_06 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 6) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f13_04 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f13_06 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 6) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f14_06 : GenQuad.LexClause (x 1) (x 4) (x 0) (x 6) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f13_54 : GenQuad.LexClause (x 1) (x 3) (x 5) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_13 : GenQuad.LexClause (x 5) (x 6) (x 1) (x 3) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_14 : GenQuad.LexClause (x 5) (x 6) (x 1) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f36_14 : GenQuad.LexClause (x 3) (x 6) (x 1) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_03 : GenQuad.LexClause (x 5) (x 6) (x 0) (x 3) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f56_04 : GenQuad.LexClause (x 5) (x 6) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f36_04 : GenQuad.LexClause (x 3) (x 6) (x 0) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1))
+    (f36_54 : GenQuad.LexClause (x 3) (x 6) (x 5) (x 4) (x 2 - x 1) (-(x 0 - x 1) - (x 6 - x 1)) (x 0 - x 1)) :
     LexAny F := by
   have T := type24OfFac F
   have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
@@ -719,13 +719,11 @@ theorem e12_neg6_fo {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn 
     rw [← F.hN, F.zero 6 2 (by decide)]; linarith [F.neg 6 1 (by decide)]
   have hN7 : 0 < ⟪F.N 7, x 2 - x 1⟫ := by
     rw [← F.hN, F.zero 7 2 (by decide)]; linarith [F.neg 7 1 (by decide)]
-  have hN8 : 0 < ⟪F.N 8, x 2 - x 1⟫ := by rw [← F.hN]; linarith
   have hN4 : ⟪F.N 4, x 2 - x 1⟫ < 0 := by
     have e := fac_eval F 4 4
     rw [F.zero 4 4 (by decide), F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at e
     have h1 := F.neg 4 1 (by decide)
     have hω := T.eq4
-    have hω4 := hC.2.1
     have key : (F.f 4 (x 2) - F.f 4 (x 1)) * oblX2 x 4 =
         F.f 4 (x 1) * (omega4 x * oblX2 x 4) := by
       linear_combination (-1 : ℝ) * e + F.f 4 (x 1) * hω
@@ -784,8 +782,19 @@ theorem e12_neg6 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     (h1456 : 0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4)
     (hab : 0 < ⟪x 0 - x 1, x 2 - x 1⟫) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) :
     LexAny F := by
+  have hB : 0 < ⟪x 2 - x 1, x 2 - x 1⟫ :=
+    real_inner_self_pos.mpr (sub_ne_zero.mpr fun h => absurd ((type24OfFac F).inj h) (by decide))
+  have hl : LexPos3 ⟪x 2 - x 1, x 2 - x 1⟫
+      ⟪x 2 - x 1, -(x 0 - x 1) - (x 6 - x 1)⟫ ⟪x 2 - x 1, x 0 - x 1⟫ := Or.inl hB
+  have hN8 : LexPos3 ⟪F.N 8, x 2 - x 1⟫ ⟪F.N 8, -(x 0 - x 1) - (x 6 - x 1)⟫ ⟪F.N 8, x 0 - x 1⟫ :=
+    Or.inl (by rw [← F.hN]; linarith)
   obtain ⟨f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14⟩ :=
-    neg6_fronts F hC hnb h346 h1356 h1456
-  exact e12_neg6_fo F hC (Or.inl hnb) h346 hab hbc f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14
+    neg6_fronts F hC.2.1 hnb h346 h1356 h1456
+  exact e12_neg6_fo F hC.2.1 (Or.inl hnb) hN8 hab hbc
+    (GenQuad.frontOf_lex f1 hl) (GenQuad.frontOf_lex f2 hl) (GenQuad.frontOf_lex f3 hl)
+    (GenQuad.frontOf_lex f4 hl) (GenQuad.frontOf_lex f5 hl) (GenQuad.frontOf_lex f6 hl)
+    (GenQuad.frontOf_lex f7 hl) (GenQuad.frontOf_lex f8 hl) (GenQuad.frontOf_lex f9 hl)
+    (GenQuad.frontOf_lex f10 hl) (GenQuad.frontOf_lex f11 hl) (GenQuad.frontOf_lex f12 hl)
+    (GenQuad.frontOf_lex f13 hl) (GenQuad.frontOf_lex f14 hl)
 
 end Minimality.T24.A19

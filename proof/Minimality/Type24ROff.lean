@@ -111,7 +111,7 @@ theorem rOff_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     have hne := hT.2 hB
     rcases lt_or_gt_of_ne hne with h346 | h346
     · exact hU (e12_neg6 F hC hnb h346 h1356 h1456 hab hbc)
-    · exact e12_A2 F hC hnb h346 hab hbc hU
+    · exact e12_A2 F hC hnb h346.le hab hbc hU
   · exact hT.1 hB
   · have hnb : F.f 3 (x 1) < F.f 3 (x 2) := (nB_pos_iff F).mp hB
     have h346 : F.f 8 (x 1) < F.f 8 (x 2) := nu346b_pos F hC h1234 hB.le

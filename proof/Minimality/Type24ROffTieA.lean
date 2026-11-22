@@ -3,8 +3,6 @@ module
 public import Minimality.M4jType24
 public import Minimality.GenQuadLex
 public import Minimality.Type24TiltFac
-public import Minimality.Type24Neg6Lex
-public import Minimality.Type24Neg6Leaf
 
 @[expose] public section
 
@@ -137,7 +135,7 @@ theorem tilt_neg6 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hω4 : 0 < ome
       oblX0 (xs x (dd x) ε) 5 * oblX2 (xs x (dd x) ε) 4 := by
     rw [o4.1, o4.2.1, o5.1, o5.2.1]; nlinarith
   obtain ⟨f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14⟩ :=
-    neg6_fronts' Fs hω4' hnb' h346' h1356' h1456'
+    neg6_fronts Fs hω4' hnb' h346' h1356' h1456'
   simp only [e0, e1, e2, e3, e4, e5, e6] at f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14
   exact ⟨f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14⟩
 
@@ -160,7 +158,7 @@ theorem tieA_lexAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn 
       ⟪x 2 + ε • Tilt.dd x - x 1, Tilt.dd x⟫ ⟪x 2 + ε • Tilt.dd x - x 1, x 0 - x 1⟫ := Or.inl hv
   have h8 : LexPos3 ⟪F.N 8, x 2 - x 1⟫ ⟪F.N 8, -(x 0 - x 1) - (x 6 - x 1)⟫ ⟪F.N 8, x 0 - x 1⟫ := by
     left; rw [← F.hN]; linarith
-  exact e12_neg6_lex F hC (Or.inr ⟨hnb0, hnc⟩) h8 hab hbc
+  exact e12_neg6_fo F hC.2.1 (Or.inr ⟨hnb0, hnc⟩) h8 hab hbc
     (GenQuad.frontOf_lex f1 hl) (GenQuad.frontOf_lex f2 hl) (GenQuad.frontOf_lex f3 hl)
     (GenQuad.frontOf_lex f4 hl) (GenQuad.frontOf_lex f5 hl) (GenQuad.frontOf_lex f6 hl)
     (GenQuad.frontOf_lex f7 hl) (GenQuad.frontOf_lex f8 hl) (GenQuad.frontOf_lex f9 hl)

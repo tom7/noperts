@@ -376,8 +376,40 @@ theorem pb_pure (a3 b3 c3 a5 b5 c5 p3 u3 q36 : ℝ) (hβ : u3 < p3) (hq36 : q36 
   push Not at h
   nlinarith [mul_nonneg_of_nonpos_of_nonpos h (sub_nonpos.mpr hβ.le), mul_neg_of_pos_of_neg S4 hq36]
 
+private theorem eta_aux {η s m A B : ℝ} (hη : 0 < η) (he : η * (2 * (s + 1)) = m) (hm : 0 < m)
+    (hA : |A| ≤ s) (hB : m ≤ B) : 0 < η * A + B := by
+  have h1 := (abs_le.1 hA).1
+  have h2 := mul_le_mul_of_nonneg_left h1 hη.le
+  nlinarith
+
+/-- Two positive-constant conditions `0 < η A_i + B_i` hold for one small `η > 0`. -/
+private theorem exists_eta2 {A1 B1 A2 B2 : ℝ} (h1 : 0 < B1) (h2 : 0 < B2) :
+    ∃ η : ℝ, 0 < η ∧ 0 < η * A1 + B1 ∧ 0 < η * A2 + B2 := by
+  have hs0 : 0 < |A1| + |A2| + 1 := by positivity
+  have hm0 : 0 < min B1 B2 := lt_min h1 h2
+  have hη : 0 < min B1 B2 / (2 * (|A1| + |A2| + 1)) := by positivity
+  have e : min B1 B2 / (2 * (|A1| + |A2| + 1)) * (2 * (|A1| + |A2| + 1)) = min B1 B2 := by field_simp
+  refine ⟨_, hη, eta_aux (s := |A1| + |A2|) hη (by linarith [e]) hm0 (by linarith [abs_nonneg A2]) (min_le_left _ _),
+    eta_aux (s := |A1| + |A2|) hη (by linarith [e]) hm0 (by linarith [abs_nonneg A1]) (min_le_right _ _)⟩
+
+private theorem g63_tie (a3 b3 c3 a5 b5 c5 p8 u8 q80 q85 : ℝ) (ha3 : 0 < a3) (hp8 : p8 < 0)
+    (hq80 : q80 < 0) (hq85 : q85 < 0) (hu : u8 = p8)
+    (e83 : 0 = p8 + a3 * (q80 - p8) + b3 * (u8 - p8) + c3 * (0 - p8))
+    (e85 : q85 = p8 + a5 * (q80 - p8) + b5 * (u8 - p8) + c5 * (0 - p8)) :
+    0 < a3 + c3 - 1 ∧ 0 < a5 * c3 - a3 * c5 + a3 - a5 := by
+  subst hu
+  constructor
+  · have key : (a3 + c3 - 1) * u8 = a3 * q80 := by linear_combination e83
+    by_contra h
+    push Not at h
+    nlinarith [mul_nonneg_of_nonpos_of_nonpos h hp8.le, mul_neg_of_pos_of_neg ha3 hq80]
+  · have key : (a5 * c3 - a3 * c5 + a3 - a5) * u8 = a3 * q85 := by linear_combination a5 * e83 - a3 * e85
+    by_contra h
+    push Not at h
+    nlinarith [mul_nonneg_of_nonpos_of_nonpos h hp8.le, mul_neg_of_pos_of_neg ha3 hq85]
+
 theorem e12_A2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    (hnb : F.f 3 (x 2) < F.f 3 (x 1)) (h346 : F.f 8 (x 2) < F.f 8 (x 1))
+    (hnb : F.f 3 (x 2) < F.f 3 (x 1)) (h346 : F.f 8 (x 2) ≤ F.f 8 (x 1))
     (hab : 0 < ⟪x 0 - x 1, x 2 - x 1⟫) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
     (hU : ¬ LexAny F) : False := by
   have T := type24OfFac F
@@ -388,16 +420,10 @@ theorem e12_A2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
   have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
   have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
   have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
-  obtain ⟨η, hη, hηC⟩ : ∃ η : ℝ, 0 < η ∧
-      0 < η * ⟪x 0 - x 1, x 6 - x 1⟫ + ⟪x 6 - x 1, x 6 - x 1⟫ := by
-    refine ⟨⟪x 6 - x 1, x 6 - x 1⟫ / (2 * (|⟪x 0 - x 1, x 6 - x 1⟫| + 1)), by positivity, ?_⟩
-    have h1 : 0 < |⟪x 0 - x 1, x 6 - x 1⟫| + 1 := by positivity
-    have h2 := neg_abs_le ⟪x 0 - x 1, x 6 - x 1⟫
-    have h3 : ⟪x 6 - x 1, x 6 - x 1⟫ / (2 * (|⟪x 0 - x 1, x 6 - x 1⟫| + 1)) *
-        (|⟪x 0 - x 1, x 6 - x 1⟫| + 1) = ⟪x 6 - x 1, x 6 - x 1⟫ / 2 := by
-      field_simp
-    have h4 : 0 < ⟪x 6 - x 1, x 6 - x 1⟫ / (2 * (|⟪x 0 - x 1, x 6 - x 1⟫| + 1)) := by positivity
-    nlinarith [mul_le_mul_of_nonneg_left h2 h4.le]
+  obtain ⟨η, hη, hηC, hη8⟩ : ∃ η : ℝ, 0 < η ∧
+      0 < η * ⟪x 0 - x 1, x 6 - x 1⟫ + ⟪x 6 - x 1, x 6 - x 1⟫ ∧
+      0 < η * (F.f 8 (x 0) - F.f 8 (x 1)) + (-F.f 8 (x 1)) :=
+    exists_eta2 hC6 (by linarith [F.neg 8 1 (by decide)])
   -- the four edge signs of the pentagon projected along `eb`
   have h63 : 0 < oblX0 x 3 + oblX6 x 3 - 1 ∧
       0 < oblX0 x 5 * oblX6 x 3 - oblX0 x 3 * oblX6 x 5 + oblX0 x 3 - oblX0 x 5 := by
@@ -409,9 +435,12 @@ theorem e12_A2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     rw [F.zero 7 2 (by decide), F.zero 7 6 (by decide)] at e75
     rw [F.zero 8 3 (by decide), F.zero 8 6 (by decide)] at e83
     rw [F.zero 8 6 (by decide)] at e85
-    exact g63_pure _ _ _ _ _ _ _ _ _ _ _ _ _ ha3 (F.neg 7 1 (by decide)) h346
-      (F.neg 7 0 (by decide)) (F.neg 8 0 (by decide)) (F.neg 7 5 (by decide))
-      (F.neg 8 5 (by decide)) (F.neg 8 1 (by decide)) e73 e83 e75 e85
+    rcases lt_or_eq_of_le h346 with h346_lt | h346_eq
+    · exact g63_pure _ _ _ _ _ _ _ _ _ _ _ _ _ ha3 (F.neg 7 1 (by decide)) h346_lt
+        (F.neg 7 0 (by decide)) (F.neg 8 0 (by decide)) (F.neg 7 5 (by decide))
+        (F.neg 8 5 (by decide)) (F.neg 8 1 (by decide)) e73 e83 e75 e85
+    · exact g63_tie _ _ _ _ _ _ _ _ _ _ ha3 (F.neg 8 1 (by decide)) (F.neg 8 0 (by decide))
+        (F.neg 8 5 (by decide)) h346_eq e83 e85
   have h50 : 0 < oblX0 x 5 + oblX6 x 5 - 1 ∧
       0 < oblX0 x 5 * oblX6 x 3 - oblX0 x 3 * oblX6 x 5 + oblX6 x 5 - oblX6 x 3 := by
     have e25 := fac_eval F 2 5
@@ -445,7 +474,7 @@ theorem e12_A2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     rw [← F.hN, F.zero 6 2 (by decide)]; linarith [F.neg 6 1 (by decide)]
   have hN7 : 0 < ⟪F.N 7, x 2 - x 1⟫ := by
     rw [← F.hN, F.zero 7 2 (by decide)]; linarith [F.neg 7 1 (by decide)]
-  have hN8 : ⟪F.N 8, x 2 - x 1⟫ < 0 := by rw [← F.hN]; linarith
+  have hN8 : ⟪F.N 8, x 2 - x 1⟫ ≤ 0 := by rw [← F.hN]; linarith
   have hN4 : ⟪F.N 4, x 2 - x 1⟫ < 0 := by
     have e := fac_eval F 4 4
     rw [F.zero 4 4 (by decide), F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at e
@@ -489,7 +518,13 @@ theorem e12_A2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     · exact Or.inl (by linarith)
     · exact Or.inl (by linarith)
     · exact Or.inl (by linarith)
-    · exact Or.inl (by linarith)
+    · rcases lt_or_eq_of_le h346 with h346_lt | h346_eq
+      · exact Or.inl (by rw [← F.hN]; linarith)
+      · refine Or.inr ⟨by rw [← F.hN, h346_eq]; ring, Or.inl ?_⟩
+        have e0 := F.hN 8 (x 0) (x 1)
+        have e6 := F.hN 8 (x 6) (x 1)
+        rw [inner_sub_right, inner_neg_right, real_inner_smul_right, ← e0, ← e6, F.zero 8 6 (by decide)]
+        linarith
   · -- the depths
     have hrep : ∀ v : Fin 7, x v - x 1 = oblX0 x v • (x 0 - x 1) + oblX2 x v • (x 2 - x 1) +
         oblX6 x v • (x 6 - x 1) := by
@@ -527,5 +562,11 @@ theorem e12_A2 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
       · exact Or.inl (by linarith)
       · exact Or.inr (Or.inl (by linarith))
       · exact Or.inr (Or.inr (by linarith))
+
+theorem e12_A2_tie {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+    (hnb : F.f 3 (x 2) < F.f 3 (x 1)) (h346 : F.f 8 (x 2) = F.f 8 (x 1))
+    (hab : 0 < ⟪x 0 - x 1, x 2 - x 1⟫) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0)
+    (hU : ¬ LexAny F) : False :=
+  e12_A2 F hC hnb h346.le hab hbc hU
 
 end Minimality.T24.A17
