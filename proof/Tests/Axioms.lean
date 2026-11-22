@@ -175,6 +175,7 @@ import Minimality.M4bType24
 import Minimality.M4Sym24
 import ProofOfMainTheorem
 import Minimality.SVC
+import Minimality.Type24NxSign
 
 /-!
 # The headline theorems use only the standard axioms
@@ -1606,3 +1607,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.SVC.dep_sign_of_facet
 #assert_standard_axioms Minimality.SVC.exists_order
 #assert_standard_axioms Minimality.SVC.single_view_closure
+#assert_standard_axioms Minimality.T24.A20.nx_neg
