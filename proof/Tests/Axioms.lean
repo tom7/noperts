@@ -1320,6 +1320,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.a1_e25
 #assert_standard_axioms Minimality.T24.A1.a1_e25_lt
 #print axioms Minimality.T24.A1.a1_e25
+#assert_standard_axioms Minimality.T24.Q24.tieCover_01635_flip
+#assert_standard_axioms Minimality.T24.Q24.tieCover_01635_flip_le
+#assert_standard_axioms Minimality.T24.Q24.tieCover_01635_2536_flip_le
+#assert_standard_axioms Minimality.T24.A1.e25_dom_01635_flip
 #assert_standard_axioms Minimality.T24.Reg.hole24R_wlog
 #assert_standard_axioms Minimality.T24.Reg.hole24R_comp_pi24
 #assert_standard_axioms Minimality.T24.Reg.a1_to_b
