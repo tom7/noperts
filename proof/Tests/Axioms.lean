@@ -1512,3 +1512,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A10.f126_x4_lt_x0_iff
 #assert_standard_axioms Minimality.T24.A10.f126_x5_lt_x0_iff
 #assert_standard_axioms Minimality.T24.A10.q45HalfHyp_false_of_B
+#assert_standard_axioms Minimality.T24.A20.radon02346
+#assert_standard_axioms Minimality.T24.A20.radon02346_signs
+#assert_standard_axioms Minimality.T24.A20.w63_facings_gt
+#assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos
+#assert_standard_axioms Minimality.T24.hole24R'_reduce
+#assert_standard_axioms Minimality.T24.type24_rupert_or_hole
