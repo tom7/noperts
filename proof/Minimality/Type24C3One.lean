@@ -291,16 +291,77 @@ private def c3eq1_row (r0 r1 r2 r3 r4 r5 : Fin 6) : Bool :=
     c3eq1_ok4 r0 r2 r5 r4 || c3eq1_ok5 r0 r2 r3 r5 r4 ||
     c3eq1_ok5 r0 r1 r2 r3 r4 || c3eq1_ok6 r0 r1 r2 r5 r3 r4
 
-private def c3eq1_for (r0 : Fin 6) : Bool :=
-  ((List.finRange 6).filter (· != r0)).all fun r1 =>
-  ((List.finRange 6).filter fun x => x != r0 && x != r1).all fun r2 =>
-  ((List.finRange 6).filter fun x => x != r0 && x != r1 && x != r2).all fun r3 =>
-  ((List.finRange 6).filter fun x => x != r0 && x != r1 && x != r2 && x != r3).all fun r4 =>
-  ((List.finRange 6).filter fun x => x != r0 && x != r1 && x != r2 && x != r3 && x != r4).all fun r5 =>
+private def all6 (f : Fin 6 → Bool) : Bool :=
+  f 0 && f 1 && f 2 && f 3 && f 4 && f 5
+
+private theorem all6_eq_true {f : Fin 6 → Bool} (h : all6 f = true) (i : Fin 6) : f i = true := by
+  dsimp only [all6] at h
+  simp only [Bool.and_eq_true] at h
+  fin_cases i <;> tauto
+
+private def c3eq1_for1 (r0 r1 : Fin 6) : Bool :=
+  if r1 == r0 then true else
+  all6 fun r2 => if r2 == r0 || r2 == r1 then true else
+  all6 fun r3 => if r3 == r0 || r3 == r1 || r3 == r2 then true else
+  all6 fun r4 => if r4 == r0 || r4 == r1 || r4 == r2 || r4 == r3 then true else
+  all6 fun r5 => if r5 == r0 || r5 == r1 || r5 == r2 || r5 == r3 || r5 == r4 then true else
     c3eq1_row r0 r1 r2 r3 r4 r5
 
-private theorem c3eq1_check (r0 : Fin 6) : c3eq1_for r0 = true := by
-  fin_cases r0 <;> decide
+private def c3eq1_lo (r0 : Fin 6) : Bool :=
+  c3eq1_for1 r0 0 && c3eq1_for1 r0 1 && c3eq1_for1 r0 2
+
+private def c3eq1_hi (r0 : Fin 6) : Bool :=
+  c3eq1_for1 r0 3 && c3eq1_for1 r0 4 && c3eq1_for1 r0 5
+
+private theorem c3eq1_lo0 : c3eq1_lo 0 = true := rfl
+private theorem c3eq1_lo1 : c3eq1_lo 1 = true := rfl
+private theorem c3eq1_lo2 : c3eq1_lo 2 = true := rfl
+private theorem c3eq1_lo3 : c3eq1_lo 3 = true := rfl
+private theorem c3eq1_lo4 : c3eq1_lo 4 = true := rfl
+private theorem c3eq1_lo5 : c3eq1_lo 5 = true := rfl
+private theorem c3eq1_hi0 : c3eq1_hi 0 = true := rfl
+private theorem c3eq1_hi1 : c3eq1_hi 1 = true := rfl
+private theorem c3eq1_hi2 : c3eq1_hi 2 = true := rfl
+private theorem c3eq1_hi3 : c3eq1_hi 3 = true := rfl
+private theorem c3eq1_hi4 : c3eq1_hi 4 = true := rfl
+private theorem c3eq1_hi5 : c3eq1_hi 5 = true := rfl
+
+attribute [irreducible] c3eq1_for1
+
+private theorem bool_and3 {a b c : Bool} (h : (a && b && c) = true) :
+    a = true ∧ b = true ∧ c = true := by
+  cases a <;> cases b <;> cases c <;> simp_all
+
+private theorem c3eq1_for1_eq_true (r0 r1 : Fin 6) : c3eq1_for1 r0 r1 = true := by
+  have hlo : c3eq1_lo r0 = true := by
+    fin_cases r0
+    · exact c3eq1_lo0
+    · exact c3eq1_lo1
+    · exact c3eq1_lo2
+    · exact c3eq1_lo3
+    · exact c3eq1_lo4
+    · exact c3eq1_lo5
+  have hhi : c3eq1_hi r0 = true := by
+    fin_cases r0
+    · exact c3eq1_hi0
+    · exact c3eq1_hi1
+    · exact c3eq1_hi2
+    · exact c3eq1_hi3
+    · exact c3eq1_hi4
+    · exact c3eq1_hi5
+  obtain ⟨h0, h1, h2⟩ := bool_and3 hlo
+  obtain ⟨h3, h4, h5⟩ := bool_and3 hhi
+  fin_cases r1
+  · exact h0
+  · exact h1
+  · exact h2
+  · exact h3
+  · exact h4
+  · exact h5
+
+private theorem if_eq_true {b p : Bool} (h : (if b = true then true else p) = true)
+    (hb : b = false) : p = true := by
+  simp [hb] at h; exact h
 
 private theorem c3eq1_finite :
     ∀ r0 r1 r2 r3 r4 r5 : Fin 6,
@@ -318,17 +379,33 @@ private theorem c3eq1_finite :
       c3eq1_ok5 r0 r1 r2 r3 r4 = true ∨
       c3eq1_ok6 r0 r1 r2 r5 r3 r4 = true := by
   intro r0 r1 r2 r3 r4 r5 h01 h02 h03 h04 h05 h12 h13 h14 h15 h23 h24 h25 h34 h35 h45 h53 hnc
-  have h0 := c3eq1_check r0
-  dsimp only [c3eq1_for] at h0
-  have h1 := List.all_eq_true.mp h0 r1 (List.mem_filter.mpr ⟨List.mem_finRange r1, bne_iff_ne.mpr h01.symm⟩)
-  have h2 := List.all_eq_true.mp h1 r2 (List.mem_filter.mpr ⟨List.mem_finRange r2, by simp [h02.symm, h12.symm]⟩)
-  have h3 := List.all_eq_true.mp h2 r3 (List.mem_filter.mpr ⟨List.mem_finRange r3, by simp [h03.symm, h13.symm, h23.symm]⟩)
-  have h4 := List.all_eq_true.mp h3 r4 (List.mem_filter.mpr ⟨List.mem_finRange r4, by simp [h04.symm, h14.symm, h24.symm, h34.symm]⟩)
-  have h := List.all_eq_true.mp h4 r5 (List.mem_filter.mpr ⟨List.mem_finRange r5, by simp [h05.symm, h15.symm, h25.symm, h35.symm, h45.symm]⟩)
+  have h1 := c3eq1_for1_eq_true r0 r1
+  unfold c3eq1_for1 at h1
+  have hb1 : (r1 == r0) = false := beq_false_of_ne h01.symm
+  have h1' := all6_eq_true (if_eq_true h1 hb1) r2
+  have hb2 : (r2 == r0 || r2 == r1) = false := by simp [h02.symm, h12.symm]
+  have h2' := all6_eq_true (if_eq_true h1' hb2) r3
+  have hb3 : (r3 == r0 || r3 == r1 || r3 == r2) = false := by simp [h03.symm, h13.symm, h23.symm]
+  have h3' := all6_eq_true (if_eq_true h2' hb3) r4
+  have hb4 : (r4 == r0 || r4 == r1 || r4 == r2 || r4 == r3) = false := by
+    simp [h04.symm, h14.symm, h24.symm, h34.symm]
+  have h4' := all6_eq_true (if_eq_true h3' hb4) r5
+  have hb5 : (r5 == r0 || r5 == r1 || r5 == r2 || r5 == r3 || r5 == r4) = false := by
+    simp [h05.symm, h15.symm, h25.symm, h35.symm, h45.symm]
+  have h := if_eq_true h4' hb5
   dsimp only [c3eq1_row] at h
-  simp only [Bool.or_eq_true, Bool.not_eq_true', Bool.and_eq_false_iff, Bool.not_eq_false',
-    Bool.and_eq_true, Nat.blt_eq] at h
-  tauto
+  simp only [Bool.or_eq_true] at h
+  rcases h with (((h | h) | h) | h) | h
+  · simp only [Bool.not_eq_true', Bool.and_eq_false_iff, Bool.not_eq_false',
+      Bool.or_eq_true, Bool.and_eq_true] at h
+    rcases h with h | h
+    · exact absurd (Nat.blt_eq.mpr h53) (Bool.eq_false_iff.mp h)
+    · simp only [Nat.blt_eq, and_assoc, or_assoc] at h hnc
+      exact absurd h hnc
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr h))
 
 /-! ### Cycles, rank clauses, tilts, and `c3eq1_closed` -/
 
