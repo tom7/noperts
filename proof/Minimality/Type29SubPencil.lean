@@ -430,7 +430,7 @@ section S2Geometry
 
 open scoped RealInnerProductSpace
 
-private theorem nf29_q_coords {x : Fin 7 → ℝ³} (N : NF29 x) :
+theorem nf29_q_coords {x : Fin 7 → ℝ³} (N : NF29 x) :
     let S := S_sp N.s N.t
     (S • (x 0 - x 6) = D035_sp N.a0 N.b0 N.h0 N.s N.t • (x 4 - x 6) +
       P0_sp N.a0 N.b0 N.h0 N.s N.t • (x 5 - x 6) + (S * N.h0) • (x 3 - x 6)) ∧
