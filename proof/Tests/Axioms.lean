@@ -44,6 +44,8 @@ import Minimality.Type24ROff
 import Minimality.Type24A2Lam
 import Minimality.Type24A1Tie
 import Minimality.Type24Wlog
+import Minimality.GenQuadLex
+import Minimality.Type24ROffTie
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1319,3 +1321,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Reg.ba4_to_a
 #assert_standard_axioms Minimality.T24.Reg.be0416_to_b
 #assert_standard_axioms Minimality.T24.Reg.cflip_to_brest
+#assert_standard_axioms Minimality.GenQuad.frontOf_lex
+#assert_standard_axioms Minimality.GenQuad.lexClause_of_frontDetLex
+#assert_standard_axioms Minimality.T24.A19.rOff_closed
+#assert_standard_axioms Minimality.T24.A19.tieA_lexAny
+#assert_standard_axioms Minimality.T24.A17.e12_A2_tie
+#assert_standard_axioms Minimality.T24.A19.Tilt.tilt_neg6
