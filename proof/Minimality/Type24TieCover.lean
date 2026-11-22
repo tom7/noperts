@@ -534,11 +534,12 @@ private def c25c' : ZMod 5 → Fin 7 := ![0, 5, 3, 4, 6]
 private theorem c25c'_inj : Function.Injective c25c' := by decide
 private theorem c25c'_cyc : S0xCycUD s0x_S24 c25c' {3, 4} {1, 2, 6, 8} := by decide
 
-/-- `lexAny_T25_05346` with arbitrary tilt `(d1, d2)` (`hdet`: `(bT25, d1, d2)` a basis) and full clauses. -/
-theorem lexAny_T25_05346_tilt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
+/-- `lexAny_T25_05346_tilt` with `LexPos3` on `-⟪F.N 1, bT25 x⟫` (covering `⟪F.N 1, bT25 x⟫ = 0`). -/
+theorem lexAny_T25_05346_tilt_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
     (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
     (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
-    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
+    (t1 : LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫))
+    (h8 : ⟪F.N 8, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 5) (x 4))
@@ -564,13 +565,33 @@ theorem lexAny_T25_05346_tilt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1
   · intro t ht
     simp only [Finset.mem_insert, Finset.mem_singleton] at ht
     rcases ht with rfl | rfl | rfl | rfl
-    · exact Or.inl (by linarith)
+    · exact t1
     · exact t2
     · exact t6
     · exact Or.inl (by linarith)
   · exact GenQuad.clauses_five (p := fun i => x (c25c' i)) (b := bT25 x) (d1 := d1) (d2 := d2)
       cA cB m0356 (lexClause_of_det hb f0356) m0456 (lexClause_of_det hb f0456)
       m0436 (lexClause_of_det hb f0436) m5436 (lexClause_of_det hb f5436)
+
+/-- `lexAny_T25_05346` with arbitrary tilt `(d1, d2)` (`hdet`: `(bT25, d1, d2)` a basis) and full clauses. -/
+theorem lexAny_T25_05346_tilt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
+    (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
+    (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
+    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (hX : GenQuad.CrossOf (x 0) (x 3) (x 5) (x 4))
+    (f0356 : FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x))
+    (f0456 : FrontDet (x 0) (x 4) (x 5) (x 6) (bT25 x))
+    (f0436 : FrontDet (x 0) (x 4) (x 3) (x 6) (bT25 x))
+    (f5436 : FrontDet (x 5) (x 4) (x 3) (x 6) (bT25 x))
+    (m0356 : GenQuad.LexClause (x 5) (x 6) (x 0) (x 3) (bT25 x) d1 d2)
+    (m0456 : GenQuad.LexClause (x 5) (x 6) (x 0) (x 4) (bT25 x) d1 d2)
+    (m0436 : GenQuad.LexClause (x 3) (x 6) (x 0) (x 4) (bT25 x) d1 d2)
+    (m5436 : GenQuad.LexClause (x 3) (x 6) (x 5) (x 4) (bT25 x) d1 d2) :
+    LexAny F :=
+  lexAny_T25_05346_tilt_lex F d1 d2 hdet h3 h4 (Or.inl (by linarith)) h8 t2 t6 hX
+    f0356 f0456 f0436 f5436 m0356 m0456 m0436 m5436
 
 
 /-! ### T26 kill and the tie covers -/
@@ -838,11 +859,8 @@ theorem q4_gt_one_of_facet8 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hle' : q4 - 1 ≤ 0 := by linarith
   nlinarith [mul_nonpos_of_nonneg_of_nonpos (mul_pos hc62 (by linarith : 0 < C)).le hle']
 
-/-- **Tie cover, rim 05346, W' discharged.** As `tieCover_05346` but without `hW'`: the W' sub-tie
-`E13 = 0` is settled inside (T25 clause `04>36` forces `E23 > 0`, then `z3 < z5` at T26; clause `45>36` is
-contradictory), and only the corner `W = {E13 = E23 = 0}` is excluded by `hW` (the Corner Slide Lemma).
-Here `1 < q4` is deduced from `h8` and `1 ≤ c63` via `q4_gt_one_of_facet8`. -/
-theorem tieCover_05346W {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
+/-- `tieCover_05346W` with `LexPos3` on `-⟪F.N 1, bT25 x⟫` (covering `⟪F.N 1, bT25 x⟫ = 0`). -/
+theorem tieCover_05346W_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
     {μ a δ γ p4 q4 c61 c62 c63 : ℝ}
     (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
     (hb26 : bT26 x = μ • ((a - 1) • (x 2 - x 5) - a • (x 0 - x 5))) (hμ : 0 < μ) (ha : 1 < a)
@@ -854,7 +872,7 @@ theorem tieCover_05346W {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : 
     -- T25 leaf hypotheses
     (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
     (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
-    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
+    (t1 : LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫)) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 5) (x 4))
@@ -922,7 +940,39 @@ theorem tieCover_05346W {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : 
       nlinarith
     have E13 : ⟪x 2 - x 5, x 3 - x 5⟫ = 0 := by rw [← h53]; exact hz
     exact wp_k4 hd1 E13 hδ E33 (u1' (by rw [e1] at hz; linarith))
-  exact lexAny_T25_05346_tilt F d1 d2 hdet h3 h4 h1 h8 t2 t6 hX f0356 f0456 f0436 f5436 k1 k2 k3 k4
+  exact lexAny_T25_05346_tilt_lex F d1 d2 hdet h3 h4 t1 h8 t2 t6 hX f0356 f0456 f0436 f5436 k1 k2 k3 k4
+
+theorem tieCover_05346W {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
+    {μ a δ γ p4 q4 c61 c62 c63 : ℝ}
+    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (hb26 : bT26 x = μ • ((a - 1) • (x 2 - x 5) - a • (x 0 - x 5))) (hμ : 0 < μ) (ha : 1 < a)
+    (hx4 : x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5)) (hp4 : 0 < p4)
+    (hx6 : x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5))
+    (hc61 : 0 < c61) (hc62 : 0 < c62) (hc63 : 1 ≤ c63)
+    (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
+    (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
+    -- T25 leaf hypotheses
+    (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
+    (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
+    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (hX : GenQuad.CrossOf (x 0) (x 3) (x 5) (x 4))
+    (f0356 : FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x))
+    (f0456 : FrontDet (x 0) (x 4) (x 5) (x 6) (bT25 x))
+    (f0436 : FrontDet (x 0) (x 4) (x 3) (x 6) (bT25 x))
+    (f5436 : FrontDet (x 5) (x 4) (x 3) (x 6) (bT25 x))
+    -- T26 leaf hypotheses
+    (g6 : 0 < ⟪F.N 6, bT26 x⟫) (g7 : 0 < ⟪F.N 7, bT26 x⟫) (g8 : 0 < ⟪F.N 8, bT26 x⟫)
+    (g3 : ⟪F.N 3, bT26 x⟫ < 0) (g4 : ⟪F.N 4, bT26 x⟫ < 0)
+    (f2354 : FrontDet (x 2) (x 3) (x 5) (x 4) (bT26 x))
+    (f2356 : FrontDet (x 2) (x 3) (x 5) (x 6) (bT26 x))
+    (f2456 : FrontDet (x 2) (x 4) (x 5) (x 6) (bT26 x))
+    (f3624 : FrontDet (x 3) (x 6) (x 2) (x 4) (bT26 x))
+    (f3654 : FrontDet (x 3) (x 6) (x 5) (x 4) (bT26 x)) :
+    LexAny F :=
+  tieCover_05346W_lex F hd1 hδ hb26 hμ ha hx4 hp4 hx6 hc61 hc62 hc63 tie hW hdet h3 h4
+    (Or.inl (by linarith)) h8 t2 t6 hX f0356 f0456 f0436 f5436 g6 g7 g8 g3 g4 f2354 f2356 f2456 f3624 f3654
 
 
 end Minimality.T24.Q24

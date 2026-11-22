@@ -96,6 +96,82 @@ private def c25d' : ZMod 6 → Fin 7 := ![0, 1, 6, 4, 3, 5]
 private theorem c25d'_inj : Function.Injective c25d' := by decide
 private theorem c25d'_cyc : S0xCycUD s0x_S24 c25d' {1, 3, 4} {0, 2, 5, 6, 7, 8} := by decide
 
+/-- `lexAny_T25_016435_tilt` with `LexPos3` on `⟪F.N 1, bT25 x⟫` (covering `⟪F.N 1, bT25 x⟫ = 0`). -/
+theorem lexAny_T25_016435_tilt_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
+    (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫)
+    (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
+    (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0)
+    (h7 : ⟪F.N 7, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
+    (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
+    (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
+    (hX : GenQuad.CrossOf (x 0) (x 3) (x 4) (x 5))
+    (f0614 : FrontDet (x 0) (x 6) (x 1) (x 4) (bT25 x))
+    (f0613 : FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x))
+    (f0615 : FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x))
+    (f0413 : FrontDet (x 0) (x 4) (x 1) (x 3) (bT25 x))
+    (f0415 : FrontDet (x 0) (x 4) (x 1) (x 5) (bT25 x))
+    (f0315 : FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x))
+    (f0463 : FrontDet (x 0) (x 4) (x 6) (x 3) (bT25 x))
+    (f0465 : FrontDet (x 0) (x 4) (x 6) (x 5) (bT25 x))
+    (f0365 : FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x))
+    (f1463 : FrontDet (x 1) (x 4) (x 6) (x 3) (bT25 x))
+    (f1465 : FrontDet (x 1) (x 4) (x 6) (x 5) (bT25 x))
+    (f6513 : FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x))
+    (f4513 : FrontDet (x 4) (x 5) (x 1) (x 3) (bT25 x))
+    (f4563 : FrontDet (x 4) (x 5) (x 6) (x 3) (bT25 x))
+    (m0614 : GenQuad.LexClause (x 1) (x 4) (x 0) (x 6) (bT25 x) d1 d2)
+    (m0613 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 6) (bT25 x) d1 d2)
+    (m0615 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 6) (bT25 x) d1 d2)
+    (m0413 : GenQuad.LexClause (x 1) (x 3) (x 0) (x 4) (bT25 x) d1 d2)
+    (m0415 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 4) (bT25 x) d1 d2)
+    (m0315 : GenQuad.LexClause (x 1) (x 5) (x 0) (x 3) (bT25 x) d1 d2)
+    (m0463 : GenQuad.LexClause (x 6) (x 3) (x 0) (x 4) (bT25 x) d1 d2)
+    (m0465 : GenQuad.LexClause (x 6) (x 5) (x 0) (x 4) (bT25 x) d1 d2)
+    (m0365 : GenQuad.LexClause (x 6) (x 5) (x 0) (x 3) (bT25 x) d1 d2)
+    (m1463 : GenQuad.LexClause (x 6) (x 3) (x 1) (x 4) (bT25 x) d1 d2)
+    (m1465 : GenQuad.LexClause (x 6) (x 5) (x 1) (x 4) (bT25 x) d1 d2)
+    (m6513 : GenQuad.LexClause (x 1) (x 3) (x 6) (x 5) (bT25 x) d1 d2)
+    (m4513 : GenQuad.LexClause (x 1) (x 3) (x 4) (x 5) (bT25 x) d1 d2)
+    (m4563 : GenQuad.LexClause (x 6) (x 3) (x 4) (x 5) (bT25 x) d1 d2) :
+    LexAny F := by
+  have hb : bT25 x ≠ 0 := fun h => by rw [h, inner_zero_right] at h3; exact lt_irrefl _ h3
+  have hinj := inj_of_fac F
+  have h04 : x 0 ≠ x 4 := fun h => absurd (hinj h) (by decide)
+  obtain ⟨cB, cA⟩ := GenQuad.lexClause_of_crossOf hX hdet h04
+  refine GenQuad.lexAny_of_clauses F (k := 6) (by norm_num) c25d'_inj c25d'_cyc (bT25 x) d1 d2 ?_ ?_ ?_
+  · intro t ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl
+    · exact t1
+    · exact Or.inl h3
+    · exact Or.inl h4
+  · intro t ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl | rfl | rfl | rfl
+    · exact Or.inl (by linarith)
+    · exact t2
+    · exact Or.inl (by linarith)
+    · exact t6
+    · exact Or.inl (by linarith)
+    · exact Or.inl (by linarith)
+  · exact GenQuad.clauses_six (p := fun i => x (c25d' i)) (b := bT25 x) (d1 := d1) (d2 := d2)
+      m0614 (lexClause_of_det hb f0614)
+      m0613 (lexClause_of_det hb f0613)
+      m0615 (lexClause_of_det hb f0615)
+      m0413 (lexClause_of_det hb f0413)
+      m0415 (lexClause_of_det hb f0415)
+      m0315 (lexClause_of_det hb f0315)
+      m0463 (lexClause_of_det hb f0463)
+      m0465 (lexClause_of_det hb f0465)
+      m0365 (lexClause_of_det hb f0365)
+      cA cB
+      m1463 (lexClause_of_det hb f1463)
+      m1465 (lexClause_of_det hb f1465)
+      (lexClause_of_det hb f6513) m6513
+      (lexClause_of_det hb f4513) m4513
+      (lexClause_of_det hb f4563) m4563
+
 /-- `lexAny_T25_016435_tilt`: T25 leaf on 6-rim `(0 1 6 4 3 5)` at arbitrary tilt `(d1, d2)`,
 with the coplanar `0435` subset discharged by `GenQuad.lexClause_of_crossOf`. -/
 theorem lexAny_T25_016435_tilt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
@@ -134,43 +210,10 @@ theorem lexAny_T25_016435_tilt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d
     (m6513 : GenQuad.LexClause (x 1) (x 3) (x 6) (x 5) (bT25 x) d1 d2)
     (m4513 : GenQuad.LexClause (x 1) (x 3) (x 4) (x 5) (bT25 x) d1 d2)
     (m4563 : GenQuad.LexClause (x 6) (x 3) (x 4) (x 5) (bT25 x) d1 d2) :
-    LexAny F := by
-  have hb : bT25 x ≠ 0 := fun h => by rw [h, inner_zero_right] at h1; exact lt_irrefl _ h1
-  have hinj := inj_of_fac F
-  have h04 : x 0 ≠ x 4 := fun h => absurd (hinj h) (by decide)
-  obtain ⟨cB, cA⟩ := GenQuad.lexClause_of_crossOf hX hdet h04
-  refine GenQuad.lexAny_of_clauses F (k := 6) (by norm_num) c25d'_inj c25d'_cyc (bT25 x) d1 d2 ?_ ?_ ?_
-  · intro t ht
-    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
-    rcases ht with rfl | rfl | rfl
-    · exact Or.inl h1
-    · exact Or.inl h3
-    · exact Or.inl h4
-  · intro t ht
-    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
-    rcases ht with rfl | rfl | rfl | rfl | rfl | rfl
-    · exact Or.inl (by linarith)
-    · exact t2
-    · exact Or.inl (by linarith)
-    · exact t6
-    · exact Or.inl (by linarith)
-    · exact Or.inl (by linarith)
-  · exact GenQuad.clauses_six (p := fun i => x (c25d' i)) (b := bT25 x) (d1 := d1) (d2 := d2)
-      m0614 (lexClause_of_det hb f0614)
-      m0613 (lexClause_of_det hb f0613)
-      m0615 (lexClause_of_det hb f0615)
-      m0413 (lexClause_of_det hb f0413)
-      m0415 (lexClause_of_det hb f0415)
-      m0315 (lexClause_of_det hb f0315)
-      m0463 (lexClause_of_det hb f0463)
-      m0465 (lexClause_of_det hb f0465)
-      m0365 (lexClause_of_det hb f0365)
-      cA cB
-      m1463 (lexClause_of_det hb f1463)
-      m1465 (lexClause_of_det hb f1465)
-      (lexClause_of_det hb f6513) m6513
-      (lexClause_of_det hb f4513) m4513
-      (lexClause_of_det hb f4563) m4563
+    LexAny F :=
+  lexAny_T25_016435_tilt_lex F d1 d2 hdet (Or.inl h1) h3 h4 h0 h5 h7 h8 t2 t6 hX
+    f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
+    m0614 m0613 m0615 m0413 m0415 m0315 m0463 m0465 m0365 m1463 m1465 m6513 m4513 m4563
 
 /-! ### 3. Tie cover, rim 016435 -/
 
@@ -190,7 +233,7 @@ theorem tieCover_016435 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : 
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
     -- T25 leaf hypotheses
     (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0)
     (h7 : ⟪F.N 7, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
@@ -352,7 +395,7 @@ theorem tieCover_016435 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : 
       have hpos := mul_pos (sub_pos.2 hq4) (lt_of_le_of_ne (by rw [e1]; linarith) (Ne.symm hne))
       rw [e2] at l; linarith only [l, hpos, u3]
     exact viaW'53 hz (u4' (by rw [e1] at hz; linarith))
-  exact lexAny_T25_016435_tilt F d1 d2 hdet h1 h3 h4 h0 h5 h7 h8 t2 t6 hX
+  exact lexAny_T25_016435_tilt_lex F d1 d2 hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX
     f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
     k0614 k0613 k0615 k0413 k0415 k0315 k0463 k0465 k0365 k1463 k1465 k6513 k4513 k4563
 

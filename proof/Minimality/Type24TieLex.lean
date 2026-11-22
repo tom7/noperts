@@ -48,6 +48,44 @@ theorem lexPos3_N8_T25 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : �
     rw [hd1, inner_add_right, inner_smul_right, inner_smul_right, h25, mul_zero, zero_add]
     exact mul_pos hδ h35
 
+/-- At `T25` (`bT25 x = x 5 - x 2`) with `d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)` (`0 < δ`):
+if `0 ≤ ⟪F.N 1, bT25 x⟫` and `(⟪F.N 1, bT25 x⟫ = 0 → 0 ≤ ⟪F.N 1, x 3 - x 5⟫)`,
+then `LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, x 0 - x 5⟫`. -/
+theorem lexPos3_N1_T25 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 : ℝ³} {γ δ : ℝ}
+    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (h1 : 0 ≤ ⟪F.N 1, bT25 x⟫) (h1eq : ⟪F.N 1, bT25 x⟫ = 0 → 0 ≤ ⟪F.N 1, x 3 - x 5⟫) :
+    LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, x 0 - x 5⟫ := by
+  rcases lt_or_eq_of_le h1 with hlt | heq
+  · exact Or.inl hlt
+  · refine Or.inr ⟨heq.symm, ?_⟩
+    have h25 : ⟪F.N 1, x 2 - x 5⟫ = 0 := by
+      have hb : x 2 - x 5 = -bT25 x := by simp only [bT25]; abel
+      rw [hb, inner_neg_right, ← heq, neg_zero]
+    have hd1_eq : ⟪F.N 1, d1⟫ = δ * ⟪F.N 1, x 3 - x 5⟫ := by
+      rw [hd1, inner_add_right, inner_smul_right, inner_smul_right, h25, mul_zero, zero_add]
+    rw [hd1_eq]
+    rcases lt_or_eq_of_le (h1eq heq.symm) with h35 | h35
+    · exact Or.inl (mul_pos hδ h35)
+    · refine Or.inr ⟨by rw [← h35, mul_zero], ?_⟩
+      rw [F.inner_sub, F.zero 1 0 (by decide), zero_sub]
+      exact neg_pos.mpr (F.neg 1 5 (by decide))
+
+/-- At `T25` (`bT25 x = x 5 - x 2`) with `d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)` (`0 < δ`):
+if `⟪F.N 1, bT25 x⟫ ≤ 0` and `(⟪F.N 1, bT25 x⟫ = 0 → ⟪F.N 1, x 3 - x 5⟫ < 0)`,
+then `LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫)`. -/
+theorem lexNeg3_N1_T25 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³} {γ δ : ℝ}
+    (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
+    (h1 : ⟪F.N 1, bT25 x⟫ ≤ 0) (h1eq : ⟪F.N 1, bT25 x⟫ = 0 → ⟪F.N 1, x 3 - x 5⟫ < 0) :
+    LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫) := by
+  rcases lt_or_eq_of_le h1 with hlt | heq
+  · exact Or.inl (neg_pos.mpr hlt)
+  · refine Or.inr ⟨by rw [heq, neg_zero], Or.inl ?_⟩
+    have h25 : ⟪F.N 1, x 2 - x 5⟫ = 0 := by
+      have hb : x 2 - x 5 = -bT25 x := by simp only [bT25]; abel
+      rw [hb, inner_neg_right, heq, neg_zero]
+    rw [hd1, inner_add_right, inner_smul_right, inner_smul_right, h25, mul_zero, zero_add]
+    exact neg_pos.mpr (mul_neg_of_pos_of_neg hδ (h1eq heq))
+
 /-- At `T26` with tilt `d1 = x 3 - x 2`: if `0 ≤ ⟪F.N 8, bT26 x⟫`, then
 `LexPos3 ⟪F.N 8, bT26 x⟫ ⟪F.N 8, x 3 - x 2⟫ ⟪F.N 8, (0 : ℝ³)⟫` (since `⟪F.N 8, x 3 - x 2⟫ = -F.f 8 (x 2) > 0`). -/
 theorem lexPos3_N8_T26 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
@@ -69,7 +107,7 @@ private theorem c25a_le_cyc : S0xCycUD s0x_S24 c25a_le {3, 4, 8} {1, 2, 6, 7} :=
 theorem lexAny_T25_0536_tilt_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
     {γ δ : ℝ} (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
     (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
-    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t1 : LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫)) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0356 : FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x))
@@ -86,7 +124,7 @@ theorem lexAny_T25_0536_tilt_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (
   · intro t ht
     simp only [Finset.mem_insert, Finset.mem_singleton] at ht
     rcases ht with rfl | rfl | rfl | rfl
-    · exact Or.inl (by linarith)
+    · exact t1
     · exact t2
     · exact t6
     · exact Or.inl (by linarith)
@@ -100,7 +138,7 @@ private theorem c25b_le_cyc : S0xCycUD s0x_S24 c25b_le {1, 3, 8} {0, 2, 5, 6, 7}
 /-- `lexAny_T25_01635_tilt` with `0 ≤ ⟪F.N 8, bT25 x⟫` (covering `h8form = 0`). -/
 theorem lexAny_T25_01635_tilt_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
     {γ δ : ℝ} (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
@@ -115,12 +153,12 @@ theorem lexAny_T25_01635_tilt_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) 
     (m0365 : GenQuad.LexClause (x 6) (x 5) (x 0) (x 3) (bT25 x) d1 d2)
     (m6513 : GenQuad.LexClause (x 1) (x 3) (x 6) (x 5) (bT25 x) d1 d2) :
     LexAny F := by
-  have hb : bT25 x ≠ 0 := fun h => by rw [h, inner_zero_right] at h1; exact lt_irrefl _ h1
+  have hb : bT25 x ≠ 0 := fun h => by rw [h, inner_zero_right] at h3; exact lt_irrefl _ h3
   refine GenQuad.lexAny_of_clauses F (k := 5) (by norm_num) c25b_le_inj c25b_le_cyc (bT25 x) d1 d2 ?_ ?_ ?_
   · intro t ht
     simp only [Finset.mem_insert, Finset.mem_singleton] at ht
     rcases ht with rfl | rfl | rfl
-    · exact Or.inl h1
+    · exact t1
     · exact Or.inl h3
     · exact lexPos3_N8_T25 F hd1 hδ h8
   · intro t ht
@@ -222,7 +260,7 @@ theorem tieCover_0536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 :
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
     (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
-    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t1 : LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫)) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0356 : FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x))
@@ -235,7 +273,7 @@ theorem tieCover_0536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 :
     (f3654 : FrontDet (x 3) (x 6) (x 5) (x 4) (bT26 x)) :
     LexAny F := by
   by_cases hc : GenQuad.LexClause (x 5) (x 6) (x 0) (x 3) (bT25 x) d1 d2
-  · exact lexAny_T25_0536_tilt_le F d1 d2 hd1 hδ h3 h4 h8 h1 h7 t2 t6 f0356 hc
+  · exact lexAny_T25_0536_tilt_le F d1 d2 hd1 hδ h3 h4 h8 t1 h7 t2 t6 f0356 hc
   · obtain ⟨⟨u1, u1'⟩, ⟨u2, -⟩, -, -⟩ := notClause hc
     have hb25 : bT25 x = x 5 - x 2 := rfl
     have hA : 0 ≤ ⟪x 3 - x 5, bT25 x⟫ := by rw [inner_sub_left]; linarith
@@ -253,7 +291,7 @@ theorem tieCover_01635_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 
     (hc61 : 0 < c61) (hc63 : 1 ≤ c63)
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
@@ -306,7 +344,7 @@ theorem tieCover_01635_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 
   · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k5
     exact kill (T6_strict hb25 hd1 hb26 hx6 tie hμ hδ ha hc61 (by linarith) E11
       (by rw [iS 6 5]; linarith) (levelB hb25 tie u1 u1'))
-  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
     k1 k5 k3 k4 k2
 
 /-- `tieCover_0536_2536` with `0 ≤ ⟪F.N 8, bT25 x⟫`. -/
@@ -316,7 +354,7 @@ theorem tieCover_0536_2536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
     (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
-    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
+    (t1 : LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫)) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (f0356 : FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x))
@@ -325,7 +363,7 @@ theorem tieCover_0536_2536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1
     (f2356 : FrontDet (x 2) (x 3) (x 5) (x 6) (bT26 x)) :
     LexAny F := by
   by_cases hc : GenQuad.LexClause (x 5) (x 6) (x 0) (x 3) (bT25 x) d1 d2
-  · exact lexAny_T25_0536_tilt_le F d1 d2 hd1 hδ h3 h4 h8 h1 h7 t2 t6 f0356 hc
+  · exact lexAny_T25_0536_tilt_le F d1 d2 hd1 hδ h3 h4 h8 t1 h7 t2 t6 f0356 hc
   · obtain ⟨⟨u1, u1'⟩, ⟨u2, -⟩, -, -⟩ := notClause hc
     have hb25 : bT25 x = x 5 - x 2 := rfl
     have hA : 0 ≤ ⟪x 3 - x 5, bT25 x⟫ := by rw [inner_sub_left]; linarith
@@ -342,7 +380,7 @@ theorem tieCover_01635_2536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
     (hc61 : 0 < c61) (hc63 : 1 ≤ c63)
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
@@ -391,7 +429,7 @@ theorem tieCover_01635_2536_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
   · obtain ⟨-, -, ⟨u1, u1'⟩, ⟨u2, -⟩⟩ := notClause k5
     exact kill (T6_strict hb25 hd1 hb26 hx6 tie hμ hδ ha hc61 (by linarith) E11
       (by rw [iS 6 5]; linarith) (levelB hb25 tie u1 u1'))
-  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+  exact lexAny_T25_01635_tilt_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
     k1 k5 k3 k4 k2
 
 /-- `tieCover_05346W` with `0 ≤ ⟪F.N 8, bT26 x⟫` (covering `h26 = 0`) and `1 ≤ c63`. -/
@@ -406,7 +444,7 @@ theorem tieCover_05346W_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
     (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
     (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
-    (h1 : ⟪F.N 1, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
+    (t1 : LexPos3 (-⟪F.N 1, bT25 x⟫) (-⟪F.N 1, d1⟫) (-⟪F.N 1, d2⟫)) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
     (hX : GenQuad.CrossOf (x 0) (x 3) (x 5) (x 4))
@@ -423,8 +461,8 @@ theorem tieCover_05346W_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
     (f3654 : FrontDet (x 3) (x 6) (x 5) (x 4) (bT26 x)) :
     LexAny F := by
   rcases lt_or_eq_of_le g8 with g8lt | g8eq
-  · exact tieCover_05346W F hd1 hδ hb26 hμ ha hx4 hp4 hx6 hc61 hc62 hc63 tie hW
-      hdet h3 h4 h1 h8 t2 t6 hX f0356 f0456 f0436 f5436 g6 g7 g8lt g3 g4 f2354 f2356 f2456 f3624 f3654
+  · exact tieCover_05346W_lex F hd1 hδ hb26 hμ ha hx4 hp4 hx6 hc61 hc62 hc63 tie hW
+      hdet h3 h4 t1 h8 t2 t6 hX f0356 f0456 f0436 f5436 g6 g7 g8lt g3 g4 f2354 f2356 f2456 f3624 f3654
   · have hq4 : 1 < q4 := q4_gt_one_of_facet8 F hx4 hx6 hp4 hc61 hc62 hc63 h8
     have hb25 : bT25 x = x 5 - x 2 := rfl
     have kill := kill26_le F hb26 hμ ha hx4 hp4 (by linarith) tie g6 g7 g8 g3 g4 f2354 f2356 f2456 f3624 f3654
@@ -477,7 +515,7 @@ theorem tieCover_05346W_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
         rw [e2] at l; linarith only [l, hpos, u2]
       have E13 : ⟪x 2 - x 5, x 3 - x 5⟫ = 0 := by rw [← h53]; exact hz
       exact wp_k4 hd1 E13 hδ E33 (u1' (by rw [e1] at hz; linarith))
-    exact lexAny_T25_05346_tilt F d1 d2 hdet h3 h4 h1 h8 t2 t6 hX f0356 f0456 f0436 f5436 k1 k2 k3 k4
+    exact lexAny_T25_05346_tilt_lex F d1 d2 hdet h3 h4 t1 h8 t2 t6 hX f0356 f0456 f0436 f5436 k1 k2 k3 k4
 
 /-- `tieCover_016435` with `0 ≤ ⟪F.N 8, bT26 x⟫` (covering `h26 = 0`). -/
 theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2 : ℝ³}
@@ -493,7 +531,7 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
     (hdet : Split.det3 (bT25 x) d1 d2 ≠ 0)
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h4 : 0 < ⟪F.N 4, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0)
     (h7 : ⟪F.N 7, bT25 x⟫ < 0) (h8 : ⟪F.N 8, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
@@ -523,7 +561,7 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
     LexAny F := by
   rcases lt_or_eq_of_le g8 with g8lt | g8eq
   · exact tieCover_016435 F hd1 hδ hb26 hμ ha hx4 hp4 hq4 hx1 hc11 hc13 hc13_1 hx6 hc61 hc13_63 hq4_63
-      h16 tie hW hdet h1 h3 h4 h0 h5 h7 h8 t2 t6 hX f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465
+      h16 tie hW hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465
       f0365 f1463 f1465 f6513 f4513 f4563 g6 g7 g8lt g3 g4 f2354 f2356 f2456 f3624 f3654
   · -- On `⟪F.N 8, bT26 x⟫ = 0`, `kill26_le` handles `z3 < z5` at `T26` identically to `kill26`.
     have hb25 : bT25 x = x 5 - x 2 := rfl
@@ -654,7 +692,7 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
         have hpos := mul_pos (sub_pos.2 hq4) (lt_of_le_of_ne (by rw [e1]; linarith) (Ne.symm hne))
         rw [e2] at l; linarith only [l, hpos, u3]
       exact viaW'53 hz (u4' (by rw [e1] at hz; linarith))
-    exact lexAny_T25_016435_tilt F d1 d2 hdet h1 h3 h4 h0 h5 h7 h8 t2 t6 hX
+    exact lexAny_T25_016435_tilt_lex F d1 d2 hdet t1 h3 h4 h0 h5 h7 h8 t2 t6 hX
       f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
       k0614 k0613 k0615 k0413 k0415 k0315 k0463 k0465 k0365 k1463 k1465 k6513 k4513 k4563
 
@@ -663,7 +701,7 @@ theorem tieCover_016435_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d1 d2
 /-- `lexAny_T25_01635_tilt_flip` with `0 ≤ ⟪F.N 8, bT25 x⟫`. -/
 theorem lexAny_T25_01635_tilt_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (d1 d2 : ℝ³)
     {γ δ : ℝ} (hd1 : d1 = γ • (x 2 - x 5) + δ • (x 3 - x 5)) (hδ : 0 < δ)
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
@@ -678,12 +716,12 @@ theorem lexAny_T25_01635_tilt_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S2
     (m0365 : GenQuad.LexClause (x 6) (x 5) (x 0) (x 3) (bT25 x) d1 d2)
     (m1365 : GenQuad.LexClause (x 6) (x 5) (x 1) (x 3) (bT25 x) d1 d2) :
     LexAny F := by
-  have hb : bT25 x ≠ 0 := fun h => by rw [h, inner_zero_right] at h1; exact lt_irrefl _ h1
+  have hb : bT25 x ≠ 0 := fun h => by rw [h, inner_zero_right] at h3; exact lt_irrefl _ h3
   refine GenQuad.lexAny_of_clauses F (k := 5) (by norm_num) c25b_le_inj c25b_le_cyc (bT25 x) d1 d2 ?_ ?_ ?_
   · intro t ht
     simp only [Finset.mem_insert, Finset.mem_singleton] at ht
     rcases ht with rfl | rfl | rfl
-    · exact Or.inl h1
+    · exact t1
     · exact Or.inl h3
     · exact lexPos3_N8_T25 F hd1 hδ h8
   · intro t ht
@@ -713,7 +751,7 @@ theorem tieCover_01635_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
     (hc61 : 0 < c61) (hc63 : 1 ≤ c63) (hc13_63 : c13 ≤ c63) (h16 : 0 < c63 * c11 - c13 * c61)
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
@@ -781,7 +819,7 @@ theorem tieCover_01635_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {d
     have e1 := iS 1 5; have e2 := iS 1 6; rw [e1, e2] at l
     nlinarith only [l, mul_nonneg (sub_nonneg.2 hc13_63) (sub_nonneg.2 u3),
       mul_nonneg hc13 (sub_nonneg.2 u1), mul_pos h16 E11]
-  exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6
+  exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6
     f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6
 
 /-- `tieCover_01635_2536` with flipped `(6, 5; 1, 3)` front and `0 ≤ ⟪F.N 8, bT25 x⟫`. -/
@@ -795,7 +833,7 @@ theorem tieCover_01635_2536_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 
     (hc61 : 0 < c61) (hc63 : 1 ≤ c63) (hc13_63 : c13 ≤ c63) (h16 : 0 < c63 * c11 - c13 * c61)
     (tie : ⟪x 2 - x 5, x 0 - x 5⟫ = 0)
     (hW : ¬ (⟪x 2 - x 5, x 3 - x 5⟫ = 0 ∧ ⟪x 0 - x 5, x 3 - x 5⟫ = 0))
-    (h1 : 0 < ⟪F.N 1, bT25 x⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
+    (t1 : LexPos3 ⟪F.N 1, bT25 x⟫ ⟪F.N 1, d1⟫ ⟪F.N 1, d2⟫) (h3 : 0 < ⟪F.N 3, bT25 x⟫) (h8 : 0 ≤ ⟪F.N 8, bT25 x⟫)
     (h0 : ⟪F.N 0, bT25 x⟫ < 0) (h5 : ⟪F.N 5, bT25 x⟫ < 0) (h7 : ⟪F.N 7, bT25 x⟫ < 0)
     (t2 : LexPos3 (-⟪F.N 2, bT25 x⟫) (-⟪F.N 2, d1⟫) (-⟪F.N 2, d2⟫))
     (t6 : LexPos3 (-⟪F.N 6, bT25 x⟫) (-⟪F.N 6, d1⟫) (-⟪F.N 6, d2⟫))
@@ -859,7 +897,7 @@ theorem tieCover_01635_2536_flip_le {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 
     have e1 := iS 1 5; have e2 := iS 1 6; rw [e1, e2] at l
     nlinarith only [l, mul_nonneg (sub_nonneg.2 hc13_63) (sub_nonneg.2 u3),
       mul_nonneg hc13 (sub_nonneg.2 u1), mul_pos h16 E11]
-  exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ h1 h3 h8 h0 h5 h7 t2 t6
+  exact lexAny_T25_01635_tilt_flip_le F d1 d2 hd1 hδ t1 h3 h8 h0 h5 h7 t2 t6
     f0613 f0615 f0315 f0365 f1365 k1 k5 k3 k4 k6
 
 end Minimality.T24.Q24

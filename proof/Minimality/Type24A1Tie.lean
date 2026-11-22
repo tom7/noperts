@@ -213,8 +213,6 @@ theorem csl24_hq_of_frame {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 tie covers that are not derivable from `Hole24R`, `Reg.A1`, `0 < det24 x`, and the tie.
 Rim-specific facts are guarded by the rim signs so that `A1TieSample` holds uniformly across all rims. -/
 structure A1TieSample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
-  /-- Non-boundary `b5 ≠ 1` (`016` at T25): no lex cover for `⟪F.N 1, bT25 x⟫ = 0` yet (`b5 = 1` is SAT in A1). -/
-  hb5_ne : ⟪F.N 1, bT25 x⟫ ≠ 0
   /-- `1 ≤ c63` (`F.f 2 (x 6) ≤ F.f 2 (x 3)` since `F.f 2 (x 3) < 0`): needed by `tieCover_01635`,
   `tieCover_01635_2536`, `tieCover_05346W`, `tieCover_016435`, and `rim_pair_lemma` (sample fact; false at general `σ = 1`). -/
   hc63 : F.f 2 (x 6) ≤ F.f 2 (x 3)
@@ -223,7 +221,7 @@ structure A1TieSample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop wher
     F.f 2 (x 6) < F.f 2 (x 3)
   /-- Facet `4` (`046`) at T25 (`0 < ⟪F.N 4, bT25 x⟫`): sample fact (SAT negated in A1 + Cbar + a4 ≤ 1);
   needed on rims `0536`, `05346`, `016435`. -/
-  h4 : ⟪F.N 1, bT25 x⟫ < 0 ∨ ⟪F.N 8, bT25 x⟫ < 0 → 0 < ⟪F.N 4, bT25 x⟫
+  h4 : ⟪F.N 1, bT25 x⟫ ≤ 0 ∨ ⟪F.N 8, bT25 x⟫ < 0 → 0 < ⟪F.N 4, bT25 x⟫
   /-- T26 `FrontDet` for `2356` (sample fact; needed on all 6 covers). -/
   f2356_26 : FrontDet (x 2) (x 3) (x 5) (x 6) (bT26 x)
   /-- Remaining 4 T26 `FrontDet`s when `0 ≤ ⟪F.N 8, bT26 x⟫` (rim `25346`; sample facts). -/
@@ -232,19 +230,19 @@ structure A1TieSample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop wher
     FrontDet (x 2) (x 4) (x 5) (x 6) (bT26 x) ∧
     FrontDet (x 3) (x 6) (x 2) (x 4) (bT26 x) ∧
     FrontDet (x 3) (x 6) (x 5) (x 4) (bT26 x)
-  /-- T25 `FrontDet` for rim `0536` (`⟪F.N 1, bT25 x⟫ < 0`, `0 ≤ ⟪F.N 8, bT25 x⟫`; sample fact). -/
-  t25_fronts_0536 : ⟪F.N 1, bT25 x⟫ < 0 → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+  /-- T25 `FrontDet` for rim `0536` (`⟪F.N 1, bT25 x⟫ ≤ 0`, `0 ≤ ⟪F.N 8, bT25 x⟫`; sample fact). -/
+  t25_fronts_0536 : ⟪F.N 1, bT25 x⟫ ≤ 0 → 0 ≤ ⟪F.N 8, bT25 x⟫ →
     FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x)
-  /-- T25 `FrontDet`s for rim `05346` (`⟪F.N 1, bT25 x⟫ < 0`, `⟪F.N 8, bT25 x⟫ < 0`; sample facts). -/
-  t25_fronts_05346 : ⟪F.N 1, bT25 x⟫ < 0 → ⟪F.N 8, bT25 x⟫ < 0 →
+  /-- T25 `FrontDet`s for rim `05346` (`⟪F.N 1, bT25 x⟫ ≤ 0`, `⟪F.N 8, bT25 x⟫ < 0`; sample facts). -/
+  t25_fronts_05346 : ⟪F.N 1, bT25 x⟫ ≤ 0 → ⟪F.N 8, bT25 x⟫ < 0 →
     FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x) ∧
     FrontDet (x 0) (x 4) (x 5) (x 6) (bT25 x) ∧
     FrontDet (x 0) (x 4) (x 3) (x 6) (bT25 x) ∧
     FrontDet (x 5) (x 4) (x 3) (x 6) (bT25 x)
-  /-- T25 `FrontDet`s for rim `01635` (`0 < ⟪F.N 1, bT25 x⟫`, `0 ≤ ⟪F.N 8, bT25 x⟫`; sample facts).
+  /-- T25 `FrontDet`s for rim `01635` (`0 ≤ ⟪F.N 1, bT25 x⟫`, `0 ≤ ⟪F.N 8, bT25 x⟫`; sample facts).
   Either `FrontDet (x 6) (x 5) (x 1) (x 3)` or the flipped front `FrontDet (x 1) (x 3) (x 6) (x 5)`
   (with `c13 ≤ c63 ∧ 0 < c63 * c11 - c13 * c61` when flipped; `GenQuadLex` will later close `det3 = 0`). -/
-  t25_fronts_01635 : 0 < ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+  t25_fronts_01635 : 0 ≤ ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
     FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x) ∧
     FrontDet (x 0) (x 6) (x 1) (x 5) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
@@ -255,8 +253,8 @@ structure A1TieSample (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop wher
           x 1 - x 5 = c11 • (x 2 - x 5) + c12 • (x 0 - x 5) + c13 • (x 3 - x 5) →
           x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5) →
           c13 ≤ c63 ∧ 0 < c63 * c11 - c13 * c61))
-  /-- T25 `FrontDet`s and frame inequalities for rim `016435` (`0 < ⟪F.N 1, bT25 x⟫`, `⟪F.N 8, bT25 x⟫ < 0`; sample facts). -/
-  t25_016435 : 0 < ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
+  /-- T25 `FrontDet`s and frame inequalities for rim `016435` (`0 ≤ ⟪F.N 1, bT25 x⟫`, `⟪F.N 8, bT25 x⟫ < 0`; sample facts). -/
+  t25_016435 : 0 ≤ ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
     (∀ {p4 q4 c11 c12 c13 c61 c62 c63 : ℝ},
       x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5) →
       x 1 - x 5 = c11 • (x 2 - x 5) + c12 • (x 0 - x 5) + c13 • (x 3 - x 5) →
@@ -315,11 +313,20 @@ private theorem a1_tie_rupert_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
     obtain ⟨t2, t6⟩ := t25_tilt_frame F
     obtain ⟨g6, g7, g3, g4⟩ := t26_facets F hdet hA1.1
     have hdet25 := t25_det_ne_zero F
-    -- Dispatch on `⟪F.N 1, bT25 x⟫` (`b5 ≠ 1`) and `⟪F.N 8, bT25 x⟫`
-    rcases lt_or_gt_of_ne hS.hb5_ne with h1_lt | h1_gt
-    · -- `N1 < 0`: rim `0536` or `05346`
+    -- Dispatch on `⟪F.N 1, bT25 x⟫` (resolving `⟪F.N 1, bT25 x⟫ = 0` at the tilt `x 3 - x 5`) and `⟪F.N 8, bT25 x⟫`
+    have h1_cases : (⟪F.N 1, bT25 x⟫ ≤ 0 ∧ (⟪F.N 1, bT25 x⟫ = 0 → ⟪F.N 1, x 3 - x 5⟫ < 0)) ∨
+        (0 ≤ ⟪F.N 1, bT25 x⟫ ∧ (⟪F.N 1, bT25 x⟫ = 0 → 0 ≤ ⟪F.N 1, x 3 - x 5⟫)) := by
+      rcases lt_trichotomy ⟪F.N 1, bT25 x⟫ 0 with h | h | h
+      · exact Or.inl ⟨h.le, fun he => absurd he h.ne⟩
+      · rcases lt_or_ge ⟪F.N 1, x 3 - x 5⟫ 0 with h35 | h35
+        · exact Or.inl ⟨h.le, fun _ => h35⟩
+        · exact Or.inr ⟨h.ge, fun _ => h35⟩
+      · exact Or.inr ⟨h.le, fun he => absurd he h.ne'⟩
+    rcases h1_cases with ⟨h1_le, h1_eq⟩ | ⟨h1_ge, h1_eq⟩
+    · -- `N1 ≤ 0` (with `N1_35 < 0` on `N1 = 0`): rim `0536` or `05346`
+      have t1 := lexNeg3_N1_T25 F (d2 := x 0 - x 5) hd1 hδ h1_le h1_eq
       rcases lt_or_ge ⟪F.N 8, bT25 x⟫ 0 with h8_25 | h8_25
-      · -- Rim `05346` (`N1 < 0`, `N8_25 < 0`)
+      · -- Rim `05346` (`N1 ≤ 0`, `N8_25 < 0`)
         have hq4_gt : 1 < q4 := q4_gt_one_of_facet8 F hx4 hx6 hp4 hc61_pos hc62_pos hc63 h8_25
         obtain ⟨κ25, hκ25, h8_eq25⟩ := facet8_T25 F hx4 hx6 hp4 hc61_pos
         have h8_alg : p4 * (c63 - 1) - (q4 - 1) * c62 < 0 := by
@@ -328,24 +335,25 @@ private theorem a1_tie_rupert_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
         obtain ⟨_, hg8_alg⟩ := rim_pair_lemma hp4 hc61_pos hc62_pos hA1.1 hc63 h8_alg
         obtain ⟨κ26, hκ26, h8_eq26⟩ := facet8_T26 F hx4 hx6 hb26 hp4 hc61_pos hμ
         have g8 : 0 < ⟪F.N 8, bT26 x⟫ := by rw [h8_eq26]; exact mul_pos hκ26 hg8_alg
-        obtain ⟨f0356, f0456, f0436, f5436⟩ := hS.t25_fronts_05346 h1_lt h8_25
+        obtain ⟨f0356, f0456, f0436, f5436⟩ := hS.t25_fronts_05346 h1_le h8_25
         obtain ⟨f2354, f2456, f3624, f3654⟩ := hS.t26_fronts_25346 g8.le
-        exact tieCover_05346W F hd1 hδ hb26 hμ hA1.1 hx4 hp4 hx6 hc61_pos hc62_pos hc63 tie hW
-          hdet25 h3 (hS.h4 (Or.inl h1_lt)) h1_lt h8_25 t2 t6
+        exact tieCover_05346W_lex F hd1 hδ hb26 hμ hA1.1 hx4 hp4 hx6 hc61_pos hc62_pos hc63 tie hW
+          hdet25 h3 (hS.h4 (Or.inl h1_le)) t1 h8_25 t2 t6
           (crossOf_0354_of_x4 hx4 hp4 hq4_gt) f0356 f0456 f0436 f5436
           g6 g7 g8 g3 g4 f2354 hS.f2356_26 f2456 f3624 f3654
-      · -- Rim `0536` (`N1 < 0`, `0 ≤ N8_25`)
-        have f0356 := hS.t25_fronts_0536 h1_lt h8_25
-        have h4 := hS.h4 (Or.inl h1_lt)
+      · -- Rim `0536` (`N1 ≤ 0`, `0 ≤ N8_25`)
+        have f0356 := hS.t25_fronts_0536 h1_le h8_25
+        have h4 := hS.h4 (Or.inl h1_le)
         rcases lt_or_ge ⟪F.N 8, bT26 x⟫ 0 with g8_lt | g8_ge
-        · exact tieCover_0536_2536_le F hd1 hδ hb26 hμ hA1.1 tie hW h3 h4 h8_25 h1_lt h7 t2 t6
+        · exact tieCover_0536_2536_le F hd1 hδ hb26 hμ hA1.1 tie hW h3 h4 h8_25 t1 h7 t2 t6
             f0356 g6 g7 g3 g8_lt hS.f2356_26
         · obtain ⟨f2354, f2456, f3624, f3654⟩ := hS.t26_fronts_25346 g8_ge
           exact tieCover_0536_le F hd1 hδ hb26 hμ hA1.1 hx4 hp4 hq4_nonneg tie hW h3 h4 h8_25
-            h1_lt h7 t2 t6 f0356 g6 g7 g8_ge g3 g4 f2354 hS.f2356_26 f2456 f3624 f3654
-    · -- `0 < N1`: rim `01635` or `016435`
+            t1 h7 t2 t6 f0356 g6 g7 g8_ge g3 g4 f2354 hS.f2356_26 f2456 f3624 f3654
+    · -- `0 ≤ N1` (with `0 ≤ N1_35` on `N1 = 0`): rim `01635` or `016435`
+      have t1 := lexPos3_N1_T25 F hd1 hδ h1_ge h1_eq
       rcases lt_or_ge ⟪F.N 8, bT25 x⟫ 0 with h8_25 | h8_25
-      · -- Rim `016435` (`0 < N1`, `N8_25 < 0`)
+      · -- Rim `016435` (`0 ≤ N1`, `N8_25 < 0`)
         have hq4_gt : 1 < q4 := q4_gt_one_of_facet8 F hx4 hx6 hp4 hc61_pos hc62_pos hc63 h8_25
         obtain ⟨κ25, hκ25, h8_eq25⟩ := facet8_T25 F hx4 hx6 hp4 hc61_pos
         have h8_alg : p4 * (c63 - 1) - (q4 - 1) * c62 < 0 := by
@@ -356,34 +364,34 @@ private theorem a1_tie_rupert_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x
         have g8 : 0 < ⟪F.N 8, bT26 x⟫ := by rw [h8_eq26]; exact mul_pos hκ26 hg8_alg
         obtain ⟨c11, c12, c13, hx1, hc11, hc12, hc13⟩ := x1_frame F
         obtain ⟨hfr, f0614, f0613, f0615, f0413, f0415, f0315, f0463, f0465, f0365,
-          f1463, f1465, f6513, f4513, f4563⟩ := hS.t25_016435 h1_gt h8_25
+          f1463, f1465, f6513, f4513, f4563⟩ := hS.t25_016435 h1_ge h8_25
         obtain ⟨hc13_1, hc13_63, hq4_63, h16⟩ := hfr hx4 hx1 hx6
         obtain ⟨f2354, f2456, f3624, f3654⟩ := hS.t26_fronts_25346 g8.le
         exact tieCover_016435 F hd1 hδ hb26 hμ hA1.1 hx4 hp4 hq4_gt hx1 hc11 hc13.le hc13_1
-          hx6 hc61_pos hc13_63 hq4_63 h16 tie hW hdet25 h1_gt h3 (hS.h4 (Or.inr h8_25))
+          hx6 hc61_pos hc13_63 hq4_63 h16 tie hW hdet25 t1 h3 (hS.h4 (Or.inr h8_25))
           h0 h5 h7 h8_25 t2 t6 (crossOf_0345_of_x4 hx4 hp4 hq4_gt)
           f0614 f0613 f0615 f0413 f0415 f0315 f0463 f0465 f0365 f1463 f1465 f6513 f4513 f4563
           g6 g7 g8 g3 g4 f2354 hS.f2356_26 f2456 f3624 f3654
-      · -- Rim `01635` (`0 < N1`, `0 ≤ N8_25`)
-        obtain ⟨f0613, f0615, f0315, f0365, h6513⟩ := hS.t25_fronts_01635 h1_gt h8_25
+      · -- Rim `01635` (`0 ≤ N1`, `0 ≤ N8_25`)
+        obtain ⟨f0613, f0615, f0315, f0365, h6513⟩ := hS.t25_fronts_01635 h1_ge h8_25
         rcases h6513 with f6513 | ⟨f1365, hfr_flip⟩
         · rcases lt_or_ge ⟪F.N 8, bT26 x⟫ 0 with g8_lt | g8_ge
           · exact tieCover_01635_2536_le F hd1 hδ hb26 hμ hA1.1 hx6 hc61_pos hc63 tie hW
-              h1_gt h3 h8_25 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+              t1 h3 h8_25 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
               g6 g7 g3 g8_lt hS.f2356_26
           · obtain ⟨f2354, f2456, f3624, f3654⟩ := hS.t26_fronts_25346 g8_ge
             exact tieCover_01635_le F hd1 hδ hb26 hμ hA1.1 hx4 hp4 hq4_nonneg hx6 hc61_pos hc63 tie hW
-              h1_gt h3 h8_25 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
+              t1 h3 h8_25 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f6513
               g6 g7 g8_ge g3 g4 f2354 hS.f2356_26 f2456 f3624 f3654
         · obtain ⟨c11, c12, c13, hx1, _, _, hc13⟩ := x1_frame F
           obtain ⟨hc13_63, h16⟩ := hfr_flip hx1 hx6
           rcases lt_or_ge ⟪F.N 8, bT26 x⟫ 0 with g8_lt | g8_ge
           · exact tieCover_01635_2536_flip_le F hd1 hδ hb26 hμ hA1.1 hx1 hc13.le hx6 hc61_pos hc63
-              hc13_63 h16 tie hW h1_gt h3 h8_25 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f1365
+              hc13_63 h16 tie hW t1 h3 h8_25 h0 h5 h7 t2 t6 f0613 f0615 f0315 f0365 f1365
               g6 g7 g3 g8_lt hS.f2356_26
           · obtain ⟨f2354, f2456, f3624, f3654⟩ := hS.t26_fronts_25346 g8_ge
             exact tieCover_01635_flip_le F hd1 hδ hb26 hμ hA1.1 hx4 hp4 hq4_nonneg hx1 hc13.le hx6
-              hc61_pos hc63 hc13_63 h16 tie hW h1_gt h3 h8_25 h0 h5 h7 t2 t6
+              hc61_pos hc63 hc13_63 h16 tie hW t1 h3 h8_25 h0 h5 h7 t2 t6
               f0613 f0615 f0315 f0365 f1365 g6 g7 g8_ge g3 g4 f2354 hS.f2356_26 f2456 f3624 f3654
 
 /-! ### Point-reflection wlog (`det24 x < 0` → `0 < det24 (-x)`) -/

@@ -739,27 +739,26 @@ theorem t16_13_of_region {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : R
 /-- Reduced sample-fact bundle: `A1TieSample` without the region facts `f2356_26` and the T26 fronts
 `2 3 5 4`-complement (`3 6 2 4`, `3 6 5 4`), which are consequences of `Reg.A1` and `0 < det24 x`. -/
 structure A1TieSmall (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
-  hb5_ne : ⟪F.N 1, bT25 x⟫ ≠ 0
   hc63 : F.f 2 (x 6) ≤ F.f 2 (x 3)
   hq_sig1 : F.f 8 (x 0) = F.f 8 (x 5) → ⟪x 2 - x 5, x 3 - x 5⟫ = 0 → ⟪x 0 - x 5, x 3 - x 5⟫ = 0 →
     F.f 2 (x 6) < F.f 2 (x 3)
-  h4 : ⟪F.N 1, bT25 x⟫ < 0 ∨ ⟪F.N 8, bT25 x⟫ < 0 → 0 < ⟪F.N 4, bT25 x⟫
+  h4 : ⟪F.N 1, bT25 x⟫ ≤ 0 ∨ ⟪F.N 8, bT25 x⟫ < 0 → 0 < ⟪F.N 4, bT25 x⟫
   /-- Undecided/sample T26 fronts `2 3 5 4` and `2 4 5 6` (rim `25346`). -/
   t26_fronts_25346 : 0 ≤ ⟪F.N 8, bT26 x⟫ →
     FrontDet (x 2) (x 3) (x 5) (x 4) (bT26 x) ∧ FrontDet (x 2) (x 4) (x 5) (x 6) (bT26 x)
-  t25_fronts_0536 : ⟪F.N 1, bT25 x⟫ < 0 → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+  t25_fronts_0536 : ⟪F.N 1, bT25 x⟫ ≤ 0 → 0 ≤ ⟪F.N 8, bT25 x⟫ →
     FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x)
-  t25_fronts_05346 : ⟪F.N 1, bT25 x⟫ < 0 → ⟪F.N 8, bT25 x⟫ < 0 →
+  t25_fronts_05346 : ⟪F.N 1, bT25 x⟫ ≤ 0 → ⟪F.N 8, bT25 x⟫ < 0 →
     FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x) ∧
     FrontDet (x 0) (x 4) (x 5) (x 6) (bT25 x) ∧
     FrontDet (x 0) (x 4) (x 3) (x 6) (bT25 x) ∧
     FrontDet (x 5) (x 4) (x 3) (x 6) (bT25 x)
-  t25_fronts_01635 : 0 < ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+  t25_fronts_01635 : 0 ≤ ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
     FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x) ∧
     (FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x) ∨ FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
-  t25_016435 : 0 < ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
+  t25_016435 : 0 ≤ ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
     (∀ {p4 q4 c11 c12 c13 c61 c62 c63 : ℝ},
       x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5) →
       x 1 - x 5 = c11 • (x 2 - x 5) + c12 • (x 0 - x 5) + c13 • (x 3 - x 5) →
@@ -777,7 +776,6 @@ structure A1TieSmall (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
 
 theorem a1TieSample_of_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
     (hdet : 0 < det24 x) (hS : A1TieSmall x F) : A1TieSample x F where
-  hb5_ne := hS.hb5_ne
   hc63 := hS.hc63
   hq_sig1 := hS.hq_sig1
   h4 := hS.h4
@@ -838,22 +836,21 @@ theorem a1_tie_rupert_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 /-- Reduced off-tie `A1E25Sample` bundle: `A1E25Sample` without the 7 T25 region front occurrences
 (`t25_01635b`, `t16_02`, `t16_04`, `t16_06`, `t16_07`, `t16_13`), proved from `Reg.A1` and `0 < det24`. -/
 structure A1E25Small (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
-  hb5_ne : ⟪F.N 1, bT25 x⟫ ≠ 0
   hc63 : F.f 2 (x 6) ≤ F.f 2 (x 3)
-  h4 : ⟪F.N 1, bT25 x⟫ < 0 ∨ ⟪F.N 8, bT25 x⟫ < 0 → 0 < ⟪F.N 4, bT25 x⟫
-  t25_fronts_0536 : ⟪F.N 1, bT25 x⟫ < 0 → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+  h4 : ⟪F.N 1, bT25 x⟫ ≤ 0 ∨ ⟪F.N 8, bT25 x⟫ < 0 → 0 < ⟪F.N 4, bT25 x⟫
+  t25_fronts_0536 : ⟪F.N 1, bT25 x⟫ ≤ 0 → 0 ≤ ⟪F.N 8, bT25 x⟫ →
     FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x)
-  t25_fronts_05346 : ⟪F.N 1, bT25 x⟫ < 0 → ⟪F.N 8, bT25 x⟫ < 0 →
+  t25_fronts_05346 : ⟪F.N 1, bT25 x⟫ ≤ 0 → ⟪F.N 8, bT25 x⟫ < 0 →
     FrontDet (x 0) (x 3) (x 5) (x 6) (bT25 x) ∧
     FrontDet (x 0) (x 4) (x 5) (x 6) (bT25 x) ∧
     FrontDet (x 0) (x 4) (x 3) (x 6) (bT25 x) ∧
     FrontDet (x 5) (x 4) (x 3) (x 6) (bT25 x)
-  t25_fronts_01635 : 0 < ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
+  t25_fronts_01635 : 0 ≤ ⟪F.N 1, bT25 x⟫ → 0 ≤ ⟪F.N 8, bT25 x⟫ →
     FrontDet (x 0) (x 6) (x 1) (x 3) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 1) (x 5) (bT25 x) ∧
     FrontDet (x 0) (x 3) (x 6) (x 5) (bT25 x) ∧
     (FrontDet (x 6) (x 5) (x 1) (x 3) (bT25 x) ∨ FrontDet (x 1) (x 3) (x 6) (x 5) (bT25 x))
-  t25_016435 : 0 < ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
+  t25_016435 : 0 ≤ ⟪F.N 1, bT25 x⟫ → ⟪F.N 8, bT25 x⟫ < 0 →
     (∀ {p4 q4 c61 c62 c63 : ℝ},
       x 4 - x 5 = p4 • (x 0 - x 5) + q4 • (x 3 - x 5) →
       x 6 - x 5 = c61 • (x 2 - x 5) + c62 • (x 0 - x 5) + c63 • (x 3 - x 5) →
@@ -870,7 +867,6 @@ structure A1E25Small (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop where
 
 theorem a1E25Sample_of_small {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hA1 : Reg.A1 x F)
     (hdet : 0 < det24 x) (hS : A1E25Small x F) : A1E25Sample x F where
-  hb5_ne := hS.hb5_ne
   hc63 := hS.hc63
   h4 := hS.h4
   t25_fronts_0536 := hS.t25_fronts_0536

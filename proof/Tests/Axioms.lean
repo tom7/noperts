@@ -18,6 +18,7 @@ import Minimality.M4cType24
 import Minimality.M4dType24
 import Minimality.Type29Leaves
 import Minimality.Type29LeavesA16
+import Minimality.Type29QPencil
 import Minimality.Type29Quad
 import Minimality.GenQuad
 import Minimality.GenQuadCross
@@ -1398,3 +1399,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A10.nu346_ustar2
 #assert_standard_axioms Minimality.T24.A10.ustar2_facings
 #assert_standard_axioms Minimality.T24.A10.ustar2_z0_nonpos
+#assert_standard_axioms Minimality.T24.Q24.lexPos3_N1_T25
+#assert_standard_axioms Minimality.T24.Q24.lexNeg3_N1_T25
+#assert_standard_axioms Minimality.NF29.f234_u23Q_sub
+#assert_standard_axioms Minimality.NF29.q_quadrant_II
+#assert_standard_axioms Minimality.NF29.q_quadrant_IV
+#assert_standard_axioms Minimality.NF29.qpencil_depth_split
