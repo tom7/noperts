@@ -49,6 +49,7 @@ import Minimality.GenQuadLex
 import Minimality.Type24ROffTie
 import Minimality.Type29T1Pair
 import Minimality.Type29T1Close
+import Minimality.Type24A1Small
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1349,3 +1350,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.u46_eq_u2346
 #assert_standard_axioms Minimality.NF29.v46_fail
 #assert_standard_axioms Minimality.NF29.t1_closed
+#assert_standard_axioms Minimality.T24.A1.f2356_26_of_region
+#assert_standard_axioms Minimality.T24.A1.t26c_of_region
+#assert_standard_axioms Minimality.T24.A1.t26d_of_region
+#assert_standard_axioms Minimality.T24.A1.c13_c63_pos_of_region
+#assert_standard_axioms Minimality.T24.A1.a1TieSample_of_small
+#assert_standard_axioms Minimality.T24.A1.a1_tie_rupert_small
