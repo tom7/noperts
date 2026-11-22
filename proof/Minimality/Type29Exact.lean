@@ -493,26 +493,36 @@ private def f012_Dn : Finset (Fin 9) := {4, 5, 6, 7}
 private theorem f012_c_inj : Function.Injective f012_c := by decide
 private theorem f012_cyc : S0xCycUD s0x_S29 f012_c f012_U f012_Dn := by decide
 
-theorem lexAny29_F012F1456 (N : NF29 x)
+theorem bLine_ne_zero (N : NF29 x) : N.bLine x ≠ 0 := by
+  intro h0
+  let F := s0x_fac29 N.facets
+  have hD2 : 0 < N.D ^ 2 := sq_pos_of_ne_zero N.hD
+  have hP4 : 0 < N.P4 := by dsimp only [P4]; linarith [N.hF5]
+  have h1 : ⟪F.N 1, N.bLine x⟫ = N.h2 * (N.f015.f (x 0) - N.f015.f (x 1)) -
+      N.h0 * (N.f015.f (x 2) - N.f015.f (x 1)) := by
+    dsimp only [bLine]
+    rw [inner_sub_right, inner_smul_right, inner_smul_right, (F.hN 1 (x 0) (x 1)).symm,
+      (F.hN 1 (x 2) (x 1)).symm]
+    rfl
+  have hv : N.h2 * (N.f015.f (x 0) - N.f015.f (x 1)) - N.h0 * (N.f015.f (x 2) - N.f015.f (x 1)) =
+      N.h0 * N.P4 * N.D ^ 2 := by f012_fac_val N
+  have h2 : ⟪F.N 1, N.bLine x⟫ = 0 := by rw [h0, inner_zero_right]
+  have h3 : 0 < N.h0 * N.P4 * N.D ^ 2 := mul_pos (mul_pos N.hh0 hP4) hD2
+  rw [h2, hv] at h1
+  linarith
+
+theorem lexAny29_F012F1456_clauses (N : NF29 x)
     (hh : N.h0 < N.h2) (h035 : 0 < N.v035) (h234 : N.v234 < 0) (h346 : N.v346 < 0) (h356 : 0 < N.v356)
-    (hF0123 : (FrontDet (x 2) (x 6) (x 1) (x 3) (N.bLine x) ∧
-        ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 6, N.bLine x⟫ ∧
-           ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 6, N.bLine x⟫)) ∨
-      (FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x) ∧
-        ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 1, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧
-           ⟪x 6, N.bLine x⟫ ≤ ⟪x 1, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫)))
-    (hF0124 : FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x))
-    (hM0124 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0134 : FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0134 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0234 : FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0234 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF1234 : FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x))
-    (hM1234 : ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫)) :
+    (hA0123 : GenQuad.LexClause (x 2) (x 6) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0123 : GenQuad.LexClause (x 1) (x 3) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0124 : GenQuad.LexClause (x 2) (x 5) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0124 : GenQuad.LexClause (x 1) (x 3) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0134 : GenQuad.LexClause (x 2) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0134 : GenQuad.LexClause (x 1) (x 6) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0234 : GenQuad.LexClause (x 3) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0234 : GenQuad.LexClause (x 1) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA1234 : GenQuad.LexClause (x 3) (x 5) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB1234 : GenQuad.LexClause (x 2) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1)) :
     Minimality.H29.LexAny29 (s0x_fac29 N.facets) := by
   let F := s0x_fac29 N.facets
   let c := f012_c
@@ -612,18 +622,46 @@ theorem lexAny29_F012F1456 (N : NF29 x)
     change 0 = N.h2 * (N.f015.f (x 0) - N.f015.f (x 1)) - N.h0 * (N.f015.f (x 2) - N.f015.f (x 1)) at h1
     rw [hv] at h1
     linarith
-  have cl : ∀ {p q r s : ℝ³}, FrontDet p q r s b → GenQuad.LexClause p q r s b d1 d2 := fun h =>
+  exact GenQuad.lexAny_of_clauses F (k := 5) (by norm_num) hc_inj hcyc b d1 d2 hU hD
+    (GenQuad.clauses_five (p := fun i => x (c i))
+      hA0123 hB0123 hA0124 hB0124 hA0134 hB0134 hA0234 hB0234 hA1234 hB1234)
+
+theorem lexAny29_F012F1456 (N : NF29 x)
+    (hh : N.h0 < N.h2) (h035 : 0 < N.v035) (h234 : N.v234 < 0) (h346 : N.v346 < 0) (h356 : 0 < N.v356)
+    (hF0123 : (FrontDet (x 2) (x 6) (x 1) (x 3) (N.bLine x) ∧
+        ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 6, N.bLine x⟫ ∧
+           ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 6, N.bLine x⟫)) ∨
+      (FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x) ∧
+        ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 1, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧
+           ⟪x 6, N.bLine x⟫ ≤ ⟪x 1, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫)))
+    (hF0124 : FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x))
+    (hM0124 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
+                 ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hF0134 : FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x))
+    (hM0134 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
+                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hF0234 : FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x))
+    (hM0234 : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
+                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hF1234 : FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x))
+    (hM1234 : ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
+                 ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫)) :
+    Minimality.H29.LexAny29 (s0x_fac29 N.facets) := by
+  have hb_ne : N.bLine x ≠ 0 := bLine_ne_zero N
+  have cl : ∀ {p q r s : ℝ³}, FrontDet p q r s (N.bLine x) →
+      GenQuad.LexClause p q r s (N.bLine x) (x 1 - x 4) (x 3 - x 1) := fun h =>
     GenQuad.lexClause_of_frontOf hb_ne (FrontDet.frontOf h)
-  have cn : ∀ {p q r s : ℝ³}, ¬ (⟪p, b⟫ ≤ ⟪r, b⟫ ∧ ⟪p, b⟫ ≤ ⟪s, b⟫ ∧ ⟪q, b⟫ ≤ ⟪r, b⟫ ∧ ⟪q, b⟫ ≤ ⟪s, b⟫) →
-      GenQuad.LexClause p q r s b d1 d2 := fun h => GenQuad.lexClause_of_notM h
-  have h0123 : GenQuad.LexClause (x 2) (x 6) (x 1) (x 3) b d1 d2 ∧
-      GenQuad.LexClause (x 1) (x 3) (x 2) (x 6) b d1 d2 := by
+  have cn : ∀ {p q r s : ℝ³}, ¬ (⟪p, N.bLine x⟫ ≤ ⟪r, N.bLine x⟫ ∧ ⟪p, N.bLine x⟫ ≤ ⟪s, N.bLine x⟫ ∧
+        ⟪q, N.bLine x⟫ ≤ ⟪r, N.bLine x⟫ ∧ ⟪q, N.bLine x⟫ ≤ ⟪s, N.bLine x⟫) →
+      GenQuad.LexClause p q r s (N.bLine x) (x 1 - x 4) (x 3 - x 1) := fun h =>
+    GenQuad.lexClause_of_notM h
+  have h0123 : GenQuad.LexClause (x 2) (x 6) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+      GenQuad.LexClause (x 1) (x 3) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1) := by
     rcases hF0123 with ⟨hf, hm⟩ | ⟨hf, hm⟩
     · exact ⟨cl hf, cn hm⟩
     · exact ⟨cn hm, cl hf⟩
-  exact GenQuad.lexAny_of_clauses F (k := 5) (by norm_num) hc_inj hcyc b d1 d2 hU hD
-    (GenQuad.clauses_five (p := fun i => x (c i))
-      h0123.1 h0123.2 (cl hF0124) (cn hM0124) (cl hF0134) (cn hM0134)
-      (cl hF0234) (cn hM0234) (cl hF1234) (cn hM1234))
+  exact lexAny29_F012F1456_clauses N hh h035 h234 h346 h356
+    h0123.1 h0123.2 (cl hF0124) (cn hM0124) (cl hF0134) (cn hM0134)
+    (cl hF0234) (cn hM0234) (cl hF1234) (cn hM1234)
 
 end Minimality.NF29

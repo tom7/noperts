@@ -131,18 +131,14 @@ theorem gstar_FB_residual {x : Fin 7 → ℝ³} (N : NF29 x)
     (hF1234Q : GenQuad.FrontDet (x 2) (x 6) (x 4) (x 5) (N.u23Q x))
     (h035 : 0 < N.v035) (h234 : N.v234 < 0) (h346 : N.v346 < 0) (h356 : 0 < N.v356)
     (hF0123F : GenQuad.FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x))
-    (hF0124F : GenQuad.FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x))
-    (hM0124F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0134F : GenQuad.FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0134F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF0234F : GenQuad.FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x))
-    (hM0234F : ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
-    (hF1234F : GenQuad.FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x))
-    (hM1234F : ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-                  ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
+    (hA0124F : GenQuad.LexClause (x 2) (x 5) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0124F : GenQuad.LexClause (x 1) (x 3) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0134F : GenQuad.LexClause (x 2) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0134F : GenQuad.LexClause (x 1) (x 6) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA0234F : GenQuad.LexClause (x 3) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB0234F : GenQuad.LexClause (x 1) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hA1234F : GenQuad.LexClause (x 3) (x 5) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
+    (hB1234F : GenQuad.LexClause (x 2) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) :
     (⟪x 4, N.u23Q x⟫ ≤ ⟪x 0, N.u23Q x⟫ ∧ ⟪x 4, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫ ∧
       ⟪x 5, N.u23Q x⟫ ≤ ⟪x 0, N.u23Q x⟫ ∧ ⟪x 5, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫) ∨
@@ -169,7 +165,7 @@ theorem gstar_FB_residual {x : Fin 7 → ℝ³} (N : NF29 x)
       (0 : ℝ) • (x 4 - x 6) + (0 : ℝ) • (x 5 - x 6) + (S_sp N.s N.t * 0) • (x 3 - x 6) := by module
   obtain ⟨r21, r23⟩ := w14_of_not_lexAny29 N hk ht1 hdG4 hb0h0 hnf
   have r12 := fb_of_not_lexAny29 N (by linarith) h035 h234 h346 h356
-    hF0123F hF0124F hM0124F hF0134F hM0134F hF0234F hM0234F hF1234F hM1234F hnf
+    hF0123F hA0124F hB0124F hA0134F hB0134F hA0234F hB0234F hA1234F hB1234F hnf
   rcases u23Q_cones_of_not_lexAny29 N hk hh2 hh0 hdG4 hU4 hU5
       hF0123Q hF0124Q hF0134Q hF0234Q hF1234Q hnf with
     hM3 | hM4 | hM5 | hM2 | hM1
@@ -220,18 +216,14 @@ def GFBHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
     GenQuad.FrontDet (x 2) (x 6) (x 4) (x 5) (N.u23Q x) ∧
     0 < N.v035 ∧ N.v234 < 0 ∧ N.v346 < 0 ∧ 0 < N.v356 ∧
     GenQuad.FrontDet (x 1) (x 3) (x 2) (x 6) (N.bLine x) ∧
-    GenQuad.FrontDet (x 2) (x 5) (x 1) (x 3) (N.bLine x) ∧
-    ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-       ⟪x 3, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 3, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫) ∧
-    GenQuad.FrontDet (x 2) (x 5) (x 1) (x 6) (N.bLine x) ∧
-    ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-       ⟪x 6, N.bLine x⟫ ≤ ⟪x 2, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫) ∧
-    GenQuad.FrontDet (x 3) (x 5) (x 1) (x 6) (N.bLine x) ∧
-    ¬ (⟪x 1, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 1, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-       ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫) ∧
-    GenQuad.FrontDet (x 3) (x 5) (x 2) (x 6) (N.bLine x) ∧
-    ¬ (⟪x 2, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 2, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫ ∧
-       ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫) ∧
+    GenQuad.LexClause (x 2) (x 5) (x 1) (x 3) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+    GenQuad.LexClause (x 1) (x 3) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+    GenQuad.LexClause (x 2) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+    GenQuad.LexClause (x 1) (x 6) (x 2) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+    GenQuad.LexClause (x 3) (x 5) (x 1) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+    GenQuad.LexClause (x 1) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+    GenQuad.LexClause (x 3) (x 5) (x 2) (x 6) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
+    GenQuad.LexClause (x 2) (x 6) (x 3) (x 5) (N.bLine x) (x 1 - x 4) (x 3 - x 1) ∧
     ¬ (⟪x 4, N.u23Q x⟫ ≤ ⟪x 0, N.u23Q x⟫ ∧ ⟪x 4, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫ ∧
        ⟪x 5, N.u23Q x⟫ ≤ ⟪x 0, N.u23Q x⟫ ∧ ⟪x 5, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫) ∧
     ¬ (⟪x 0, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 0, N.u23Q x⟫ ≤ ⟪x 5, N.u23Q x⟫ ∧
@@ -251,11 +243,11 @@ theorem hole29'_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29' x N) : Ho
   refine ⟨h, fun hG => ?_⟩
   rcases hG with ⟨hk, hh2, hh0, ht1, hU4, hU5, hG4, hb0h0, hm21,
     hF0123Q, hF0124Q, hF0134Q, hF0234Q, hF1234Q,
-    h035, h234, h346, h356, hF0123F, hF0124F, hM0124F, hF0134F, hM0134F,
-    hF0234F, hM0234F, hF1234F, hM1234F, hnotQ2, hnotQ5⟩
+    h035, h234, h346, h356, hF0123F, hA0124F, hB0124F, hA0134F, hB0134F,
+    hA0234F, hB0234F, hA1234F, hB1234F, hnotQ2, hnotQ5⟩
   rcases gstar_FB_residual N hk hh2 hh0 ht1 hU4 hU5 hG4 hb0h0
       hF0123Q hF0124Q hF0134Q hF0234Q hF1234Q h035 h234 h346 h356
-      hF0123F hF0124F hM0124F hF0134F hM0134F hF0234F hM0234F hF1234F hM1234F
+      hF0123F hA0124F hB0124F hA0134F hB0134F hA0234F hB0234F hA1234F hB1234F
       h.1.2.2.2.2.2.1 with hQ2 | hQ5 | hnotm21
   · exact hnotQ2 hQ2
   · exact hnotQ5 hQ5
