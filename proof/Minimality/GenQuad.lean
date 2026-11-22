@@ -1,6 +1,7 @@
 module
 
 public import Minimality.GenericLeaves
+public import Minimality.SameView
 
 @[expose] public section
 
@@ -25,6 +26,29 @@ namespace Minimality.GenQuad
 def FrontOf (p q r s b : ℝ³) : Prop :=
   ∃ lam mu eta : ℝ, 0 ≤ lam ∧ lam ≤ 1 ∧ 0 ≤ mu ∧ mu ≤ 1 ∧ 0 < eta ∧
     lam • p + (1 - lam) • q = mu • r + (1 - mu) • s + eta • b
+
+theorem frontOf_iff_frontDiag (p q r s b : ℝ³) :
+    FrontOf p q r s b ↔ FrontDiag q p s r b := by
+  constructor
+  · rintro ⟨lam, mu, eta, hl0, hl1, hm0, hm1, he, hv⟩
+    refine ⟨lam, mu, eta, hl0, hl1, hm0, hm1, he, ?_⟩
+    rw [← sub_eq_iff_eq_add'] at hv
+    rw [← hv]; module
+  · rintro ⟨lam, mu, eta, hl0, hl1, hm0, hm1, he, hv⟩
+    refine ⟨lam, mu, eta, hl0, hl1, hm0, hm1, he, ?_⟩
+    have : lam • p + (1 - lam) • q - (mu • r + (1 - mu) • s) = eta • b := by
+      rw [← hv]; module
+    rw [← this]; abel
+
+/-- Obtuse frame guard: at an obtuse corner (`⟪e0, e2⟫ ≤ 0`, `⟪e0, e6⟫ ≤ 0`), a view with frame
+coordinates of sign pattern `(-, +, +)` has `⟪e0, A0 • e0 + A2 • e2 + A6 • e6⟫ ≤ 0`. -/
+theorem obtuse_frame {e0 e2 e6 : ℝ³} {A0 A2 A6 : ℝ} (h02 : ⟪e0, e2⟫ ≤ 0) (h06 : ⟪e0, e6⟫ ≤ 0)
+    (hA0 : A0 ≤ 0) (hA2 : 0 ≤ A2) (hA6 : 0 ≤ A6) :
+    ⟪e0, A0 • e0 + A2 • e2 + A6 • e6⟫ ≤ 0 := by
+  simp only [inner_add_right, real_inner_smul_right]
+  have := real_inner_self_nonneg (x := e0)
+  nlinarith [mul_nonpos_of_nonneg_of_nonpos hA2 h02, mul_nonpos_of_nonneg_of_nonpos hA6 h06,
+    mul_nonpos_of_nonpos_of_nonneg hA0 this]
 
 /-- The RobUniLex clause of one alternating quadruple: peaks `r s`, valleys `p q`. -/
 def LexClause (p q r s b d1 d2 : ℝ³) : Prop :=

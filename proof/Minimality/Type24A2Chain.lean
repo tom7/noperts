@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type24A2Lam
 public import Minimality.Type24BSharp
+public import Minimality.LemmaCA
 
 @[expose] public section
 
@@ -137,27 +138,22 @@ theorem z2_pos_w63 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have hBga : 0 < ⟪x 2 - x 1, x 2 - x 1⟫ + (-⟪x 2 - x 1, x 6 - x 1⟫) := by linarith
   have hCS : 0 < ⟪x 0 - x 1, x 0 - x 1⟫ * ⟪x 2 - x 1, x 2 - x 1⟫ -
       (-⟪x 0 - x 1, x 2 - x 1⟫) ^ 2 := by
-    let r : ℝ := ⟪x 0 - x 1, x 2 - x 1⟫ / ⟪x 2 - x 1, x 2 - x 1⟫
-    have hne : (x 0 - x 1) - r • (x 2 - x 1) ≠ 0 := by
-      intro h0
-      have hr : x 0 - x 1 = r • (x 2 - x 1) := sub_eq_zero.mp h0
-      have h03 : ⟪F.N 5, x 0 - x 1⟫ = r * ⟪F.N 5, x 2 - x 1⟫ := by
-        rw [hr, real_inner_smul_right]
+    have hlin : LinearIndependent ℝ ![x 0 - x 1, x 2 - x 1] := by
+      rw [LinearIndependent.pair_iff]
+      intro a b hab
+      have h03 : a * ⟪F.N 5, x 0 - x 1⟫ + b * ⟪F.N 5, x 2 - x 1⟫ = 0 := by
+        have hN := congrArg (fun w => ⟪F.N 5, w⟫) hab
+        simpa only [inner_add_right, real_inner_smul_right, inner_zero_right] using hN
       rw [← F.hN 5 (x 0) (x 1), ← F.hN 5 (x 2) (x 1), F.zero 5 1 (by decide),
-        F.zero 5 2 (by decide), sub_zero, sub_self, mul_zero] at h03
-      exact (F.neg 5 0 (by decide)).ne h03
-    set u := x 0 - x 1
-    set v := x 2 - x 1
-    have hpos := real_inner_self_pos.mpr hne
-    change 0 < ⟪u - r • v, u - r • v⟫ at hpos
-    rw [inner_sub_left u (r • v), inner_sub_right u u (r • v),
-      inner_sub_right (r • v) u (r • v), real_inner_smul_left, real_inner_smul_right,
-      real_inner_smul_left, real_inner_smul_right, real_inner_comm v u] at hpos
-    have hdiv : r * ⟪v, v⟫ = ⟪u, v⟫ := div_mul_cancel₀ _ hB.ne'
-    have hvu : ⟪v, u⟫ = ⟪u, v⟫ := real_inner_comm u v
-    rw [hvu] at hpos
-    have hpos2 : 0 < ⟪u, u⟫ - 2 * r * ⟪u, v⟫ + r * (r * ⟪v, v⟫) := by linarith
-    nlinarith [mul_pos hpos2 hB]
+        F.zero 5 2 (by decide), sub_zero, sub_self, mul_zero, add_zero] at h03
+      have ha0 : a = 0 := (mul_eq_zero.mp h03).resolve_right (F.neg 5 0 (by decide)).ne
+      subst ha0
+      rw [zero_smul, zero_add] at hab
+      have h2ne : x 2 - x 1 ≠ 0 := sub_ne_zero.mpr (fun h => absurd (T.inj h) (by decide))
+      exact ⟨rfl, (smul_eq_zero.mp hab).resolve_right h2ne⟩
+    have hlt := LemmaCA.inner_sq_lt hlin
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hlt
+    nlinarith
   have hid := u07_alphaBound_id x
   dsimp only at hid
   have hprod : 0 < (omega3 x * ⟪x 2 - x 1, x 2 - x 1⟫ - (-⟪x 0 - x 1, x 2 - x 1⟫)) *

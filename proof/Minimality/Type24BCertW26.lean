@@ -222,37 +222,30 @@ theorem cert_w26_geom {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarI
 
 /-- **`ustar_collapse` without the `z6 < z3` part of its depth condition** (when `nB < nC`): only
 `0 < z3(u*)` and `max 0 z6(u*) < z5(u*)` remain. -/
-theorem ustar_closed_W26 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
-    (h8 : ⟪F.N 8, ustar x⟫ < 0)
-    (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
+theorem ustar_closed_W26 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hU : UStarArgs x F)
     (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) (hn : nB x < nC x)
     (hz3 : 0 < ⟪x 3 - x 1, ustar x⟫)
     (hz5 : max 0 ⟪x 6 - x 1, ustar x⟫ < ⟪x 5 - x 1, ustar x⟫) :
     Minimality.Gen.LexAny F ∨ SplitAny24 F := by
-  by_cases hU : Minimality.Gen.LexAny F
-  · exact Or.inl hU
+  by_cases hL : Minimality.Gen.LexAny F
+  · exact Or.inl hL
   have h63 : ⟪x 6 - x 1, ustar x⟫ < ⟪x 3 - x 1, ustar x⟫ := by
     by_contra h
-    exact cert_w26_geom F hC ha5 hc3 hbc hn hU (not_lt.mp h)
-  exact ustar_collapse F hC ha5 hc3 hD h8 hab hac
-    (lt_min (max_lt hz3 h63) hz5)
+    exact cert_w26_geom F hU.hC hU.ha5 hU.hc3 hbc hn hL (not_lt.mp h)
+  exact ustar_collapse F hU (lt_min (max_lt hz3 h63) hz5)
 
 /-- Variant: when `0 ≤ z6(u*)` the whole `z3` condition is dropped. -/
-theorem ustar_closed_W26_z6 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
-    (h8 : ⟪F.N 8, ustar x⟫ < 0)
-    (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
+theorem ustar_closed_W26_z6 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hU : UStarArgs x F)
     (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) (hn : nB x < nC x)
     (hz6 : 0 ≤ ⟪x 6 - x 1, ustar x⟫)
     (hz5 : ⟪x 6 - x 1, ustar x⟫ < ⟪x 5 - x 1, ustar x⟫) :
     Minimality.Gen.LexAny F ∨ SplitAny24 F := by
-  by_cases hU : Minimality.Gen.LexAny F
-  · exact Or.inl hU
+  by_cases hL : Minimality.Gen.LexAny F
+  · exact Or.inl hL
   have h63 : ⟪x 6 - x 1, ustar x⟫ < ⟪x 3 - x 1, ustar x⟫ := by
     by_contra h
-    exact cert_w26_geom F hC ha5 hc3 hbc hn hU (not_lt.mp h)
+    exact cert_w26_geom F hU.hC hU.ha5 hU.hc3 hbc hn hL (not_lt.mp h)
   rw [← max_eq_right hz6] at h63 hz5
-  exact ustar_collapse F hC ha5 hc3 hD h8 hab hac (lt_min h63 hz5)
+  exact ustar_collapse F hU (lt_min h63 hz5)
 
 end Minimality.T24.A10
