@@ -1,6 +1,10 @@
-import Minimality.Type24TieSigma
-import Minimality.Type24Quad
-import Minimality.M4dType24
+module
+
+public import Minimality.Type24TieSigma
+public import Minimality.Type24Quad
+public import Minimality.M4dType24
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

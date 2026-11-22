@@ -1,5 +1,7 @@
-import Minimality.Type24A1Small
-import Minimality.Type24A1Z54
+module
+
+public import Minimality.Type24A1Small
+public import Minimality.Type24A1Z54
 
 /-!
 # Type 24, region A1 inside OB1: the glue
@@ -9,6 +11,8 @@ import Minimality.Type24A1Z54
 `a1_offtie_rupert`). The case split is on the tie `⟪x 2 - x 5, x 5 - x 0⟫ = 0`.
 -/
 
+
+@[expose] public section
 
 open scoped RealInnerProductSpace
 open Finset

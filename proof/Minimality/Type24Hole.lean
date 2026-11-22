@@ -49,14 +49,14 @@ def Hole24R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
 def Hole24Flags (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
   ¬ FacetCell24 fs ∧ ¬ T024 x ∧ ¬ NC24 x ∧ ¬ Adj24 x ∧ ¬ Face.Face24 x
 
-/-- The single named Type-24 open hole proposition for `Minimality.lean`. -/
-def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
+/-- Unreduced Type-24 hole proposition (with `Hole24R`). -/
+def Hole24Unreduced (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R x F)
 
-/-- Main Type-24 reduction using `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`,
+/-- Unreduced Type-24 reduction using `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`,
 `isRupert_type24_outside_Cbar'`, `Q45.q45_half_cell`, `RCell.anyFaceChord_isRupert`, and
 `RCell.lexAny_isRupert` (`mkFac24` constructs `F`). -/
-theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
+theorem type24_rupert_or_holeR {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) < 0))
@@ -79,7 +79,7 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     IsRupert (univ.image x) ∨
       ∃ hh : ∀ t i, (i ∈ s0x_S24 t → ![fA, fB, fF, fG, fE, fC, fH, fD, fI] t (x i) = 0) ∧
         (i ∉ s0x_S24 t → ![fA, fB, fF, fG, fE, fC, fH, fD, fI] t (x i) < 0),
-        Hole24 x ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
+        Hole24Unreduced x ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
           (mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] hh) := by
   rcases Face.rupert_or_resid24_noFacetCell_noNC_noAdj_noFace
       fA fB fC fD fE fF fG fH fI hA hB hC hD hE hF hG hH hI with

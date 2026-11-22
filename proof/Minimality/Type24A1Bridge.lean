@@ -1,5 +1,7 @@
-import Minimality.M4cType24
-import Minimality.Type24Quad
+module
+
+public import Minimality.M4cType24
+public import Minimality.Type24Quad
 
 /-!
 # Type 24, region A1: bridges and easy region facts (group F1)
@@ -8,6 +10,8 @@ import Minimality.Type24Quad
 `t26_facets`, `t25_tilt_frame`.  Facet indices are those of `s0x_S24`:
 `0 = 012, 1 = 016, 2 = 025, 3 = 0345, 4 = 046, 5 = 126, 6 = 235, 7 = 236, 8 = 346`.
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

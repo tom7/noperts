@@ -1371,6 +1371,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.a1_e25_small
 #assert_standard_axioms Minimality.T24.A1.a1_e25_lt_small
 #assert_standard_axioms Minimality.T24.A1.a1_closed
+#assert_standard_axioms Minimality.T24.hole24R_of_hole24R'
+#assert_standard_axioms Minimality.T24.hole24R_reduce
+#assert_standard_axioms Minimality.T24.type24_rupert_or_hole
 #assert_standard_axioms Minimality.T24.A20.w02_u27_noA
 #assert_standard_axioms Minimality.T24.A20.z_core_neg_z3
 #assert_standard_axioms Minimality.T24.A20.w02_neg_false
@@ -1382,6 +1385,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.u07_z40_bound
 #assert_standard_axioms Minimality.T24.A1.u27_z26_bound
 #assert_standard_axioms Minimality.T24.A1.a1_closed
+#assert_standard_axioms Minimality.T24.hole24R_of_hole24R'
+#assert_standard_axioms Minimality.T24.hole24R_reduce
+#assert_standard_axioms Minimality.T24.type24_rupert_or_hole
 #assert_standard_axioms Minimality.T24.A10.e0416_hrow
 #assert_standard_axioms Minimality.T24.A10.dl_sigma
 #assert_standard_axioms Minimality.T24.A10.ustar_collapse

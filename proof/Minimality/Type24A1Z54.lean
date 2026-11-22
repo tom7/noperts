@@ -1,5 +1,7 @@
-import Minimality.Type24A1E25
-import Minimality.Type24A1Tie
+module
+
+public import Minimality.Type24A1E25
+public import Minimality.Type24A1Tie
 
 /-!
 # Type 24, region A1 off the tie: the step `z54_half` (T2: `z4(w05) < z5(w05)`)
@@ -8,6 +10,8 @@ A22-REFEREE section 3.3 (exact `t = 1/2` identity) in Lean: `z54_half_alg` (pure
 (geometric version), `a1_offtie_rupert` (off-tie A1 closes except the named sample facts `A1Z54Sample`
 and `A1E25Sample`).
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

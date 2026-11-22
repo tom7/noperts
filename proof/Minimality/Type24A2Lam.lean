@@ -1,6 +1,8 @@
-import Minimality.M4dType24
-import Minimality.Type24QuadW02
-import Minimality.Type24Regions
+module
+
+public import Minimality.M4dType24
+public import Minimality.Type24QuadW02
+public import Minimality.Type24Regions
 
 /-!
 # Type 24, region A2, line `w02`: the `Lambda5 > omega3` part (group a20)
@@ -8,6 +10,8 @@ import Minimality.Type24Regions
 `w02_cminus_empty` (A20.2), `w02_lam5_false` (A20.5), `splitAny_w02_ppp_e12 / _e36` (A20.3),
 `a2_lam5_closed` (A20.6).
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
@@ -110,8 +114,8 @@ theorem w02_lam5_false {x : Fin 7 → ℝ³} {a5 b5 c5 : ℝ}
 
 /-! ### A20.3 level-0 split leaves at `w02+++` -/
 
-private def cW : ZMod 5 → Fin 7 := ![1, 2, 5, 3, 6]
-private theorem cW_inj : Function.Injective cW := by decide
+def cW : ZMod 5 → Fin 7 := ![1, 2, 5, 3, 6]
+theorem cW_inj : Function.Injective cW := by decide
 
 /-- Shared setup of the level-0 split leaves at `w02+++` (facings strict except at the facets `0`, `2`,
 which are tilted by `d1 = x 0 - x 3`). -/

@@ -1,5 +1,7 @@
-import Minimality.Type24A1Tie
-import Minimality.Type24SAT.K24.CornerOB1
+module
+
+public import Minimality.Type24A1Tie
+public import Minimality.Type24SAT.K24.CornerOB1
 
 /-!
 # Type 24, region A1 off the tie (step T1): `e25_dom` and `a1_e25`
@@ -8,6 +10,8 @@ Proves `⟪x 5, x 5 - x 0⟫ ≤ ⟪x 2, x 5 - x 0⟫` (`z5(w05) ≤ z2(w05)`) o
 the T25 rim facts (dispatched over the four T25 rims `0536`, `01635`, `05346`, `016435`), and
 `H24K.SAT.OB1 x` (only needed on rim `016435` for clauses `14>63` and `14>65`).
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

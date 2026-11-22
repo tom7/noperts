@@ -1,8 +1,10 @@
-import Minimality.Type24Regions
-import Minimality.Type24A1Bridge
-import Minimality.Type24A1Frame
-import Minimality.Type24TieLex
-import Minimality.CSLCorner
+module
+
+public import Minimality.Type24Regions
+public import Minimality.Type24A1Bridge
+public import Minimality.Type24A1Frame
+public import Minimality.Type24TieLex
+public import Minimality.CSLCorner
 
 /-!
 # Type 24, region A1 on the tie: `a1_tie_rupert`
@@ -19,6 +21,8 @@ Main glue theorem for region `A1` (`1 < oblX0 x 5`, `F.f 8 (x 0) ≤ F.f 8 (x 5)
 - Without `0 < det24 x`, `a1_tie_rupert` reduces `det24 x < 0` to `0 < det24 (fun i => -x i)` by
   point reflection (`facNeg`, `isRupert_image_smul (-1)`).
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

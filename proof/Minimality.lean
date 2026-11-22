@@ -40,6 +40,7 @@ public import Minimality.Type24NC
 public import Minimality.Type24Adj
 public import Minimality.Type24Face
 public import Minimality.Type24Hole
+public import Minimality.Type24HoleReduce
 public import Minimality.Type29Hole
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA

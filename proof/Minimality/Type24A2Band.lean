@@ -1,4 +1,8 @@
-import Minimality.Type24A2Lam
+module
+
+public import Minimality.Type24A2Lam
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

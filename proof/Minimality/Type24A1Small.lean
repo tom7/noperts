@@ -1,5 +1,9 @@
-import Minimality.Type24A1Tie
-import Minimality.Type24A1E25
+module
+
+public import Minimality.Type24A1Tie
+public import Minimality.Type24A1E25
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
