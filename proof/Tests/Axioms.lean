@@ -22,6 +22,7 @@ import Minimality.Type29Quad
 import Minimality.GenQuad
 import Minimality.GenQuadCross
 import Minimality.Type29Exact
+import Minimality.Type29Quad2
 import Minimality.Chi29
 import Minimality.Type29ExactFront
 import Minimality.M4fType24
@@ -1067,6 +1068,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.NF29.lexAny29_W14x5
 #print axioms Minimality.NF29.lexAny29_W14x5'
 #print axioms Minimality.NF29.lexAny29_F012F1456
+#assert_standard_axioms Minimality.NF29.lexAny29_F015_124_pmp
+#assert_standard_axioms Minimality.NF29.lexAny29_F015_035_ppp
+#assert_standard_axioms Minimality.NF29.lexAny29_F015_035_pmm
+#assert_standard_axioms Minimality.NF29.lexAny29_F015_124_5
+#print axioms Minimality.NF29.lexAny29_F015_124_pmp
+#print axioms Minimality.NF29.lexAny29_F015_035_ppp
+#print axioms Minimality.NF29.lexAny29_F015_035_pmm
+#print axioms Minimality.NF29.lexAny29_F015_124_5
 #assert_standard_axioms Minimality.NF29.split_det3_eq
 #assert_standard_axioms Minimality.NF29.chi_pos_of_D_pos
 #assert_standard_axioms Minimality.NF29.chi_neg_of_D_pos
