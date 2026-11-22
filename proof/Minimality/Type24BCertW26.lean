@@ -168,30 +168,6 @@ theorem hu3_of_a5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
   exact pos_of_mul_pos_right this hD.le
 
 
-/-- Region fact: `0 < ⟪N8, u27⟫` for `c3 < 1`. -/
-theorem hu8_of_c3 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    (hc3 : oblX6 x 3 < 1) : 0 < ⟪F.N 8, u27 x⟫ := by
-  have T := type24OfFac F
-  have hom3 : 0 < omega3 x := hC.1
-  have hom5 : 0 < omega5 x := hC.2.2.1
-  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
-  have f2 : F.f 8 (x 2) < 0 := F.neg 8 2 (by decide)
-  have f36 : F.f 8 (x 6) = 0 := F.zero 8 6 (by decide)
-  have f33 : F.f 8 (x 3) = 0 := F.zero 8 3 (by decide)
-  have ev3 := fac_eval F 8 3
-  rw [f33, f36, hom3_mul F] at ev3
-  have hmu : 0 < (omega3 x + 1) * oblX0 x 3 + (omega5 x + 1) * (1 - oblX6 x 3) := by
-    have : 0 < 1 - oblX6 x 3 := by linarith
-    positivity
-  have hid : oblX0 x 3 * ⟪F.N 8, u27 x⟫ =
-      ((omega3 x + 1) * oblX0 x 3 + (omega5 x + 1) * (1 - oblX6 x 3)) * (-F.f 8 (x 2)) := by
-    rw [inner_u27_z54, f36]
-    linear_combination -(1 + omega5 x) * ev3
-  have hpos : 0 < oblX0 x 3 * ⟪F.N 8, u27 x⟫ := by
-    rw [hid]; exact mul_pos hmu (by linarith)
-  exact pos_of_mul_pos_right hpos ha3.le
-
-
 theorem f3_lt_of_nB_lt_nC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : nB x < nC x) :
     F.f 3 (x 2) < F.f 3 (x 6) := by
   have hD := d45_pos F

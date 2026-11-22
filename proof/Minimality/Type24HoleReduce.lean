@@ -7,6 +7,7 @@ public import Minimality.Type24A1Closed
 public import Minimality.Type24A2Band
 public import Minimality.Type24Wlog
 public import Minimality.Type24BSharp
+public import Minimality.Type24BUstar2
 
 @[expose] public section
 
@@ -78,13 +79,39 @@ def WallA5BRes (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
        max 0 ⟪x 6 - x 1, A10.ustar x⟫ < ⟪x 5 - x 1, A10.ustar x⟫) ∧
     ¬ A2BandHyp x F
 
-/-- Residual piece: `BE0416` inside `OB1` (region `B` not yet closed). -/
-def BE0416Res (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R x F ∧ H24K.SAT.OB1 x ∧ Reg.BE0416 x F
+/-- Hypothesis bundle for `Type24BSharp.ustar_closed_W26_full`. -/
+def UstarW26Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  oblX6 x 3 < 1 ∧ A10.Dl x < 0 ∧ ⟪F.N 8, A10.ustar x⟫ < 0 ∧ A7.nB x < A7.nC x ∧
+    max 0 ⟪x 6 - x 1, A10.ustar x⟫ < ⟪x 5 - x 1, A10.ustar x⟫
 
-/-- Residual piece: `BRest` inside `OB1` (region `B` not yet closed). -/
+/-- Hypothesis bundle for `Type24BUstar.ustar_collapse`. -/
+def UstarHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  oblX6 x 3 < 1 ∧ A10.Dl x < 0 ∧ ⟪F.N 8, A10.ustar x⟫ < 0 ∧
+    max 0 ⟪x 6 - x 1, A10.ustar x⟫ < min ⟪x 3 - x 1, A10.ustar x⟫ ⟪x 5 - x 1, A10.ustar x⟫
+
+/-- Hypothesis bundle for `Type24BUstar2.ustar2_collapse`. -/
+def Ustar2Hyp (x : Fin 7 → ℝ³) (_F : S0xFac 9 s0x_S24 x) : Prop :=
+  oblX6 x 4 < 1 ∧ A10.Dl4 x < 0 ∧ 0 < oblX0 x 4 * oblX2 x 3 - oblX0 x 3 * oblX2 x 4 ∧
+    0 < A10.nu346b x ∧ 0 < A10.Qu2 x ∧
+    max 0 ⟪x 6 - x 1, A10.ustar2 x⟫ <
+      min ⟪x 4 - x 1, A10.ustar2 x⟫ (min ⟪x 3 - x 1, A10.ustar2 x⟫ ⟪x 5 - x 1, A10.ustar2 x⟫)
+
+/-- Hypothesis bundle for `M4cType24.splitAny24_E0416`. -/
+def E0416Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  F.f 3 (x 6) < F.f 3 (x 1) ∧
+    (1 - oblX0 x 4) * (1 - oblX2 x 5) < oblX0 x 5 * oblX2 x 4 ∧
+    max 0 (max ⟪x 2 - x 1, x 4 - x 0⟫ ⟪x 5 - x 1, x 4 - x 0⟫) < ⟪x 4 - x 1, x 4 - x 0⟫ ∧
+    ⟪x 4 - x 1, x 4 - x 0⟫ < ⟪x 6 - x 1, x 4 - x 0⟫
+
+/-- Residual piece: `BE0416` inside `OB1`, outside `ustar_closed_W26_full`, `ustar_collapse`, `ustar2_collapse`, and `splitAny24_E0416`. -/
+def BE0416Res (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R x F ∧ H24K.SAT.OB1 x ∧ Reg.BE0416 x F ∧
+    ¬ UstarW26Hyp x F ∧ ¬ UstarHyp x F ∧ ¬ Ustar2Hyp x F ∧ ¬ E0416Hyp x F
+
+/-- Residual piece: `BRest` inside `OB1`, outside `ustar_closed_W26_full`, `ustar_collapse`, and `ustar2_collapse`. -/
 def BRestRes (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24R x F ∧ H24K.SAT.OB1 x ∧ Reg.BRest x F
+  Hole24R x F ∧ H24K.SAT.OB1 x ∧ Reg.BRest x F ∧
+    ¬ UstarW26Hyp x F ∧ ¬ UstarHyp x F ∧ ¬ Ustar2Hyp x F
 
 /-- Residual piece: self-twin part of `CC` (`a4 < 1`, `τ ≥ 1`) inside `OB1`. -/
 def CCSelfRes (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
@@ -197,6 +224,44 @@ private theorem close_wallA5_a4lt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   · exact hR.2.2.2.2.1 hL
   · exact hR.2.2.2.2.2 hS
 
+private theorem close_B_ustar {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hR : Hole24R x F)
+    (hO : H24K.SAT.OB1 x) (ha5 : oblX0 x 5 ≤ 1)
+    (hB : UstarW26Hyp x F ∨ UstarHyp x F ∨ Ustar2Hyp x F) : False := by
+  rcases hB with ⟨hc3, hD, h8, hn, hz5⟩ | ⟨hc3, hD, h8, hz⟩ | ⟨hc4, hD4, hΔ, hnu, hQ, hz⟩
+  · rcases A10.ustar_closed_W26_full F hR.1 ha5 hc3 hD h8 hO.1 hO.2.1 hO.2.2 hn hz5 with hL | hS
+    · exact hR.2.2.2.2.1 hL
+    · exact hR.2.2.2.2.2 hS
+  · rcases A10.ustar_collapse F hR.1 ha5 hc3 hD h8 hO.1 hO.2.1 hz with hL | hS
+    · exact hR.2.2.2.2.1 hL
+    · exact hR.2.2.2.2.2 hS
+  · rcases A10.ustar2_collapse F hR.1 ha5 hc4 hD4 hΔ hnu hQ hO.1 hO.2.1 hz with hL | hS
+    · exact hR.2.2.2.2.1 hL
+    · exact hR.2.2.2.2.2 hS
+
+private theorem close_BE0416 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hR : Hole24R x F)
+    (hO : H24K.SAT.OB1 x) (hBE : Reg.BE0416 x F) : BE0416Res x F := by
+  by_contra hnot
+  by_cases h1 : UstarW26Hyp x F
+  · exact close_B_ustar F hR hO hBE.1.le (Or.inl h1)
+  by_cases h2 : UstarHyp x F
+  · exact close_B_ustar F hR hO hBE.1.le (Or.inr (Or.inl h2))
+  by_cases h3 : Ustar2Hyp x F
+  · exact close_B_ustar F hR hO hBE.1.le (Or.inr (Or.inr h3))
+  by_cases h4 : E0416Hyp x F
+  · exact hR.2.2.2.2.2 (A8.splitAny24_E0416 F hR.1 hBE.2.2.1 h4.1 hBE.2.2.2.2 h4.2.1 h4.2.2)
+  exact hnot ⟨hR, hO, hBE, h1, h2, h3, h4⟩
+
+private theorem close_BRest {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hR : Hole24R x F)
+    (hO : H24K.SAT.OB1 x) (hBR : Reg.BRest x F) : BRestRes x F := by
+  by_contra hnot
+  by_cases h1 : UstarW26Hyp x F
+  · exact close_B_ustar F hR hO hBR.1.le (Or.inl h1)
+  by_cases h2 : UstarHyp x F
+  · exact close_B_ustar F hR hO hBR.1.le (Or.inr (Or.inl h2))
+  by_cases h3 : Ustar2Hyp x F
+  · exact close_B_ustar F hR hO hBR.1.le (Or.inr (Or.inr h3))
+  exact hnot ⟨hR, hO, hBR, h1, h2, h3⟩
+
 /-- **Reduction of `Hole24R` to `Hole24R'`**: closes `ROff`, `A1` (modulo its 3 sample bundles),
 `A2` (modulo `A2BandHyp`), `WallA5`/`WallA4C` (via `pi24`, `ustar_closed_W26_full`, and `a2_band_closed_gen`),
 and transports `BA4`, `CA`, `CA2`, `CFlip` via `pi24`. -/
@@ -229,8 +294,8 @@ theorem hole24R_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hR : Hole
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl hres)))))))))
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
           (close_A2 (Sym.sym24 F) hR' hO' hA2')))))))))))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, hO, hBE⟩))))))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, hO, hBR⟩)))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (close_BE0416 F hR hO hBE)))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (close_BRest F hR hO hBR))))))))
     · have hR' := Reg.hole24R_comp_pi24 hR
       have hO' := (A19.ob1_comp_pi24 x).2 hO
       rcases close_A1 (Sym.sym24 F) hR' hO' (Reg.ca_to_a1 hCA) with hRup | hres
@@ -243,8 +308,9 @@ theorem hole24R_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hR : Hole
     · rcases lt_or_eq_of_le hCB.2.2.1 with h4 | h4
       · have hR' := Reg.hole24R_comp_pi24 hR
         have hO' := (A19.ob1_comp_pi24 x).2 hO
-        exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
-          ⟨hR', hO', Reg.cflip_to_brest (Reg.cb_a4lt_cflip hCB h4)⟩)))))))))))
+        exact Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <|
+          Or.inr <| Or.inr <| Or.inr <| Or.inr
+          (close_BRest (Sym.sym24 F) hR' hO' (Reg.cflip_to_brest (Reg.cb_a4lt_cflip hCB h4)))
       · have hR' := Reg.hole24R_comp_pi24 hR
         have hO' := (A19.ob1_comp_pi24 x).2 hO
         have hw := Reg.wallA4C_to_wallA5 hCB.1 hCB.2.1 h4
@@ -254,8 +320,9 @@ theorem hole24R_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hR : Hole
       · rcases lt_or_ge (F.f 6 (x 0)) (F.f 6 (x 4)) with ht | ht
         · have hR' := Reg.hole24R_comp_pi24 hR
           have hO' := (A19.ob1_comp_pi24 x).2 hO
-          exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
-            ⟨hR', hO', Reg.cflip_to_brest (Reg.cc_tau_cflip hCC h4 ht)⟩)))))))))))
+          exact Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <|
+            Or.inr <| Or.inr <| Or.inr <| Or.inr
+            (close_BRest (Sym.sym24 F) hR' hO' (Reg.cflip_to_brest (Reg.cc_tau_cflip hCC h4 ht)))
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
             ⟨hR, hO, hCC, h4, ht⟩))))))))
       · have hR' := Reg.hole24R_comp_pi24 hR
