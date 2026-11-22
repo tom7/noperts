@@ -152,7 +152,6 @@ theorem z2_pos_w63 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       have h2ne : x 2 - x 1 ≠ 0 := sub_ne_zero.mpr (fun h => absurd (T.inj h) (by decide))
       exact ⟨rfl, (smul_eq_zero.mp hab).resolve_right h2ne⟩
     have hlt := LemmaCA.inner_sq_lt hlin
-    simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hlt
     nlinarith
   have hid := u07_alphaBound_id x
   dsimp only at hid
