@@ -37,6 +37,7 @@ import Minimality.Type24TieSigma
 import Minimality.M4iType24
 import Minimality.Type24Regions
 import Minimality.Type24A1Bridge
+import Minimality.M4jType24
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1254,3 +1255,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A1.t25_016
 #assert_standard_axioms Minimality.T24.A1.t26_facets
 #assert_standard_axioms Minimality.T24.A1.t25_tilt_frame
+#assert_standard_axioms Minimality.T24.A19.e12_neg6
+#assert_standard_axioms Minimality.T24.A19.e12_neg6_fo
