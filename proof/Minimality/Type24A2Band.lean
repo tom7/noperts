@@ -53,18 +53,18 @@ theorem z_core_neg_z3 (z0 z3 z5 z6 : ℝ) (h6 : z6 < 0) (h5 : 0 ≤ z5)
 theorem w02_neg_false {x : Fin 7 → ℝ³} {a3 b3 c3 a5 b5 c5 : ℝ}
     (h3 : x 3 - x 1 = a3 • (x 0 - x 1) + b3 • (x 2 - x 1) + c3 • (x 6 - x 1))
     (h5 : x 5 - x 1 = a5 • (x 0 - x 1) + b5 • (x 2 - x 1) + c5 • (x 6 - x 1))
-    (ha3 : 0 < a3) (hp : a3 * b5 < a5 * b3) (hr : a3 * c5 ≤ a5 * c3) (ha35 : a3 < a5)
+    (ha3 : 0 < a3) (hp : a3 * b5 < a5 * b3) (hr : a3 * c5 ≤ a5 * c3) (ha35 : a3 ≤ a5)
     (hz2 : z x (bW02 x) 2 < 0) (h6 : z x (bW02 x) 6 < 0)
     (h53 : z x (bW02 x) 5 ≤ z x (bW02 x) 3) (h50 : 0 ≤ z x (bW02 x) 5) : False := by
   have e := w02_ident h3 h5
   have hp0 : 0 < a5 * b3 - a3 * b5 := by linarith
   have hr0 : 0 ≤ a5 * c3 - a3 * c5 := by linarith
   nlinarith [mul_pos hp0 (neg_pos.mpr hz2), mul_nonneg hr0 (neg_nonneg.mpr h6.le),
-    mul_nonneg ha3.le (sub_nonneg.mpr h53), mul_nonneg (sub_nonneg.mpr ha35.le) (h50.trans h53)]
+    mul_nonneg ha3.le (sub_nonneg.mpr h53), mul_nonneg (sub_nonneg.mpr ha35) (h50.trans h53)]
 
 theorem a2_band_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hC : CbarIn x) (hA2 : Minimality.T24.Reg.A2 x F) (hOB : H24K.SAT.OB1 x)
-    (hband : omega5 x * (omega3 x - Lam5 x) < 1) (ha35 : oblX0 x 3 < oblX0 x 5)
+    (hband : omega5 x * (omega3 x - Lam5 x) < 1) (ha35 : oblX0 x 3 ≤ oblX0 x 5)
     (hc3 : oblX6 x 3 < 1) (hc53 : oblX6 x 5 < oblX6 x 3) (hLam1 : Lam5 x < 1 + omega3 x)
     (hp : oblX0 x 3 * oblX2 x 5 < oblX0 x 5 * oblX2 x 3)
     (hr : oblX0 x 3 * oblX6 x 5 ≤ oblX0 x 5 * oblX6 x 3)
@@ -184,7 +184,7 @@ theorem a2_band_closed {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 /-- `a2_lam5_closed` as a corollary (it needs the extra region fact `a3 < a5`; `hu07`-type inputs are not used). -/
 theorem a2_lam5_closed_of_band {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hC : CbarIn x) (hA2 : Minimality.T24.Reg.A2 x F) (hOB : H24K.SAT.OB1 x)
-    (hL : omega3 x < Lam5 x) (ha35 : oblX0 x 3 < oblX0 x 5)
+    (hL : omega3 x < Lam5 x) (ha35 : oblX0 x 3 ≤ oblX0 x 5)
     (hc3 : oblX6 x 3 < 1) (hc53 : oblX6 x 5 < oblX6 x 3) (hLam1 : Lam5 x < 1 + omega3 x)
     (hp : oblX0 x 3 * oblX2 x 5 < oblX0 x 5 * oblX2 x 3)
     (hr : oblX0 x 3 * oblX6 x 5 ≤ oblX0 x 5 * oblX6 x 3)

@@ -567,136 +567,15 @@ theorem inner_u27 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : Fin 9) :
 theorem u27_z_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     (hu3 : 0 < ⟪F.N 3, u27 x⟫) (hu8 : 0 < ⟪F.N 8, u27 x⟫) (hL : ¬ LexAny F) :
     0 ≤ ⟪x 2 - x 0, u27 x⟫ := by
-  by_contra hcon
-  push Not at hcon
-  have T := type24OfFac F
-  have hom3 : 0 < omega3 x := hC.1
-  have hom4 : 0 < omega4 x := hC.2.1
-  have hom5 : 0 < omega5 x := hC.2.2.1
-  have hD24 : 0 ≤ Delta24 x := hC.2.2.2
-  have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
-  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
-  have hu_ne : u27 x ≠ 0 := by
-    intro h0; rw [h0, inner_zero_right] at hcon; exact lt_irrefl _ hcon
-  -- facings at `(u27, x 2 - x 1, 0)`, `U := {2, 3, 7, 8}`, `Dn := {0, 4, 5}`
-  have hu0 : ⟪F.N 0, u27 x⟫ < 0 := by
-    rw [inner_u27, F.zero 0 0 (by decide), F.zero 0 1 (by decide), F.zero 0 2 (by decide)]
-    nlinarith [F.neg 0 6 (by decide)]
-  have hu5 : ⟪F.N 5, u27 x⟫ < 0 := by
-    rw [inner_u27, F.zero 5 1 (by decide), F.zero 5 2 (by decide), F.zero 5 6 (by decide)]
-    nlinarith [F.neg 5 0 (by decide), mul_neg_of_pos_of_neg (show 0 < 1 + omega5 x by linarith)
-      (F.neg 5 0 (by decide))]
-  have hu2 : ⟪F.N 2, u27 x⟫ = 0 := by
-    have ev := fac_eval F 2 5
-    rw [F.zero 2 5 (by decide), F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at ev
-    have e5 := Minimality.T24.M4.eq5 F
-    have hprod : oblX6 x 5 * ⟪F.N 2, u27 x⟫ = 0 := by
-      rw [inner_u27, F.zero 2 0 (by decide), F.zero 2 2 (by decide)]
-      linear_combination (1 + omega3 x) * (-ev) + (1 + omega3 x) * F.f 2 (x 1) * e5
-    exact (mul_eq_zero.mp hprod).resolve_left hc5.ne'
-  have hu7 : ⟪F.N 7, u27 x⟫ = 0 := by
-    have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
-    have ev3 := fac_eval F 7 3
-    rw [F.zero 7 3 (by decide), F.zero 7 2 (by decide), F.zero 7 6 (by decide)] at ev3
-    have e3 := Minimality.T24.M4.eq3 F
-    have h70 : F.f 7 (x 0) - F.f 7 (x 1) = omega3 x * F.f 7 (x 1) := by
-      have : oblX0 x 3 * ((F.f 7 (x 0) - F.f 7 (x 1)) - omega3 x * F.f 7 (x 1)) = 0 := by
-        linear_combination -ev3 + F.f 7 (x 1) * e3
-      exact sub_eq_zero.mp ((mul_eq_zero.mp this).resolve_left ha3.ne')
-    rw [inner_u27, F.zero 7 2 (by decide), F.zero 7 6 (by decide)]
-    linear_combination (1 + omega5 x) * h70
-  have hu4 : ⟪F.N 4, u27 x⟫ ≤ 0 := by
-    have ev := fac_eval F 4 4
-    rw [F.zero 4 4 (by decide), F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at ev
-    have e4 := Minimality.T24.M4.eq4 F
-    have hprod : oblX2 x 4 * ⟪F.N 4, u27 x⟫ = oblX2 x 4 * (F.f 4 (x 1) * Delta24 x) := by
-      rw [inner_u27, F.zero 4 0 (by decide), F.zero 4 6 (by decide)]
-      simp only [Delta24]
-      linear_combination (omega3 x * omega5 x - 1) * (-ev) +
-        (omega3 x * omega5 x - 1) * F.f 4 (x 1) * e4
-    have := mul_left_cancel₀ hb4.ne' hprod
-    rw [this]
-    exact mul_nonpos_of_nonpos_of_nonneg (F.neg 4 1 (by decide)).le hD24
-  have hd2 : 0 < ⟪F.N 2, x 2 - x 1⟫ := by
-    rw [← F.hN 2 (x 2) (x 1), F.zero 2 2 (by decide)]; linarith [F.neg 2 1 (by decide)]
-  have hd7 : 0 < ⟪F.N 7, x 2 - x 1⟫ := by
-    rw [← F.hN 7 (x 2) (x 1), F.zero 7 2 (by decide)]; linarith [F.neg 7 1 (by decide)]
-  have hd4 : 0 < -⟪F.N 4, x 2 - x 1⟫ := by
-    have ev := fac_eval F 4 4
-    rw [F.zero 4 4 (by decide), F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at ev
-    have e4 := Minimality.T24.M4.eq4 F
-    have hprod : oblX2 x 4 * (F.f 4 (x 2) - F.f 4 (x 1)) = oblX2 x 4 * (omega4 x * F.f 4 (x 1)) := by
-      linear_combination -ev + F.f 4 (x 1) * e4
-    have := mul_left_cancel₀ hb4.ne' hprod
-    rw [← F.hN 4 (x 2) (x 1), this]
-    nlinarith [mul_neg_of_pos_of_neg hom4 (F.neg 4 1 (by decide))]
-  -- the front diagonal `24` over `06` at `u27`
-  obtain ⟨s, t, γ, hs0, hs1, ht0, ht1, hγ0, hdiag_vec⟩ := u27_bound F hC
-  have hdiag_pos : 0 < (1 - s) * (1 - t) * (⟪x 2, u27 x⟫ - ⟪x 0, u27 x⟫) +
-      (1 - s) * t * (⟪x 2, u27 x⟫ - ⟪x 6, u27 x⟫) +
-      s * (1 - t) * (⟪x 4, u27 x⟫ - ⟪x 0, u27 x⟫) +
-      s * t * (⟪x 4, u27 x⟫ - ⟪x 6, u27 x⟫) := by
-    have hinner := congrArg (fun w => ⟪w, u27 x⟫) hdiag_vec
-    have hrhs : 0 < ⟪γ • u27 x, u27 x⟫ := by
-      rw [real_inner_smul_left]
-      exact mul_pos hγ0 (real_inner_self_pos.mpr hu_ne)
-    rw [← hinner] at hrhs
-    have hlhs : ⟪(x 2 + s • (x 4 - x 2)) - (x 0 + t • (x 6 - x 0)), u27 x⟫ =
-        (1 - s) * (1 - t) * (⟪x 2, u27 x⟫ - ⟪x 0, u27 x⟫) +
-        (1 - s) * t * (⟪x 2, u27 x⟫ - ⟪x 6, u27 x⟫) +
-        s * (1 - t) * (⟪x 4, u27 x⟫ - ⟪x 0, u27 x⟫) +
-        s * t * (⟪x 4, u27 x⟫ - ⟪x 6, u27 x⟫) := by
-      simp only [inner_sub_left, inner_add_left, real_inner_smul_left]; ring
-    linarith
-  have hex_pos : ∃ q ∈ Minimality.RimCell.diagPairs,
-      LexLt3 (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.1), u27 x⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.1), x 2 - x 1⟫, (0 : ℝ))
-             (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.2), u27 x⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) q.2), x 2 - x 1⟫, (0 : ℝ)) := by
-    by_contra hno
-    push Not at hno
-    have h01 : ⟪x 2, u27 x⟫ - ⟪x 0, u27 x⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (0, 1) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    have h21 : ⟪x 2, u27 x⟫ - ⟪x 6, u27 x⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (2, 1) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    have h03 : ⟪x 4, u27 x⟫ - ⟪x 0, u27 x⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (0, 3) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    have h23 : ⟪x 4, u27 x⟫ - ⟪x 6, u27 x⟫ ≤ 0 := by
-      by_contra h; push Not at h
-      exact hno (2, 3) (by decide) (Or.inl (by simp [Matrix.cons_val]; linarith))
-    nlinarith [mul_nonneg (sub_nonneg.mpr hs1) (sub_nonneg.mpr ht1),
-      mul_nonneg (sub_nonneg.mpr hs1) ht0, mul_nonneg hs0 (sub_nonneg.mpr ht1), mul_nonneg hs0 ht0]
-  have hex_neg : ∃ p ∈ Minimality.RimCell.diagPairs,
-      LexLt3 (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.2), u27 x⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.2), x 2 - x 1⟫, (0 : ℝ))
-             (⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.1), u27 x⟫,
-              ⟪x ((![0, 2, 6, 4] : ZMod 4 → Fin 7) p.1), x 2 - x 1⟫, (0 : ℝ)) := by
-    refine ⟨(0, 1), by decide, Or.inl ?_⟩
-    simp only [Matrix.cons_val]
-    rw [← sub_pos, ← inner_sub_left, show x 0 - x 2 = -(x 2 - x 0) from by abel, inner_neg_left]
-    linarith [hcon]
-  apply hL
-  refine ⟨4, inferInstance, (![0, 2, 6, 4] : ZMod 4 → Fin 7), {2, 3, 7, 8}, {0, 4, 5},
-    u27 x, x 2 - x 1, 0, by decide,
-    (by intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)),
-    (by unfold S0xCycUD; decide), ?_, ?_,
-    by simpa [inner_zero_right] using robUniLex_four_of_mixed hex_pos hex_neg⟩
-  · intro tf ht
-    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
-    · exact Or.inr ⟨show ⟪F.N ⟨2, by decide⟩, u27 x⟫ = 0 from hu2, Or.inl hd2⟩
-    · exact Or.inl (show 0 < ⟪F.N ⟨3, by decide⟩, u27 x⟫ from hu3)
-    · exact Or.inr ⟨show ⟪F.N ⟨7, by decide⟩, u27 x⟫ = 0 from hu7, Or.inl hd7⟩
-    · exact Or.inl (show 0 < ⟪F.N ⟨8, by decide⟩, u27 x⟫ from hu8)
-  · intro tf ht
-    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
-    · exact Or.inl (by linarith [show ⟪F.N ⟨0, by decide⟩, u27 x⟫ < 0 from hu0])
-    · rcases lt_or_eq_of_le (show ⟪F.N ⟨4, by decide⟩, u27 x⟫ ≤ 0 from hu4) with h | h
-      · exact Or.inl (by linarith)
-      · exact Or.inr ⟨by linarith, Or.inl hd4⟩
-    · exact Or.inl (by linarith [show ⟪F.N ⟨5, by decide⟩, u27 x⟫ < 0 from hu5])
+  obtain ⟨hU, hD⟩ := u27_facings F hC hu3 hu8
+  have hw := Minimality.T24.M4.weak_shadow_of_frontDiag F ![0, 2, 6, 4]
+    (by intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide))
+    {2, 3, 7, 8} {0, 4, 5} (by unfold S0xCycUD; decide)
+    (u27 x) (x 2 - x 1) 0
+    (by simpa [inner_zero_right] using hU)
+    (by simpa [inner_zero_right] using hD)
+    (u27_bound F hC) (i := 1) (j := 0) (by decide) hL
+  simpa only [Matrix.cons_val] using hw
 
 /-- Facet facts at `bW02` that follow from `F` alone (all but facet `8`). -/
 theorem facets_w02 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :

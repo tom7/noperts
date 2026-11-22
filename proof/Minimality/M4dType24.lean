@@ -996,6 +996,90 @@ theorem u27_bound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
       ((1 - l) • x 2 + l • x 4) - ((1 - m') • x 0 + m' • x 6) := by module
   rw [hre, heq]; module
 
+theorem u27_facings {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+    (hu3 : 0 < ⟪F.N 3, u27 x⟫) (hu8 : 0 < ⟪F.N 8, u27 x⟫) :
+    (∀ t ∈ ({2, 3, 7, 8} : Finset (Fin 9)), LexPos3 ⟪F.N t, u27 x⟫ ⟪F.N t, x 2 - x 1⟫ 0) ∧
+    (∀ t ∈ ({0, 4, 5} : Finset (Fin 9)), LexPos3 (-⟪F.N t, u27 x⟫) (-⟪F.N t, x 2 - x 1⟫) (-0)) := by
+  have T := type24OfFac F
+  have hom3 : 0 < omega3 x := hC.1
+  have hom4 : 0 < omega4 x := hC.2.1
+  have hom5 : 0 < omega5 x := hC.2.2.1
+  have hD24 : 0 ≤ Delta24 x := hC.2.2.2
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  have inner_u27_local : ∀ t : Fin 9, ⟪F.N t, u27 x⟫ =
+      (1 + omega5 x) * (F.f t (x 0) - F.f t (x 1)) +
+      (omega3 x * omega5 x - 1) * (F.f t (x 2) - F.f t (x 1)) +
+      (1 + omega3 x) * (F.f t (x 6) - F.f t (x 1)) := fun t => by
+    dsimp [u27]
+    rw [inner_add_right, inner_add_right, inner_smul_right, inner_smul_right, inner_smul_right,
+      ← F.hN t (x 0) (x 1), ← F.hN t (x 2) (x 1), ← F.hN t (x 6) (x 1)]
+  have hu0 : ⟪F.N 0, u27 x⟫ < 0 := by
+    rw [inner_u27_local, F.zero 0 0 (by decide), F.zero 0 1 (by decide), F.zero 0 2 (by decide)]
+    nlinarith [F.neg 0 6 (by decide)]
+  have hu5 : ⟪F.N 5, u27 x⟫ < 0 := by
+    rw [inner_u27_local, F.zero 5 1 (by decide), F.zero 5 2 (by decide), F.zero 5 6 (by decide)]
+    nlinarith [F.neg 5 0 (by decide), mul_neg_of_pos_of_neg (show 0 < 1 + omega5 x by linarith)
+      (F.neg 5 0 (by decide))]
+  have hu2 : ⟪F.N 2, u27 x⟫ = 0 := by
+    have ev := fac_eval F 2 5
+    rw [F.zero 2 5 (by decide), F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at ev
+    have e5 := eq5 F
+    have hprod : oblX6 x 5 * ⟪F.N 2, u27 x⟫ = 0 := by
+      rw [inner_u27_local, F.zero 2 0 (by decide), F.zero 2 2 (by decide)]
+      linear_combination (1 + omega3 x) * (-ev) + (1 + omega3 x) * F.f 2 (x 1) * e5
+    exact (mul_eq_zero.mp hprod).resolve_left hc5.ne'
+  have hu7 : ⟪F.N 7, u27 x⟫ = 0 := by
+    have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+    have ev3 := fac_eval F 7 3
+    rw [F.zero 7 3 (by decide), F.zero 7 2 (by decide), F.zero 7 6 (by decide)] at ev3
+    have e3 := eq3 F
+    have h70 : F.f 7 (x 0) - F.f 7 (x 1) = omega3 x * F.f 7 (x 1) := by
+      have : oblX0 x 3 * ((F.f 7 (x 0) - F.f 7 (x 1)) - omega3 x * F.f 7 (x 1)) = 0 := by
+        linear_combination -ev3 + F.f 7 (x 1) * e3
+      exact sub_eq_zero.mp ((mul_eq_zero.mp this).resolve_left ha3.ne')
+    rw [inner_u27_local, F.zero 7 2 (by decide), F.zero 7 6 (by decide)]
+    linear_combination (1 + omega5 x) * h70
+  have hu4 : ⟪F.N 4, u27 x⟫ ≤ 0 := by
+    have ev := fac_eval F 4 4
+    rw [F.zero 4 4 (by decide), F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at ev
+    have e4 := eq4 F
+    have hprod : oblX2 x 4 * ⟪F.N 4, u27 x⟫ = oblX2 x 4 * (F.f 4 (x 1) * Delta24 x) := by
+      rw [inner_u27_local, F.zero 4 0 (by decide), F.zero 4 6 (by decide)]
+      simp only [Delta24]
+      linear_combination (omega3 x * omega5 x - 1) * (-ev) +
+        (omega3 x * omega5 x - 1) * F.f 4 (x 1) * e4
+    have := mul_left_cancel₀ hb4.ne' hprod
+    rw [this]
+    exact mul_nonpos_of_nonpos_of_nonneg (F.neg 4 1 (by decide)).le hD24
+  have hd2 : 0 < ⟪F.N 2, x 2 - x 1⟫ := by
+    rw [← F.hN 2 (x 2) (x 1), F.zero 2 2 (by decide)]; linarith [F.neg 2 1 (by decide)]
+  have hd7 : 0 < ⟪F.N 7, x 2 - x 1⟫ := by
+    rw [← F.hN 7 (x 2) (x 1), F.zero 7 2 (by decide)]; linarith [F.neg 7 1 (by decide)]
+  have hd4 : 0 < -⟪F.N 4, x 2 - x 1⟫ := by
+    have ev := fac_eval F 4 4
+    rw [F.zero 4 4 (by decide), F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at ev
+    have e4 := eq4 F
+    have hprod : oblX2 x 4 * (F.f 4 (x 2) - F.f 4 (x 1)) = oblX2 x 4 * (omega4 x * F.f 4 (x 1)) := by
+      linear_combination -ev + F.f 4 (x 1) * e4
+    have := mul_left_cancel₀ hb4.ne' hprod
+    rw [← F.hN 4 (x 2) (x 1), this]
+    nlinarith [mul_neg_of_pos_of_neg hom4 (F.neg 4 1 (by decide))]
+  constructor
+  · intro tf ht
+    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
+    · exact Or.inr ⟨show ⟪F.N ⟨2, by decide⟩, u27 x⟫ = 0 from hu2, Or.inl hd2⟩
+    · exact Or.inl (show 0 < ⟪F.N ⟨3, by decide⟩, u27 x⟫ from hu3)
+    · exact Or.inr ⟨show ⟪F.N ⟨7, by decide⟩, u27 x⟫ = 0 from hu7, Or.inl hd7⟩
+    · exact Or.inl (show 0 < ⟪F.N ⟨8, by decide⟩, u27 x⟫ from hu8)
+  · intro tf ht
+    fin_cases tf <;> dsimp only at ht ⊢ <;> (try exact absurd ht (by decide))
+    · exact Or.inl (by linarith [show ⟪F.N ⟨0, by decide⟩, u27 x⟫ < 0 from hu0])
+    · rcases lt_or_eq_of_le (show ⟪F.N ⟨4, by decide⟩, u27 x⟫ ≤ 0 from hu4) with h | h
+      · exact Or.inl (by linarith)
+      · exact Or.inr ⟨by linarith, Or.inl hd4⟩
+    · exact Or.inl (by linarith [show ⟪F.N ⟨5, by decide⟩, u27 x⟫ < 0 from hu5])
+
 theorem z5_gt_z4_w05 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (l1 l2 l3 l4 l5 : ℝ)
     (_hl1 : 0 ≤ l1) (_hl2 : 0 ≤ l2) (_hl3 : 0 ≤ l3) (_hl4 : 0 ≤ l4) (_hl5 : 0 ≤ l5)
