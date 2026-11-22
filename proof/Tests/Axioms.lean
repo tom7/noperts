@@ -58,6 +58,7 @@ import Minimality.Type24A1Closed
 import Minimality.Type24BUstar
 import Minimality.Type24BUstar2
 import Minimality.Type24BCertW26
+import Minimality.Type24BSharp
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1420,3 +1421,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.lemma_f4_id
 #assert_standard_axioms Minimality.T24.lemma_f4_alg
 #assert_standard_axioms Minimality.T24.lemma_f4_A2
+#assert_standard_axioms Minimality.T24.A10.ustar_sharp
+#assert_standard_axioms Minimality.T24.A10.ustar_closed_W26_full
