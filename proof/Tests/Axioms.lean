@@ -1455,6 +1455,22 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.cert_FB_CQ1_false
 #assert_standard_axioms Minimality.NF29.nf29_row_eq_inner
 #assert_standard_axioms Minimality.NF29.cert_FB_CQ1_NF29_false
+#print axioms Minimality.NF29.block_B20
+#print axioms Minimality.NF29.Kstar_sos
+#print axioms Minimality.NF29.cert_FB_CQ34_common
+#print axioms Minimality.NF29.del12_split
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ34_mults_pos
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ34_false
+#assert_standard_axioms Minimality.NF29.del12_pos_of_split
+#assert_standard_axioms Minimality.NF29.w14_of_not_lexAny29
+#assert_standard_axioms Minimality.NF29.u23Q_cones_of_not_lexAny29
+#assert_standard_axioms Minimality.NF29.cq1_of_not_lexAny29
+#assert_standard_axioms Minimality.NF29.cq3_of_not_lexAny29
+#assert_standard_axioms Minimality.NF29.cq4_of_not_lexAny29
+#assert_standard_axioms Minimality.NF29.fb_of_not_lexAny29
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ1_leaf
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ3_leaf
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ4_leaf
 #assert_standard_axioms Minimality.T24.A20.w63_syzygy
 #assert_standard_axioms Minimality.T24.A20.u07_alphaBound_id
 #assert_standard_axioms Minimality.T24.A20.z2_w63_eq
