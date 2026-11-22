@@ -18,7 +18,7 @@ open Minimality Minimality.H21 Minimality.H24.SAT Minimality.T24.SAT Minimality.
   Minimality.T24.Sym Minimality.T24.A8
 
 theorem ustar_sharp {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
     (h8 : ⟪F.N 8, ustar x⟫ < 0)
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
     (h63 : ⟪x 6 - x 1, ustar x⟫ < ⟪x 3 - x 1, ustar x⟫) (h30 : ⟪x 3 - x 1, ustar x⟫ ≤ 0)
@@ -98,7 +98,7 @@ theorem ustar_sharp {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
 /-- `ustar_closed_W26` without any `z3` hypothesis. -/
 theorem ustar_closed_W26_full {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
     (h8 : ⟪F.N 8, ustar x⟫ < 0)
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
     (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0) (hn : nB x < nC x)
@@ -113,5 +113,37 @@ theorem ustar_closed_W26_full {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     exact cert_w26_geom F hC ha5 hc3 hbc hn hU (not_lt.mp h)
   exact absurd (ustar_sharp F hC ha5 hc3 hD h8 hab hac h63 (not_lt.mp h3)
     (lt_of_le_of_lt (le_max_left _ _) hz5)) hU
+
+/-- On the wall `a5 = 1`, `Dl < 0` holds unconditionally. -/
+theorem dl_neg_of_wallA5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (ha5 : oblX0 x 5 = 1) :
+    Dl x < 0 := by
+  have T := type24OfFac F
+  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  unfold Dl
+  rw [ha5, sub_self, mul_zero, zero_sub]
+  exact neg_lt_zero.mpr (mul_pos ha3 hc5)
+
+/-- On the wall `a5 = 1`, `Dl4 < 0` holds unconditionally. -/
+theorem dl4_neg_of_wallA5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (ha5 : oblX0 x 5 = 1) :
+    Dl4 x < 0 := by
+  have T := type24OfFac F
+  have ha4 : 0 < oblX0 x 4 := T.X0_pos (v := 4) (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  unfold Dl4
+  rw [ha5, sub_self, mul_zero, zero_sub]
+  exact neg_lt_zero.mpr (mul_pos ha4 hc5)
+
+/-- On the wall `a5 = 1` with `a4 < 1`, `nB < 0 < nC` holds unconditionally. -/
+theorem nB_lt_nC_of_wallA5_a4lt {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha5 : oblX0 x 5 = 1) (ha4 : oblX0 x 4 < 1) :
+    nB x < nC x := by
+  have T := type24OfFac F
+  have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  unfold nB nC
+  rw [ha5, sub_self, mul_zero, mul_zero, zero_sub, sub_zero]
+  have h14 : 0 < 1 - oblX0 x 4 := sub_pos.mpr ha4
+  linarith [mul_pos hc5 h14, mul_pos hb5 h14]
 
 end Minimality.T24.A10

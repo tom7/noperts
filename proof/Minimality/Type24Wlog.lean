@@ -246,6 +246,25 @@ theorem cc_tau_ge_to_cc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : CC x
   simp only [oblX0_comp_pi24_5, oblX0_comp_pi24_4, sym24_f8_x0, sym24_f8_x5, sym24_f6_x0, sym24_f6_x4]
   exact ⟨h4, ht, h5.le, fun hq => absurd hq.2 (not_lt.mpr hs)⟩
 
+/-- `WallA4C` (`a5 < 1`, `σ ≥ 1`, `a4 = 1`) maps under `pi24` into `WallA5` with `a4 < 1` and `τ ≥ 1`. -/
+theorem wallA4C_to_wallA5 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h5 : oblX0 x 5 < 1) (hs : F.f 8 (x 5) ≤ F.f 8 (x 0)) (h4 : oblX0 x 4 = 1) :
+    WallA5 (x ∘ pi24) ∧ oblX0 (x ∘ pi24) 4 < 1 ∧
+      (sym24 F).f 6 ((x ∘ pi24) 4) ≤ (sym24 F).f 6 ((x ∘ pi24) 0) := by
+  unfold WallA5
+  simp only [oblX0_comp_pi24_5, oblX0_comp_pi24_4, sym24_f6_x0, sym24_f6_x4]
+  exact ⟨h4, h5, hs⟩
+
+/-- `WallA5` (`a5 = 1`) with `a4 > 1` maps under `pi24` into `A1` or `A2` (with `a4 = 1`). -/
+theorem wallA5_a4gt_to_a {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (_h5 : oblX0 x 5 = 1) (h4 : 1 < oblX0 x 4) :
+    A1 (x ∘ pi24) (sym24 F) ∨ A2 (x ∘ pi24) (sym24 F) := by
+  unfold A1 A2
+  simp only [oblX0_comp_pi24_5, sym24_f8_x0, sym24_f8_x5]
+  rcases le_or_gt (F.f 6 (x 0)) (F.f 6 (x 4)) with ht | ht
+  · exact Or.inl ⟨h4, ht⟩
+  · exact Or.inr ⟨h4, ht⟩
+
 
 /-- **Payoff**: if the `A`-side (`A1`, `A2`) and the `B`-side (`BRest`, `BE0416`) are closed inside `OB1`
 on `Hole24R`, then so are `BA4`, `CA`, `CA2` and `CFlip` (that is `CB` and `CC` with `a4 < 1`, `tau < 1`).

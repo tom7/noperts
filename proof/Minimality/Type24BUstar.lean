@@ -106,7 +106,7 @@ theorem ustar_z0_nonpos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hD : Dl 
     mul_nonpos_of_nonneg_of_nonpos hA6 hac]
 
 theorem ustar_collapse {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
     (h8 : ⟪F.N 8, ustar x⟫ < 0)
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0) (hac : ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0)
     (hz : max 0 ⟪x 6 - x 1, ustar x⟫ < min ⟪x 3 - x 1, ustar x⟫ ⟪x 5 - x 1, ustar x⟫) :

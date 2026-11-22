@@ -65,7 +65,7 @@ theorem lam5_comp_pi24 (x : Fin 7 → ℝ³) : Lam5 (x ∘ pi24) = Lam4 x := by
 /-! ### Part 1: `ustar_facings`, `splitAny24_Ustar`, `isRupert_of_Ustar`, `splitAny24_Ustar_twin` -/
 
 theorem ustar_facings {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0) :
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0) :
     ⟪F.N 0, ustar x⟫ < 0 ∧ ⟪F.N 1, ustar x⟫ < 0 ∧ ⟪F.N 2, ustar x⟫ = 0 ∧
     ⟪F.N 3, ustar x⟫ < 0 ∧ ⟪F.N 4, ustar x⟫ < 0 ∧ 0 < ⟪F.N 5, ustar x⟫ ∧
     0 < ⟪F.N 6, ustar x⟫ ∧ 0 < ⟪F.N 7, ustar x⟫ := by
@@ -105,8 +105,8 @@ theorem ustar_facings {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       rw [ev5]; ring
     rw [h52, zero_sub, h55]
     have t1 : 0 < (-Dl x) * (-F.f 5 (x 0)) := mul_pos hD_pos (neg_pos.mpr h50)
-    have t2 : 0 < (1 - oblX6 x 3) * ((oblX0 x 5 - 1) * F.f 5 (x 0)) :=
-      mul_pos hc3_pos (mul_pos_of_neg_of_neg (sub_neg.mpr ha5) h50)
+    have t2 : 0 ≤ (1 - oblX6 x 3) * ((oblX0 x 5 - 1) * F.f 5 (x 0)) :=
+      mul_nonneg hc3_pos.le (mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr ha5) h50.le)
     linarith
   · rw [hus 6, F.zero 6 2 (by decide), F.zero 6 5 (by decide), zero_sub]
     have h60 : 0 < -F.f 6 (x 0) := by linarith [F.neg 6 0 (by decide)]
@@ -133,7 +133,7 @@ theorem ustar_facings {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     linarith
 
 private theorem ustar_row35_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0) :
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0) :
     0 < oblX0 x 3 * (1 - oblX6 x 5) - oblX0 x 5 * (1 - oblX6 x 3) := by
   have T := type24OfFac F
   have hom3 : 0 < omega3 x := hC.1
@@ -326,7 +326,7 @@ private theorem ustar_row35_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   nlinarith
 
 theorem splitAny24_Ustar {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
     (h8 : ⟪F.N 8, ustar x⟫ < 0)
     (hz : max 0 ⟪x 6 - x 1, ustar x⟫ <
       min ⟪x 2 - x 1, ustar x⟫ (min ⟪x 3 - x 1, ustar x⟫ ⟪x 5 - x 1, ustar x⟫)) :
@@ -654,7 +654,7 @@ theorem splitAny24_Ustar {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         exact mul_pos (mul_pos (by norm_num) hc3_pos) hdet_sq
 
 theorem isRupert_of_Ustar {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn x) (ha5 : oblX0 x 5 < 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
+    (hC : CbarIn x) (ha5 : oblX0 x 5 ≤ 1) (hc3 : oblX6 x 3 < 1) (hD : Dl x < 0)
     (h8 : ⟪F.N 8, ustar x⟫ < 0)
     (hz : max 0 ⟪x 6 - x 1, ustar x⟫ <
       min ⟪x 2 - x 1, ustar x⟫ (min ⟪x 3 - x 1, ustar x⟫ ⟪x 5 - x 1, ustar x⟫)) :
@@ -663,7 +663,7 @@ theorem isRupert_of_Ustar {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   exact splitAny24_isRupert F hS
 
 theorem splitAny24_Ustar_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hC : CbarIn (x ∘ pi24)) (ha5 : oblX0 (x ∘ pi24) 5 < 1) (hc3 : oblX6 (x ∘ pi24) 3 < 1)
+    (hC : CbarIn (x ∘ pi24)) (ha5 : oblX0 (x ∘ pi24) 5 ≤ 1) (hc3 : oblX6 (x ∘ pi24) 3 < 1)
     (hD : Dl (x ∘ pi24) < 0)
     (h8 : ⟪(sym24 F).N 8, ustar (x ∘ pi24)⟫ < 0)
     (hz : max 0 ⟪(x ∘ pi24) 6 - (x ∘ pi24) 1, ustar (x ∘ pi24)⟫ <
