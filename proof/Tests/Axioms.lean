@@ -19,6 +19,8 @@ import Minimality.M4dType24
 import Minimality.Type29Leaves
 import Minimality.Type29LeavesA16
 import Minimality.Type29QPencil
+import Minimality.Type29DClose
+import Minimality.Type29SubPencil
 import Minimality.Type29Quad
 import Minimality.GenQuad
 import Minimality.GenQuadCross
@@ -1433,3 +1435,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.H29.type29_rupert_or_hole'
 #assert_standard_axioms Minimality.T24.A10.ustar_sharp
 #assert_standard_axioms Minimality.T24.A10.ustar_closed_W26_full
+#assert_standard_axioms Minimality.NF29.d1_row_neg
+#assert_standard_axioms Minimality.NF29.d3_identity
+#assert_standard_axioms Minimality.NF29.lexAny29_F124xF346_clauses
+#assert_standard_axioms Minimality.NF29.t1_D_closed
+#assert_standard_axioms Minimality.NF29.syz_012_14_Q
+#assert_standard_axioms Minimality.NF29.cert_FB_CQ5_pos_eta5_pos
