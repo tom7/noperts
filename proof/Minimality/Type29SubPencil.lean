@@ -858,7 +858,7 @@ end DB
 section DBLeaves
 
 open scoped RealInnerProductSpace
-open _root_.Minimality (s0x_fac29)
+open _root_.Minimality.H21 (s0x_fac29)
 open Minimality.GenQuad (FrontDet LexClause lexClause_of_frontOf lexClause_of_notM)
 
 variable {x : Fin 7 → ℝ³}
@@ -981,6 +981,19 @@ private theorem u23Q_params_of_Gstar (N : NF29 x)
     linarith
   exact ⟨hdG, hK, h4, h5⟩
 
+private theorem u23Q_ne_zero (N : NF29 x)
+    (hU4 : 0 < U4_sp N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.t) : N.u23Q x ≠ 0 := by
+  intro h0
+  have h1 : N.f356.f (x 3 + N.u23Q x) - N.f356.f (x 3) = 0 := by rw [h0, add_zero, sub_self]
+  rw [f356_u23Q N] at h1
+  have h4 : 0 < N.D023 - N.DG5 := by
+    dsimp [U4_sp, DG5_sp, D023_sp, D0_sp, G4_sp, G5_sp, NF29.D023, NF29.DG5, NF29.dG4,
+      NF29.dG] at *
+    linarith
+  have hD2 : 0 < N.D ^ 2 := sq_pos_of_ne_zero N.hD
+  have : 0 < (N.D023 - N.DG5) * N.D ^ 2 := mul_pos h4 hD2
+  linarith
+
 /-- `U023Q` 5-rim case split on `![0, 2, 4, 6, 5]`: under `G*` + `K1a` and the five `FrontDet`
 diagonals (all checked on `N_star_pert` and `N_counter`), `¬ LexAny29` forces one of the five
 `M` cones `C_Q3`, `C_Q4`, `C_Q5+`, `C_Q2`, `C_Q1`. -/
@@ -1005,16 +1018,18 @@ theorem u23Q_cones_of_not_lexAny29 (N : NF29 x)
     (⟪x 4, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 4, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫ ∧
       ⟪x 5, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 5, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫) := by
   by_contra hnot
-  push_neg at hnot
-  rcases hnot with ⟨hM3, hM4, hM5, hM2, hM1⟩
+  rcases not_or.mp hnot with ⟨hM3, hnot⟩
+  rcases not_or.mp hnot with ⟨hM4, hnot⟩
+  rcases not_or.mp hnot with ⟨hM5, hnot⟩
+  rcases not_or.mp hnot with ⟨hM2, hM1⟩
   obtain ⟨hdG, hK, h4, h5⟩ := u23Q_params_of_Gstar N ha2 hh2 hh0 hdG4 hU4 hU5
-  have hd_ne : x 3 - x 6 ≠ 0 := sub_ne_zero.mpr (N.inj.ne (by decide))
+  have hu_ne : N.u23Q x ≠ 0 := u23Q_ne_zero N hU4
   exact hnf (lexAny29_U023Qx_clauses N hdG hdG4 hh0 N.hE35 hK hh2.le h4 h5
-    (lexClause_of_frontOf hd_ne hF0123.frontOf) (lexClause_of_notM hM3)
-    (lexClause_of_frontOf hd_ne hF0124.frontOf) (lexClause_of_notM hM4)
-    (lexClause_of_frontOf hd_ne hF0134.frontOf) (lexClause_of_notM hM5)
-    (lexClause_of_notM hM2) (lexClause_of_frontOf hd_ne hF0234.frontOf)
-    (lexClause_of_notM hM1) (lexClause_of_frontOf hd_ne hF1234.frontOf))
+    (lexClause_of_frontOf hu_ne hF0123.frontOf) (lexClause_of_notM hM3)
+    (lexClause_of_frontOf hu_ne hF0124.frontOf) (lexClause_of_notM hM4)
+    (lexClause_of_frontOf hu_ne hF0134.frontOf) (lexClause_of_notM hM5)
+    (lexClause_of_notM hM2) (lexClause_of_frontOf hu_ne hF0234.frontOf)
+    (lexClause_of_notM hM1) (lexClause_of_frontOf hu_ne hF1234.frontOf))
 
 /-- `C_Q1` rim bridge at `vQ = S • u23Q`. -/
 theorem cq1_of_not_lexAny29 (N : NF29 x)
@@ -1047,10 +1062,10 @@ theorem cq1_of_not_lexAny29 (N : NF29 x)
       ⟪x 5, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 5, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫ := by
     by_contra hnot
     obtain ⟨hdG, hK, h4, h5⟩ := u23Q_params_of_Gstar N ha2 hh2 hh0 hdG4 hU4 hU5
-    have hd_ne : x 3 - x 6 ≠ 0 := sub_ne_zero.mpr (N.inj.ne (by decide))
+    have hu_ne : N.u23Q x ≠ 0 := u23Q_ne_zero N hU4
     exact hnf (lexAny29_U023Qx_clauses N hdG hdG4 hh0 N.hE35 hK hh2.le h4 h5
       hA0123 hB0123 hA0124 hB0124 hA0134 hB0134 hA0234 hB0234
-      (lexClause_of_notM hnot) (lexClause_of_frontOf hd_ne hF1234.frontOf))
+      (lexClause_of_notM hnot) (lexClause_of_frontOf hu_ne hF1234.frontOf))
   have hqc := nf29_q_coords N
   dsimp only at hqc
   have h6c : S_sp N.s N.t • (x 6 - x 6) =
@@ -1096,9 +1111,9 @@ theorem cq3_of_not_lexAny29 (N : NF29 x)
       ⟪x 4, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 4, N.u23Q x⟫ ≤ ⟪x 6, N.u23Q x⟫ := by
     by_contra hnot
     obtain ⟨hdG, hK, h4, h5⟩ := u23Q_params_of_Gstar N ha2 hh2 hh0 hdG4 hU4 hU5
-    have hd_ne : x 3 - x 6 ≠ 0 := sub_ne_zero.mpr (N.inj.ne (by decide))
+    have hu_ne : N.u23Q x ≠ 0 := u23Q_ne_zero N hU4
     exact hnf (lexAny29_U023Qx_clauses N hdG hdG4 hh0 N.hE35 hK hh2.le h4 h5
-      (lexClause_of_frontOf hd_ne hF0123.frontOf) (lexClause_of_notM hnot)
+      (lexClause_of_frontOf hu_ne hF0123.frontOf) (lexClause_of_notM hnot)
       hA0124 hB0124 hA0134 hB0134 hA0234 hB0234 hA1234 hB1234)
   have hqc := nf29_q_coords N
   dsimp only at hqc
@@ -1143,9 +1158,9 @@ theorem cq4_of_not_lexAny29 (N : NF29 x)
       ⟪x 4, N.u23Q x⟫ ≤ ⟪x 2, N.u23Q x⟫ ∧ ⟪x 4, N.u23Q x⟫ ≤ ⟪x 5, N.u23Q x⟫ := by
     by_contra hnot
     obtain ⟨hdG, hK, h4, h5⟩ := u23Q_params_of_Gstar N ha2 hh2 hh0 hdG4 hU4 hU5
-    have hd_ne : x 3 - x 6 ≠ 0 := sub_ne_zero.mpr (N.inj.ne (by decide))
+    have hu_ne : N.u23Q x ≠ 0 := u23Q_ne_zero N hU4
     exact hnf (lexAny29_U023Qx_clauses N hdG hdG4 hh0 N.hE35 hK hh2.le h4 h5
-      hA0123 hB0123 (lexClause_of_frontOf hd_ne hF0124.frontOf) (lexClause_of_notM hnot)
+      hA0123 hB0123 (lexClause_of_frontOf hu_ne hF0124.frontOf) (lexClause_of_notM hnot)
       hA0134 hB0134 hA0234 hB0234 hA1234 hB1234)
   have hqc := nf29_q_coords N
   dsimp only at hqc
@@ -1234,7 +1249,7 @@ theorem cert_FB_CQ1_leaf (N : NF29 x)
                   ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) : False := by
   have hdG4 : 0 < N.dG4 := by
-    rw [show N.dG4 = G4_sp N.b0 N.h0 N.b2 N.h2 by dsimp [NF29.dG4, G4_sp]; ring]
+    dsimp [NF29.dG4]
     exact hG4
   have hS : 0 < S_sp N.s N.t := sub_pos.mpr N.hst
   have hD0 : 0 < D0_sp N.a0 N.b0 N.a2 N.b2 := N.hDD
@@ -1284,7 +1299,7 @@ theorem cert_FB_CQ3_leaf (N : NF29 x)
                   ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) : False := by
   have hdG4 : 0 < N.dG4 := by
-    rw [show N.dG4 = G4_sp N.b0 N.h0 N.b2 N.h2 by dsimp [NF29.dG4, G4_sp]; ring]
+    dsimp [NF29.dG4]
     exact hG4
   have hG55 : 0 < ⟪x 5 - x 6, x 5 - x 6⟫ :=
     real_inner_self_pos.mpr (sub_ne_zero.mpr (fun h => absurd (N.inj h) (by decide)))
@@ -1330,7 +1345,7 @@ theorem cert_FB_CQ4_leaf (N : NF29 x)
                   ⟪x 6, N.bLine x⟫ ≤ ⟪x 3, N.bLine x⟫ ∧ ⟪x 6, N.bLine x⟫ ≤ ⟪x 5, N.bLine x⟫))
     (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) : False := by
   have hdG4 : 0 < N.dG4 := by
-    rw [show N.dG4 = G4_sp N.b0 N.h0 N.b2 N.h2 by dsimp [NF29.dG4, G4_sp]; ring]
+    dsimp [NF29.dG4]
     exact hG4
   have hG55 : 0 < ⟪x 5 - x 6, x 5 - x 6⟫ :=
     real_inner_self_pos.mpr (sub_ne_zero.mpr (fun h => absurd (N.inj h) (by decide)))
