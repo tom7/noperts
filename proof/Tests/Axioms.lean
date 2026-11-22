@@ -18,6 +18,7 @@ import Minimality.M4cType24
 import Minimality.M4dType24
 import Minimality.Type29Leaves
 import Minimality.Type29LeavesA16
+import Minimality.GenQuad
 import Minimality.M4eType24
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -1013,6 +1014,26 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.NF29.u2346_eq
 #print axioms Minimality.NF29.lexAny29_U2346
 #print axioms Minimality.NF29.lexAny29_W14t1
+#assert_standard_axioms Minimality.GenQuad.clauses_four
+#assert_standard_axioms Minimality.GenQuad.clauses_five
+#assert_standard_axioms Minimality.GenQuad.clauses_six
+#assert_standard_axioms Minimality.GenQuad.clauses_of_sorted
+#assert_standard_axioms Minimality.GenQuad.frontOf_of_det
+#assert_standard_axioms Minimality.GenQuad.frontOf_of_det_neg
+#assert_standard_axioms Minimality.GenQuad.lexAny_of_clauses
+#assert_standard_axioms Minimality.GenQuad.lexClause_of_frontOf
+#assert_standard_axioms Minimality.GenQuad.lexClause_of_notM
+#assert_standard_axioms Minimality.GenQuad.robUniLex_of_clauses
+#print axioms Minimality.GenQuad.clauses_four
+#print axioms Minimality.GenQuad.clauses_five
+#print axioms Minimality.GenQuad.clauses_six
+#print axioms Minimality.GenQuad.clauses_of_sorted
+#print axioms Minimality.GenQuad.frontOf_of_det
+#print axioms Minimality.GenQuad.frontOf_of_det_neg
+#print axioms Minimality.GenQuad.lexAny_of_clauses
+#print axioms Minimality.GenQuad.lexClause_of_frontOf
+#print axioms Minimality.GenQuad.lexClause_of_notM
+#print axioms Minimality.GenQuad.robUniLex_of_clauses
 #assert_standard_axioms Minimality.T24.A12.tie1_bound
 #assert_standard_axioms Minimality.T24.A12.lexAny_or_split_E3426
 #assert_standard_axioms Minimality.T24.A12.isRupert_of_E3426
