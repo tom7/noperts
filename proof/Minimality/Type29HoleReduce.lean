@@ -8,6 +8,8 @@ public import Minimality.Type29T1Pair
 public import Minimality.Type29Quad
 public import Minimality.Type29SubPencil
 public import Minimality.Type29Single
+public import Minimality.Type29Pair2
+public import Minimality.Type29Pair5
 
 @[expose] public section
 
@@ -480,5 +482,133 @@ theorem type29_rupert_or_hole'''' {x : Fin 7 → ℝ³} (N : NF29 x)
     (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
     IsRupert (univ.image x) ∨ Hole29R4 x N :=
   (type29_rupert_or_hole''' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R3_reduce h))
+
+/-! ### PAIR29: two-view (pair) closures (`Type29Pair*.lean`) -/
+
+/-- Pair `w1` + `x 5 - x 6` (lines F124xF346, F1456xF356) (PAIR29; `PL29.lexAny_pair1`). -/
+def Pair1Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.a2 < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 4 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 4 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 4 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 4 7⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, x 5 - x 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 5 - x 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, x 5 - x 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 5 - x 6⟫ < 0 ∧
+    (∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 4 7⟫ ≠ ⟪x j, PL29.lv29 N 4 7⟫) ∧
+    ∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 5 - x 6⟫ ≠ ⟪x j, x 5 - x 6⟫
+
+/-- Pair `x 1 - x 2` + `x 5 - x 6` (lines F012xF124, F1456xF356) (PAIR29; `PL29.lexAny_pair2`). -/
+def Pair2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.V < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 3, x 1 - x 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 1 - x 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, x 1 - x 2⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, x 5 - x 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 5 - x 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, x 5 - x 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 5 - x 6⟫ < 0 ∧
+    0 < PL29.PlaneSide x 2 5 6 0 1 ∧
+    0 < PL29.PlaneSide x 2 3 6 1 5 ∧
+    0 < PL29.PlaneSide x 2 3 5 1 6 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 2⟫ ≠ ⟪x j, x 1 - x 2⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 5 - x 6⟫ ≠ ⟪x j, x 5 - x 6⟫
+
+/-- Pair `w1` + `x 4 - x 6` (lines F015xF356, F1456xF346) (PAIR29; `PL29.lexAny_pair3`). -/
+def Pair3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.b0 < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 1 8⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 1 8⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 1 8⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 1 8⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, x 4 - x 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 1, x 4 - x 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 4 - x 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 3, x 4 - x 6⟫ < 0 ∧
+    (∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 1 8⟫ ≠ ⟪x j, PL29.lv29 N 1 8⟫) ∧
+    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 4 - x 6⟫ ≠ ⟪x j, x 4 - x 6⟫
+
+/-- Single view `x 3 - x 6` (line F346xF356) (PAIR29; `PL29.lexAny_pair4`, no class fact). -/
+def Pair4Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 1, x 3 - x 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, x 3 - x 6⟫ ∧
+    ∀ i ∈ ({0, 1, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫
+
+/-- Pair `w1` + `x 1 - x 4` (lines F035xF346, F124xF1456) (PAIR29; `PL29.lexAny_pair5`). -/
+def Pair5Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.b0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 3 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 3 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 3 7⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 3 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 3 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 3 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 3 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ ∧
+    PL29.PlaneSide x 2 3 6 1 4 < 0 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 3 7⟫ ≠ ⟪x j, PL29.lv29 N 3 7⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+
+/-- Single view `w1` with SELF (line F015xF023) (PAIR29; `PL29.lexAny_pair6`, no class fact). -/
+def Pair6Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 1 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 1 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 1 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 1 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 1 2⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 1 2⟫ ≠ ⟪x j, PL29.lv29 N 1 2⟫
+
+/-- Union of the PAIR29 pair-closure instances. -/
+def Pair29Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  Pair1Hyp x N ∨
+    Pair2Hyp x N ∨
+    Pair3Hyp x N ∨
+    Pair4Hyp x N ∨
+    Pair5Hyp x N ∨
+    Pair6Hyp x N
+
+/-- Shrunken Type-29 open hole proposition, excluding the PAIR29 pair-closure instances. -/
+def Hole29R5 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  Hole29R4 x N ∧ ¬ Pair29Hyp x N
+
+/-- Every point of `Hole29R5` lies in `Hole29`. -/
+theorem hole29_of_hole29R5 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R5 x N) : Hole29 x N :=
+  hole29_of_hole29R4 h.1
+
+/-- **Reduction of `Hole29R4` to `Hole29R5`**: the PAIR29 instances (`PL29.lexAny29_pair*`) against
+`¬ LexAny29`. -/
+theorem hole29R4_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R4 x N) : Hole29R5 x N := by
+  have hnl := (hole29_of_hole29R4 h).2.2.2.2.2.1
+  refine ⟨h, ?_⟩
+  rintro (⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩
+    | ⟨h1, h2, h3⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩)
+  · exact hnl (PL29.lexAny29_pair1 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11)
+  · exact hnl (PL29.lexAny29_pair2 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13)
+  · exact hnl (PL29.lexAny29_pair3 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11)
+  · exact hnl (PL29.lexAny29_pair4 N h1 h2 h3)
+  · exact hnl (PL29.lexAny29_pair5 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13)
+  · exact hnl (PL29.lexAny29_pair6 N h1 h2 h3 h4 h5 h6)
+
+/-- Main Type-29 reduction leaving `Hole29R5`. -/
+theorem type29_rupert_or_hole''''' {x : Fin 7 → ℝ³} (N : NF29 x)
+    (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
+    IsRupert (univ.image x) ∨ Hole29R5 x N :=
+  (type29_rupert_or_hole'''' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R4_reduce h))
 
 end Minimality.H29

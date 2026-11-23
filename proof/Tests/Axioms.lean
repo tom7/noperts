@@ -1772,3 +1772,21 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.SVCC.CellsLex.cell_016_0345_pzpzmpppm_lex
 #assert_standard_axioms Minimality.SVCC.CellsLex.cell_0345_236_ppmzppmzp_lex
 #assert_standard_axioms Minimality.SVCC.CellsLex.cell_0345_236_pppzmppzm_lex
+
+-- PAIR29: two-view pair closures (Type29Pair*), Hole29R5
+#assert_standard_axioms Minimality.PL29.all_perms_split
+#assert_standard_axioms Minimality.PL29.perms7_split
+#assert_standard_axioms Minimality.PL29.lexAny_pair1
+#assert_standard_axioms Minimality.PL29.lexAny_pair2
+#assert_standard_axioms Minimality.PL29.lexAny_pair3
+#assert_standard_axioms Minimality.PL29.lexAny_pair4
+#assert_standard_axioms Minimality.PL29.lexAny_pair5
+#assert_standard_axioms Minimality.PL29.lexAny_pair6
+#assert_standard_axioms Minimality.PL29.lexAny29_pair1
+#assert_standard_axioms Minimality.PL29.lexAny29_pair2
+#assert_standard_axioms Minimality.PL29.lexAny29_pair3
+#assert_standard_axioms Minimality.PL29.lexAny29_pair4
+#assert_standard_axioms Minimality.PL29.lexAny29_pair5
+#assert_standard_axioms Minimality.PL29.lexAny29_pair6
+#assert_standard_axioms Minimality.H29.hole29R4_reduce
+#assert_standard_axioms Minimality.H29.type29_rupert_or_hole'''''
