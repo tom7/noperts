@@ -464,3 +464,532 @@ theorem decOK_tri {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → �
   exact decOK_append (decOK_term x P _ _ _) (decOK_term x P _ _ _)
 
 end Minimality.PSVC
+
+
+/-!
+# Triple closure (PAIRLEAN2): three views coupled pairwise by the Gram symmetry
+
+Extends `PSVC.pair_closure` to three views `u`, `v`, `w`. At each view an order of the points
+is excluded (forced pair, separated signed circuit, SELF), passes a valid rim (then `LexAny`),
+or is *bad*. The bad orders at `v` and `w` are listed (`Bv`, `Bw`, certified by `check2`). At
+the outer view `u` every bad order `L` must be killed together with every pair `(b, c)` of
+`Bv × Bw`: GRAM (`gramBad`) on `(L, b)`, on `(L, c)` or on `(b, c)`. The Bool function
+`triOK` tries the two cheap cases first (`L` GRAM-kills all of `Bv`, or all of `Bw`).
+
+Also `decOK_edge` / `edge_forced`: an edge view `x i - x j` decomposes as itself, and puts
+`i` strictly above `j`.
+-/
+
+set_option autoImplicit false
+
+open scoped RealInnerProductSpace
+open Minimality Minimality.H21
+
+namespace Minimality.PSVC
+
+open Minimality.SVC
+
+/-- Every pair `(b, c)` of listed bad orders at `v`, `w` is GRAM-killed with `L` (the order at
+the outer view `u`) or with each other. -/
+def triOK {p : ℕ} (Eu Ev Ew : List (List (Fin p × Fin p))) (Bv Bw : List (List (Fin p)))
+    (L : List (Fin p)) : Bool :=
+  Bv.all (gramBad Eu Ev L) || Bw.all (gramBad Eu Ew L) ||
+    Bv.all fun b => gramBad Eu Ev L b || Bw.all fun c => gramBad Eu Ew L c || gramBad Ev Ew b c
+
+/-- Check at the outer view `u`: every order is excluded, passes a rim, or satisfies `triOK`. -/
+def checkT {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n) (sw : Fin m → SignType)
+    (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (Eu Ev Ew : List (List (Fin p × Fin p))) (R : List (Rim m p)) (Bv Bw : List (List (Fin p))) :
+    Bool :=
+  R.all (rimValid S P sw) &&
+    (List.finRange p).permutations'.all fun L =>
+      exclOK forced deps Eu L || R.any (fun ρ => rimOK ρ L) || triOK Eu Ev Ew Bv Bw L
+
+theorem triOK_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {u v w : ℝ³}
+    {Eu Ev Ew : List (List (Fin p × Fin p))} (hEu : ∀ d ∈ Eu, DecOK x P u d)
+    (hEv : ∀ d ∈ Ev, DecOK x P v d) (hEw : ∀ d ∈ Ew, DecOK x P w d)
+    {Bv Bw : List (List (Fin p))} {Lu Lv Lw : List (Fin p)} (hv : Lv ∈ Bv) (hw : Lw ∈ Bw)
+    (hrku : ∀ i j, rk Lu i < rk Lu j → ⟪x (P i), u⟫ < ⟪x (P j), u⟫)
+    (hrkv : ∀ i j, rk Lv i < rk Lv j → ⟪x (P i), v⟫ < ⟪x (P j), v⟫)
+    (hrkw : ∀ i j, rk Lw i < rk Lw j → ⟪x (P i), w⟫ < ⟪x (P j), w⟫)
+    (h : triOK Eu Ev Ew Bv Bw Lu = true) : False := by
+  simp only [triOK, Bool.or_eq_true, List.all_eq_true] at h
+  rcases h with (h | h) | h
+  · exact gramBad_false hEu hEv hrku hrkv (h Lv hv)
+  · exact gramBad_false hEu hEw hrku hrkw (h Lw hw)
+  · rcases h Lv hv with h1 | h1
+    · exact gramBad_false hEu hEv hrku hrkv h1
+    · rcases h1 Lw hw with h2 | h2
+      · exact gramBad_false hEu hEw hrku hrkw h2
+      · exact gramBad_false hEv hEw hrkv hrkw h2
+
+/-- One view's input to `triple_closure`: facings on the rim facets, tilts, forced pairs,
+decompositions, distinct depths. -/
+structure ViewData {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (w : ℝ³) (sw : Fin m → SignType)
+    (R : List (Rim m p)) (forced : List (Fin p × Fin p)) (E : List (List (Fin p × Fin p))) :
+    Prop where
+  hsw : ∀ ρ ∈ R, ∀ t, t ∈ ρ.U ∨ t ∈ ρ.Dn → SignType.sign ⟪F.N t, w⟫ = sw t
+  hR : ∀ ρ ∈ R, ∃ d1 : ℝ³, ∀ t, sw t = 0 → SignType.sign ⟪F.N t, d1⟫ = ρ.sd t
+  hforced : ∀ ij ∈ forced, ⟪x (P ij.2), w⟫ < ⟪x (P ij.1), w⟫
+  hE : ∀ d ∈ E, DecOK x P w d
+  hgen : ∀ i j, i ≠ j → ⟪x (P i), w⟫ ≠ ⟪x (P j), w⟫
+
+/-- The sorted order at a view of a `ViewData`: excluded orders are impossible, a passing rim
+gives `LexAny`, and otherwise the order is bad. -/
+theorem ViewData.order {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    {F : S0xFac m S x} {P : Fin p → Fin n} {w : ℝ³} {sw : Fin m → SignType}
+    {R : List (Rim m p)} {forced : List (Fin p × Fin p)} {E : List (List (Fin p × Fin p))}
+    (V : ViewData F P w sw R forced E) :
+    ∃ L ∈ (List.finRange p).permutations', ∀ i j, rk L i < rk L j → ⟪x (P i), w⟫ < ⟪x (P j), w⟫ :=
+  exists_order (fun i => ⟪x (P i), w⟫) (fun i j h => by by_contra hne; exact V.hgen i j hne h)
+
+/-- **Triple closure.** Three views with `ViewData` and shared signed dependencies; if `check2`
+holds at `v` (list `Bv`) and at `w` (list `Bw`) and `checkT` at `u`, then `Gen.LexAny F`. -/
+theorem triple_closure {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (u v w : ℝ³) (su sv sw : Fin m → SignType)
+    (Ru Rv Rw : List (Rim m p)) (fu fv fw : List (Fin p × Fin p))
+    (Eu Ev Ew : List (List (Fin p × Fin p)))
+    (Vu : ViewData F P u su Ru fu Eu) (Vv : ViewData F P v sv Rv fv Ev)
+    (Vw : ViewData F P w sw Rw fw Ew)
+    (deps : List (Fin p → SignType))
+    (hdeps : ∀ s ∈ deps, ∃ mu : Fin p → ℝ, ∑ i, mu i = 0 ∧ ∑ i, mu i • x (P i) = 0 ∧
+      ∀ i, SignType.sign (mu i) = s i)
+    (Bv Bw : List (List (Fin p)))
+    (hcu : checkT S P su fu deps Eu Ev Ew Ru Bv Bw = true)
+    (hcv : check2 S P sv fv deps Ev Rv Bv = true)
+    (hcw : check2 S P sw fw deps Ew Rw Bw = true) : Minimality.Gen.LexAny F := by
+  classical
+  obtain ⟨Lu, hLu, hrku⟩ := Vu.order
+  obtain ⟨Lv, hLv, hrkv⟩ := Vv.order
+  obtain ⟨Lw, hLw, hrkw⟩ := Vw.order
+  simp only [checkT, check2, Bool.and_eq_true, List.all_eq_true] at hcu hcv hcw
+  obtain ⟨hvu, hpu⟩ := hcu
+  obtain ⟨hvv, hpv⟩ := hcv
+  obtain ⟨hvw, hpw⟩ := hcw
+  have h2 := hpv Lv hLv
+  simp only [Bool.or_eq_true, List.any_eq_true] at h2
+  rcases h2 with (hx | ⟨ρ, hρ, hok⟩) | hmv
+  · exact (exclOK_false Vv.hforced hdeps Vv.hE hrkv hx).elim
+  · exact lexAny_of_rimOK F P v sv ρ (Vv.hsw ρ hρ) (Vv.hR ρ hρ) (hvv ρ hρ) hrkv hok
+  have h3 := hpw Lw hLw
+  simp only [Bool.or_eq_true, List.any_eq_true] at h3
+  rcases h3 with (hx | ⟨ρ, hρ, hok⟩) | hmw
+  · exact (exclOK_false Vw.hforced hdeps Vw.hE hrkw hx).elim
+  · exact lexAny_of_rimOK F P w sw ρ (Vw.hsw ρ hρ) (Vw.hR ρ hρ) (hvw ρ hρ) hrkw hok
+  have h1 := hpu Lu hLu
+  simp only [Bool.or_eq_true, List.any_eq_true] at h1
+  rcases h1 with (hx | ⟨ρ, hρ, hok⟩) | ht
+  · exact (exclOK_false Vu.hforced hdeps Vu.hE hrku hx).elim
+  · exact lexAny_of_rimOK F P u su ρ (Vu.hsw ρ hρ) (Vu.hR ρ hρ) (hvu ρ hρ) hrku hok
+  · exact (triOK_false Vu.hE Vv.hE Vw.hE (by simpa using hmv) (by simpa using hmw)
+      hrku hrkv hrkw ht).elim
+
+/-! ### Edge views -/
+
+/-- An edge view `x (P i) - x (P j)` is its own decomposition. -/
+theorem decOK_edge {n p : ℕ} (x : Fin n → ℝ³) (P : Fin p → Fin n) (i j : Fin p) :
+    DecOK x P (x (P i) - x (P j)) [(i, j)] :=
+  ⟨[1], rfl, by simp, by simp⟩
+
+/-- At the edge view `x a - x b` (`x a ≠ x b`) the point `a` is strictly deeper than `b`. -/
+theorem edge_forced {n : ℕ} (x : Fin n → ℝ³) (a b : Fin n) (h : x a ≠ x b) :
+    ⟪x b, x a - x b⟫ < ⟪x a, x a - x b⟫ := by
+  have hpos : 0 < ⟪x a - x b, x a - x b⟫ :=
+    real_inner_self_pos.mpr (sub_ne_zero.mpr h)
+  rw [inner_sub_left] at hpos
+  linarith
+
+/-! ### Gram determinant for disjoint edge-on facets (input of `hR_gram`) -/
+
+/-- Two vectors with a common orthogonal-to-one test vector `a` (`⟪N1, a⟫ ≠ 0 = ⟪N2, a⟫`,
+`N2 ≠ 0`) are independent: their Gram determinant is nonzero. -/
+theorem gram_ne_of {N1 N2 a : ℝ³} (h1 : ⟪N1, a⟫ ≠ 0) (h2 : ⟪N2, a⟫ = 0) (hN2 : N2 ≠ 0) :
+    ⟪N1, N1⟫ * ⟪N2, N2⟫ - ⟪N1, N2⟫ ^ 2 ≠ 0 := by
+  intro hG
+  set g11 := ⟪N1, N1⟫
+  set g12 := ⟪N1, N2⟫
+  set g22 := ⟪N2, N2⟫
+  have hN1 : N1 ≠ 0 := by rintro rfl; exact h1 (inner_zero_left a)
+  have h11 : 0 < g11 := real_inner_self_pos.mpr hN1
+  set v := g12 • N1 - g11 • N2 with hv
+  have hvv : ⟪v, v⟫ = g11 * (g11 * g22 - g12 ^ 2) := by
+    simp only [hv, inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right,
+      real_inner_comm N1 N2]
+    ring
+  have hv0 : v = 0 := by
+    rw [hG, mul_zero] at hvv
+    exact inner_self_eq_zero.mp hvv
+  have ha : ⟪v, a⟫ = g12 * ⟪N1, a⟫ := by
+    simp only [hv, inner_sub_left, real_inner_smul_left, h2, mul_zero, sub_zero]
+  rw [hv0, inner_zero_left] at ha
+  have g12z : g12 = 0 := (mul_eq_zero.mp ha.symm).resolve_right h1
+  have hv1 : g12 • N1 - g11 • N2 = 0 := hv0
+  rw [g12z, zero_smul, zero_sub, neg_eq_zero] at hv1
+  exact hN2 ((smul_eq_zero.mp hv1).resolve_left h11.ne')
+
+/-- `gram_ne_of` with the test vector orthogonal to the first vector. -/
+theorem gram_ne_of' {N1 N2 a : ℝ³} (h1 : ⟪N1, a⟫ = 0) (h2 : ⟪N2, a⟫ ≠ 0) (hN1 : N1 ≠ 0) :
+    ⟪N1, N1⟫ * ⟪N2, N2⟫ - ⟪N1, N2⟫ ^ 2 ≠ 0 := by
+  have := gram_ne_of h2 h1 hN1
+  rw [real_inner_comm N1 N2, mul_comm] at this
+  exact this
+
+/-- A facet normal is nonzero (a point on the facet and one off it). -/
+theorem facet_N_ne {m n : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (t : Fin m) (i j : Fin n) (hi : i ∈ S t) (hj : j ∉ S t) : F.N t ≠ 0 := by
+  intro h
+  have := F.hN t (x j) (x i)
+  rw [h, inner_zero_left, F.zero t i hi, sub_zero] at this
+  exact (F.neg t j hj).ne this
+
+end Minimality.PSVC
+
+
+/-!
+# Pencil rule PENC (PAIRLEAN3)
+
+If two views `v1`, `v2` and an edge vector `e = x i - x j` are all orthogonal to one nonzero
+vector `N` (the normal of a facet that is edge-on at both views and contains `i`, `j`), the three
+vectors are linearly dependent: `c1 v1 + c2 v2 + c3 e = 0`, `c ≠ 0`. Pairing with test vectors
+`t` (facet normals) whose signs at `v1`, `v2`, `e` are known constrains the sign pattern of `c`
+(`zeroSumOK`). When every consistent pattern has `c3 ≠ 0` and the same signs of
+`α = -c1/c3`, `β = -c2/c3` (`pencCheck`), we get `e = α v1 + β v2` with those signs
+(`pencil_of_check`). Then `0 ≤ ⟪e, e⟫ = α (z_i - z_j)(v1) + β (z_i - z_j)(v2)`, so the depth
+orders at `v1`, `v2` cannot make both terms `≤ 0` with one `< 0` (`pencKill_false`).
+
+`triple_closure_p` is `triple_closure` with the pair kills `gramBad || PENC` (`pairBad`).
+-/
+
+set_option autoImplicit false
+
+open scoped RealInnerProductSpace
+open Minimality Minimality.H21
+
+namespace Minimality.PSVC
+
+open Minimality.SVC
+
+/-! ### Linear algebra -/
+
+/-- Three vectors of `ℝ³` orthogonal to a nonzero vector are linearly dependent. -/
+theorem dep_of_perp {N v1 v2 e : ℝ³} (hN : N ≠ 0) (h1 : ⟪N, v1⟫ = 0) (h2 : ⟪N, v2⟫ = 0)
+    (h3 : ⟪N, e⟫ = 0) :
+    ∃ c1 c2 c3 : ℝ, (c1 ≠ 0 ∨ c2 ≠ 0 ∨ c3 ≠ 0) ∧ c1 • v1 + c2 • v2 + c3 • e = 0 := by
+  have hnli : ¬ LinearIndependent ℝ ![v1, v2, e, N] := by
+    intro hli
+    have := hli.fintype_card_le_finrank
+    simp at this
+  rw [Fintype.not_linearIndependent_iff] at hnli
+  obtain ⟨g, hg, i, hi⟩ := hnli
+  rw [Fin.sum_univ_four] at hg
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+    Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons] at hg
+  have hNN : 0 < ⟪N, N⟫ := real_inner_self_pos.mpr hN
+  have g3 : g 3 = 0 := by
+    have h := congrArg (fun v => ⟪N, v⟫) hg
+    simp only [inner_add_right, real_inner_smul_right, h1, h2, h3, inner_zero_right,
+      mul_zero, zero_add] at h
+    exact (mul_eq_zero.mp h).resolve_right hNN.ne'
+  rw [g3, zero_smul, add_zero] at hg
+  refine ⟨g 0, g 1, g 2, ?_, hg⟩
+  fin_cases i
+  · exact Or.inl hi
+  · exact Or.inr (Or.inl hi)
+  · exact Or.inr (Or.inr hi)
+  · exact absurd g3 hi
+
+/-! ### Sign patterns -/
+
+/-- The signs of three reals with zero sum: all zero, or both strict signs occur. -/
+def zeroSumOK (a b c : SignType) : Bool :=
+  (a == 0 && b == 0 && c == 0) ||
+    ((a == 1 || b == 1 || c == 1) && (a == -1 || b == -1 || c == -1))
+
+theorem sign_cases (r : ℝ) :
+    (r < 0 ∧ SignType.sign r = -1) ∨ (r = 0 ∧ SignType.sign r = 0) ∨
+      (0 < r ∧ SignType.sign r = 1) := by
+  rcases lt_trichotomy r 0 with h | h | h
+  · exact Or.inl ⟨h, sign_neg h⟩
+  · exact Or.inr (Or.inl ⟨h, by rw [h, sign_zero]⟩)
+  · exact Or.inr (Or.inr ⟨h, sign_pos h⟩)
+
+theorem zeroSumOK_of {a b c : ℝ} (h : a + b + c = 0) :
+    zeroSumOK (SignType.sign a) (SignType.sign b) (SignType.sign c) = true := by
+  rcases sign_cases a with ⟨ha, sa⟩ | ⟨ha, sa⟩ | ⟨ha, sa⟩ <;>
+  rcases sign_cases b with ⟨hb, sb⟩ | ⟨hb, sb⟩ | ⟨hb, sb⟩ <;>
+  rcases sign_cases c with ⟨hc, sc⟩ | ⟨hc, sc⟩ | ⟨hc, sc⟩ <;>
+  rw [sa, sb, sc] <;> first | decide | (exfalso; linarith)
+
+/-- All 27 sign triples. -/
+def sgnL : List SignType := [-1, 0, 1]
+
+def pats3 : List (SignType × SignType × SignType) :=
+  sgnL.flatMap fun a => sgnL.flatMap fun b => sgnL.map fun c => (a, b, c)
+
+theorem mem_pats3 (k : SignType × SignType × SignType) : k ∈ pats3 := by
+  obtain ⟨a, b, c⟩ := k
+  cases a <;> cases b <;> cases c <;> decide
+
+/-- Test rows `(s1, s2, s3)` (signs of one test vector at `v1`, `v2`, `e`). Every nonzero sign
+pattern `(k1, k2, k3)` of a dependency `c1 v1 + c2 v2 + c3 e = 0` that is consistent with all
+rows has `k3 ≠ 0`, `sign (-c1/c3) = σ1` and `sign (-c2/c3) = σ2`. -/
+def pencCheck (T : List (SignType × SignType × SignType)) (σ1 σ2 : SignType) : Bool :=
+  pats3.all fun k =>
+    (k.1 == 0 && k.2.1 == 0 && k.2.2 == 0) ||
+      !(T.all fun r => zeroSumOK (k.1 * r.1) (k.2.1 * r.2.1) (k.2.2 * r.2.2)) ||
+      (k.2.2 != 0 && -(k.1 * k.2.2) == σ1 && -(k.2.1 * k.2.2) == σ2)
+
+theorem sign_inv' (c : ℝ) : SignType.sign c⁻¹ = SignType.sign c := by
+  rcases lt_trichotomy c 0 with h | h | h
+  · rw [sign_neg h, sign_neg (inv_lt_zero.mpr h)]
+  · rw [h, inv_zero]
+  · rw [sign_pos h, sign_pos (inv_pos.mpr h)]
+
+/-- **Pencil lemma.** `v1`, `v2`, `e` orthogonal to `N ≠ 0`, test vectors with known signs,
+`pencCheck` passes: `e = α v1 + β v2` with `sign α = σ1`, `sign β = σ2`. -/
+theorem pencil_of_check {N v1 v2 e : ℝ³} (hN : N ≠ 0) (h1 : ⟪N, v1⟫ = 0) (h2 : ⟪N, v2⟫ = 0)
+    (h3 : ⟪N, e⟫ = 0) (T : List (SignType × SignType × SignType))
+    (hT : ∀ r ∈ T, ∃ t : ℝ³, SignType.sign ⟪t, v1⟫ = r.1 ∧ SignType.sign ⟪t, v2⟫ = r.2.1 ∧
+      SignType.sign ⟪t, e⟫ = r.2.2)
+    {σ1 σ2 : SignType} (hc : pencCheck T σ1 σ2 = true) :
+    ∃ α β : ℝ, e = α • v1 + β • v2 ∧ SignType.sign α = σ1 ∧ SignType.sign β = σ2 := by
+  obtain ⟨c1, c2, c3, hne, hdep⟩ := dep_of_perp hN h1 h2 h3
+  have hrows : (T.all fun r => zeroSumOK (SignType.sign c1 * r.1) (SignType.sign c2 * r.2.1)
+      (SignType.sign c3 * r.2.2)) = true := by
+    rw [List.all_eq_true]
+    intro r hr
+    obtain ⟨t, s1, s2, s3⟩ := hT r hr
+    have hz : c1 * ⟪t, v1⟫ + c2 * ⟪t, v2⟫ + c3 * ⟪t, e⟫ = 0 := by
+      have h := congrArg (fun v => ⟪t, v⟫) hdep
+      simpa only [inner_add_right, real_inner_smul_right, inner_zero_right] using h
+    have := zeroSumOK_of hz
+    rwa [sign_mul, sign_mul, sign_mul, s1, s2, s3] at this
+  simp only [pencCheck, List.all_eq_true] at hc
+  have hk := hc _ (mem_pats3 (SignType.sign c1, SignType.sign c2, SignType.sign c3))
+  simp only [hrows, Bool.not_true, Bool.or_false, Bool.or_eq_true, Bool.and_eq_true,
+    beq_iff_eq, bne_iff_ne, ne_eq] at hk
+  rcases hk with ⟨⟨z1, z2⟩, z3⟩ | ⟨⟨k3, hα⟩, hβ⟩
+  · exfalso
+    rw [sign_eq_zero_iff] at z1 z2 z3
+    rcases hne with h | h | h <;> contradiction
+  · have c3ne : c3 ≠ 0 := fun h => k3 (by rw [h, sign_zero])
+    refine ⟨-c1 / c3, -c2 / c3, ?_, ?_, ?_⟩
+    · have he : e = c3⁻¹ • (c3 • e) := by rw [smul_smul, inv_mul_cancel₀ c3ne, one_smul]
+      have h' : c3 • e = -(c1 • v1 + c2 • v2) := by
+        rw [eq_neg_iff_add_eq_zero, add_comm]; exact hdep
+      rw [he, h']
+      module
+    · rw [div_eq_mul_inv, sign_mul, sign_inv', Left.sign_neg, ← hα, neg_mul]
+    · rw [div_eq_mul_inv, sign_mul, sign_inv', Left.sign_neg, ← hβ, neg_mul]
+
+/-! ### The rule on depth orders -/
+
+/-- A pencil rule: `x (P i) - x (P j) = α v1 + β v2`, `sign α = s1`, `sign β = s2`. -/
+structure Penc (p : ℕ) where
+  i : Fin p
+  j : Fin p
+  s1 : SignType
+  s2 : SignType
+deriving DecidableEq
+
+def PencOK {n p : ℕ} (x : Fin n → ℝ³) (P : Fin p → Fin n) (v1 v2 : ℝ³) (r : Penc p) : Prop :=
+  ∃ α β : ℝ, x (P r.i) - x (P r.j) = α • v1 + β • v2 ∧ SignType.sign α = r.s1 ∧
+    SignType.sign β = r.s2
+
+/-- The term `α (z_i - z_j)` is strictly negative at the order `L` (`sign α = s`). -/
+def negT {p : ℕ} (s : SignType) (L : List (Fin p)) (i j : Fin p) : Bool :=
+  (s == 1 && Nat.blt (rk L i) (rk L j)) || (s == -1 && Nat.blt (rk L j) (rk L i))
+
+/-- PENC kill: both terms `≤ 0`, one `< 0`. -/
+def pencKill {p : ℕ} (r : Penc p) (L1 L2 : List (Fin p)) : Bool :=
+  (negT r.s1 L1 r.i r.j || r.s1 == 0) && (negT r.s2 L2 r.i r.j || r.s2 == 0) &&
+    (negT r.s1 L1 r.i r.j || negT r.s2 L2 r.i r.j)
+
+theorem negT_sound {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {v : ℝ³} {L : List (Fin p)}
+    (hrk : ∀ i j, rk L i < rk L j → ⟪x (P i), v⟫ < ⟪x (P j), v⟫) {i j : Fin p} {α : ℝ}
+    (h : negT (SignType.sign α) L i j = true) : α * (⟪x (P i), v⟫ - ⟪x (P j), v⟫) < 0 := by
+  simp only [negT, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, Nat.blt_eq] at h
+  rcases h with ⟨hs, hl⟩ | ⟨hs, hl⟩
+  · exact mul_neg_of_pos_of_neg (sign_eq_one_iff.mp hs) (sub_neg.mpr (hrk _ _ hl))
+  · exact mul_neg_of_neg_of_pos (sign_eq_neg_one_iff.mp hs) (sub_pos.mpr (hrk _ _ hl))
+
+theorem term_le {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {v : ℝ³} {L : List (Fin p)}
+    (hrk : ∀ i j, rk L i < rk L j → ⟪x (P i), v⟫ < ⟪x (P j), v⟫) {i j : Fin p} {α : ℝ}
+    (h : (negT (SignType.sign α) L i j || SignType.sign α == 0) = true) :
+    α * (⟪x (P i), v⟫ - ⟪x (P j), v⟫) ≤ 0 := by
+  rcases Bool.or_eq_true _ _ ▸ h with h | h
+  · exact (negT_sound hrk h).le
+  · rw [beq_iff_eq, sign_eq_zero_iff] at h
+    rw [h, zero_mul]
+
+theorem pencKill_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {v1 v2 : ℝ³}
+    {r : Penc p} (hr : PencOK x P v1 v2 r) {L1 L2 : List (Fin p)}
+    (hrk1 : ∀ i j, rk L1 i < rk L1 j → ⟪x (P i), v1⟫ < ⟪x (P j), v1⟫)
+    (hrk2 : ∀ i j, rk L2 i < rk L2 j → ⟪x (P i), v2⟫ < ⟪x (P j), v2⟫)
+    (h : pencKill r L1 L2 = true) : False := by
+  obtain ⟨α, β, he, sα, sβ⟩ := hr
+  have hee : ⟪x (P r.i) - x (P r.j), x (P r.i) - x (P r.j)⟫ =
+      α * (⟪x (P r.i), v1⟫ - ⟪x (P r.j), v1⟫) + β * (⟪x (P r.i), v2⟫ - ⟪x (P r.j), v2⟫) := by
+    calc _ = ⟪x (P r.i) - x (P r.j), α • v1 + β • v2⟫ := by rw [← he]
+      _ = _ := by
+        rw [inner_add_right, real_inner_smul_right, real_inner_smul_right, inner_sub_left,
+          inner_sub_left]
+  have h0 := real_inner_self_nonneg (x := x (P r.i) - x (P r.j))
+  simp only [pencKill, Bool.and_eq_true] at h
+  obtain ⟨⟨ha, hb⟩, hab⟩ := h
+  rw [← sα] at ha hab
+  rw [← sβ] at hb hab
+  have t1 := term_le hrk1 ha
+  have t2 := term_le hrk2 hb
+  rcases Bool.or_eq_true _ _ ▸ hab with h | h
+  · have := negT_sound hrk1 h; linarith
+  · have := negT_sound hrk2 h; linarith
+
+/-! ### Facet form of the pencil check -/
+
+/-- Sign of `⟪N t, x a - x b⟫` read from incidence (meaningful when `a ∈ S t ∨ b ∈ S t`). -/
+def esgn {m n : ℕ} (S : Fin m → Finset (Fin n)) (a b : Fin n) (t : Fin m) : SignType :=
+  if a ∈ S t then (if b ∈ S t then 0 else 1) else (if b ∈ S t then -1 else 0)
+
+theorem esgn_sound {m n : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (a b : Fin n) (t : Fin m) (h : a ∈ S t ∨ b ∈ S t) :
+    SignType.sign ⟪F.N t, x a - x b⟫ = esgn S a b t := by
+  rw [F.inner_sub]
+  unfold esgn
+  by_cases ha : a ∈ S t <;> by_cases hb : b ∈ S t <;> simp only [ha, hb, ite_true, ite_false]
+  · rw [F.zero t a ha, F.zero t b hb, sub_self, sign_zero]
+  · rw [F.zero t a ha, zero_sub]; exact sign_pos (neg_pos.mpr (F.neg t b hb))
+  · rw [F.zero t b hb, sub_zero]; exact sign_neg (F.neg t a ha)
+  · exact absurd h (by tauto)
+
+/-- The pencil check for the edge `P r.i, P r.j` of facet `a` (edge-on at both views, facings
+`s1`, `s2`), test facets `T` (each containing `P r.i` or `P r.j`). -/
+def pencCheckF {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n)
+    (s1 s2 : Fin m → SignType) (a : Fin m) (T : List (Fin m)) (r : Penc p) : Bool :=
+  decide (P r.i ∈ S a) && decide (P r.j ∈ S a) && s1 a == 0 && s2 a == 0 &&
+    T.all (fun t => decide (P r.i ∈ S t) || decide (P r.j ∈ S t)) &&
+    pencCheck (T.map fun t => (s1 t, s2 t, esgn S (P r.i) (P r.j) t)) r.s1 r.s2
+
+theorem pencOK_of_checkF {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (v1 v2 : ℝ³) (s1 s2 : Fin m → SignType)
+    (a : Fin m) (T : List (Fin m)) (r : Penc p) (y : Fin n) (hy : y ∉ S a)
+    (hs1 : ∀ t ∈ a :: T, SignType.sign ⟪F.N t, v1⟫ = s1 t)
+    (hs2 : ∀ t ∈ a :: T, SignType.sign ⟪F.N t, v2⟫ = s2 t)
+    (hc : pencCheckF S P s1 s2 a T r = true) : PencOK x P v1 v2 r := by
+  simp only [pencCheckF, Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq,
+    List.all_eq_true, Bool.or_eq_true] at hc
+  obtain ⟨⟨⟨⟨⟨hi, hj⟩, z1⟩, z2⟩, hT⟩, hc⟩ := hc
+  have hN : F.N a ≠ 0 := facet_N_ne F a (P r.i) y hi hy
+  have e1 : ⟪F.N a, v1⟫ = 0 := sign_eq_zero_iff.mp ((hs1 a (by simp)).trans z1)
+  have e2 : ⟪F.N a, v2⟫ = 0 := sign_eq_zero_iff.mp ((hs2 a (by simp)).trans z2)
+  have e3 : ⟪F.N a, x (P r.i) - x (P r.j)⟫ = 0 := by
+    rw [F.inner_sub, F.zero a _ hi, F.zero a _ hj, sub_self]
+  refine pencil_of_check hN e1 e2 e3 _ ?_ hc
+  intro q hq
+  obtain ⟨t, ht, rfl⟩ := List.mem_map.mp hq
+  have htT : t ∈ a :: T := List.mem_cons_of_mem a ht
+  refine ⟨F.N t, hs1 t htT, hs2 t htT, ?_⟩
+  rcases hT t ht with h | h
+  · exact esgn_sound F _ _ t (Or.inl h)
+  · exact esgn_sound F _ _ t (Or.inr h)
+
+/-! ### Triple closure with PENC -/
+
+/-- Pair kill: GRAM or a pencil rule. -/
+def pairBad {p : ℕ} (E1 E2 : List (List (Fin p × Fin p))) (R : List (Penc p))
+    (L1 L2 : List (Fin p)) : Bool :=
+  gramBad E1 E2 L1 L2 || R.any fun r => pencKill r L1 L2
+
+theorem pairBad_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {w1 w2 : ℝ³}
+    {E1 E2 : List (List (Fin p × Fin p))} (hE1 : ∀ d ∈ E1, DecOK x P w1 d)
+    (hE2 : ∀ d ∈ E2, DecOK x P w2 d) {R : List (Penc p)} (hR : ∀ r ∈ R, PencOK x P w1 w2 r)
+    {L1 L2 : List (Fin p)}
+    (hrk1 : ∀ i j, rk L1 i < rk L1 j → ⟪x (P i), w1⟫ < ⟪x (P j), w1⟫)
+    (hrk2 : ∀ i j, rk L2 i < rk L2 j → ⟪x (P i), w2⟫ < ⟪x (P j), w2⟫)
+    (h : pairBad E1 E2 R L1 L2 = true) : False := by
+  simp only [pairBad, Bool.or_eq_true, List.any_eq_true] at h
+  rcases h with h | ⟨r, hr, hk⟩
+  · exact gramBad_false hE1 hE2 hrk1 hrk2 h
+  · exact pencKill_false (hR r hr) hrk1 hrk2 hk
+
+/-- `triOK` with `pairBad` (GRAM or PENC) for the three pairs. -/
+def triOKp {p : ℕ} (Eu Ev Ew : List (List (Fin p × Fin p))) (Ruv Ruw Rvw : List (Penc p))
+    (Bv Bw : List (List (Fin p))) (L : List (Fin p)) : Bool :=
+  Bv.all (pairBad Eu Ev Ruv L) || Bw.all (pairBad Eu Ew Ruw L) ||
+    Bv.all fun b => pairBad Eu Ev Ruv L b || Bw.all fun c =>
+      pairBad Eu Ew Ruw L c || pairBad Ev Ew Rvw b c
+
+/-- `checkT` with `triOKp`. -/
+def checkTp {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n) (sw : Fin m → SignType)
+    (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (Eu Ev Ew : List (List (Fin p × Fin p))) (Ruv Ruw Rvw : List (Penc p)) (R : List (Rim m p))
+    (Bv Bw : List (List (Fin p))) : Bool :=
+  R.all (rimValid S P sw) &&
+    (List.finRange p).permutations'.all fun L =>
+      exclOK forced deps Eu L || R.any (fun ρ => rimOK ρ L) || triOKp Eu Ev Ew Ruv Ruw Rvw Bv Bw L
+
+theorem triOKp_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {u v w : ℝ³}
+    {Eu Ev Ew : List (List (Fin p × Fin p))} (hEu : ∀ d ∈ Eu, DecOK x P u d)
+    (hEv : ∀ d ∈ Ev, DecOK x P v d) (hEw : ∀ d ∈ Ew, DecOK x P w d)
+    {Ruv Ruw Rvw : List (Penc p)} (hRuv : ∀ r ∈ Ruv, PencOK x P u v r)
+    (hRuw : ∀ r ∈ Ruw, PencOK x P u w r) (hRvw : ∀ r ∈ Rvw, PencOK x P v w r)
+    {Bv Bw : List (List (Fin p))} {Lu Lv Lw : List (Fin p)} (hv : Lv ∈ Bv) (hw : Lw ∈ Bw)
+    (hrku : ∀ i j, rk Lu i < rk Lu j → ⟪x (P i), u⟫ < ⟪x (P j), u⟫)
+    (hrkv : ∀ i j, rk Lv i < rk Lv j → ⟪x (P i), v⟫ < ⟪x (P j), v⟫)
+    (hrkw : ∀ i j, rk Lw i < rk Lw j → ⟪x (P i), w⟫ < ⟪x (P j), w⟫)
+    (h : triOKp Eu Ev Ew Ruv Ruw Rvw Bv Bw Lu = true) : False := by
+  simp only [triOKp, Bool.or_eq_true, List.all_eq_true] at h
+  rcases h with (h | h) | h
+  · exact pairBad_false hEu hEv hRuv hrku hrkv (h Lv hv)
+  · exact pairBad_false hEu hEw hRuw hrku hrkw (h Lw hw)
+  · rcases h Lv hv with h1 | h1
+    · exact pairBad_false hEu hEv hRuv hrku hrkv h1
+    · rcases h1 Lw hw with h2 | h2
+      · exact pairBad_false hEu hEw hRuw hrku hrkw h2
+      · exact pairBad_false hEv hEw hRvw hrkv hrkw h2
+
+/-- **Triple closure with PENC.** As `triple_closure`, with pencil rules `Ruv`, `Ruw`, `Rvw`
+(each `PencOK` for its pair of views) added to the GRAM pair kills of `checkTp`. -/
+theorem triple_closure_p {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (u v w : ℝ³) (su sv sw : Fin m → SignType)
+    (Ru Rv Rw : List (Rim m p)) (fu fv fw : List (Fin p × Fin p))
+    (Eu Ev Ew : List (List (Fin p × Fin p)))
+    (Vu : ViewData F P u su Ru fu Eu) (Vv : ViewData F P v sv Rv fv Ev)
+    (Vw : ViewData F P w sw Rw fw Ew)
+    (deps : List (Fin p → SignType))
+    (hdeps : ∀ s ∈ deps, ∃ mu : Fin p → ℝ, ∑ i, mu i = 0 ∧ ∑ i, mu i • x (P i) = 0 ∧
+      ∀ i, SignType.sign (mu i) = s i)
+    (Ruv Ruw Rvw : List (Penc p)) (hRuv : ∀ r ∈ Ruv, PencOK x P u v r)
+    (hRuw : ∀ r ∈ Ruw, PencOK x P u w r) (hRvw : ∀ r ∈ Rvw, PencOK x P v w r)
+    (Bv Bw : List (List (Fin p)))
+    (hcu : checkTp S P su fu deps Eu Ev Ew Ruv Ruw Rvw Ru Bv Bw = true)
+    (hcv : check2 S P sv fv deps Ev Rv Bv = true)
+    (hcw : check2 S P sw fw deps Ew Rw Bw = true) : Minimality.Gen.LexAny F := by
+  classical
+  obtain ⟨Lu, hLu, hrku⟩ := Vu.order
+  obtain ⟨Lv, hLv, hrkv⟩ := Vv.order
+  obtain ⟨Lw, hLw, hrkw⟩ := Vw.order
+  simp only [checkTp, check2, Bool.and_eq_true, List.all_eq_true] at hcu hcv hcw
+  obtain ⟨hvu, hpu⟩ := hcu
+  obtain ⟨hvv, hpv⟩ := hcv
+  obtain ⟨hvw, hpw⟩ := hcw
+  have h2 := hpv Lv hLv
+  simp only [Bool.or_eq_true, List.any_eq_true] at h2
+  rcases h2 with (hx | ⟨ρ, hρ, hok⟩) | hmv
+  · exact (exclOK_false Vv.hforced hdeps Vv.hE hrkv hx).elim
+  · exact lexAny_of_rimOK F P v sv ρ (Vv.hsw ρ hρ) (Vv.hR ρ hρ) (hvv ρ hρ) hrkv hok
+  have h3 := hpw Lw hLw
+  simp only [Bool.or_eq_true, List.any_eq_true] at h3
+  rcases h3 with (hx | ⟨ρ, hρ, hok⟩) | hmw
+  · exact (exclOK_false Vw.hforced hdeps Vw.hE hrkw hx).elim
+  · exact lexAny_of_rimOK F P w sw ρ (Vw.hsw ρ hρ) (Vw.hR ρ hρ) (hvw ρ hρ) hrkw hok
+  have h1 := hpu Lu hLu
+  simp only [Bool.or_eq_true, List.any_eq_true] at h1
+  rcases h1 with (hx | ⟨ρ, hρ, hok⟩) | ht
+  · exact (exclOK_false Vu.hforced hdeps Vu.hE hrku hx).elim
+  · exact lexAny_of_rimOK F P u su ρ (Vu.hsw ρ hρ) (Vu.hR ρ hρ) (hvu ρ hρ) hrku hok
+  · exact (triOKp_false Vu.hE Vv.hE Vw.hE hRuv hRuw hRvw (by simpa using hmv)
+      (by simpa using hmw) hrku hrkv hrkw ht).elim
+
+end Minimality.PSVC
