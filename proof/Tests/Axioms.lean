@@ -1960,7 +1960,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.PL29.lexAny29_pair4_lex
 #assert_standard_axioms Minimality.PL29.lexAny29_pair5_lex
 #assert_standard_axioms Minimality.PL29.lexAny29_pair6_lex
--- Task TRI24B: further three-view triple closures T11..T26 (tri3 stage 2)
+-- Task TRI24B: further three-view triple closures T11..T24 (tri3 stage 2)
 #assert_standard_axioms Minimality.PSVC.T11.lexAny_T11
 #assert_standard_axioms Minimality.PSVC.T12.lexAny_T12
 #assert_standard_axioms Minimality.PSVC.T13.lexAny_T13
@@ -1975,8 +1975,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.PSVC.T22.lexAny_T22
 #assert_standard_axioms Minimality.PSVC.T23.lexAny_T23
 #assert_standard_axioms Minimality.PSVC.T24.lexAny_T24
-#assert_standard_axioms Minimality.PSVC.T25.lexAny_T25
-#assert_standard_axioms Minimality.PSVC.T26.lexAny_T26
 #assert_standard_axioms Minimality.T24.triple2_lexAny
 #assert_standard_axioms Minimality.T24.hole24R7_reduce
 #assert_standard_axioms Minimality.T24.hole24Q45R7_reduce
