@@ -10,6 +10,16 @@ public import Minimality.Type29SubPencil
 public import Minimality.Type29Single
 public import Minimality.Type29Pair2
 public import Minimality.Type29Pair5
+public import Minimality.Type29Tri2
+public import Minimality.Type29Tri3
+public import Minimality.Type29Tri10
+public import Minimality.Type29Tri8
+public import Minimality.Type29Tri7
+public import Minimality.Type29Tri6
+public import Minimality.Type29Tri5
+public import Minimality.Type29Tri1
+public import Minimality.Type29Tri9
+public import Minimality.Type29Tri4
 
 @[expose] public section
 
@@ -610,5 +620,328 @@ theorem type29_rupert_or_hole''''' {x : Fin 7 → ℝ³} (N : NF29 x)
     (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
     IsRupert (univ.image x) ∨ Hole29R5 x N :=
   (type29_rupert_or_hole'''' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R4_reduce h))
+
+/-! ### TRI29L: triple closures (`Type29Tri*.lean`) -/
+
+/-- Triple `x 5 - x 6`, `x 0 - x 1`, `x 1 - x 2` (lines F1456xF356, F012xF015, F012xF124) (TRI29L; `PL29.lexAny_tri2`, no class fact). -/
+def Triple29_2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 0, x 5 - x 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 5 - x 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, x 5 - x 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 5 - x 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 0 - x 1⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 3, x 1 - x 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 1 - x 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, x 1 - x 2⟫ < 0 ∧
+    PL29.PlaneSide x 1 3 6 0 4 < 0 ∧
+    0 < PL29.PlaneSide x 1 3 4 0 6 ∧
+    PL29.PlaneSide x 2 4 6 0 3 < 0 ∧
+    0 < PL29.PlaneSide x 2 3 6 1 4 ∧
+    0 < PL29.PlaneSide x 1 3 6 0 5 ∧
+    PL29.PlaneSide x 2 5 6 0 3 < 0 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 5 - x 6⟫ ≠ ⟪x j, x 5 - x 6⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 2⟫ ≠ ⟪x j, x 1 - x 2⟫
+
+/-- Triple `w1`, `x 0 - x 1`, `x 5 - x 6` (lines F124xF346, F012xF015, F1456xF356) (TRI29L; `PL29.lexAny_tri3`, no class fact). -/
+def Triple29_3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 4 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 4 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 4 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 4 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 4 7⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 4 7⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 0 - x 1⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, x 5 - x 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 5 - x 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, x 5 - x 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 5 - x 6⟫ < 0 ∧
+    0 < PL29.PlaneSide x 2 3 6 1 5 ∧
+    0 < PL29.PlaneSide x 2 3 5 1 6 ∧
+    PL29.PlaneSide x 2 5 6 0 4 < 0 ∧
+    0 < PL29.PlaneSide x 2 4 6 0 5 ∧
+    PL29.PlaneSide x 2 4 5 0 6 < 0 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 4 7⟫ ≠ ⟪x j, PL29.lv29 N 4 7⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 5 - x 6⟫ ≠ ⟪x j, x 5 - x 6⟫
+
+/-- Triple `w1`, `x 0 - x 1`, `w3` (lines F1456xF234, F012xF015, F035xF234) (TRI29L; `PL29.lexAny_tri10`, no class fact). -/
+def Triple29_10Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 5 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 5 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 5 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 5 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 5 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 5 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 5 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, x 0 - x 1⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 3 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 3 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 3 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 3 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 3 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 3 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 3 6⟫ < 0 ∧
+    PL29.PlaneSide x 1 3 6 0 4 < 0 ∧
+    PL29.PlaneSide x 1 3 4 0 6 < 0 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 5 6⟫ ≠ ⟪x j, PL29.lv29 N 5 6⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 3 6⟫ ≠ ⟪x j, PL29.lv29 N 3 6⟫
+
+/-- Triple `w1`, `w2`, `x 1 - x 2` (lines F023xF124, F012xF035, F012xF124) (TRI29L; `PL29.lexAny_tri8`, no class fact). -/
+def Triple29_8Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 2 4⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 2 4⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 2 4⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 2 4⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 2 4⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 2 4⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 2 4⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 0 3⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 0 3⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 0 3⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 0 3⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 0 3⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 0 3⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 0 3⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, x 1 - x 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 1 - x 2⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 1 - x 2⟫ ∧
+    PL29.PlaneSide x 1 3 6 0 5 < 0 ∧
+    0 < PL29.PlaneSide x 2 3 6 1 5 ∧
+    PL29.PlaneSide x 2 3 5 1 6 < 0 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 2 4⟫ ≠ ⟪x j, PL29.lv29 N 2 4⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 0 3⟫ ≠ ⟪x j, PL29.lv29 N 0 3⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 2⟫ ≠ ⟪x j, x 1 - x 2⟫
+
+/-- Triple `w1`, `x 0 - x 1`, `w3` (lines F012xF346, F012xF015, F1456xF234) (TRI29L; `PL29.lexAny_tri7`, no class fact). -/
+def Triple29_7Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 0 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 0 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 0 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 0 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 0 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 0 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 0 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 0 - x 1⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 5 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 5 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 5 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 5 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 5 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 5 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 5 6⟫ ∧
+    PL29.PlaneSide x 1 3 6 0 4 < 0 ∧
+    0 < PL29.PlaneSide x 1 3 4 0 6 ∧
+    0 < PL29.PlaneSide x 1 3 6 0 5 ∧
+    PL29.PlaneSide x 2 5 6 0 3 < 0 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 0 7⟫ ≠ ⟪x j, PL29.lv29 N 0 7⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 5 6⟫ ≠ ⟪x j, PL29.lv29 N 5 6⟫
+
+/-- Triple `w1`, `x 0 - x 1`, `x 5 - x 6` (lines F124xF346, F012xF015, F1456xF356) (TRI29L; `PL29.lexAny_tri6`, no class fact). -/
+def Triple29_6Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 4 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 4 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 4 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 4 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 4 7⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 4 7⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 0 - x 1⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, x 5 - x 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 5 - x 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, x 5 - x 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 5 - x 6⟫ < 0 ∧
+    PL29.PlaneSide x 2 4 6 0 3 < 0 ∧
+    0 < PL29.PlaneSide x 2 3 6 1 4 ∧
+    PL29.PlaneSide x 2 5 6 0 4 < 0 ∧
+    0 < PL29.PlaneSide x 2 4 6 0 5 ∧
+    PL29.PlaneSide x 2 4 5 0 6 < 0 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 4 7⟫ ≠ ⟪x j, PL29.lv29 N 4 7⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 5 - x 6⟫ ≠ ⟪x j, x 5 - x 6⟫
+
+/-- Triple `w1`, `w2`, `w3` (lines F012xF1456, F012xF346, F035xF234) (TRI29L; `PL29.lexAny_tri5`, no class fact). -/
+def Triple29_5Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 0 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 0 5⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 0 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 0 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 0 5⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 0 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 0 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 0 7⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 0 7⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 0 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 0 7⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 0 7⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 0 7⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 3 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 3 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 3 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 3 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 3 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 3 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 3 6⟫ < 0 ∧
+    0 < PL29.PlaneSide x 2 3 6 1 4 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 0 5⟫ ≠ ⟪x j, PL29.lv29 N 0 5⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 0 7⟫ ≠ ⟪x j, PL29.lv29 N 0 7⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 3 6⟫ ≠ ⟪x j, PL29.lv29 N 3 6⟫
+
+/-- Triple `w1`, `x 0 - x 1`, `w3` (lines F015xF023, F012xF015, F012xF234) (TRI29L; `PL29.lexAny_tri1`, no class fact). -/
+def Triple29_1Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 1 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 1 2⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 1 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 1 2⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 1 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 1 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 1 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 0 - x 1⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 0 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 0 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 0 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 0 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 0 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 0 6⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 0 6⟫ < 0 ∧
+    PL29.PlaneSide x 1 3 6 0 4 < 0 ∧
+    0 < PL29.PlaneSide x 1 3 4 0 6 ∧
+    0 < PL29.PlaneSide x 2 3 6 1 4 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 1 2⟫ ≠ ⟪x j, PL29.lv29 N 1 2⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 0 6⟫ ≠ ⟪x j, PL29.lv29 N 0 6⟫
+
+/-- Triple `w1`, `x 1 - x 2`, `x 3 - x 5` (lines F012xF1456, F012xF124, F035xF356) (TRI29L; `PL29.lexAny_tri9`, no class fact). -/
+def Triple29_9Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 0 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, PL29.lv29 N 0 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 0 5⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 0 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 0 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 0 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 0 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 3, x 1 - x 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 1 - x 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, x 1 - x 2⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 0, x 3 - x 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, x 3 - x 5⟫ ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 0 5⟫ ≠ ⟪x j, PL29.lv29 N 0 5⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 2⟫ ≠ ⟪x j, x 1 - x 2⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 3 - x 5⟫ ≠ ⟪x j, x 3 - x 5⟫
+
+/-- Triple `w1`, `x 0 - x 1`, `x 3 - x 4` (lines F015xF023, F012xF015, F234xF346) (TRI29L; `PL29.lexAny_tri4`, no class fact). -/
+def Triple29_4Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 1 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 1 2⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 1 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 1 2⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 1 2⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 1 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 1 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 0 - x 1⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 0, x 3 - x 4⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 1, x 3 - x 4⟫ < 0 ∧
+    0 < PL29.PlaneSide x 1 3 6 0 5 ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 1 2⟫ ≠ ⟪x j, PL29.lv29 N 1 2⟫) ∧
+    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫) ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 3 - x 4⟫ ≠ ⟪x j, x 3 - x 4⟫
+
+/-- Union of the TRI29L triple-closure instances. -/
+def Tri29Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  Triple29_2Hyp x N ∨
+    Triple29_3Hyp x N ∨
+    Triple29_10Hyp x N ∨
+    Triple29_8Hyp x N ∨
+    Triple29_7Hyp x N ∨
+    Triple29_6Hyp x N ∨
+    Triple29_5Hyp x N ∨
+    Triple29_1Hyp x N ∨
+    Triple29_9Hyp x N ∨
+    Triple29_4Hyp x N
+
+/-- Shrunken Type-29 open hole proposition, excluding the TRI29L triple-closure instances. -/
+def Hole29R6 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  Hole29R5 x N ∧ ¬ Tri29Hyp x N
+
+/-- Every point of `Hole29R6` lies in `Hole29`. -/
+theorem hole29_of_hole29R6 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R6 x N) : Hole29 x N :=
+  hole29_of_hole29R5 h.1
+
+/-- **Reduction of `Hole29R5` to `Hole29R6`**: the TRI29L instances (`PL29.lexAny29_tri*`) against
+`¬ LexAny29`. -/
+theorem hole29R5_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R5 x N) : Hole29R6 x N := by
+  have hnl := (hole29_of_hole29R5 h).2.2.2.2.2.1
+  refine ⟨h, ?_⟩
+  rintro (⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16⟩)
+  · exact hnl (PL29.lexAny29_tri2 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19)
+  · exact hnl (PL29.lexAny29_tri3 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21)
+  · exact hnl (PL29.lexAny29_tri10 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22)
+  · exact hnl (PL29.lexAny29_tri8 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23)
+  · exact hnl (PL29.lexAny29_tri7 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24)
+  · exact hnl (PL29.lexAny29_tri6 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21)
+  · exact hnl (PL29.lexAny29_tri5 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24)
+  · exact hnl (PL29.lexAny29_tri1 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23)
+  · exact hnl (PL29.lexAny29_tri9 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15)
+  · exact hnl (PL29.lexAny29_tri4 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16)
+
+/-- Main Type-29 reduction leaving `Hole29R6`. -/
+theorem type29_rupert_or_hole'''''' {x : Fin 7 → ℝ³} (N : NF29 x)
+    (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
+    IsRupert (univ.image x) ∨ Hole29R6 x N :=
+  (type29_rupert_or_hole''''' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R5_reduce h))
 
 end Minimality.H29
