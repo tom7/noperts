@@ -11,6 +11,7 @@ public import Minimality.Type24BUstar2
 public import Minimality.Type24W63Radon
 public import Minimality.Type24C3One
 public import Minimality.Type24E23
+public import Minimality.Type24W63Ties
 
 @[expose] public section
 
@@ -335,21 +336,19 @@ theorem hole24R_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hR : Hole
         exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
           (close_wallA5_a4lt (Sym.sym24 F) hR' hO' hw.1 hw.2.1))))))))))))
 
-/-- Further shrunken residual of `Hole24R1` removing generic `{1 < oblX6 x 3, 0 < mustar x}` points
-via `A20.w63_closes_mustar_pos`. -/
+/-- Further shrunken residual of `Hole24R1` removing `{1 < oblX6 x 3, 0 < mustar x}` off the
+`w63`-failure star locus `W63Star x`, via `A20.w63_closes_star`. -/
 def Hole24R2 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24R1 x F ∧
-    ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x ∧
-      ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
-        i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫)
+    ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x ∧ ¬ A20.W63Star x)
 
 /-- Every point of `Hole24R1` reduces to `Hole24R2`. -/
 theorem hole24R1_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     (h : Hole24R1 x F) : Hole24R2 x F := by
   refine ⟨h, ?_⟩
-  rintro ⟨hc3, hmu, hgen⟩
+  rintro ⟨hc3, hmu, hnot⟩
   have hR := hole24R_of_hole24R1 h
-  exact hR.2.2.2.2.1 (A20.w63_closes_mustar_pos F hc3 hmu hgen)
+  exact hR.2.2.2.2.1 (A20.w63_closes_star F hc3 hmu hnot)
 
 /-- Further shrunken residual of `Hole24R2` removing the `{c3 = 1}` stratum off the depth ties on
 `{0,1,2,3,4,6}` at `w63`, via `A20.c3eq1_closed` (no sample facts since C3FACTS). -/
@@ -368,22 +367,19 @@ theorem hole24R2_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   have hR := hole24R_of_hole24R1 h.1
   exact hR.2.2.2.2.1 (A20.c3eq1_closed F hR.1 hc3 hgen)
 
-/-- Further shrunken residual of `Hole24R3` removing generic `{1 < oblX2 x 3, 0 < mu23 x}` points
-via `A20.e23_closes_mu23_pos`. -/
+/-- Further shrunken residual of `Hole24R3` removing `{1 < oblX2 x 3, 0 < mu23 x}` off the
+`E23`-failure star locus `E23Star x`, via `A20.e23_closes_star`. -/
 def Hole24R4 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24R3 x F ∧
-    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x ∧
-      ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
-        ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
-        i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫)
+    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x ∧ ¬ A20.E23Star x)
 
 /-- Every point of `Hole24R3` reduces to `Hole24R4`. -/
 theorem hole24R3_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     (h : Hole24R3 x F) : Hole24R4 x F := by
   refine ⟨h, ?_⟩
-  rintro ⟨hb3, hmu, hgen⟩
+  rintro ⟨hb3, hmu, hnot⟩
   have hR := hole24R_of_hole24R1 h.1.1
-  exact hR.2.2.2.2.1 (A20.e23_closes_mu23_pos F hb3 hmu hgen)
+  exact hR.2.2.2.2.1 (A20.e23_closes_star F hb3 hmu hnot)
 
 /-- Further shrunken residual of `Hole24R4` removing generic wall points
 `{1 < oblX6 x 3, mustar x = 0}` via `A20.w63_closes_wall` and
@@ -411,19 +407,15 @@ theorem hole24R4_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     exact hR.2.2.2.2.1 (A20.e23_closes_wall F hb3 hmu hgen)
 
 /-- Shrunken `Q45` residual removing the same five A20/DI loci as `Hole24R2..R5`:
-`w63` (`1 < c3, 0 < mu*`), `c3 = 1`, `E23` (`1 < b3, 0 < mu23`), and the two walls
+`w63` off `W63Star`, `c3 = 1`, `E23` off `E23Star`, and the two walls
 (`1 < c3, mu* = 0` and `1 < b3, mu23 = 0`). -/
 def Hole24Q45R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Q45Special x F ∧
-    ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x ∧
-      ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
-        i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) ∧
+    ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x ∧ ¬ A20.W63Star x) ∧
     ¬ (oblX6 x 3 = 1 ∧
       ∀ i ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 6} : Finset (Fin 7)),
         i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) ∧
-    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x ∧
-      ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
-        i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫) ∧
+    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x ∧ ¬ A20.E23Star x) ∧
     ¬ (1 < oblX6 x 3 ∧ A20.mustar x = 0 ∧
       ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
         i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫) ∧
@@ -435,12 +427,12 @@ def Hole24Q45R (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
 theorem hole24Q45_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     (hQ : Hole24Q45Special x F) : Hole24Q45R x F := by
   refine ⟨hQ, ?_, ?_, ?_, ?_, ?_⟩
-  · rintro ⟨hc3, hmu, hgen⟩
-    exact hQ.2.2.2.2.2.1 (A20.w63_closes_mustar_pos F hc3 hmu hgen)
+  · rintro ⟨hc3, hmu, hnot⟩
+    exact hQ.2.2.2.2.2.1 (A20.w63_closes_star F hc3 hmu hnot)
   · rintro ⟨hc3, hgen⟩
     exact hQ.2.2.2.2.2.1 (A20.c3eq1_closed F hQ.1 hc3 hgen)
-  · rintro ⟨hb3, hmu, hgen⟩
-    exact hQ.2.2.2.2.2.1 (A20.e23_closes_mu23_pos F hb3 hmu hgen)
+  · rintro ⟨hb3, hmu, hnot⟩
+    exact hQ.2.2.2.2.2.1 (A20.e23_closes_star F hb3 hmu hnot)
   · rintro ⟨hc3, hmu, hgen⟩
     exact hQ.2.2.2.2.2.1 (A20.w63_closes_wall F hc3 hmu hgen)
   · rintro ⟨hb3, hmu, hgen⟩
@@ -453,7 +445,8 @@ def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0x
 
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be ≤ 1, al ≤ 1}` (where `al, be` are the
 `par2546_quad` coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`),
-any point of `Hole24 x fs (mkFac24 fs hh)` lies in the `w63` or `E23` tie locus on `{0, 2, 3, 4, 5, 6}`. -/
+any point of `Hole24 x fs (mkFac24 fs hh)` lies in the `W63Star` / `E23Star` star loci or the
+wall `{mustar = 0}` / `{mu23 = 0}` tie loci on `{0, 2, 3, 4, 5, 6}`. -/
 theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hH : Hole24 x fs (mkFac24 fs hh))
@@ -461,44 +454,49 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
     {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
     (hbe : be ≤ 1) (hal : al ≤ 1) :
-    (∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
-    (∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
+    A20.W63Star x ∨ A20.E23Star x ∨
+    (A20.mustar x = 0 ∧ ∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
+    (A20.mu23 x = 0 ∧ ∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
   rcases hH with ⟨hflags, hQ | hR5⟩
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
-    · left
-      by_contra hno
-      push Not at hno
-      rcases eq_or_lt_of_le hmu with hzero | hpos
-      · exact hQ.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
-      · exact hQ.2.1 ⟨hc3, hpos, fun i hi j hj hij =>
-          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
-    · right
-      by_contra hno
-      push Not at hno
-      rcases eq_or_lt_of_le hmu23 with hzero | hpos
-      · exact hQ.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
-      · exact hQ.2.2.2.1 ⟨hb3, hpos, fun i hi j hj hij =>
-          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
+    · rcases eq_or_lt_of_le hmu with hzero | hpos
+      · right; right; left
+        refine ⟨hzero.symm, ?_⟩
+        by_contra hno; push Not at hno
+        exact hQ.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
+      · left
+        by_contra hno
+        exact hQ.2.1 ⟨hc3, hpos, hno⟩
+    · rcases eq_or_lt_of_le hmu23 with hzero | hpos
+      · right; right; right
+        refine ⟨hzero.symm, ?_⟩
+        by_contra hno; push Not at hno
+        exact hQ.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
+      · right; left
+        by_contra hno
+        exact hQ.2.2.2.1 ⟨hb3, hpos, hno⟩
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
-    · left
-      by_contra hno
-      push Not at hno
-      rcases eq_or_lt_of_le hmu with hzero | hpos
-      · exact hR5.2.1 ⟨hc3, hzero.symm, hno⟩
-      · exact hR5.1.1.1.2 ⟨hc3, hpos, fun i hi j hj hij =>
-          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
-    · right
-      by_contra hno
-      push Not at hno
-      rcases eq_or_lt_of_le hmu23 with hzero | hpos
-      · exact hR5.2.2 ⟨hb3, hzero.symm, hno⟩
-      · exact hR5.1.2 ⟨hb3, hpos, fun i hi j hj hij =>
-          hno i (by fin_cases i <;> simp at hi ⊢) j (by fin_cases j <;> simp at hj ⊢) hij⟩
+    · rcases eq_or_lt_of_le hmu with hzero | hpos
+      · right; right; left
+        refine ⟨hzero.symm, ?_⟩
+        by_contra hno; push Not at hno
+        exact hR5.2.1 ⟨hc3, hzero.symm, hno⟩
+      · left
+        by_contra hno
+        exact hR5.1.1.1.2 ⟨hc3, hpos, hno⟩
+    · rcases eq_or_lt_of_le hmu23 with hzero | hpos
+      · right; right; right
+        refine ⟨hzero.symm, ?_⟩
+        by_contra hno; push Not at hno
+        exact hR5.2.2 ⟨hb3, hzero.symm, hno⟩
+      · right; left
+        by_contra hno
+        exact hR5.1.2 ⟨hb3, hpos, hno⟩
 
 /-- Strict version on `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be < 1, al < 1}`:
-any point of `Hole24 x fs (mkFac24 fs hh)` lies in the `w63` or `E23` tie locus. -/
+any point of `Hole24 x fs (mkFac24 fs hh)` lies in `W63Star x ∨ E23Star x`. -/
 theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hH : Hole24 x fs (mkFac24 fs hh))
@@ -506,29 +504,14 @@ theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
     {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
     (hbe : be < 1) (hal : al < 1) :
-    (∃ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
-      i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
-    (∃ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)), ∃ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
-      i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
+    A20.W63Star x ∨ A20.E23Star x := by
   rcases hH with ⟨hflags, hQ | hR5⟩
   · rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
-    · left
-      by_contra hno
-      push Not at hno
-      exact hQ.2.1 ⟨hc3, hmu, hno⟩
-    · right
-      by_contra hno
-      push Not at hno
-      exact hQ.2.2.2.1 ⟨hb3, hmu23, hno⟩
+    · left; by_contra hno; exact hQ.2.1 ⟨hc3, hmu, hno⟩
+    · right; by_contra hno; exact hQ.2.2.2.1 ⟨hb3, hmu23, hno⟩
   · rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
-    · left
-      by_contra hno
-      push Not at hno
-      exact hR5.1.1.1.2 ⟨hc3, hmu, hno⟩
-    · right
-      by_contra hno
-      push Not at hno
-      exact hR5.1.2 ⟨hb3, hmu23, hno⟩
+    · left; by_contra hno; exact hR5.1.1.1.2 ⟨hc3, hmu, hno⟩
+    · right; by_contra hno; exact hR5.1.2 ⟨hb3, hmu23, hno⟩
 
 /-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R` and `Hole24R5`). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
