@@ -176,6 +176,7 @@ import Minimality.M4Sym24
 import ProofOfMainTheorem
 import Minimality.SVC
 import Minimality.Type24NxSign
+import Minimality.Type24SVCCells
 
 /-!
 # The headline theorems use only the standard axioms
@@ -1620,3 +1621,32 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.SVC.exists_order
 #assert_standard_axioms Minimality.SVC.single_view_closure
 #assert_standard_axioms Minimality.T24.A20.nx_neg
+
+-- SVC cells (SVCCELLS: SIGCHECK sign-closed cells as SVC instances)
+#assert_standard_axioms Minimality.SVCC.svc_local
+#assert_standard_axioms Minimality.SVCC.dep_of_chain
+#assert_standard_axioms Minimality.SVCC.tilt_gram
+#assert_standard_axioms Minimality.SVCC.tilt2
+#assert_standard_axioms Minimality.SVCC.exists_dep
+#assert_standard_axioms Minimality.SVCC.Cells.cell_012_0345_zpmzppmpp
+#assert_standard_axioms Minimality.SVCC.Cells.cell_016_025_pzzmmmmmm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_016_0345_pzpzmpppm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_016_126_pzmmmzmmm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_016_346_pzppmpppz
+#assert_standard_axioms Minimality.SVCC.Cells.cell_025_046_ppzmzpppp
+#assert_standard_axioms Minimality.SVCC.Cells.cell_025_126_pmzmmzmmm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_025_235_ppzmppzpp
+#assert_standard_axioms Minimality.SVCC.Cells.cell_025_236_ppzmmpmzm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_025_346_ppzmppppz
+#assert_standard_axioms Minimality.SVCC.Cells.cell_0345_046_pppzzpppm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_0345_236_ppmzppmzp
+#assert_standard_axioms Minimality.SVCC.Cells.cell_0345_236_pppzpppzm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_0345_236_pppzmppzm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_0345_346_pppzmpppz
+#assert_standard_axioms Minimality.SVCC.Cells.cell_046_235_pppmzpzpp
+#assert_standard_axioms Minimality.SVCC.Cells.cell_046_236_ppppzppzm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_046_236_ppmmzpmzm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_046_346_mmmpzmmmz
+#assert_standard_axioms Minimality.SVCC.Cells.cell_235_236_pppmmpzzm
+#assert_standard_axioms Minimality.SVCC.Cells.cell_235_346_pppmppzpz
+#assert_standard_axioms Minimality.SVCC.Cells.cell_236_346_mmppmmpzz
