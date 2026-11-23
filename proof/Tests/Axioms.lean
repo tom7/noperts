@@ -2006,3 +2006,27 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.triple3_lexAny
 #assert_standard_axioms Minimality.T24.hole24R8_reduce
 #assert_standard_axioms Minimality.T24.hole24Q45R8_reduce
+
+-- TRI29B: triple closures (Type29Tri*), Hole29R7
+#assert_standard_axioms Minimality.PL29.lexAny_tri11
+#assert_standard_axioms Minimality.PL29.lexAny29_tri11
+#assert_standard_axioms Minimality.PL29.lexAny_tri12
+#assert_standard_axioms Minimality.PL29.lexAny29_tri12
+#assert_standard_axioms Minimality.PL29.lexAny_tri13
+#assert_standard_axioms Minimality.PL29.lexAny29_tri13
+#assert_standard_axioms Minimality.PL29.lexAny_tri14
+#assert_standard_axioms Minimality.PL29.lexAny29_tri14
+#assert_standard_axioms Minimality.PL29.lexAny_tri15
+#assert_standard_axioms Minimality.PL29.lexAny29_tri15
+#assert_standard_axioms Minimality.PL29.lexAny_tri16
+#assert_standard_axioms Minimality.PL29.lexAny29_tri16
+#assert_standard_axioms Minimality.PL29.lexAny_tri17
+#assert_standard_axioms Minimality.PL29.lexAny29_tri17
+#assert_standard_axioms Minimality.PL29.lexAny_tri18
+#assert_standard_axioms Minimality.PL29.lexAny29_tri18
+#assert_standard_axioms Minimality.PL29.lexAny_tri19
+#assert_standard_axioms Minimality.PL29.lexAny29_tri19
+#assert_standard_axioms Minimality.PL29.lexAny_tri20
+#assert_standard_axioms Minimality.PL29.lexAny29_tri20
+#assert_standard_axioms Minimality.H29.hole29R6_reduce
+#assert_standard_axioms Minimality.H29.type29_rupert_or_hole'''''''
