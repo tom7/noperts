@@ -19,10 +19,7 @@ public import Minimality.Type24SVCCellsLex_c06
 public import Minimality.Type24SVCCellsLex_c10
 public import Minimality.Type24SVCCellsLex_c16
 public import Minimality.Type24SVCCellsLex_c21
-public import Minimality.Type24SVCCellsLex_c01
-public import Minimality.Type24SVCCellsLex_c03
-public import Minimality.Type24SVCCellsLex_c12
-public import Minimality.Type24SVCCellsLex_c14
+public import Minimality.Type24TBCells
 public import Minimality.Type24PairL3u27
 public import Minimality.Type24Triple1
 public import Minimality.Type24Triple2
@@ -520,18 +517,15 @@ theorem e23_closes_star_or_facetCell {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³
 
 def Cell_012_0345_zpmzppmpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, ⟪F.N 0, w⟫ = 0 ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
-    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ⟪x 2, w⟫ ≠ ⟪x 3, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫
 
 def Cell_0345_236_ppmzppmzp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
-    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 7, w⟫ = 0 ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ⟪x 2, w⟫ ≠ ⟪x 3, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 7, w⟫ = 0 ∧ 0 < ⟪F.N 8, w⟫
 
 def Cell_0345_236_pppzmppzm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 1, w⟫ ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧ ⟪F.N 4, w⟫ < 0 ∧
-    0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ ⟪F.N 7, w⟫ = 0 ∧ ⟪F.N 8, w⟫ < 0 ∧
-    ⟪x 3, w⟫ ≠ ⟪x 6, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ ⟪F.N 7, w⟫ = 0 ∧ ⟪F.N 8, w⟫ < 0
 
 def Cell_025_046_ppzmzpppp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ = 0 ∧ ⟪F.N 3, w⟫ < 0 ∧
@@ -567,8 +561,7 @@ def Cell_236_346_mmppmmpzz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop
 
 def Cell_016_0345_pzpzmpppm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 1, w⟫ = 0 ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧
-    ⟪F.N 4, w⟫ < 0 ∧ 0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ < 0 ∧
-    ⟪x 3, w⟫ ≠ ⟪x 6, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    ⟪F.N 4, w⟫ < 0 ∧ 0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ < 0
 
 /-- Disjunction of the 12 non-triangle SVC cells from `Minimality.Type24SVCCells`. -/
 def SVCCellHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
@@ -589,9 +582,9 @@ def SVCCellHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
 theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     (h : SVCCellHyp x F) : Gen.LexAny F := by
   rcases h with
-      ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, h23, h45⟩
-    | ⟨w, h0, h2, h3, h4, h5, h6, h7, h8, h23, h45⟩
-    | ⟨w, h1, h2, h3, h4, h5, h6, h7, h8, h36, h45⟩
+      ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8⟩
+    | ⟨w, h0, h2, h3, h4, h5, h6, h7, h8⟩
+    | ⟨w, h1, h2, h3, h4, h5, h6, h7, h8⟩
     | ⟨w, h0, h1, h2, h3, h4, h6, h8⟩
     | ⟨h4, h8⟩
     | ⟨w, h0, h2, h3, h4, h6, h7, h8, hD⟩
@@ -600,10 +593,10 @@ theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     | ⟨h1, h4, h56⟩
     | ⟨w, h2, h3, h4, h6, h7, h8⟩
     | ⟨h0, h2, h24⟩
-    | ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, h36, h45⟩
-  · exact SVCC.CellsLex.cell_012_0345_zpmzppmpp_lex F w h0 h1 h2 h3 h4 h5 h6 h7 h8 h23 h45
-  · exact SVCC.CellsLex.cell_0345_236_ppmzppmzp_lex F w h0 h2 h3 h4 h5 h6 h7 h8 h23 h45
-  · exact SVCC.CellsLex.cell_0345_236_pppzmppzm_lex F w h1 h2 h3 h4 h5 h6 h7 h8 h36 h45
+    | ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8⟩
+  · exact SVCC.CellsTB.cell_012_0345_zpmzppmpp_tb F w h0 h1 h2 h3 h4 h5 h6 h7 h8
+  · exact SVCC.CellsTB.cell_0345_236_ppmzppmzp_tb F w h0 h2 h3 h4 h5 h6 h7 h8
+  · exact SVCC.CellsTB.cell_0345_236_pppzmppzm_tb F w h1 h2 h3 h4 h5 h6 h7 h8
   · exact SVCC.CellsLex.cell_025_046_ppzmzpppp_lex F w h0 h1 h2 h3 h4 h6 h8
   · exact SVCC.CellsLex.cell_025_235_ppzmppzpp_lex F h4 h8
   · exact SVCC.CellsLex.cell_025_346_ppzmppppz_lex F w h0 h2 h3 h4 h6 h7 h8 hD
@@ -612,7 +605,7 @@ theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   · exact SVCC.CellsLex.cell_235_236_pppmmpzzm_lex F h1 h4 h56
   · exact SVCC.CellsLex.cell_235_346_pppmppzpz_lex F w h2 h3 h4 h6 h7 h8
   · exact SVCC.CellsLex.cell_236_346_mmppmmpzz_lex F h0 h2 h24
-  · exact SVCC.CellsLex.cell_016_0345_pzpzmpppm_lex F w h0 h1 h2 h3 h4 h5 h6 h7 h8 h36 h45
+  · exact SVCC.CellsTB.cell_016_0345_pzpzmpppm_tb F w h0 h1 h2 h3 h4 h5 h6 h7 h8
 
 /-- Hypothesis bundle for the two-view pair closure `Minimality.PSVC.L3u27.lexAny_L3_u27`
 (`L3 = F016xF0345` at `w1`, `u27 = F025xF236` at `w2`). -/

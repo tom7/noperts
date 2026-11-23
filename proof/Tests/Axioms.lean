@@ -1645,6 +1645,25 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.SVC.dep_sign_of_facet
 #assert_standard_axioms Minimality.SVC.exists_order
 #assert_standard_axioms Minimality.SVC.single_view_closure
+#assert_standard_axioms Minimality.SVC.svc_local_tb
+#assert_standard_axioms Minimality.SVC.Geo.tbReal_of_tilt2
+#assert_standard_axioms Minimality.SVC.Geo.Tilt2.pair
+#assert_standard_axioms Minimality.SVC.Geo.Tilt2.span
+#assert_standard_axioms Minimality.SVC.Geo.tbg_vac
+#assert_standard_axioms Minimality.SVC.Geo.cross_ne_quad
+#assert_standard_axioms Minimality.SVCC.CellsTB.c01_hreal
+#assert_standard_axioms Minimality.SVCC.CellsTB.c03_hreal
+#assert_standard_axioms Minimality.SVCC.CellsTB.c12_hreal
+#assert_standard_axioms Minimality.SVCC.CellsTB.c14_hreal
+#assert_standard_axioms Minimality.SVCC.CellsTB.c01_hvac
+#assert_standard_axioms Minimality.SVCC.CellsTB.c03_hvac
+#assert_standard_axioms Minimality.SVCC.CellsTB.c12_hvac
+#assert_standard_axioms Minimality.SVCC.CellsTB.c14_hvac
+#assert_standard_axioms Minimality.SVCC.CellsTB.cell_012_0345_zpmzppmpp_tb
+#assert_standard_axioms Minimality.SVCC.CellsTB.cell_016_0345_pzpzmpppm_tb
+#assert_standard_axioms Minimality.SVCC.CellsTB.cell_0345_236_ppmzppmzp_tb
+#assert_standard_axioms Minimality.SVCC.CellsTB.cell_0345_236_pppzmppzm_tb
+#assert_standard_axioms Minimality.T24.svcCell_lexAny
 #assert_standard_axioms Minimality.T24.A20.nx_neg
 
 -- SVC cells (SVCCELLS: SIGCHECK sign-closed cells as SVC instances)
@@ -1770,10 +1789,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.SVCC.CellsLex.cell_025_346_ppzmppppz_lex
 #assert_standard_axioms Minimality.SVCC.CellsLex.cell_046_235_pppmzpzpp_lex
 #assert_standard_axioms Minimality.SVCC.CellsLex.cell_235_346_pppmppzpz_lex
-#assert_standard_axioms Minimality.SVCC.CellsLex.cell_012_0345_zpmzppmpp_lex
-#assert_standard_axioms Minimality.SVCC.CellsLex.cell_016_0345_pzpzmpppm_lex
-#assert_standard_axioms Minimality.SVCC.CellsLex.cell_0345_236_ppmzppmzp_lex
-#assert_standard_axioms Minimality.SVCC.CellsLex.cell_0345_236_pppzmppzm_lex
 
 -- PAIR29: two-view pair closures (Type29Pair*), Hole29R5
 #assert_standard_axioms Minimality.PL29.all_perms_split
