@@ -1,32 +1,27 @@
 module
 
 public import Minimality.Type29T1Close
-public import Minimality.SVC
 
 @[expose] public section
 
 /-!
-# Type 29, `t = 1` K1a cell without the sample fact `s < 1 ∨ D234 < 1`
+# Type 29, `t = 1` K1a cell without the sample fact `s < 1 ∨ D234 < 1`: the escape and its view
 
 `t1_closed` (Type29T1Close) needs `hsD : s < 1 ∨ D234 < 1`, which fails on part of the cell
 (nopert229 T1FACTS: exact escape shape `(-43/20, 3/5, 7/20, -7/2, -33/20, 9/4, 31/20, 1)`).
 `t1_escape`: on the escape (`¬ hsD`, `¬ LexAny29`) one has `s ≥ 1`, `D234 ≥ 1`, `g35 = g45 = 0`.
 There the view `u023_356 = D023 (x1 - x4) - dG4 (x3 - x6)` (line of the facet planes 023 and 356)
-closes by `single_view_closure` with the tilt `x0 - x1`, in three cases of `m = b2 + h2`:
-`C : m < 0`, `B : 0 < m < b0 + h0`, `A : b0 + h0 < m` (leaves `lexAny29_F023F356_C/B/A`).
-`t1_closed'` = `t1_closed` with `hsD` replaced by `hsD ∨ T1EscOK N`.
-
-Not covered (hypotheses of `T1EscOK`): K1a (`a2 < 0 < b0`), the edge cases `m = 0` (facet 124
-edge-on at the view) and `m = b0 + h0` (facet 012 edge-on), and depth ties at the view among the
-vertices `1, 2, 3, 4, 6` (and `0` in case A); the forced chain is `z3 < z6 < z4 < z1` (and `z2 < z0`
-in case A), so only ties with `z2` (and `z0`) are open, a codimension-1 metric set.
+closes. This file has the view data: the facet values at `u023_356` (`f*_u023_356`), the facings
+(`t1e_facing_signs`; only 012 and 124 vary, with `m = b2 + h2`), the forced depth chain
+`z3 < z6 < z4 < z1` (`t1e_forced_z`) and `z2 < z0` for `b0 + h0 ≤ m` (`t1e_z02_A`). The leaf
+(`lexAny29_F023F356`, lexicographic depths, all `m`) and `t1_closed'` are in `Type29T1Res`.
 -/
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 open scoped RealInnerProductSpace
 open Finset
-open Minimality Minimality.Gen Minimality.LexCell Minimality.H21 Minimality.SVC
+open Minimality Minimality.Gen Minimality.LexCell Minimality.H21
 
 namespace Minimality.NF29
 
@@ -170,123 +165,22 @@ theorem t1e_facing_signs (N : NF29 x) (ht : N.t = 1) (ha2 : N.a2 < 0) (hdG4 : 0 
   · change SignType.sign (N.f356.f (x 3 + N.u023_356 x) - N.f356.f (x 3)) = 0
     rw [f356_u023_356 N ht]; exact sign_zero
 
-/-- the tilt `x0 - x1` is positive on both edge-on facets 023 and 356 -/
-theorem t1e_tilt_pos (N : NF29 x) (ht : N.t = 1) (hb0 : 0 < N.b0) :
-    0 < N.f023.f (x 0) - N.f023.f (x 1) ∧ 0 < N.f356.f (x 0) - N.f356.f (x 1) := by
-  have hD2 : 0 < N.D ^ 2 := sq_pos_of_ne_zero N.hD
-  refine ⟨?_, ?_⟩
-  · have h0 := N.f023.zero 0 (by decide)
-    have h1 := N.f023.neg 1 (by decide)
-    linarith
-  · have hv : N.f356.f (x 0) - N.f356.f (x 1) = (N.b0 + N.h0) * N.s * N.D ^ 2 := by
-      dsimp only [f356, Face16.ofPoly]
-      nf29_simp N
-      simp only [det3c, NF29.D]
-      rw [ht]; ring
-    rw [hv]
-    exact mul_pos (mul_pos (by linarith [N.hh0]) N.hs) hD2
-
-/-! ### the finite core (copied from T1Core) -/
+/-! ### the finite data: points and forced pairs (rims and checks in Type29T1Res) -/
 
 def t1e_P5 : Fin 5 → Fin 7 := ![1, 2, 3, 4, 6]
 def t1e_forced5 : List (Fin 5 × Fin 5) := [(4, 2), (3, 4), (0, 3)]
-def t1e_RB : List (Rim 9 5) :=
-  [{ k := 5, c := ![3, 4, 2, 1, 0], U := {0, 1, 2, 3, 5, 8}, Dn := {4, 6, 7},
-     sd := ![0, 0, 1, 0, 0, 0, 0, 0, 1] }]
-def t1e_RC : List (Rim 9 5) :=
-  [{ k := 4, c := ![3, 4, 2, 1], U := {0, 1, 2, 3, 4, 5, 8}, Dn := {6, 7},
-     sd := ![0, 0, 1, 0, 0, 0, 0, 0, 1] }]
-theorem t1e_checkB : check s0x_S29 t1e_P5 ![1, 1, 0, 1, -1, 1, -1, -1, 0] t1e_forced5 [] t1e_RB = true := by
-  decide +kernel
-theorem t1e_checkC : check s0x_S29 t1e_P5 ![1, 1, 0, 1, 1, 1, -1, -1, 0] t1e_forced5 [] t1e_RC = true := by
-  decide +kernel
-
-theorem t1e_leaf_core (N : NF29 x) (ht : N.t = 1) (ha2 : N.a2 < 0) (hb0 : 0 < N.b0)
-    (hdG4 : 0 < N.dG4) (hA : 0 < 1 - N.b0 - N.h0)
-    (h35 : ⟪x 3 - x 6, x 5 - x 6⟫ = 0) (h45 : ⟪x 4 - x 6, x 5 - x 6⟫ = 0)
-    (hg34 : ⟪x 3 - x 6, x 4 - x 6⟫ < 0)
-    (s012 s124 : SignType) (hs012 : s012 ≠ 0) (hs124 : s124 ≠ 0)
-    (h012 : SignType.sign (N.D02 * (N.b0 - N.b2 + N.h0 - N.h2)) = s012)
-    (h124 : SignType.sign (-(N.b2 + N.h2) * N.dG4) = s124)
-    (R : List (Rim 9 5)) (hRsd : ∀ ρ ∈ R, ρ.sd = ![0, 0, 1, 0, 0, 0, 0, 0, 1])
-    (hgen : ∀ i j : Fin 5, i ≠ j → ⟪x (t1e_P5 i), N.u023_356 x⟫ ≠ ⟪x (t1e_P5 j), N.u023_356 x⟫)
-    (hcheck : check s0x_S29 t1e_P5 ![s012, 1, 0, 1, s124, 1, -1, -1, 0] t1e_forced5 [] R = true) :
-    Minimality.H29.LexAny29 (s0x_fac29 N.facets) := by
-  obtain ⟨z1, z2, z3⟩ := t1e_forced_z N ht hdG4 h35 h45 hg34
-  obtain ⟨t1, t2⟩ := t1e_tilt_pos N ht hb0
-  refine single_view_closure (s0x_fac29 N.facets) t1e_P5 (N.u023_356 x) _
-    (t1e_facing_signs N ht ha2 hdG4 hA s012 s124 h012 h124) R ?_ t1e_forced5 ?_ [] (by simp) hgen hcheck
-  · intro ρ hρ
-    refine ⟨x 0 - x 1, fun t ht0 => ?_⟩
-    rw [hRsd ρ hρ]
-    have hd : ∀ t : Fin 9, ⟪(s0x_fac29 N.facets).N t, x 0 - x 1⟫ =
-        (s0x_fac29 N.facets).f t (x 0) - (s0x_fac29 N.facets).f t (x 1) :=
-      fun t => ((s0x_fac29 N.facets).hN t (x 0) (x 1)).symm
-    rw [hd t]
-    fin_cases t
-    · exact absurd ht0 hs012
-    · exact absurd ht0 (by simp)
-    · change SignType.sign (N.f023.f (x 0) - N.f023.f (x 1)) = 1
-      exact sign_pos t1
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 hs124
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 (by simp)
-    · change SignType.sign (N.f356.f (x 0) - N.f356.f (x 1)) = 1
-      exact sign_pos t2
-  · intro ij hij
-    simp only [t1e_forced5, List.mem_cons, List.not_mem_nil, or_false] at hij
-    rcases hij with rfl | rfl | rfl
-    · exact z1
-    · exact z2
-    · exact z3
-
-/-- case C: `b2 + h2 < 0` (x1 inside the rim 4 6 3 2) -/
-theorem lexAny29_F023F356_C (N : NF29 x) (ht : N.t = 1) (ha2 : N.a2 < 0) (hb0 : 0 < N.b0)
-    (hdG4 : 0 < N.dG4) (hA : 0 < 1 - N.b0 - N.h0)
-    (h35 : ⟪x 3 - x 6, x 5 - x 6⟫ = 0) (h45 : ⟪x 4 - x 6, x 5 - x 6⟫ = 0)
-    (hg34 : ⟪x 3 - x 6, x 4 - x 6⟫ < 0) (hm : N.b2 + N.h2 < 0)
-    (hgen : ∀ i j : Fin 5, i ≠ j → ⟪x (t1e_P5 i), N.u023_356 x⟫ ≠ ⟪x (t1e_P5 j), N.u023_356 x⟫) :
-    Minimality.H29.LexAny29 (s0x_fac29 N.facets) := by
-  have hD02 : 0 < N.D02 := N.hDD
-  refine t1e_leaf_core N ht ha2 hb0 hdG4 hA h35 h45 hg34 1 1 one_ne_zero one_ne_zero ?_ ?_ t1e_RC
-    (by intro ρ hρ; simp [t1e_RC] at hρ; subst hρ; rfl) hgen t1e_checkC
-  · exact sign_pos (mul_pos hD02 (by linarith [N.hh0]))
-  · exact sign_pos (mul_pos (by linarith) hdG4)
-
-/-- case B: `0 < b2 + h2 < b0 + h0` (rim 4 6 3 2 1) -/
-theorem lexAny29_F023F356_B (N : NF29 x) (ht : N.t = 1) (ha2 : N.a2 < 0) (hb0 : 0 < N.b0)
-    (hdG4 : 0 < N.dG4) (hA : 0 < 1 - N.b0 - N.h0)
-    (h35 : ⟪x 3 - x 6, x 5 - x 6⟫ = 0) (h45 : ⟪x 4 - x 6, x 5 - x 6⟫ = 0)
-    (hg34 : ⟪x 3 - x 6, x 4 - x 6⟫ < 0) (hm0 : 0 < N.b2 + N.h2)
-    (hm1 : N.b2 + N.h2 < N.b0 + N.h0)
-    (hgen : ∀ i j : Fin 5, i ≠ j → ⟪x (t1e_P5 i), N.u023_356 x⟫ ≠ ⟪x (t1e_P5 j), N.u023_356 x⟫) :
-    Minimality.H29.LexAny29 (s0x_fac29 N.facets) := by
-  have hD02 : 0 < N.D02 := N.hDD
-  refine t1e_leaf_core N ht ha2 hb0 hdG4 hA h35 h45 hg34 1 (-1) one_ne_zero (by decide) ?_ ?_ t1e_RB
-    (by intro ρ hρ; simp [t1e_RB] at hρ; subst hρ; rfl) hgen t1e_checkB
-  · exact sign_pos (mul_pos hD02 (by linarith))
-  · exact sign_neg (mul_neg_of_neg_of_pos (by linarith) hdG4)
-
 /-! ### case A (x0 on the rim) -/
-/-- `Dp ≥ 0` in case A. Only seven inequalities are needed (the NF29 facts `a2 < 0`, `b2 < 0`,
-`h0, h2 > 0`, the facet inequalities and `D234 ≥ 1` of the first version were not used; each of the
-seven is needed by this `nlinarith` call). -/
+/-- `Dp ≥ 0` in case A and on its wall `m = b0 + h0`. Only seven inequalities are needed (the
+NF29 facts `a2 < 0`, `b2 < 0`, `h0, h2 > 0`, the facet inequalities and `D234 ≥ 1` of the first
+version were not used; each of the seven is needed by this `nlinarith` call). -/
 theorem t1l2_cA2 (a0 b0 h0 a2 b2 h2 s : ℝ) (ha0 : a0 < 0) (hb0 : 0 < b0)
     (hDG5 : 0 < a0 * b2 - a2 * b0 + (a2 * (1 - h0) - a0 * (1 - h2)))
     (hs : 1 ≤ s) (hA0 : 0 < 1 - b0 - h0)
-    (hdG4 : 0 < b0 * (1 - h2) - b2 * (1 - h0)) (hA : b0 + h0 < b2 + h2) :
+    (hdG4 : 0 < b0 * (1 - h2) - b2 * (1 - h0)) (hA : b0 + h0 ≤ b2 + h2) :
     0 ≤ a2 - a0 + s * (h2 - h0) - (s - 1) * (b2 + h2 - b0 - h0) := by
-  nlinarith [mul_nonneg (sub_nonneg.mpr hs) (sub_pos.mpr hA).le]
+  nlinarith [mul_nonneg (sub_nonneg.mpr hs) (sub_nonneg.mpr hA)]
 def t1e_P6 : Fin 6 → Fin 7 := ![1, 2, 3, 4, 6, 0]
 def t1e_forced6 : List (Fin 6 × Fin 6) := [(4, 2), (3, 4), (0, 3), (5, 1)]
-def t1e_RA : List (Rim 9 6) :=
-  [{ k := 6, c := ![3, 4, 2, 1, 5, 0], U := {1, 2, 3, 5, 8}, Dn := {0, 4, 6, 7},
-     sd := ![0, 0, 1, 0, 0, 0, 0, 0, 1] }]
-theorem t1e_checkA : check s0x_S29 t1e_P6 ![-1, 1, 0, 1, -1, 1, -1, -1, 0] t1e_forced6 [] t1e_RA = true := by
-  decide +kernel
-
 theorem t1e_vec_x02 (N : NF29 x) (ht : N.t = 1) :
     x 0 - x 2 = (N.a2 - N.a0 + N.s * (N.h2 - N.h0) - (N.s - 1) * (N.b2 + N.h2 - N.b0 - N.h0)) • (x 1 - x 4)
       + (N.h0 - N.h2) • (x 3 - x 6) + (N.b2 + N.h2 - N.b0 - N.h0) • (x 4 - x 6) := by
@@ -296,10 +190,11 @@ theorem t1e_vec_x02 (N : NF29 x) (ht : N.t = 1) :
   simp only [nfV, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
   ring
 
+/-- `z2 < z0` at `u023_356` for `b0 + h0 ≤ m` (case A and its wall). -/
 theorem t1e_z02_A (N : NF29 x) (ht : N.t = 1) (hb0 : 0 < N.b0)
     (hdG4 : 0 < N.dG4) (hA : 0 < 1 - N.b0 - N.h0) (hs1 : 1 ≤ N.s)
     (h35 : ⟪x 3 - x 6, x 5 - x 6⟫ = 0) (h45 : ⟪x 4 - x 6, x 5 - x 6⟫ = 0)
-    (hg34 : ⟪x 3 - x 6, x 4 - x 6⟫ < 0) (hmA : N.b0 + N.h0 < N.b2 + N.h2) :
+    (hg34 : ⟪x 3 - x 6, x 4 - x 6⟫ < 0) (hmA : N.b0 + N.h0 ≤ N.b2 + N.h2) :
     ⟪x 2, N.u023_356 x⟫ < ⟪x 0, N.u023_356 x⟫ := by
   have hp := t1_par N ht
   rw [hp, real_inner_smul_right] at h35 h45
@@ -315,59 +210,16 @@ theorem t1e_z02_A (N : NF29 x) (ht : N.t = 1) (hb0 : 0 < N.b0)
   have hee : 0 < ⟪x 3 - x 6, x 3 - x 6⟫ := real_inner_self_pos.mpr he3
   have hdp := t1l2_cA2 N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s N.ha0 hb0 N.hDG5 hs1 hA hdG4 hmA
   have hq : N.h0 - N.h2 < 0 := by linarith [N.hb2]
-  have hr : 0 < N.b2 + N.h2 - N.b0 - N.h0 := by linarith
+  have hr : 0 ≤ N.b2 + N.h2 - N.b0 - N.h0 := by linarith
   have hγ := D023_pos N
   rw [← sub_pos, ← inner_sub_left, t1e_vec_x02 N ht]
   dsimp only [u023_356]
   simp only [inner_add_left, inner_add_right, real_inner_smul_left, real_inner_smul_right, h3,
     h3', h4']
   have hg : ⟪x 4 - x 6, x 3 - x 6⟫ < 0 := by rw [real_inner_comm]; exact hg34
-  nlinarith [mul_nonneg hdp (mul_pos hγ hdd).le, mul_pos (mul_pos hr hdG4) (neg_pos.mpr hg),
-    mul_nonneg (mul_nonneg (neg_nonneg.mpr hq.le) hdG4.le) hee.le]
-
-theorem lexAny29_F023F356_A (N : NF29 x) (ht : N.t = 1) (ha2 : N.a2 < 0) (hb0 : 0 < N.b0)
-    (hdG4 : 0 < N.dG4) (hA : 0 < 1 - N.b0 - N.h0) (hs1 : 1 ≤ N.s)
-    (h35 : ⟪x 3 - x 6, x 5 - x 6⟫ = 0) (h45 : ⟪x 4 - x 6, x 5 - x 6⟫ = 0)
-    (hg34 : ⟪x 3 - x 6, x 4 - x 6⟫ < 0) (hmA : N.b0 + N.h0 < N.b2 + N.h2)
-    (hgen : ∀ i j : Fin 6, i ≠ j → ⟪x (t1e_P6 i), N.u023_356 x⟫ ≠ ⟪x (t1e_P6 j), N.u023_356 x⟫) :
-    Minimality.H29.LexAny29 (s0x_fac29 N.facets) := by
-  obtain ⟨z1, z2, z3⟩ := t1e_forced_z N ht hdG4 h35 h45 hg34
-  have z4 := t1e_z02_A N ht hb0 hdG4 hA hs1 h35 h45 hg34 hmA
-  obtain ⟨t1, t2⟩ := t1e_tilt_pos N ht hb0
-  have hD02 : 0 < N.D02 := N.hDD
-  have hb2 := N.hb2
-  refine single_view_closure (s0x_fac29 N.facets) t1e_P6 (N.u023_356 x) _
-    (t1e_facing_signs N ht ha2 hdG4 hA (-1) (-1) ?_ ?_) t1e_RA ?_ t1e_forced6 ?_ [] (by simp) hgen t1e_checkA
-  · exact sign_neg (mul_neg_of_pos_of_neg hD02 (by linarith [N.hh0]))
-  · exact sign_neg (mul_neg_of_neg_of_pos (by linarith [N.hh0]) hdG4)
-  · intro ρ hρ
-    simp only [t1e_RA, List.mem_singleton] at hρ
-    subst hρ
-    refine ⟨x 0 - x 1, fun t ht0 => ?_⟩
-    have hd : ∀ t : Fin 9, ⟪(s0x_fac29 N.facets).N t, x 0 - x 1⟫ =
-        (s0x_fac29 N.facets).f t (x 0) - (s0x_fac29 N.facets).f t (x 1) :=
-      fun t => ((s0x_fac29 N.facets).hN t (x 0) (x 1)).symm
-    rw [hd t]
-    fin_cases t
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 (by simp)
-    · change SignType.sign (N.f023.f (x 0) - N.f023.f (x 1)) = 1
-      exact sign_pos t1
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 (by simp)
-    · exact absurd ht0 (by simp)
-    · change SignType.sign (N.f356.f (x 0) - N.f356.f (x 1)) = 1
-      exact sign_pos t2
-  · intro ij hij
-    simp only [t1e_forced6, List.mem_cons, List.not_mem_nil, or_false] at hij
-    rcases hij with rfl | rfl | rfl | rfl
-    · exact z1
-    · exact z2
-    · exact z3
-    · exact z4
-
+  nlinarith [mul_nonneg hdp (mul_pos hγ hdd).le,
+    mul_nonneg (mul_nonneg hr hdG4.le) (neg_pos.mpr hg).le,
+    mul_pos (mul_pos (neg_pos.mpr hq) hdG4) hee]
 
 /-! ### the escape of `t1_closed` (copied from nopert229 t1facts/T1Escape.lean) -/
 
@@ -395,69 +247,5 @@ theorem t1_escape (N : NF29 x) (ht : N.t = 1)
     hnf (lexAny29_W14_of_V46 N ht hdG4 hA hU5 hsD hg35 hg45 hA46)
   push Not at hsD
   exact ⟨hsD.1, hsD.2, h35, h45⟩
-
-/-! ### `t1_closed'`: the `t = 1` cell without `hsD` -/
-
-/-- Distinct depths on `1, 2, 3, 4, 6` and of `0` against them give distinct depths on `t1e_P6`. -/
-theorem t1e_gen6 (N : NF29 x)
-    (hgen : ∀ i j : Fin 5, i ≠ j → ⟪x (t1e_P5 i), N.u023_356 x⟫ ≠ ⟪x (t1e_P5 j), N.u023_356 x⟫)
-    (h0 : ∀ i : Fin 5, ⟪x 0, N.u023_356 x⟫ ≠ ⟪x (t1e_P5 i), N.u023_356 x⟫) :
-    ∀ i j : Fin 6, i ≠ j → ⟪x (t1e_P6 i), N.u023_356 x⟫ ≠ ⟪x (t1e_P6 j), N.u023_356 x⟫ := by
-  have hP : ∀ i : Fin 5, t1e_P6 (Fin.castSucc i) = t1e_P5 i := by decide
-  have hL : t1e_P6 (Fin.last 5) = 0 := rfl
-  intro i j hij
-  induction i using Fin.lastCases with
-  | last =>
-    induction j using Fin.lastCases with
-    | last => exact absurd rfl hij
-    | cast j => rw [hL, hP]; exact h0 j
-  | cast i =>
-    induction j using Fin.lastCases with
-    | last => rw [hL, hP]; exact fun h => h0 i h.symm
-    | cast j => rw [hP, hP]; exact hgen i j (fun h => hij (by rw [h]))
-
-/-- The part of the escape `1 ≤ s, 1 ≤ D234` of `t1_closed` that `lexAny29_F023F356_A/B/C` close:
-K1a, `m = b2 + h2` off the two edge-on values `0` and `b0 + h0`, and no depth tie at `u023_356`
-among `1, 2, 3, 4, 6`, nor of `0` with them in case A (`b0 + h0 < m`). -/
-def T1EscOK (N : NF29 x) : Prop :=
-  N.a2 < 0 ∧ 0 < N.b0 ∧ N.b2 + N.h2 ≠ 0 ∧ N.b2 + N.h2 ≠ N.b0 + N.h0 ∧
-    (∀ i j : Fin 5, i ≠ j → ⟪x (t1e_P5 i), N.u023_356 x⟫ ≠ ⟪x (t1e_P5 j), N.u023_356 x⟫) ∧
-    (N.b0 + N.h0 < N.b2 + N.h2 →
-      ∀ i : Fin 5, ⟪x 0, N.u023_356 x⟫ ≠ ⟪x (t1e_P5 i), N.u023_356 x⟫)
-
-/-- **`t1_closed` without the sample fact `hsD`.** On the `t = 1` K1a cell with the V46 leaf region,
-either `hsD` (old proof, `t1_closed`) or the escape conditions `T1EscOK` (then `t1_escape` gives
-`s, D234 ≥ 1`, `g35 = g45 = 0`; `¬ Z` makes `g34 < 0`; the leaves `lexAny29_F023F356_A/B/C` close). -/
-theorem t1_closed' (N : NF29 x) (ht : N.t = 1)
-    (hdG4 : 0 < N.dG4) (hA : 0 < 1 - N.b0 - N.h0) (hU5 : 0 < N.DG4 - N.D023)
-    (hesc : (N.s < 1 ∨ N.D234 < 1) ∨ N.T1EscOK)
-    (hg34 : ⟪x 3 - x 6, x 4 - x 6⟫ ≤ 0)
-    (hZ : ¬ (⟪x 3 - x 6, x 4 - x 6⟫ = 0 ∧ ⟪x 3 - x 6, x 5 - x 6⟫ = 0 ∧
-      ⟪x 4 - x 6, x 5 - x 6⟫ = 0))
-    (hg35 : ⟪x 3 - x 6, x 5 - x 6⟫ ≤ 0) (hg45 : ⟪x 4 - x 6, x 5 - x 6⟫ ≤ 0)
-    (h012 : 0 < N.f012.f (x 3 + N.u2346 x) - N.f012.f (x 3))
-    (h015 : N.f015.f (x 3 + N.u2346 x) - N.f015.f (x 3) < 0)
-    (h035 : N.f035.f (x 3 + N.u2346 x) - N.f035.f (x 3) < 0)
-    (h124 : 0 < N.f124.f (x 3 + N.u2346 x) - N.f124.f (x 3))
-    (h1456 : N.f1456.f (x 3 + N.u2346 x) - N.f1456.f (x 3) < 0)
-    (h234 : 0 < N.f234.f (x 3 + N.u2346 x) - N.f234.f (x 3))
-    (h356 : N.f356.f (x 3 + N.u2346 x) - N.f356.f (x 3) < 0)
-    (lam mu eta : ℝ) (hlam0 : 0 < lam) (hlam1 : lam < 1) (hmu0 : 0 < mu) (hmu1 : mu < 1)
-    (heta : 0 < eta)
-    (hfront : lam • x 1 + (1 - lam) • x 3 = mu • x 0 + (1 - mu) • x 4 + eta • N.u2346 x)
-    (hnf : ¬ Minimality.H29.LexAny29 (s0x_fac29 N.facets)) : False := by
-  rcases hesc with hsD | ⟨ha2, hb0, hm0, hm1, hgen, hgenA⟩
-  · exact t1_closed N ht hdG4 hA hU5 hsD hg35 hg45 h012 h015 h035 h124 h1456 h234 h356
-      lam mu eta hlam0 hlam1 hmu0 hmu1 heta hfront hnf
-  obtain ⟨hs1, -, h35, h45⟩ := t1_escape N ht hdG4 hA hU5 hg35 hg45 h012 h015 h035 h124
-    h1456 h234 h356 lam mu eta hlam0 hlam1 hmu0 hmu1 heta hfront hnf
-  have hg34' : ⟪x 3 - x 6, x 4 - x 6⟫ < 0 :=
-    lt_of_le_of_ne hg34 (fun h => hZ ⟨h, h35, h45⟩)
-  rcases lt_or_gt_of_ne hm0 with hC | hpos
-  · exact hnf (lexAny29_F023F356_C N ht ha2 hb0 hdG4 hA h35 h45 hg34' hC hgen)
-  rcases lt_or_gt_of_ne hm1 with hB | hAc
-  · exact hnf (lexAny29_F023F356_B N ht ha2 hb0 hdG4 hA h35 h45 hg34' hpos hB hgen)
-  · exact hnf (lexAny29_F023F356_A N ht ha2 hb0 hdG4 hA hs1 h35 h45 hg34' hAc
-      (t1e_gen6 N hgen (hgenA hAc)))
 
 end Minimality.NF29

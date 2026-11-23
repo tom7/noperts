@@ -2,7 +2,7 @@ module
 
 public import Minimality.Type29Hole
 public import Minimality.Type29T1Close
-public import Minimality.Type29T1Escape
+public import Minimality.Type29T1Res
 public import Minimality.Type29DClose
 public import Minimality.Type29SubPencil
 
@@ -24,14 +24,12 @@ Excludes the `t = 1` K1a cell closed by `NF29.t1_closed'` (`T1Hyp`) and the pair
 (`TDHyp`) from `Hole29`, yielding `Hole29R1 x N := Hole29 x N ∧ ¬ (T1Hyp x N ∨ TDHyp x N)`.
 -/
 
-/-- Hypothesis bundle for `NF29.t1_closed'` (excluding `OB6`'s `hg34, hg35, hg45`, `¬ Z29` and
-`¬ LexAny29`, which are already supplied by `Hole29`). The former sample fact `s < 1 ∨ D234 < 1`
-(false on part of the cell) is weakened to `(s < 1 ∨ D234 < 1) ∨ T1EscOK`: the escape is closed by
-the `F023 x F356` leaves except at K1b, the edge cases `b2 + h2 ∈ {0, b0 + h0}` and depth ties at
-`u023_356` (`NF29.T1EscOK`). -/
+/-- Hypothesis bundle for `NF29.t1_closed'` (excluding `OB6`'s `hg34, hg35, hg45`, `¬ Z29`, the K1
+sign pattern and `¬ LexAny29`, which are already supplied by `Hole29`). The former sample fact
+`s < 1 ∨ D234 < 1` (false on part of the cell) is gone: its escape is closed by the `F023 x F356`
+leaf `NF29.lexAny29_F023F356` (K1b is empty there, `NF29.t1r_K1b_false`). -/
 def T1Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.t = 1 ∧ 0 < N.dG4 ∧ 0 < 1 - N.b0 - N.h0 ∧ 0 < N.DG4 - N.D023 ∧
-    ((N.s < 1 ∨ N.D234 < 1) ∨ N.T1EscOK) ∧
     0 < N.f012.f (x 3 + N.u2346 x) - N.f012.f (x 3) ∧
     N.f015.f (x 3 + N.u2346 x) - N.f015.f (x 3) < 0 ∧
     N.f035.f (x 3 + N.u2346 x) - N.f035.f (x 3) < 0 ∧
@@ -82,9 +80,10 @@ theorem hole29_of_hole29R1 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R1 x N)
 theorem hole29_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29 x N) : Hole29R1 x N := by
   refine ⟨h, fun hTD => ?_⟩
   rcases hTD with hT | hD
-  · rcases hT with ⟨ht, hdG4, hA, hU5, hsD, h012, h015, h035, h124, h1456, h234, h356,
+  · rcases hT with ⟨ht, hdG4, hA, hU5, h012, h015, h035, h124, h1456, h234, h356,
       lam, mu, eta, hlam0, hlam1, hmu0, hmu1, heta, hfront⟩
-    exact t1_closed' N ht hdG4 hA hU5 hsD h.2.2.1.1 h.2.1 h.2.2.1.2.1 h.2.2.1.2.2
+    exact t1_closed' N ht (h.1.imp (fun k => ⟨k.1, k.2.1⟩) (fun k => ⟨k.1, k.2.1⟩)) hdG4 hA hU5
+      h.2.2.1.1 h.2.1 h.2.2.1.2.1 h.2.2.1.2.2
       h012 h015 h035 h124 h1456 h234 h356 lam mu eta hlam0 hlam1 hmu0 hmu1 heta hfront
       h.2.2.2.2.2.1
   · rcases hD with ⟨ht, hdG4, hA, hb2h2, hb2h2_lt, hpos,
