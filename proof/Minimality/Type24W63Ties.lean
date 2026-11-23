@@ -341,7 +341,7 @@ theorem e23_closes_star {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     Minimality.Gen.LexAny F := by
   obtain ⟨hc3', hmu'⟩ := tl_hyps_sym hb3 hmu
   refine lexAny_sym F (w63_closes_star (sym24 F) hc3' hmu' ?_)
-  simpa only [W63Star, Function.comp_apply, pi24_0, pi24_2, pi24_3, pi24_4, pi24_6] using h
+  simpa only [W63Star, E23Star, Function.comp_apply, pi24_0, pi24_2, pi24_3, pi24_4, pi24_6] using h
 
 /-- **E23 single-view theorem** (`pi24` mirror of `w63_closes_mustar_pos`): corollary of
 `e23_closes_mu23_pos_nt`. -/
