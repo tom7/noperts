@@ -31,7 +31,7 @@ open Minimality Minimality.H21 Minimality.H24.SAT Minimality.T24.SAT Minimality.
   Minimality.T24.Sym Minimality.T24.M4 Minimality.T24.A15 Minimality.T24.Z0
   Minimality.T24.Par Minimality.T24 Minimality.LexCell
 
-/-! ### 1. `E23` mirror (`pi24` transport of `w63_closes_mustar_pos`) -/
+/-! ### 1. `E23` mirror (`mustar_comp_pi24`) -/
 
 /-- Mirror of `mustar` under `pi24 = (2 6)(4 5)`: `(omega3 + 1) a3 + (omega4 + 1) (1 - b3)`. -/
 noncomputable def mu23 (x : Fin 7 → ℝ³) : ℝ :=
@@ -40,37 +40,6 @@ noncomputable def mu23 (x : Fin 7 → ℝ³) : ℝ :=
 theorem mustar_comp_pi24 (x : Fin 7 → ℝ³) : mustar (x ∘ pi24) = mu23 x := by
   simp only [mustar, mu23, omega3_comp_pi24, omega5_comp_pi24, oblX0_comp_pi24,
     oblX6_comp_pi24, pi24_3]
-
-/-- **E23 single-view theorem** (`pi24` mirror of `w63_closes_mustar_pos`): on
-`{CbarIn x, 1 < b3, 0 < mu23}` with distinct `E23`-depths on `{0, 2, 3, 5, 6}`,
-`E23 = x 3 - x 2` gives `Minimality.Gen.LexAny F`. -/
-theorem e23_closes_mu23_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hb3 : 1 < oblX2 x 3) (hmu : 0 < mu23 x)
-    (hgen : ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 3 - x 2⟫ ≠ ⟪x j, x 3 - x 2⟫) :
-    Minimality.Gen.LexAny F := by
-  have hc3' : 1 < oblX6 (x ∘ pi24) 3 := by simpa [oblX6_comp_pi24, pi24_3] using hb3
-  have hmu' : 0 < mustar (x ∘ pi24) := by rwa [mustar_comp_pi24]
-  have hgen' : ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪(x ∘ pi24) i, (x ∘ pi24) 3 - (x ∘ pi24) 6⟫ ≠
-        ⟪(x ∘ pi24) j, (x ∘ pi24) 3 - (x ∘ pi24) 6⟫ := by
-    intro i hi j hj hij
-    have hi' : pi24 i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)) := by
-      fin_cases i <;> simp at hi ⊢
-    have hj' : pi24 j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)) := by
-      fin_cases j <;> simp at hj ⊢
-    have hij' : pi24 i ≠ pi24 j := fun heq => by
-      have hinv : (pi24 (pi24 i)) = (pi24 (pi24 j)) := congrArg pi24 heq
-      have hpi : ∀ a : Fin 7, pi24 (pi24 a) = a := by decide
-      rw [hpi i, hpi j] at hinv
-      exact hij hinv
-    have h1 := hgen (pi24 i) hi' (pi24 j) hj' hij'
-    dsimp only [Function.comp_apply]
-    rw [pi24_3, pi24_6]
-    exact h1
-  exact lexAny_sym F (w63_closes_mustar_pos (sym24 F) hc3' hmu' hgen')
 
 /-! ### 2. Coupling & algebraic identities -/
 

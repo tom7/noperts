@@ -1427,6 +1427,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.hole24R4_reduce
 #assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
+#assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos_nt
+#assert_standard_axioms Minimality.T24.A20.w63_closes_triple
+#assert_standard_axioms Minimality.T24.A20.w63_closes_star
+#assert_standard_axioms Minimality.T24.A20.e23_closes_mu23_pos_nt
+#assert_standard_axioms Minimality.T24.A20.e23_closes_triple
+#assert_standard_axioms Minimality.T24.A20.e23_closes_star
 #assert_standard_axioms Minimality.T24.A20.w02_u27_noA
 #assert_standard_axioms Minimality.T24.A20.z_core_neg_z3
 #assert_standard_axioms Minimality.T24.A20.w02_neg_false
@@ -1474,6 +1480,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.hole24R4_reduce
 #assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
+#assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos_nt
+#assert_standard_axioms Minimality.T24.A20.w63_closes_triple
+#assert_standard_axioms Minimality.T24.A20.w63_closes_star
+#assert_standard_axioms Minimality.T24.A20.e23_closes_mu23_pos_nt
+#assert_standard_axioms Minimality.T24.A20.e23_closes_triple
+#assert_standard_axioms Minimality.T24.A20.e23_closes_star
 #assert_standard_axioms Minimality.T24.A10.e0416_hrow
 #assert_standard_axioms Minimality.T24.A10.dl_sigma
 #assert_standard_axioms Minimality.T24.A10.ustar_collapse
@@ -1621,6 +1633,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.hole24R4_reduce
 #assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
+#assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos_nt
+#assert_standard_axioms Minimality.T24.A20.w63_closes_triple
+#assert_standard_axioms Minimality.T24.A20.w63_closes_star
+#assert_standard_axioms Minimality.T24.A20.e23_closes_mu23_pos_nt
+#assert_standard_axioms Minimality.T24.A20.e23_closes_triple
+#assert_standard_axioms Minimality.T24.A20.e23_closes_star
 
 -- Single-view closure (SVC; GENERALIZE-1122B section 1)
 #assert_standard_axioms Minimality.SVC.radon_no_sep
