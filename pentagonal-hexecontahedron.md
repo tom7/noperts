@@ -1,9 +1,9 @@
 # The pentagonal hexecontahedron
 
-The pentagonal hexecontahedron (PH) is the Catalan solid with 60 irregular
-pentagonal faces and 92 vertices, the dual of the snub dodecahedron. It is not
-Rupert. This page gives the exact statement, what Lean checked and how, and
-how to verify the result.
+The pentagonal hexecontahedron (PH) is the Catalan solid with 60
+irregular pentagonal faces and 92 vertices, the dual of the snub
+dodecahedron. It is not Rupert. This page gives the exact statement,
+what Lean checked and how, and how to verify the result.
 
 Lean entry point:
 [`proof/PentagonalHexecontahedron.lean`](proof/PentagonalHexecontahedron.lean).
@@ -40,6 +40,9 @@ Lean entry point:
   mirror image of this set, up to similarity. This was checked numerically to
   4·10⁻⁴⁰ by `search/ph/ph-crosscheck.py`, not by Lean. Since the statement
   includes reflections, McCooey's solid is covered.
+
+Here's an [STL file](web/pentagonalhexecontahedron.stl) that you can 3D print.
+This one has irrational coordinates, so it cannot be exact in float.
 
 ## The statement
 
@@ -80,42 +83,49 @@ coplanar.
 The techniques are described in [How the Nopert proofs work](nopert-proof.md).
 
 - The solution tables exclude every `IModel` (`IcoModel.lean`; see
-  [rational models](nopert-proof.md#rational-models-and-neighborhoods)). An `IModel`
-  is any solid whose vertices are the orbits, under I, of three points (one on
-  a 5-fold axis, one on a 3-fold axis and one generic, each fixed by its
-  stabilizer), within 6·10⁻¹⁶ of a fixed rational model.
+  [rational
+  models](nopert-proof.md#rational-models-and-neighborhoods)). An
+  `IModel` is any solid whose vertices are the orbits, under I, of
+  three points (one on a 5-fold axis, one on a 3-fold axis and one
+  generic, each fixed by its stabilizer), within 6·10⁻¹⁶ of a fixed
+  rational model.
 - Lean's kernel decides, by interval arithmetic (ξ to 10⁻²⁴) and exact
-  arithmetic in K = ℚ(√5, sin 72°), that the polar dual of Wikipedia's snub
-  is such a model after a fixed rotation and scaling (`phIModel`).
-  Similarities preserve Rupert-ness, which gives
+  arithmetic in K = ℚ(√5, sin 72°), that the polar dual of Wikipedia's
+  snub is such a model after a fixed rotation and scaling
+  (`phIModel`). Similarities preserve Rupert-ness, which gives
   `pentagonalHexecontahedron_not_rupert`.
-- The [symmetry reductions](nopert-proof.md#poses-and-symmetry-reductions) are those of the snub dodecahedron, which shares the
-  icosahedral group and frame. The view is reduced into a triangle T, and the
-  relative rotation into the Dirichlet cell of I around the identity.
-- Unlike the deltoidal hexecontahedron, the PH needs no [caps](nopert-proof.md#caps) or [ties](nopert-proof.md#ties-and-tie-tubes). Because
-  it is not centrally symmetric, it uses no half-turn reduction.
+- The [symmetry
+  reductions](nopert-proof.md#poses-and-symmetry-reductions) are those
+  of the snub dodecahedron, which shares the icosahedral group and
+  frame. The view is reduced into a triangle T, and the relative
+  rotation into the Dirichlet cell of I around the identity.
+- Unlike the deltoidal hexecontahedron, the PH needs no
+  [caps](nopert-proof.md#caps) or
+  [ties](nopert-proof.md#ties-and-tie-tubes). Because it is not
+  centrally symmetric, it uses no half-turn reduction.
 
 ## What is proved and what is verified
 
 This is a **Lean verification**, not a plain Lean proof:
 
-1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
-   kernel and depends only on the standard axioms (`propext`,
-   `Classical.choice`, `Quot.sound`). Its "genuine solid" half needs no data
-   at all. The facts about the exact solid are decided by the kernel.
-2. **Verification of the data.** The data is too large for the kernel (chart
-   0's table alone has 595,098 rows). The program
-   `constructPentagonalHexecontahedron` runs the same Lean validity checks as
-   compiled code on every row. Only if all of them pass does it construct
-   `CertificatesValid`, and from it (via part 1)
-   `∀ V, IsPentagonalHexecontahedron V → IsNopert V`. It then prints
-   `instantiated: IsNopert V for every pentagonal hexecontahedron V (none is Rupert)`.
-   This step trusts Lean's compiler and runtime to evaluate the checks
-   correctly. That is the same trust as `native_decide`, though
-   `native_decide` is not used.
+1. **Lean proof.** `isNopert_of_certificatesValid` is checked by
+   Lean's kernel and depends only on the standard axioms (`propext`,
+   `Classical.choice`, `Quot.sound`). Its "genuine solid" half needs
+   no data at all. The facts about the exact solid are decided by the
+   kernel.
+2. **Verification of the data.** The data is too large for the kernel
+   (chart 0's table alone has 595,098 rows). The program
+   `constructPentagonalHexecontahedron` runs the same Lean validity
+   checks as compiled code on every row. Only if all of them pass does
+   it construct `CertificatesValid`, and from it (via part 1) `∀ V,
+   IsPentagonalHexecontahedron V → IsNopert V`. It then prints
+   `instantiated: IsNopert V for every pentagonal hexecontahedron V
+   (none is Rupert)`. This step trusts Lean's compiler and runtime to
+   evaluate the checks correctly. That is the same trust as
+   `native_decide`, though `native_decide` is not used.
 
-The C++ search that produced the data does not need to be trusted: a mistake
-there can only produce data that fails the checks.
+The C++ search that produced the data does not need to be trusted: a
+mistake there can only produce data that fails the checks.
 
 ## Status
 
@@ -141,11 +151,11 @@ there can only produce data that fails the checks.
 ## Verifying existing data
 
 The data from the verified run is archived by the author (not in this
-repository); to check it yourself, rebuild it (see "Reproducing the data"
-below). The program expects these directories:
+repository); to check it yourself, rebuild it (see "Reproducing the
+data" below). The program expects these directories:
 
-- tube packs: `manifest.txt` and the identity-tube packs it lists, in code
-  order;
+- tube packs: `manifest.txt` and the identity-tube packs it lists, in
+  code order;
 - chart packs: `c<chart>/t<code>.pack` for charts 0–2, or one
   `chart<chart>.pack` each. Chart 3 is a 4-row table built into Lean
   (`FundamentalChart3`).
@@ -156,15 +166,16 @@ proof/.lake/build/bin/constructPentagonalHexecontahedron \
   TUBEPACKS/manifest.txt PACKS
 ```
 
-The program checks the view cover, then the tube tables, then the four chart
-tables. A run takes about 23 min on 64 cores.
+The program checks the view cover, then the tube tables, then the four
+chart tables. A run takes about 23 min on 64 cores.
 
 ## Reproducing the data
 
 The search is in [`search/ph/`](search/ph/), copied from the
-`pentagonalhexecontahedron` branch of nopert229 (04d115c), with the code the
-solids' searches share now in [`search/common/`](search/common/). Its
-`README.md` describes it. Build the tools and run the whole pipeline with:
+`pentagonalhexecontahedron` branch of nopert229 (04d115c), with the
+code the solids' searches share now in
+[`search/common/`](search/common/). Its `README.md` describes it.
+Build the tools and run the whole pipeline with:
 
 ```sh
 ./get-cc-lib.sh
@@ -172,26 +183,28 @@ make -C search/ph -j 16 all    # optional: rebuild.sh builds what it needs
 search/ph/rebuild.sh --from model --work DIR    # default DIR: work-ph/
 ```
 
-The stages are model, tube, tubepack, search, pack and verify. Each can
-be restarted (`--from STAGE`, `--only STAGE`), and `--dry_run` prints the
-commands. The model stage rewrites committed files: the model files in
-`search/ph/` and the generated Lean data in `proof/PentagonalHexecontahedron/`
-(`SolidModel.lean`'s vertex tables, `WedgeCoverData.lean`, `OrbitData.lean`,
-`PHStatementData.lean`) and `proof/Pipeline/IcoGroupData.lean`. It must run
-once in a fresh checkout, because the later stages read its `codebdd.json`.
-The verify stage runs `constructPentagonalHexecontahedron` on the new packs.
+The stages are model, tube, tubepack, search, pack and verify. Each
+can be restarted (`--from STAGE`, `--only STAGE`), and `--dry_run`
+prints the commands. The model stage rewrites committed files: the
+model files in `search/ph/` and the generated Lean data in
+`proof/PentagonalHexecontahedron/` (`SolidModel.lean`'s vertex tables,
+`WedgeCoverData.lean`, `OrbitData.lean`, `PHStatementData.lean`) and
+`proof/Pipeline/IcoGroupData.lean`. It must run once in a fresh
+checkout, because the later stages read its `codebdd.json`. The verify
+stage runs `constructPentagonalHexecontahedron` on the new packs.
 Since the deduplication of 2026-10-10 (see [BUILDING.md](BUILDING.md),
 "Former names"), the vertices are in `SolidModel.lean` and the solid's
 orbit tables in `OrbitData.lean`; the rest of `IcoGroupData` is the
 shared `proof/Pipeline/IcoGroupData.lean`. The generators were adapted
 to this layout on 2026-10-10: run from the committed model files (with
 the `codebdd.json` that `codebdd.exe` writes from `ph-model.txt`), the
-scripts in `search/ph/scripts/` reproduce `SolidModel.lean` (updated in
-place), `WedgeCoverData.lean`, `OrbitData.lean`, `PHStatementData.lean`
-and `Pipeline/IcoGroupData.lean` byte for byte.
+scripts in `search/ph/scripts/` reproduce `SolidModel.lean` (updated
+in place), `WedgeCoverData.lean`, `OrbitData.lean`,
+`PHStatementData.lean` and `Pipeline/IcoGroupData.lean` byte for byte.
 
-On nopert229, a from-scratch run on 64 cores (125 GB, 2026-10-05, Mathlib
-already built) took 2 h 37 min, with a peak of 9.7 GB in one process:
+On nopert229, a from-scratch run on 64 cores (125 GB, 2026-10-05,
+Mathlib already built) took 2 h 37 min, with a peak of 9.7 GB in one
+process:
 
 | Stage | 64 cores |
 |---|---|
@@ -202,5 +215,5 @@ already built) took 2 h 37 min, with a peak of 9.7 GB in one process:
 | pack | 43 min |
 | verify | 23 min (chart 0: 595,098 rows) |
 
-That run regenerated every committed data file byte for byte. The pipeline
-has not yet been run end to end from `search/ph/`.
+That run regenerated every committed data file byte for byte. The
+pipeline has not yet been run end to end from `search/ph/`.

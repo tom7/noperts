@@ -16,9 +16,9 @@ Lean entry point: [`proof/Septopert.lean`](proof/Septopert.lean); the headline t
 
 ## The solid
 
-![The Septopert, spinning around with confidence](septopert.gif)
+![The Septopert, spinning around with confidence](web/septopert.gif)
 
-Here is an exact [STL file](septopert.stl). On github, you can
+Here is an exact [STL file](web/septopert.stl). On github, you can
 rotate it around in your browser by just clicking on that.
 
 The Septopert is the convex hull of these points (its vertices):
@@ -72,16 +72,16 @@ lemmas to prove the statement for the vertices above.)
 Exact arithmetic (integer face normals; lengths in the integer
 coordinates above).
 
-![Line drawing of two views of the Septopert, with colored edges](septopert-edges.svg)
+![Line drawing of two views of the Septopert, with colored edges](web/septopert-edges.svg)
 
 (Note: This is a schematic drawing used for any member of the Septopert family, not exact.)
 
 | color | description | edges | dihedral angle | edge length |
 |-------|-------------|-------|----------------|-------------|
-|![blue](swatch-apex.svg)| apex of pyramid | 6–0, 6–1, 6–2 | 90° (exactly) | 14 |
-|![yellow](swatch-base.svg)| base of pyramid | 0–1, 0–2, 1–2 | 144.735610° | 14√2 ≈ 19.798990 |
-|![green](swatch-triforce-exterior.svg)| triforce exterior | 0–4, 0–5, 1–3, 1–5, 2–3, 2–4 | 108.316731° | √146 ≈ 12.083046 |
-|![red](swatch-triforce-center.svg)| triforce center | 3–4, 3–5, 4–5 | 141.057559° | 7√2 ≈ 9.899495 |
+|![blue](web/swatch-apex.svg)| apex of pyramid | 6–0, 6–1, 6–2 | 90° (exactly) | 14 |
+|![yellow](web/swatch-base.svg)| base of pyramid | 0–1, 0–2, 1–2 | 144.735610° | 14√2 ≈ 19.798990 |
+|![green](web/swatch-triforce-exterior.svg)| triforce exterior | 0–4, 0–5, 1–3, 1–5, 2–3, 2–4 | 108.316731° | √146 ≈ 12.083046 |
+|![red](web/swatch-triforce-center.svg)| triforce center | 3–4, 3–5, 4–5 | 141.057559° | 7√2 ≈ 9.899495 |
 
 ## The statement
 

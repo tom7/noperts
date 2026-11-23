@@ -10,8 +10,9 @@ Lean entry point:
 
 ## The solid
 
-The statement is about the exact solid, with irrational coordinates. David
-McCooey's vertices are the cyclic permutations, with all sign changes, of
+The statement is about the exact solid, with irrational coordinates.
+David McCooey's vertices are the cyclic permutations, with all sign
+changes, of
 
 ```
 (0, 0, √5)   (0, C1, C7)   (C3, 0, C6)   (C0, C2, C5)   (C4, C4, C4)
@@ -25,11 +26,15 @@ where
 | C4 = (5 + 4√5)/11 | C5 = (5 + √5)/4 | C6 = (5 + 3√5)/6 | C7 = (25 + 9√5)/22 |
 
 - These are 62 points (`DH.deltoidalHexecontahedron` in
-  `proof/DeltoidalHexecontahedron/Statement.lean`; `mcCooey` in the entry
-  point is the same set as a `Finset`): 12 on the 5-fold axes, 30 on the
-  2-fold axes and 20 on the 3-fold axes.
-- Symmetry Ih (the full icosahedral group, of order 120), so the solid is
-  centrally symmetric.
+  `proof/DeltoidalHexecontahedron/Statement.lean`; `mcCooey` in the
+  entry point is the same set as a `Finset`): 12 on the 5-fold axes,
+  30 on the 2-fold axes and 20 on the 3-fold axes.
+- Symmetry Ih (the full icosahedral group, of order 120), so the solid
+  is centrally symmetric.
+
+Here is an [STL file](web/deltoidalhexecontahedron.stl) if you want to
+3D print it. This one has irrational coordinates, so it cannot be
+exact in float.
 
 ## The statement
 
@@ -40,19 +45,20 @@ theorem isNopert_of_certificatesValid (h : CertificatesValid) :
     ∀ V : Finset ℝ³, DH.IsDeltoidalHexecontahedron V → IsNopert V
 ```
 
-`DH.IsDeltoidalHexecontahedron V` says that `V` is the image of McCooey's
-points under a similarity: an orthogonal map (possibly a reflection), a
-positive scaling and a translation. So the theorem covers the exact solid in
-any position, size and orientation, and nothing else. The corollary
-`isNopert_mcCooey_of_certificatesValid` states it for McCooey's coordinates
-themselves.
+`DH.IsDeltoidalHexecontahedron V` says that `V` is the image of
+McCooey's points under a similarity: an orthogonal map (possibly a
+reflection), a positive scaling and a translation. So the theorem
+covers the exact solid in any position, size and orientation, and
+nothing else. The corollary `isNopert_mcCooey_of_certificatesValid`
+states it for McCooey's coordinates themselves.
 
-`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are not all
-in one plane, so their convex hull is a genuine solid, and that this solid is
-not Rupert. `IsRupert` (in `proof/MainTheorem.lean`) is the Rupert property:
-two copies of the solid, each rotated, can be placed so that the shadow of
-one lies strictly inside the shadow of the other. `CertificatesValid` says
-that the certificate data (four solution tables, three cap certificates and
+`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are
+not all in one plane, so their convex hull is a genuine solid, and
+that this solid is not Rupert. `IsRupert` (in
+`proof/MainTheorem.lean`) is the Rupert property: two copies of the
+solid, each rotated, can be placed so that the shadow of one lies
+strictly inside the shadow of the other. `CertificatesValid` says that
+the certificate data (four solution tables, three cap certificates and
 the tie certificates) passes Lean's validity checks, and that the code
 triangles cover the view domain.
 
@@ -60,26 +66,32 @@ triangles cover the view domain.
 
 The DH is only just not Rupert. It has poses with clearance exactly 0
 (*ties*), and moving its twelve 5-fold vertices outward by any amount
-η > 0 gives a Rupert solid: next to a tie there is a passage with clearance
-about 0.0695·η. `search/dh/dh-boundary.py` checks this numerically, with
-60 digits, for η from 10⁻³ down to 10⁻¹⁸; it is not part of the Lean result.
-So every neighbourhood of the DH, however small, contains Rupert solids.
-Unlike for Septopert Classic, there is no true statement about all solids near a
-rational model, and the proof uses the exact solid near the ties (the
-techniques are described in [How the Nopert proofs work](nopert-proof.md)):
+η > 0 gives a Rupert solid: next to a tie there is a passage with
+clearance about 0.0695·η. `search/dh/dh-boundary.py` checks this
+numerically, with 60 digits, for η from 10⁻³ down to 10⁻¹⁸; it is not
+part of the Lean result. So every neighbourhood of the DH, however
+small, contains Rupert solids. Unlike for Septopert Classic, there is
+no true statement about all solids near a rational model, and the
+proof uses the exact solid near the ties (the techniques are described
+in [How the Nopert proofs work](nopert-proof.md)):
 
 - The solution tables exclude every centrally symmetric solid with
-  icosahedral symmetry whose vertices are within 6·10⁻¹⁶ of a rational model,
-  provided exact claims hold for it near the ties (`ExactClaims`).
-- For the exact DH, Lean's kernel decides by exact arithmetic in
-  K = ℚ(√5, sin 72°) that it is such a solid (frame, 70 vertex slots, orbits,
-  central symmetry, closeness to the rational model), and the cap and tie
-  certificates, checked exactly over K, prove the exact claims.
-- Near the 2-fold view and the view where the ties meet the identity, [*caps*](nopert-proof.md#caps)
-  (blow-up charts with exact Bernstein bounds) cover the remaining rotations.
-  Along each pinning tie, [*tie tubes*](nopert-proof.md#ties-and-tie-tubes) prove that no rotation close to the
-  tie is a passage. The mirror ties are handled by a [*half-turn reduction*](nopert-proof.md#poses-and-symmetry-reductions),
-  which uses the central symmetry: the relative rotation R may be replaced
+  icosahedral symmetry whose vertices are within 6·10⁻¹⁶ of a rational
+  model, provided exact claims hold for it near the ties
+  (`ExactClaims`).
+- For the exact DH, Lean's kernel decides by exact arithmetic in K =
+  ℚ(√5, sin 72°) that it is such a solid (frame, 70 vertex slots,
+  orbits, central symmetry, closeness to the rational model), and the
+  cap and tie certificates, checked exactly over K, prove the exact
+  claims.
+- Near the 2-fold view and the view where the ties meet the identity,
+  [*caps*](nopert-proof.md#caps) (blow-up charts with exact Bernstein
+  bounds) cover the remaining rotations. Along each pinning tie, [*tie
+  tubes*](nopert-proof.md#ties-and-tie-tubes) prove that no rotation
+  close to the tie is a passage. The mirror ties are handled by a
+  [*half-turn
+  reduction*](nopert-proof.md#poses-and-symmetry-reductions), which
+  uses the central symmetry: the relative rotation R may be replaced
   by H_u R g (H_u the half-turn about the view u, g a rotation of the
   solid).
 

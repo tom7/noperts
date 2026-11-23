@@ -33,6 +33,9 @@ and M₂ (the cyclic shift of coordinates, the rotation by 2π/3 about
 - It is the same solid as cc-lib's `SnubDodecahedron()` (checked
   numerically; not part of the Lean result).
 
+Here's an [STL file](web/snubdodecahedron.stl) that you can 3D print.
+This one has irrational coordinates, so it cannot be exact in float.
+
 ## The statement
 
 In [`proof/SnubDodecahedron.lean`](proof/SnubDodecahedron.lean):

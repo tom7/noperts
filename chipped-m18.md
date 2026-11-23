@@ -16,9 +16,9 @@ Lean entry point: [`proof/ChippedM18.lean`](proof/ChippedM18.lean).
 
 ## The solid
 
-![The Chipped M18, still confident despite damage](chipped-m18.gif)
+![The Chipped M18, still confident despite damage](web/chipped-m18.gif)
 
-Here is an exact [STL file](chipped-m18.stl) (in the integer coordinates
+Here is an exact [STL file](web/chipped-m18.stl) (in the integer coordinates
 below).
 
 Start with Septopert M18, whose vertices are (−18, 9, 9), (17, 3, 3),
@@ -50,7 +50,7 @@ or rigid transformation of the solid is a nopert too.
 Computed in exact arithmetic from the Lean vertices. Lengths are in the
 Lean coordinates (the integers above divided by 4224).
 
-![Line drawing of the Chipped M18, with a zoom onto one of its acute corners](chipped-m18-edges.svg)
+![Line drawing of the Chipped M18, with a zoom onto one of its acute corners](web/chipped-m18-edges.svg)
 
 Schematic. The chip is a small feature repeated three times; the
 right panel zooms in on one of them. Each edge of the same color
@@ -58,13 +58,13 @@ is equal.
 
 | color | description | edges | dihedral angle | edge length |
 |-------|-------------|-------|----------------|-------------|
-|![orange](swatch-acute.svg)| **acute**: chip pentagon against a pyramid face | 0–1, 0–2, 10–12, 11–13, 12–14, 13–15 | **81.950533°** (cos = 1/√51) | 0.018414 |
-|![blue](swatch-apex.svg)| apex of pyramid | 0–5, 5–12, 5–13 | 90° (exactly) | 0.828125 (= 53/64) |
-|![green](swatch-triforce-exterior.svg)| triforce exterior (shortened) | 3–6, 6–8, 4–7, 7–9, 16–18, 17–18 | 106.945562° | 0.495584 |
-|![purple](swatch-chip-pentagon-108.svg)| chip pentagon, new edge | 1–3, 2–4, 8–10, 9–11, 14–16, 15–17 | 108.691736° | 0.210627 |
-|![red](swatch-triforce-center.svg)| triforce center | 6–7, 6–18, 7–18 | 140.882929° | 0.618718 |
-|![yellow](swatch-base.svg)| base of pyramid (shortened) | 1–10, 2–11, 14–15 | 146.496544° | 1.141683 |
-|![sky blue](swatch-chip-pentagon-176.svg)| chip pentagon, new edge | 3–4, 8–16, 9–17 | 175.803214° | 0.196865 |
+|![orange](web/swatch-acute.svg)| **acute**: chip pentagon against a pyramid face | 0–1, 0–2, 10–12, 11–13, 12–14, 13–15 | **81.950533°** (cos = 1/√51) | 0.018414 |
+|![blue](web/swatch-apex.svg)| apex of pyramid | 0–5, 5–12, 5–13 | 90° (exactly) | 0.828125 (= 53/64) |
+|![green](web/swatch-triforce-exterior.svg)| triforce exterior (shortened) | 3–6, 6–8, 4–7, 7–9, 16–18, 17–18 | 106.945562° | 0.495584 |
+|![purple](web/swatch-chip-pentagon-108.svg)| chip pentagon, new edge | 1–3, 2–4, 8–10, 9–11, 14–16, 15–17 | 108.691736° | 0.210627 |
+|![red](web/swatch-triforce-center.svg)| triforce center | 6–7, 6–18, 7–18 | 140.882929° | 0.618718 |
+|![yellow](web/swatch-base.svg)| base of pyramid (shortened) | 1–10, 2–11, 14–15 | 146.496544° | 1.141683 |
+|![sky blue](web/swatch-chip-pentagon-176.svg)| chip pentagon, new edge | 3–4, 8–16, 9–17 | 175.803214° | 0.196865 |
 
 The chips leave M18's face planes where they were, so the surviving
 edge classes keep exactly M18's dihedral angles (including the right
