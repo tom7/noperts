@@ -46,6 +46,7 @@ public import Minimality.Type29CellII
 public import Minimality.Type29CellII41
 public import Minimality.Type29CellII42
 public import Minimality.Type29CellII44
+public import Minimality.Type29CellII45
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
