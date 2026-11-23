@@ -45,6 +45,8 @@ public import Minimality.Type24Triple21
 public import Minimality.Type24Triple22
 public import Minimality.Type24Triple23
 public import Minimality.Type24Triple24
+public import Minimality.Type24Triple25
+public import Minimality.Type24Triple26
 
 @[expose] public section
 
@@ -1031,6 +1033,41 @@ theorem hole24Q45R6_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (triple_lexAny htri))
   · exact Or.inr ⟨h, htri⟩
 
+/-! ### Further three-view triple closures (`Type24Triple25..26`, TRI24C) -/
+
+def Triple25Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w1 w2 : ℝ³,
+    (0 < ⟪F.N 1, w0⟫ ∧ 0 < ⟪F.N 2, w0⟫ ∧ ⟪F.N 3, w0⟫ < 0 ∧ ⟪F.N 4, w0⟫ = 0 ∧ ⟪F.N 6, w0⟫ = 0 ∧ 0 < ⟪F.N 7, w0⟫ ∧ ⟪F.N 8, w0⟫ < 0) ∧
+    (⟪F.N 0, w1⟫ = 0 ∧ 0 < ⟪F.N 1, w1⟫ ∧ ⟪F.N 2, w1⟫ < 0 ∧ ⟪F.N 3, w1⟫ = 0 ∧ 0 < ⟪F.N 4, w1⟫ ∧ 0 < ⟪F.N 5, w1⟫ ∧ ⟪F.N 6, w1⟫ < 0 ∧ ⟪F.N 7, w1⟫ < 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (⟪F.N 0, w2⟫ = 0 ∧ 0 < ⟪F.N 1, w2⟫ ∧ ⟪F.N 2, w2⟫ < 0 ∧ ⟪F.N 3, w2⟫ < 0 ∧ 0 < ⟪F.N 4, w2⟫ ∧ 0 < ⟪F.N 5, w2⟫ ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ = 0 ∧ ⟪F.N 8, w2⟫ < 0) ∧
+    (⟪F.N 4, F.N 4⟫ * ⟪F.N 6, F.N 6⟫ - ⟪F.N 4, F.N 6⟫ ^ 2 ≠ 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+def Triple26Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w1 : ℝ³,
+    (0 < ⟪F.N 0, w0⟫ ∧ ⟪F.N 1, w0⟫ < 0 ∧ 0 < ⟪F.N 2, w0⟫ ∧ 0 < ⟪F.N 3, w0⟫ ∧ ⟪F.N 4, w0⟫ < 0 ∧ ⟪F.N 5, w0⟫ < 0 ∧ ⟪F.N 6, w0⟫ = 0 ∧ ⟪F.N 7, w0⟫ < 0 ∧ ⟪F.N 8, w0⟫ = 0) ∧
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ = 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ < 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (⟪F.N 0, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 1, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 2, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 4, (x 3 - x 4)⟫ < 0 ∧ 0 < ⟪F.N 5, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 6, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 7, (x 3 - x 4)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 3 - x 4)⟫ ≠ ⟪x j, (x 3 - x 4)⟫)
+
+
+/-- Disjunction of the 2 further (TRI24C) three-view triple closure hypotheses. -/
+def TripleHyp3 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Triple25Hyp x F ∨ Triple26Hyp x F
+
+/-- Any of the 2 further (TRI24C) three-view triple closures gives `Gen.LexAny F`. -/
+theorem triple3_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : TripleHyp3 x F) : Gen.LexAny F := by
+  rcases h with h25 | h26
+  · obtain ⟨w0, w1, w2, ⟨h0_1, h0_2, h0_3, h0_4, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hD0, hg0, hg1, hg2⟩ := h25
+    exact PSVC.T25.lexAny_T25 F w0 w1 w2 h0_1 h0_2 h0_3 h0_4 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hD0 hg0 hg1 hg2
+  · obtain ⟨w0, w1, ⟨h0_0, h0_1, h0_2, h0_3, h0_4, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_4, h2_5, h2_6, h2_7⟩, hg0, hg1, hg2⟩ := h26
+    exact PSVC.T26.lexAny_T26 F w0 w1 h0_0 h0_1 h0_2 h0_3 h0_4 h0_5 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_4 h2_5 h2_6 h2_7 hg0 hg1 hg2
+
 /-- Further shrunken residual of `Hole24R7` removing the further three-view triple closures. -/
 def Hole24R8 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24R7 x F ∧ ¬ TripleHyp2 x F
@@ -1053,11 +1090,33 @@ theorem hole24Q45R7_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (triple2_lexAny htri))
   · exact Or.inr ⟨h, htri⟩
 
+/-- Further shrunken residual of `Hole24R8` removing the TRI24C three-view triple closures. -/
+def Hole24R9 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R8 x F ∧ ¬ TripleHyp3 x F
+
+/-- Every point of `Hole24R8` is Rupert or reduces to `Hole24R9`. -/
+theorem hole24R8_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R8 x F) : IsRupert (univ.image x) ∨ Hole24R9 x F := by
+  by_cases htri : TripleHyp3 x F
+  · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (triple3_lexAny htri))
+  · exact Or.inr ⟨h, htri⟩
+
+/-- Further shrunken `Q45` residual of `Hole24Q45R8` removing the TRI24C three-view triple closures. -/
+def Hole24Q45R9 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24Q45R8 x F ∧ ¬ TripleHyp3 x F
+
+/-- Every point of `Hole24Q45R8` is Rupert or reduces to `Hole24Q45R9`. -/
+theorem hole24Q45R8_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24Q45R8 x F) : IsRupert (univ.image x) ∨ Hole24Q45R9 x F := by
+  by_cases htri : TripleHyp3 x F
+  · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (triple3_lexAny htri))
+  · exact Or.inr ⟨h, htri⟩
+
 /-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24Q45R7`,
 `Hole24R7`, and the two star-closed `{1 < c3, 0 < mustar}` / `{1 < b3, 0 < mu23}` exclusions
 discharged via `Hole24Flags.1` (`¬ FacetCell24 fs`) and `Type24T2b`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24Flags x fs ∧ (Hole24Q45R8 x F ∨ Hole24R8 x F) ∧
+  Hole24Flags x fs ∧ (Hole24Q45R9 x F ∨ Hole24R9 x F) ∧
     ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x) ∧
     ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x)
 
@@ -1076,32 +1135,32 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
       ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
     (A20.mu23 x = 0 ∧ ∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
-  rcases hH with ⟨hflags, hQ | hR8, hnow, hnoe⟩
+  rcases hH with ⟨hflags, hQ | hR9, hnow, hnoe⟩
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · rcases eq_or_lt_of_le hmu with hzero | hpos
       · left
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hQ.1.1.1.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
+        exact hQ.1.1.1.1.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
       · exact False.elim (hnow ⟨hc3, hpos⟩)
     · rcases eq_or_lt_of_le hmu23 with hzero | hpos
       · right
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hQ.1.1.1.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
+        exact hQ.1.1.1.1.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
       · exact False.elim (hnoe ⟨hb3, hpos⟩)
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · rcases eq_or_lt_of_le hmu with hzero | hpos
       · left
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hR8.1.1.1.2.1 ⟨hc3, hzero.symm, hno⟩
+        exact hR9.1.1.1.1.2.1 ⟨hc3, hzero.symm, hno⟩
       · exact False.elim (hnow ⟨hc3, hpos⟩)
     · rcases eq_or_lt_of_le hmu23 with hzero | hpos
       · right
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hR8.1.1.1.2.2 ⟨hb3, hzero.symm, hno⟩
+        exact hR9.1.1.1.1.2.2 ⟨hb3, hzero.symm, hno⟩
       · exact False.elim (hnoe ⟨hb3, hpos⟩)
 
 /-- The strict region `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be < 1, al < 1}` is
@@ -1118,7 +1177,7 @@ theorem hole24_b3_c3_st_lt_empty {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →
   · exact hnow ⟨hc3, hmu⟩
   · exact hnoe ⟨hb3, hmu23⟩
 
-/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R8`, `Hole24R8`, and the star-closed
+/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R9`, `Hole24R9`, and the star-closed
 exclusions). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1163,7 +1222,9 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
           · exact Or.inl hRup
           · rcases hole24Q45R7_reduce hQ7 with hRup | hQ8
             · exact Or.inl hRup
-            · exact Or.inr ⟨hh, hflags, Or.inl hQ8, hnow, hnoe⟩
+            · rcases hole24Q45R8_reduce hQ8 with hRup | hQ9
+              · exact Or.inl hRup
+              · exact Or.inr ⟨hh, hflags, Or.inl hQ9, hnow, hnoe⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
     · by_cases hnow : 1 < oblX6 x 3 ∧ 0 < A20.mustar x
@@ -1181,6 +1242,8 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
             · exact Or.inl hRup
             · rcases hole24R7_reduce hR7 with hRup | hR8
               · exact Or.inl hRup
-              · exact Or.inr ⟨hh, hflags, Or.inr hR8, hnow, hnoe⟩
+              · rcases hole24R8_reduce hR8 with hRup | hR9
+                · exact Or.inl hRup
+                · exact Or.inr ⟨hh, hflags, Or.inr hR9, hnow, hnoe⟩
 
 end Minimality.T24

@@ -2000,3 +2000,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.l44_ID10
 #assert_standard_axioms Minimality.NF29.l44_ID11
 #assert_standard_axioms Minimality.NF29.l44_ID12
+-- Task TRI24C: further three-view triple closures T25..T26 (tri3 stage 2 leftovers)
+#assert_standard_axioms Minimality.PSVC.T25.lexAny_T25
+#assert_standard_axioms Minimality.PSVC.T26.lexAny_T26
+#assert_standard_axioms Minimality.T24.triple3_lexAny
+#assert_standard_axioms Minimality.T24.hole24R8_reduce
+#assert_standard_axioms Minimality.T24.hole24Q45R8_reduce
