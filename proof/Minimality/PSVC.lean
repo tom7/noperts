@@ -1203,13 +1203,113 @@ def checkTpW {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n) 
       rimClosedW R (exclOK forced deps Eu) (linExts W) ||
         (linExts W).all fun L => exclOK forced deps Eu L || triOKpW Eu Ev Ew Ruv Ruw Rvw Bv Bw L
 
+theorem check2W_of_masks {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n)
+    (sw : Fin m → SignType) (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (E : List (List (Fin p × Fin p))) (R : List (Rim m p)) (T : List (Fin p × Fin p))
+    (B2 : List (List (Fin p))) (rMs : List Nat) (m2 : Nat)
+    (hval : R.all (rimValid S P sw) = true)
+    (hlen : rMs.length = R.length)
+    (hr : (List.finRange p).permutations'.all (fun L =>
+      (List.finRange R.length).all (fun i =>
+        !Nat.testBit (rMs.getD i.val 0) (SVC.lehmerAux L) ||
+          (exclOK forced deps E L || SVC.rimOK (R[i]) L))) = true)
+    (hm2 : (List.finRange p).permutations'.all (fun L =>
+      !Nat.testBit m2 (SVC.lehmerAux L) || (exclOK forced deps E L || B2.contains L)) = true)
+    (hw : (SVC.weakOrders p T).all (fun W =>
+      let exts := SVC.linExts W
+      rMs.any (fun rM => exts.all fun L => Nat.testBit rM (SVC.lehmerAux L)) ||
+        exts.all fun L => Nat.testBit m2 (SVC.lehmerAux L)) = true) :
+    check2W S P sw forced deps E R T B2 = true := by
+  simp only [check2W, Bool.and_eq_true, hval, true_and, List.all_eq_true]
+  intro W hW
+  have hWw := List.all_eq_true.mp hw W hW
+  simp only [Bool.or_eq_true, List.any_eq_true, List.all_eq_true] at hWw ⊢
+  rcases hWw with ⟨rM, hrM, hbit⟩ | hbit
+  · left
+    obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.mp hrM
+    have hiR : i < R.length := hlen ▸ hi
+    simp only [rimClosedW, Bool.or_eq_true, List.any_eq_true, List.all_eq_true]
+    right
+    refine ⟨R[i], List.getElem_mem hiR, fun L hL => ?_⟩
+    have hLp := SVC.mem_linExts_of_weakOrders hW hL
+    have hri := List.all_eq_true.mp (List.all_eq_true.mp hr L hLp) ⟨i, hiR⟩ (List.mem_finRange _)
+    have hbt := hbit L hL
+    have hget : rMs.getD i 0 = rMs[i] := by simp [List.getD_eq_getElem?_getD, hi]
+    rw [hget, hbt] at hri
+    simpa using hri
+  · right
+    intro L hL
+    have hLp := SVC.mem_linExts_of_weakOrders hW hL
+    have hm := List.all_eq_true.mp hm2 L hLp
+    have hbt := hbit L hL
+    rw [hbt] at hm
+    simpa using hm
+
+theorem check1W_of_masks {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n)
+    (sw : Fin m → SignType) (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (E1 E2 : List (List (Fin p × Fin p))) (R : List (Rim m p)) (T : List (Fin p × Fin p))
+    (B2 : List (List (Fin p))) (rMs : List Nat) (m2 : Nat)
+    (hval : R.all (rimValid S P sw) = true)
+    (hlen : rMs.length = R.length)
+    (hr : (List.finRange p).permutations'.all (fun L =>
+      (List.finRange R.length).all (fun i =>
+        !Nat.testBit (rMs.getD i.val 0) (SVC.lehmerAux L) ||
+          (exclOK forced deps E1 L || SVC.rimOK (R[i]) L))) = true)
+    (hm2 : (List.finRange p).permutations'.all (fun L =>
+      !Nat.testBit m2 (SVC.lehmerAux L) || (exclOK forced deps E1 L || B2.all (gramBad E1 E2 L))) = true)
+    (hw : (SVC.weakOrders p T).all (fun W =>
+      let exts := SVC.linExts W
+      rMs.any (fun rM => exts.all fun L => Nat.testBit rM (SVC.lehmerAux L)) ||
+        exts.all fun L => Nat.testBit m2 (SVC.lehmerAux L)) = true) :
+    check1W S P sw forced deps E1 E2 R T B2 = true := by
+  simp only [check1W, Bool.and_eq_true, hval, true_and, List.all_eq_true]
+  intro W hW
+  have hWw := List.all_eq_true.mp hw W hW
+  simp only [Bool.or_eq_true, List.any_eq_true, List.all_eq_true] at hWw ⊢
+  rcases hWw with ⟨rM, hrM, hbit⟩ | hbit
+  · left
+    obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.mp hrM
+    have hiR : i < R.length := hlen ▸ hi
+    simp only [rimClosedW, Bool.or_eq_true, List.any_eq_true, List.all_eq_true]
+    right
+    refine ⟨R[i], List.getElem_mem hiR, fun L hL => ?_⟩
+    have hLp := SVC.mem_linExts_of_weakOrders hW hL
+    have hri := List.all_eq_true.mp (List.all_eq_true.mp hr L hLp) ⟨i, hiR⟩ (List.mem_finRange _)
+    have hbt := hbit L hL
+    have hget : rMs.getD i 0 = rMs[i] := by simp [List.getD_eq_getElem?_getD, hi]
+    rw [hget, hbt] at hri
+    simpa using hri
+  · right
+    intro L hL
+    have hLp := SVC.mem_linExts_of_weakOrders hW hL
+    have hm := List.all_eq_true.mp hm2 L hLp
+    have hbt := hbit L hL
+    rw [hbt] at hm
+    simpa using hm
+
+private theorem exists_det3_ne_zero {w : ℝ³} (hw : w ≠ 0) :
+    ∃ d1 d2 : ℝ³, Split.det3 w d1 d2 ≠ 0 := by
+  have hcomp : w 0 ≠ 0 ∨ w 1 ≠ 0 ∨ w 2 ≠ 0 := by
+    by_contra h
+    push Not at h
+    apply hw
+    ext i
+    fin_cases i <;> simp [h]
+  rcases hcomp with h0 | h1 | h2
+  · refine ⟨EuclideanSpace.single 1 (1 : ℝ), EuclideanSpace.single 2 (1 : ℝ), ?_⟩
+    dsimp only [Split.det3]; simpa [PiLp.single_apply] using h0
+  · refine ⟨EuclideanSpace.single 2 (1 : ℝ), EuclideanSpace.single 0 (1 : ℝ), ?_⟩
+    dsimp only [Split.det3]; simpa [PiLp.single_apply] using h1
+  · refine ⟨EuclideanSpace.single 0 (1 : ℝ), EuclideanSpace.single 1 (1 : ℝ), ?_⟩
+    dsimp only [Split.det3]; simpa [PiLp.single_apply] using h2
+
 /-- Tie-tolerant `ViewData`: replaces `hgen` with per-rim `(d1, d2)` (`Split.det3 w d1 d2 ≠ 0`),
 injectivity of `x ∘ P`, and allowed tie pairs `T`. -/
 structure ViewDataLex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
     (F : S0xFac m S x) (P : Fin p → Fin n) (w : ℝ³) (sw : Fin m → SignType)
     (R : List (Rim m p)) (forced : List (Fin p × Fin p)) (E : List (List (Fin p × Fin p)))
     (T : List (Fin p × Fin p)) : Prop where
-  hne : R ≠ []
+  hw0 : w ≠ 0
   hsw : ∀ ρ ∈ R, ∀ t, t ∈ ρ.U ∨ t ∈ ρ.Dn → SignType.sign ⟪F.N t, w⟫ = sw t
   hR : ∀ ρ ∈ R, ∃ d1 d2 : ℝ³,
     (∀ t, sw t = 0 → SignType.sign ⟪F.N t, d1⟫ = ρ.sd t) ∧ Split.det3 w d1 d2 ≠ 0
@@ -1236,8 +1336,7 @@ private theorem check2W_extract {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x 
   rcases Bool.or_eq_true _ _ |>.mp (hcW W hW) with hrim | hall
   · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
     rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
-    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R V.hne
-      obtain ⟨d1, d2, _, hdet⟩ := V.hR ρ0 hρ0
+    · obtain ⟨d1, d2, hdet⟩ := exists_det3_ne_zero V.hw0
       obtain ⟨L, hL, _, hrk⟩ := hW_ext (fun i => lexKey (x (P i)) w d1 d2)
         (fun _ _ h => lexKey_lt_of_lt h)
         (fun i j h => by by_contra hne'; exact lexKey_ne hdet (fun e => hne' (V.hP e)) h)
@@ -1249,8 +1348,7 @@ private theorem check2W_extract {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x 
       rcases hrim L hL with hexcl | hok
       · exact absurd (exclOK_lex_false (w_ne_zero_of_det3 hdet) V.hforced hdeps V.hE hrk hexcl) False.elim
       · exact Or.inl (lexAny_of_rimOK_lex F P w d1 d2 sw ρ (V.hsw ρ hρ) hd1 (hval ρ hρ) hrk hok)
-  · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R V.hne
-    obtain ⟨d1, d2, _, hdet⟩ := V.hR ρ0 hρ0
+  · obtain ⟨d1, d2, hdet⟩ := exists_det3_ne_zero V.hw0
     obtain ⟨L, hL, _, hrk⟩ := hW_ext (fun i => lexKey (x (P i)) w d1 d2)
       (fun _ _ h => lexKey_lt_of_lt h)
       (fun i j h => by by_contra hne'; exact lexKey_ne hdet (fun e => hne' (V.hP e)) h)
@@ -1280,8 +1378,7 @@ theorem pair_closure_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n
     rcases Bool.or_eq_true _ _ |>.mp (hcW1 W1 hW1) with hrim | hall
     · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
       rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
-      · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R1 V1.hne
-        obtain ⟨d11, d12, _, hdet1⟩ := V1.hR ρ0 hρ0
+      · obtain ⟨d11, d12, hdet1⟩ := exists_det3_ne_zero V1.hw0
         obtain ⟨L1, hL1, _, hrk1⟩ := hW1_ext (fun i => lexKey (x (P i)) w1 d11 d12)
           (fun _ _ h => lexKey_lt_of_lt h)
           (fun i j h => by by_contra hne'; exact lexKey_ne hdet1 (fun e => hne' (V1.hP e)) h)
@@ -1293,8 +1390,7 @@ theorem pair_closure_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n
         rcases hrim L1 hL1 with hexcl | hok
         · exact (exclOK_lex_false (w_ne_zero_of_det3 hdet1) V1.hforced hdeps V1.hE hrk1 hexcl).elim
         · exact lexAny_of_rimOK_lex F P w1 d11 d12 sw1 ρ (V1.hsw ρ hρ) hd1 (hval1 ρ hρ) hrk1 hok
-    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R1 V1.hne
-      obtain ⟨d11, d12, _, hdet1⟩ := V1.hR ρ0 hρ0
+    · obtain ⟨d11, d12, hdet1⟩ := exists_det3_ne_zero V1.hw0
       obtain ⟨L1, hL1, _, hrk1⟩ := hW1_ext (fun i => lexKey (x (P i)) w1 d11 d12)
         (fun _ _ h => lexKey_lt_of_lt h)
         (fun i j h => by by_contra hne'; exact lexKey_ne hdet1 (fun e => hne' (V1.hP e)) h)
@@ -1371,8 +1467,7 @@ theorem triple_closure_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin
   rcases Bool.or_eq_true _ _ |>.mp (hcuW Wu hWu) with hrim | hall
   · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
     rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
-    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
-      obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+    · obtain ⟨du1, du2, hdetu⟩ := exists_det3_ne_zero Vu.hw0
       obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
         (fun _ _ h => lexKey_lt_of_lt h)
         (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
@@ -1384,8 +1479,7 @@ theorem triple_closure_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin
       rcases hrim Lu hLu with hexcl | hok
       · exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku hexcl).elim
       · exact lexAny_of_rimOK_lex F P u du1 du2 su ρ (Vu.hsw ρ hρ) hd1 (hvu ρ hρ) hrku hok
-  · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
-    obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+  · obtain ⟨du1, du2, hdetu⟩ := exists_det3_ne_zero Vu.hw0
     obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
       (fun _ _ h => lexKey_lt_of_lt h)
       (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
@@ -1421,8 +1515,7 @@ theorem triple_closure_p_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : F
   rcases Bool.or_eq_true _ _ |>.mp (hcuW Wu hWu) with hrim | hall
   · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
     rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
-    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
-      obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+    · obtain ⟨du1, du2, hdetu⟩ := exists_det3_ne_zero Vu.hw0
       obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
         (fun _ _ h => lexKey_lt_of_lt h)
         (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
@@ -1434,8 +1527,7 @@ theorem triple_closure_p_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : F
       rcases hrim Lu hLu with hexcl | hok
       · exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku hexcl).elim
       · exact lexAny_of_rimOK_lex F P u du1 du2 su ρ (Vu.hsw ρ hρ) hd1 (hvu ρ hρ) hrku hok
-  · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
-    obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+  · obtain ⟨du1, du2, hdetu⟩ := exists_det3_ne_zero Vu.hw0
     obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
       (fun _ _ h => lexKey_lt_of_lt h)
       (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
