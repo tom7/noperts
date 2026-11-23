@@ -267,4 +267,218 @@ theorem type29_rupert_or_hole''' {x : Fin 7 → ℝ³} (N : NF29 x)
     IsRupert (univ.image x) ∨ Hole29R3 x N :=
   (type29_rupert_or_hole'' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R2_reduce h))
 
+/-! ### SINGLE29: sixteen more single-view cells (`Type29Single.lean`, SINGLE29 part) -/
+
+/-- Single-view cell `e05b` (SINGLE29; `PL29.lexAny_e05b`, view `x 0 - x 5`, K1b). -/
+def E05bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.a2 ∧
+    ⟪(s0x_fac29 N.facets).N 4, x 0 - x 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 0 - x 5⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 5⟫ ≠ ⟪x j, x 0 - x 5⟫
+
+/-- Single-view cell `e12b` (SINGLE29; `PL29.lexAny_e12b`, view `x 1 - x 2`, K1b). -/
+def E12bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.b0 < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, x 1 - x 2⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, x 1 - x 2⟫ ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 2⟫ ≠ ⟪x j, x 1 - x 2⟫
+
+/-- Single-view cell `e02a` (SINGLE29; `PL29.lexAny_e02a`, view `x 0 - x 2`, K1a). -/
+def E02aHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.b0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 5, x 0 - x 2⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, x 0 - x 2⟫ ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 2⟫ ≠ ⟪x j, x 0 - x 2⟫
+
+/-- Single-view cell `e15a` (SINGLE29; `PL29.lexAny_e15a`, view `x 1 - x 5`, K1a). -/
+def E15aHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.V < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 2, x 1 - x 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, x 1 - x 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 1 - x 5⟫ < 0 ∧
+    0 < PL29.PlaneSide x 2 5 6 0 1 ∧
+    ∀ i ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 5⟫ ≠ ⟪x j, x 1 - x 5⟫
+
+/-- Single-view cell `e15a2` (SINGLE29; `PL29.lexAny_e15a2`, view `x 1 - x 5`, K1a). -/
+def E15a2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.b0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, x 1 - x 5⟫ ∧
+    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 5⟫ ≠ ⟪x j, x 1 - x 5⟫
+
+/-- Single-view cell `e02b` (SINGLE29; `PL29.lexAny_e02b`, view `x 0 - x 2`, K1b). -/
+def E02bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.a2 ∧
+    ⟪(s0x_fac29 N.facets).N 5, x 0 - x 2⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, x 0 - x 2⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 2⟫ ≠ ⟪x j, x 0 - x 2⟫
+
+/-- Single-view cell `e14b` (SINGLE29; `PL29.lexAny_e14b`, view `x 1 - x 4`, K1b). -/
+def E14bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.V ∧
+    ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 3, x 1 - x 4⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ < 0 ∧
+    PL29.PlaneSide x 2 4 6 0 1 < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+
+/-- Single-view cell `e14b2` (SINGLE29; `PL29.lexAny_e14b2`, view `x 1 - x 4`, K1b). -/
+def E14b2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.a2 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ ∧
+    ∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+
+/-- Single-view cell `e15a3` (SINGLE29; `PL29.lexAny_e15a3`, view `x 1 - x 5`, K1a). -/
+def E15a3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.b0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 6, x 1 - x 5⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 1 - x 5⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 5⟫ ≠ ⟪x j, x 1 - x 5⟫
+
+/-- Single-view cell `e14b3` (SINGLE29; `PL29.lexAny_e14b3`, view `x 1 - x 4`, K1b). -/
+def E14b3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.a2 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, x 1 - x 4⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ < 0 ∧
+    ∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+
+/-- Single-view cell `e24a2` (SINGLE29; `PL29.lexAny_e24a2`, view `x 2 - x 4`, K1a). -/
+def E24a2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.a2 < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 1, x 2 - x 4⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 3, x 2 - x 4⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 8, x 2 - x 4⟫ < 0 ∧
+    ∀ i ∈ ({1, 2, 3, 4, 5} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 2 - x 4⟫ ≠ ⟪x j, x 2 - x 4⟫
+
+/-- Single-view cell `e05b2` (SINGLE29; `PL29.lexAny_e05b2`, view `x 0 - x 5`, K1b). -/
+def E05b2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.b0 < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 4, x 0 - x 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 6, x 0 - x 5⟫ ∧
+    ⟪(s0x_fac29 N.facets).N 7, x 0 - x 5⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 3, 4, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 5⟫ ≠ ⟪x j, x 0 - x 5⟫
+
+/-- Single-view cell `e03a` (SINGLE29; `PL29.lexAny_e03a`, view `x 0 - x 3`, K1a). -/
+def E03aHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.a2 < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 4, x 0 - x 3⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 5, x 0 - x 3⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 3⟫ ≠ ⟪x j, x 0 - x 3⟫
+
+/-- Single-view cell `e23b` (SINGLE29; `PL29.lexAny_e23b`, view `x 2 - x 3`, K1b). -/
+def E23bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.b0 < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 1, x 2 - x 3⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 5, x 2 - x 3⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 2 - x 3⟫ ≠ ⟪x j, x 2 - x 3⟫
+
+/-- Single-view cell `l1456x234` (SINGLE29; `PL29.lexAny_l1456x234`, view `cross N1456 N234`, no class fact). -/
+def L1456x234Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 5 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 5 6⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 5 6⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 5 6⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 5 6⟫ ∧
+    ∀ i ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 5 6⟫ ≠ ⟪x j, PL29.lv29 N 5 6⟫
+
+/-- Single-view cell `l035x1456` (SINGLE29; `PL29.lexAny_l035x1456`, view `cross N035 N1456`, no class fact). -/
+def L035x1456Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 3 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 3 5⟫ < 0 ∧
+    ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 3 5⟫ < 0 ∧
+    0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 3 5⟫ ∧
+    0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 3 5⟫ ∧
+    ∀ i ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, PL29.lv29 N 3 5⟫ ≠ ⟪x j, PL29.lv29 N 3 5⟫
+
+
+/-- Union of the SINGLE29 single-view cells. -/
+def Single29Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  E05bHyp x N ∨
+    E12bHyp x N ∨
+    E02aHyp x N ∨
+    E15aHyp x N ∨
+    E15a2Hyp x N ∨
+    E02bHyp x N ∨
+    E14bHyp x N ∨
+    E14b2Hyp x N ∨
+    E15a3Hyp x N ∨
+    E14b3Hyp x N ∨
+    E24a2Hyp x N ∨
+    E05b2Hyp x N ∨
+    E03aHyp x N ∨
+    E23bHyp x N ∨
+    L1456x234Hyp x N ∨
+    L035x1456Hyp x N
+
+/-- Shrunken Type-29 open hole proposition, excluding the SINGLE29 single-view cells. -/
+def Hole29R4 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  Hole29R3 x N ∧ ¬ Single29Hyp x N
+
+/-- Every point of `Hole29R4` lies in `Hole29`. -/
+theorem hole29_of_hole29R4 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R4 x N) : Hole29 x N :=
+  hole29_of_hole29R3 h.1
+
+/-- **Reduction of `Hole29R3` to `Hole29R4`**: the SINGLE29 cells (`PL29.lexAny29_*`) against
+`¬ LexAny29`. -/
+theorem hole29R3_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R3 x N) : Hole29R4 x N := by
+  have hnl := (hole29_of_hole29R3 h).2.2.2.2.2.1
+  refine ⟨h, ?_⟩
+  rintro (⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩
+    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩
+    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4, h5⟩
+    | ⟨h1, h2, h3, h4, h5⟩
+    | ⟨h1, h2, h3, h4, h5⟩
+    | ⟨h1, h2, h3, h4, h5⟩
+    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩)
+  · exact hnl (PL29.lexAny29_K1b_e05 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_K1b_e12 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_K1a_e02 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_K1a_e15 N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1a_e15_2 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_K1b_e02 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_K1b_e14 N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1b_e14_2 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_K1a_e15_3 N h1 h2 h3 h4 h5)
+  · exact hnl (PL29.lexAny29_K1b_e14_3 N h1 h2 h3 h4 h5)
+  · exact hnl (PL29.lexAny29_K1a_e24_2 N h1 h2 h3 h4 h5)
+  · exact hnl (PL29.lexAny29_K1b_e05_2 N h1 h2 h3 h4 h5)
+  · exact hnl (PL29.lexAny29_K1a_e03 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_K1b_e23 N h1 h2 h3 h4)
+  · exact hnl (PL29.lexAny29_l1456x234 N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_l035x1456 N h1 h2 h3 h4 h5 h6)
+
+/-- Main Type-29 reduction leaving `Hole29R4`. -/
+theorem type29_rupert_or_hole'''' {x : Fin 7 → ℝ³} (N : NF29 x)
+    (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
+    IsRupert (univ.image x) ∨ Hole29R4 x N :=
+  (type29_rupert_or_hole''' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R3_reduce h))
+
 end Minimality.H29
