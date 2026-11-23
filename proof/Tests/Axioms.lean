@@ -52,6 +52,7 @@ import Minimality.GenQuadLex
 import Minimality.Type24ROffTie
 import Minimality.Type29T1Pair
 import Minimality.Type29T1Close
+import Minimality.Type29T1Escape
 import Minimality.Type24A1Small
 import Minimality.Type24A2Band
 import Minimality.Type24A1Z54
@@ -1371,6 +1372,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.u46_eq_u2346
 #assert_standard_axioms Minimality.NF29.v46_fail
 #assert_standard_axioms Minimality.NF29.t1_closed
+#assert_standard_axioms Minimality.NF29.t1_escape
+#assert_standard_axioms Minimality.NF29.lexAny29_F023F356_A
+#assert_standard_axioms Minimality.NF29.lexAny29_F023F356_B
+#assert_standard_axioms Minimality.NF29.lexAny29_F023F356_C
+#assert_standard_axioms Minimality.NF29.t1_closed'
 #assert_standard_axioms Minimality.T24.A1.f2356_26_of_region
 #assert_standard_axioms Minimality.T24.A1.t26c_of_region
 #assert_standard_axioms Minimality.T24.A1.t26d_of_region
