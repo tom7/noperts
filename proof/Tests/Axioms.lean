@@ -1685,3 +1685,20 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
 #assert_standard_axioms Minimality.T24.type24_rupert_or_hole
+
+-- Task DM: three-view triple closure + pencil rule + T1..T10
+#assert_standard_axioms Minimality.PSVC.triple_closure
+#assert_standard_axioms Minimality.PSVC.triple_closure_p
+#assert_standard_axioms Minimality.PSVC.pencil_of_check
+#assert_standard_axioms Minimality.PSVC.pencOK_of_checkF
+#assert_standard_axioms Minimality.PSVC.T1.lexAny_T1
+#assert_standard_axioms Minimality.PSVC.T2.lexAny_T2
+#assert_standard_axioms Minimality.PSVC.T3.lexAny_T3
+#assert_standard_axioms Minimality.PSVC.T4.lexAny_T4
+#assert_standard_axioms Minimality.PSVC.T5.lexAny_T5
+#assert_standard_axioms Minimality.PSVC.T6.lexAny_T6
+#assert_standard_axioms Minimality.PSVC.T7.lexAny_T7
+#assert_standard_axioms Minimality.PSVC.T8.lexAny_T8
+#assert_standard_axioms Minimality.PSVC.T9.lexAny_T9
+#assert_standard_axioms Minimality.PSVC.T10.lexAny_T10
+#assert_standard_axioms Minimality.T24.triple_lexAny
