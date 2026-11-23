@@ -12,6 +12,9 @@ public import Minimality.Type24W63Radon
 public import Minimality.Type24C3One
 public import Minimality.Type24E23
 public import Minimality.Type24W63Ties
+public import Minimality.Type24T2b
+public import Minimality.Type24SVCCells
+public import Minimality.Type24PairL3u27
 
 @[expose] public section
 
@@ -438,15 +441,237 @@ theorem hole24Q45_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   · rintro ⟨hb3, hmu, hgen⟩
     exact hQ.2.2.2.2.2.1 (A20.e23_closes_wall F hb3 hmu hgen)
 
-/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24Q45Special`
-shrunk to `Hole24Q45R` and `Hole24R` shrunk to `Hole24R5`. -/
+private theorem mkFac24_linear_eq {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
+    (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
+    (s : Fin 9) (u : ℝ³) :
+    ⟪(mkFac24 fs hh).N s, u⟫ = (fs s).linear u := by
+  have h1 := (mkFac24 fs hh).hN s u 0
+  have h2 : (fs s).linear u = fs s u - fs s 0 := by simpa using (fs s).linear_apply_vsub u 0
+  have h3 : (mkFac24 fs hh).f s = fs s := rfl
+  rw [h2, ← h3, ← sub_zero u, ← h1]
+  simp [sub_zero]
+
+private theorem facetCell24_of_n346 {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
+    (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
+    (hu : ∃ u : ℝ³, 0 < ⟪(mkFac24 fs hh).N 8, u⟫ ∧ ⟪(mkFac24 fs hh).N 3, u⟫ < 0 ∧
+      ⟪(mkFac24 fs hh).N 4, u⟫ < 0 ∧ ⟪(mkFac24 fs hh).N 7, u⟫ < 0) :
+    FacetCell24 fs := by
+  obtain ⟨u, h8, h3, h4, h7⟩ := hu
+  refine ⟨8, u, by rwa [← mkFac24_linear_eq fs hh 8 u], ?_⟩
+  intro s hs
+  rw [← mkFac24_linear_eq fs hh s u]
+  fin_cases s <;> first | exact absurd hs (by decide) | exact h3 | exact h4 | exact h7
+
+private theorem facetCell24_of_n235 {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
+    (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
+    (hu : ∃ u : ℝ³, 0 < ⟪(mkFac24 fs hh).N 6, u⟫ ∧ ⟪(mkFac24 fs hh).N 3, u⟫ < 0 ∧
+      ⟪(mkFac24 fs hh).N 2, u⟫ < 0 ∧ ⟪(mkFac24 fs hh).N 7, u⟫ < 0) :
+    FacetCell24 fs := by
+  obtain ⟨u, h6, h3, h2, h7⟩ := hu
+  refine ⟨6, u, by rwa [← mkFac24_linear_eq fs hh 6 u], ?_⟩
+  intro s hs
+  rw [← mkFac24_linear_eq fs hh s u]
+  fin_cases s <;> first | exact absurd hs (by decide) | exact h2 | exact h3 | exact h7
+
+/-- Combining `W63Star` with `t2b_closes`, `{1 < oblX6 x 3, 0 < mustar x}` gives `LexAny` unless
+`FacetCell24 fs` holds. -/
+theorem w63_closes_star_or_facetCell {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
+    (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
+    (hc3 : 1 < oblX6 x 3) (hmu : 0 < A20.mustar x) :
+    Gen.LexAny (mkFac24 fs hh) ∨ FacetCell24 fs := by
+  by_cases hW : A20.W63Star x
+  · rcases A20.t2b_closes (mkFac24 fs hh) hW.1 hW.2.1 with hLex | hu
+    · exact Or.inl hLex
+    · exact Or.inr (facetCell24_of_n346 fs hh hu)
+  · exact Or.inl (A20.w63_closes_star (mkFac24 fs hh) hc3 hmu hW)
+
+/-- Combining `E23Star` with `t2b_closes_e23`, `{1 < oblX2 x 3, 0 < mu23 x}` gives `LexAny` unless
+`FacetCell24 fs` holds. -/
+theorem e23_closes_star_or_facetCell {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
+    (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
+    (hb3 : 1 < oblX2 x 3) (hmu : 0 < A20.mu23 x) :
+    Gen.LexAny (mkFac24 fs hh) ∨ FacetCell24 fs := by
+  by_cases hE : A20.E23Star x
+  · rcases A20.t2b_closes_e23 (mkFac24 fs hh) hE.1 hE.2.1 with hLex | hu
+    · exact Or.inl hLex
+    · exact Or.inr (facetCell24_of_n235 fs hh hu)
+  · exact Or.inl (A20.e23_closes_star (mkFac24 fs hh) hb3 hmu hE)
+
+/-! ### Non-triangle SVC cells (`Type24SVCCells`) and two-view pair closure (`Type24PairL3u27`) -/
+
+def Cell_012_0345_zpmzppmpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, ⟪F.N 0, w⟫ = 0 ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
+    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4, 5} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 1, 2, 3, 4, 5} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+def Cell_0345_236_ppmzppmzp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
+    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 7, w⟫ = 0 ∧ 0 < ⟪F.N 8, w⟫ ∧
+    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+def Cell_0345_236_pppzmppzm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, 0 < ⟪F.N 1, w⟫ ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧ ⟪F.N 4, w⟫ < 0 ∧
+    0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ ⟪F.N 7, w⟫ = 0 ∧ ⟪F.N 8, w⟫ < 0 ∧
+    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+def Cell_025_046_ppzmzpppp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ = 0 ∧ ⟪F.N 3, w⟫ < 0 ∧
+    ⟪F.N 4, w⟫ = 0 ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
+    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+def Cell_025_235_ppzmppzpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  0 < ⟪F.N 4, x 2 - x 5⟫ ∧ 0 < ⟪F.N 8, x 2 - x 5⟫ ∧
+    ∀ i ∈ ({0, 2, 3, 4, 5} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 5} : Finset (Fin 7)), i ≠ j → ⟪x i, x 2 - x 5⟫ ≠ ⟪x j, x 2 - x 5⟫
+
+def Cell_025_346_ppzmppppz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 2, w⟫ = 0 ∧ ⟪F.N 3, w⟫ < 0 ∧ 0 < ⟪F.N 4, w⟫ ∧
+    0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ = 0 ∧
+    ⟪F.N 2, F.N 2⟫ * ⟪F.N 8, F.N 8⟫ - ⟪F.N 2, F.N 8⟫ ^ 2 ≠ 0 ∧
+    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+def Cell_046_235_pppmzpzpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, 0 < ⟪F.N 1, w⟫ ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ < 0 ∧ ⟪F.N 4, w⟫ = 0 ∧
+    ⟪F.N 6, w⟫ = 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
+    ⟪F.N 4, F.N 4⟫ * ⟪F.N 6, F.N 6⟫ - ⟪F.N 4, F.N 6⟫ ^ 2 ≠ 0 ∧
+    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+def Cell_046_346_mmmpzmmmz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ⟪F.N 2, x 4 - x 6⟫ < 0 ∧ ⟪F.N 6, x 4 - x 6⟫ < 0 ∧
+    ∀ i ∈ ({0, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, x 4 - x 6⟫ ≠ ⟪x j, x 4 - x 6⟫
+
+def Cell_235_236_pppmmpzzm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  0 < ⟪F.N 1, x 2 - x 3⟫ ∧ ⟪F.N 4, x 2 - x 3⟫ < 0 ∧
+    ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, x 2 - x 3⟫ ≠ ⟪x j, x 2 - x 3⟫
+
+def Cell_235_346_pppmppzpz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ < 0 ∧ 0 < ⟪F.N 4, w⟫ ∧ ⟪F.N 6, w⟫ = 0 ∧
+    0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ = 0 ∧
+    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+def Cell_236_346_mmppmmpzz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ⟪F.N 0, x 3 - x 6⟫ < 0 ∧ 0 < ⟪F.N 2, x 3 - x 6⟫ ∧
+    ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫
+
+def Cell_016_0345_pzpzmpppm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 1, w⟫ = 0 ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧
+    ⟪F.N 4, w⟫ < 0 ∧ 0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
+      ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+
+/-- Disjunction of the 12 non-triangle SVC cells from `Minimality.Type24SVCCells`. -/
+def SVCCellHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Cell_012_0345_zpmzppmpp x F ∨
+  Cell_0345_236_ppmzppmzp x F ∨
+  Cell_0345_236_pppzmppzm x F ∨
+  Cell_025_046_ppzmzpppp x F ∨
+  Cell_025_235_ppzmppzpp x F ∨
+  Cell_025_346_ppzmppppz x F ∨
+  Cell_046_235_pppmzpzpp x F ∨
+  Cell_046_346_mmmpzmmmz x F ∨
+  Cell_235_236_pppmmpzzm x F ∨
+  Cell_235_346_pppmppzpz x F ∨
+  Cell_236_346_mmppmmpzz x F ∨
+  Cell_016_0345_pzpzmpppm x F
+
+/-- Any of the 12 non-triangle SVC cells closes to `Gen.LexAny F`. -/
+theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : SVCCellHyp x F) : Gen.LexAny F := by
+  rcases h with
+      ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, hgen⟩
+    | ⟨w, h0, h2, h3, h4, h5, h6, h7, h8, hgen⟩
+    | ⟨w, h1, h2, h3, h4, h5, h6, h7, h8, hgen⟩
+    | ⟨w, h0, h1, h2, h3, h4, h6, h8, hgen⟩
+    | ⟨h4, h8, hgen⟩
+    | ⟨w, h0, h2, h3, h4, h6, h7, h8, hD, hgen⟩
+    | ⟨w, h1, h2, h3, h4, h6, h7, h8, hD, hgen⟩
+    | ⟨h2, h6, hgen⟩
+    | ⟨h1, h4, hgen⟩
+    | ⟨w, h2, h3, h4, h6, h7, h8, hgen⟩
+    | ⟨h0, h2, hgen⟩
+    | ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, hgen⟩
+  · exact SVCC.Cells.cell_012_0345_zpmzppmpp F w h0 h1 h2 h3 h4 h5 h6 h7 h8 hgen
+  · exact SVCC.Cells.cell_0345_236_ppmzppmzp F w h0 h2 h3 h4 h5 h6 h7 h8 hgen
+  · exact SVCC.Cells.cell_0345_236_pppzmppzm F w h1 h2 h3 h4 h5 h6 h7 h8 hgen
+  · exact SVCC.Cells.cell_025_046_ppzmzpppp F w h0 h1 h2 h3 h4 h6 h8 hgen
+  · exact SVCC.Cells.cell_025_235_ppzmppzpp F h4 h8 hgen
+  · exact SVCC.Cells.cell_025_346_ppzmppppz F w h0 h2 h3 h4 h6 h7 h8 hD hgen
+  · exact SVCC.Cells.cell_046_235_pppmzpzpp F w h1 h2 h3 h4 h6 h7 h8 hD hgen
+  · exact SVCC.Cells.cell_046_346_mmmpzmmmz F h2 h6 hgen
+  · exact SVCC.Cells.cell_235_236_pppmmpzzm F h1 h4 hgen
+  · exact SVCC.Cells.cell_235_346_pppmppzpz F w h2 h3 h4 h6 h7 h8 hgen
+  · exact SVCC.Cells.cell_236_346_mmppmmpzz F h0 h2 hgen
+  · exact SVCC.Cells.cell_016_0345_pzpzmpppm F w h0 h1 h2 h3 h4 h5 h6 h7 h8 hgen
+
+/-- Hypothesis bundle for the two-view pair closure `Minimality.PSVC.L3u27.lexAny_L3_u27`
+(`L3 = F016xF0345` at `w1`, `u27 = F025xF236` at `w2`). -/
+def PairL3u27Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 w2 : ℝ³,
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ = 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ = 0 ∧
+     ⟪F.N 4, w1⟫ < 0 ∧ ⟪F.N 5, w1⟫ < 0 ∧ ⟪F.N 6, w1⟫ < 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 0, w2⟫ ∧ ⟪F.N 2, w2⟫ = 0 ∧ ⟪F.N 3, w2⟫ < 0 ∧ 0 < ⟪F.N 4, w2⟫ ∧
+     0 < ⟪F.N 5, w2⟫ ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ = 0 ∧ 0 < ⟪F.N 8, w2⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+/-- `PairL3u27Hyp` closes to `Gen.LexAny F`. -/
+theorem pairL3u27_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : PairL3u27Hyp x F) : Gen.LexAny F := by
+  obtain ⟨w1, w2, ⟨a0, a1, a2, a3, a4, a5, a6, a8⟩,
+    ⟨b0, b2, b3, b4, b5, b6, b7, b8⟩, hg1, hg2⟩ := h
+  exact PSVC.L3u27.lexAny_L3_u27 F w1 w2 a0 a1 a2 a3 a4 a5 a6 a8
+    b0 b2 b3 b4 b5 b6 b7 b8 hg1 hg2
+
+/-- Further shrunken residual of `Hole24R5` removing the 12 non-triangle SVC cells and the
+`L3 × u27` two-view pair. -/
+def Hole24R6 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R5 x F ∧ ¬ SVCCellHyp x F ∧ ¬ PairL3u27Hyp x F
+
+/-- Every point of `Hole24R5` is Rupert or reduces to `Hole24R6`. -/
+theorem hole24R5_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R5 x F) : IsRupert (univ.image x) ∨ Hole24R6 x F := by
+  by_cases hsvc : SVCCellHyp x F
+  · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (svcCell_lexAny hsvc))
+  · by_cases hpair : PairL3u27Hyp x F
+    · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (pairL3u27_lexAny hpair))
+    · exact Or.inr ⟨h, hsvc, hpair⟩
+
+/-- Further shrunken `Q45` residual removing the 12 non-triangle SVC cells and the
+`L3 × u27` two-view pair. -/
+def Hole24Q45R6 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24Q45R x F ∧ ¬ SVCCellHyp x F ∧ ¬ PairL3u27Hyp x F
+
+/-- Every point of `Hole24Q45R` is Rupert or reduces to `Hole24Q45R6`. -/
+theorem hole24Q45R_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24Q45R x F) : IsRupert (univ.image x) ∨ Hole24Q45R6 x F := by
+  by_cases hsvc : SVCCellHyp x F
+  · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (svcCell_lexAny hsvc))
+  · by_cases hpair : PairL3u27Hyp x F
+    · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (pairL3u27_lexAny hpair))
+    · exact Or.inr ⟨h, hsvc, hpair⟩
+
+/-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24Q45R6`,
+`Hole24R6`, and the two star-closed `{1 < c3, 0 < mustar}` / `{1 < b3, 0 < mu23}` exclusions
+discharged via `Hole24Flags.1` (`¬ FacetCell24 fs`) and `Type24T2b`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24Flags x fs ∧ (Hole24Q45R x F ∨ Hole24R5 x F)
+  Hole24Flags x fs ∧ (Hole24Q45R6 x F ∨ Hole24R6 x F) ∧
+    ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x) ∧
+    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x)
 
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be ≤ 1, al ≤ 1}` (where `al, be` are the
 `par2546_quad` coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`),
-any point of `Hole24 x fs (mkFac24 fs hh)` lies in the `W63Star` / `E23Star` star loci or the
-wall `{mustar = 0}` / `{mu23 = 0}` tie loci on `{0, 2, 3, 4, 5, 6}`. -/
+any point of `Hole24 x fs (mkFac24 fs hh)` lies in the wall `{mustar = 0}` / `{mu23 = 0}` tie loci
+on `{0, 2, 3, 4, 5, 6}` (the star loci are closed by `Type24T2b` + `¬ FacetCell24 fs`). -/
 theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hH : Hole24 x fs (mkFac24 fs hh))
@@ -454,66 +679,54 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
     {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
     (hbe : be ≤ 1) (hal : al ≤ 1) :
-    A20.W63Star x ∨ A20.E23Star x ∨
     (A20.mustar x = 0 ∧ ∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
     (A20.mu23 x = 0 ∧ ∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
-  rcases hH with ⟨hflags, hQ | hR5⟩
+  rcases hH with ⟨hflags, hQ | hR6, hnow, hnoe⟩
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · rcases eq_or_lt_of_le hmu with hzero | hpos
-      · right; right; left
-        refine ⟨hzero.symm, ?_⟩
-        by_contra hno; push Not at hno
-        exact hQ.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
       · left
-        by_contra hno
-        exact hQ.2.1 ⟨hc3, hpos, hno⟩
-    · rcases eq_or_lt_of_le hmu23 with hzero | hpos
-      · right; right; right
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hQ.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
-      · right; left
-        by_contra hno
-        exact hQ.2.2.2.1 ⟨hb3, hpos, hno⟩
+        exact hQ.1.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
+      · exact False.elim (hnow ⟨hc3, hpos⟩)
+    · rcases eq_or_lt_of_le hmu23 with hzero | hpos
+      · right
+        refine ⟨hzero.symm, ?_⟩
+        by_contra hno; push Not at hno
+        exact hQ.1.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
+      · exact False.elim (hnoe ⟨hb3, hpos⟩)
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · rcases eq_or_lt_of_le hmu with hzero | hpos
-      · right; right; left
-        refine ⟨hzero.symm, ?_⟩
-        by_contra hno; push Not at hno
-        exact hR5.2.1 ⟨hc3, hzero.symm, hno⟩
       · left
-        by_contra hno
-        exact hR5.1.1.1.2 ⟨hc3, hpos, hno⟩
-    · rcases eq_or_lt_of_le hmu23 with hzero | hpos
-      · right; right; right
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hR5.2.2 ⟨hb3, hzero.symm, hno⟩
-      · right; left
-        by_contra hno
-        exact hR5.1.2 ⟨hb3, hpos, hno⟩
+        exact hR6.1.2.1 ⟨hc3, hzero.symm, hno⟩
+      · exact False.elim (hnow ⟨hc3, hpos⟩)
+    · rcases eq_or_lt_of_le hmu23 with hzero | hpos
+      · right
+        refine ⟨hzero.symm, ?_⟩
+        by_contra hno; push Not at hno
+        exact hR6.1.2.2 ⟨hb3, hzero.symm, hno⟩
+      · exact False.elim (hnoe ⟨hb3, hpos⟩)
 
-/-- Strict version on `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be < 1, al < 1}`:
-any point of `Hole24 x fs (mkFac24 fs hh)` lies in `W63Star x ∨ E23Star x`. -/
-theorem hole24_b3_c3_st_lt_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
+/-- The strict region `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be < 1, al < 1}` is
+**empty** in `Hole24 x fs (mkFac24 fs hh)`. -/
+theorem hole24_b3_c3_st_lt_empty {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
     (hH : Hole24 x fs (mkFac24 fs hh))
     (hb3 : 1 < oblX2 x 3) (hc3 : 1 < oblX6 x 3)
     {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
-    (hbe : be < 1) (hal : al < 1) :
-    A20.W63Star x ∨ A20.E23Star x := by
-  rcases hH with ⟨hflags, hQ | hR5⟩
-  · rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
-    · left; by_contra hno; exact hQ.2.1 ⟨hc3, hmu, hno⟩
-    · right; by_contra hno; exact hQ.2.2.2.1 ⟨hb3, hmu23, hno⟩
-  · rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
-    · left; by_contra hno; exact hR5.1.1.1.2 ⟨hc3, hmu, hno⟩
-    · right; by_contra hno; exact hR5.1.2 ⟨hb3, hmu23, hno⟩
+    (hbe : be < 1) (hal : al < 1) : False := by
+  rcases hH with ⟨hflags, _, hnow, hnoe⟩
+  rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
+  · exact hnow ⟨hc3, hmu⟩
+  · exact hnoe ⟨hb3, hmu23⟩
 
-/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R` and `Hole24R5`). -/
+/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R6`, `Hole24R6`, and the star-closed
+exclusions). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -539,12 +752,34 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
         (i ∉ s0x_S24 t → ![fA, fB, fF, fG, fE, fC, fH, fD, fI] t (x i) < 0),
         Hole24 x ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
           (mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] hh) := by
+  let fs := ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
   rcases type24_rupert_or_holeR fA fB fC fD fE fF fG fH fI hA hB hC hD hE hF hG hH hI with
     hRup | ⟨hh, hflags, hQ | hR⟩
   · exact Or.inl hRup
-  · exact Or.inr ⟨hh, hflags, Or.inl (hole24Q45_reduce hQ)⟩
+  · by_cases hnow : 1 < oblX6 x 3 ∧ 0 < A20.mustar x
+    · rcases w63_closes_star_or_facetCell fs hh hnow.1 hnow.2 with hLex | hFac
+      · exact Or.inl (Gen.lexAny_isRupert (mkFac24 fs hh) (EdgeViewLink.inj_of_fac24 (mkFac24 fs hh)) hLex)
+      · exact False.elim (hflags.1 hFac)
+    · by_cases hnoe : 1 < oblX2 x 3 ∧ 0 < A20.mu23 x
+      · rcases e23_closes_star_or_facetCell fs hh hnoe.1 hnoe.2 with hLex | hFac
+        · exact Or.inl (Gen.lexAny_isRupert (mkFac24 fs hh) (EdgeViewLink.inj_of_fac24 (mkFac24 fs hh)) hLex)
+        · exact False.elim (hflags.1 hFac)
+      · rcases hole24Q45R_reduce (hole24Q45_reduce hQ) with hRup | hQ6
+        · exact Or.inl hRup
+        · exact Or.inr ⟨hh, hflags, Or.inl hQ6, hnow, hnoe⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
-    · exact Or.inr ⟨hh, hflags, Or.inr (hole24R4_reduce (hole24R3_reduce (hole24R2_reduce (hole24R1_reduce hR'))))⟩
+    · by_cases hnow : 1 < oblX6 x 3 ∧ 0 < A20.mustar x
+      · rcases w63_closes_star_or_facetCell fs hh hnow.1 hnow.2 with hLex | hFac
+        · exact Or.inl (Gen.lexAny_isRupert (mkFac24 fs hh) (EdgeViewLink.inj_of_fac24 (mkFac24 fs hh)) hLex)
+        · exact False.elim (hflags.1 hFac)
+      · by_cases hnoe : 1 < oblX2 x 3 ∧ 0 < A20.mu23 x
+        · rcases e23_closes_star_or_facetCell fs hh hnoe.1 hnoe.2 with hLex | hFac
+          · exact Or.inl (Gen.lexAny_isRupert (mkFac24 fs hh) (EdgeViewLink.inj_of_fac24 (mkFac24 fs hh)) hLex)
+          · exact False.elim (hflags.1 hFac)
+        · rcases hole24R5_reduce (hole24R4_reduce (hole24R3_reduce (hole24R2_reduce (hole24R1_reduce hR')))) with
+            hRup | hR6
+          · exact Or.inl hRup
+          · exact Or.inr ⟨hh, hflags, Or.inr hR6, hnow, hnoe⟩
 
 end Minimality.T24

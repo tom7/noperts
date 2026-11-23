@@ -1417,7 +1417,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_nonneg
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_pos
 #assert_standard_axioms Minimality.T24.hole24R3_reduce
-#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_ties
+#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.A20.w63_facings_wall
 #assert_standard_axioms Minimality.T24.A20.radon0345_depth
 #assert_standard_axioms Minimality.T24.A20.radon02356_signs
@@ -1470,7 +1470,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_nonneg
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_pos
 #assert_standard_axioms Minimality.T24.hole24R3_reduce
-#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_ties
+#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.A20.w63_facings_wall
 #assert_standard_axioms Minimality.T24.A20.radon0345_depth
 #assert_standard_axioms Minimality.T24.A20.radon02356_signs
@@ -1623,7 +1623,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_nonneg
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_pos
 #assert_standard_axioms Minimality.T24.hole24R3_reduce
-#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_ties
+#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.A20.w63_facings_wall
 #assert_standard_axioms Minimality.T24.A20.radon0345_depth
 #assert_standard_axioms Minimality.T24.A20.radon02356_signs
@@ -1681,3 +1681,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 -- T2b: the triple-tie locus at w63 / E23 (T2BLEAN)
 #assert_standard_axioms Minimality.T24.A20.t2b_closes
 #assert_standard_axioms Minimality.T24.A20.t2b_closes_e23
+
+-- Task DL: pair closure, SVC cell / pair hole exclusions, star-closed region
+#assert_standard_axioms Minimality.PSVC.pair_closure
+#assert_standard_axioms Minimality.PSVC.L3u27.lexAny_L3_u27
+#assert_standard_axioms Minimality.T24.svcCell_lexAny
+#assert_standard_axioms Minimality.T24.pairL3u27_lexAny
+#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
+#assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
+#assert_standard_axioms Minimality.T24.type24_rupert_or_hole
