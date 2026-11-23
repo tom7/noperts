@@ -6,6 +6,7 @@ import SnubCube
 import Nopert231
 import Minimality
 import Minimality.Arc016Witness
+import Minimality.PSVCPairAux
 import Minimality.TwoRayDiag
 import Minimality.Type16V2PopV
 import Minimality.Type16V2Tri
@@ -1765,6 +1766,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 -- Task DM: three-view triple closure + pencil rule + T1..T10
 #assert_standard_axioms Minimality.PSVC.triple_closure
 #assert_standard_axioms Minimality.PSVC.triple_closure_p
+#assert_standard_axioms Minimality.PSVC.svc_cond
+#assert_standard_axioms Minimality.PSVC.pair_aux_closure
 #assert_standard_axioms Minimality.PSVC.pencil_of_check
 #assert_standard_axioms Minimality.PSVC.pencOK_of_checkF
 #assert_standard_axioms Minimality.PSVC.T1.lexAny_T1
