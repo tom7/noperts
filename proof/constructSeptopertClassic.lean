@@ -3,16 +3,18 @@ import SeptopertClassic.NativeExecutable
 import SeptopertClassic.PackedSolutionTree
 
 /-!
-Native executable that checks Septopert Classic's certificate data and, if it is
-all valid, constructs `IsNopert septopertClassic`: not coplanar (a Lean proof) and
-not Rupert (`¬ IsRupert SeptopertClassic.verts`, from the checked data), as in
+Native executable that checks Septopert Classic's certificate data
+and, if it is all valid, constructs `IsNopert septopertClassic`: not
+coplanar (a Lean proof) and not Rupert (`¬ IsRupert
+SeptopertClassic.verts`, from the checked data), as in
 `SeptopertClassic.isNopert_of_certificatesValid`.
 
 Usage:
   constructSeptopertClassic <tube manifest.txt> <chart directory> <cap.cert>
     Checks everything: the cap certificate, every tube table and all four
     chart tables. On success it prints
-      instantiated: IsNopert septopertClassic (Septopert Classic is a Nopert: not Rupert)
+      "instantiated: IsNopert septopertClassic (Septopert Classic is a Nopert:
+       not Rupert)"
     This is the verification of the result; the other modes are diagnostics.
   constructSeptopertClassic chart <tube manifest.txt> <chart directory> <chart>
     Checks one chart's table (all its rows and its root), without the tube
@@ -23,19 +25,19 @@ Usage:
     Checks every row of one search job's pack (row 0 is the job's root);
     with `locals`, also the tube tables that its rows use.
 
-The arguments: `manifest.txt` lists one tube pack per code triangle (in
-`ViewCover.codeTriangles` order), next to the packs; the chart directory holds
-`c<C>/t<T>.pack` (chart C = 0..3, code T = 0..21); `cap.cert` is the cap
-certificate. How to produce or obtain the data, and the running time and
-memory needed: see `septopert-classic.md` and `BUILDING.md` at the root of the
-repository.
+The arguments: `manifest.txt` lists one tube pack per code triangle
+(in `ViewCover.codeTriangles` order), next to the packs; the chart
+directory holds `c<C>/t<T>.pack` (chart C = 0..3, code T = 0..21);
+`cap.cert` is the cap certificate. How to produce or obtain the data,
+and the running time and memory needed: see `septopert-classic.md` and
+`BUILDING.md` at the root of the repository.
 
-The data is untrusted: it is decoded and checked natively, in parallel. Each
-chart pack is kept as bytes with an index and its rows are decoded on demand
-(`PackedSolutionTree.decodeCodeTablesLazy`); the charts are loaded, checked
-and dropped one at a time. Worker threads: the runtime's default (hardware
-threads); set `LEAN_NUM_THREADS` to use fewer. Each table is checked in 256
-row chunks.
+The data is untrusted: it is decoded and checked natively, in
+parallel. Each chart pack is kept as bytes with an index and its rows
+are decoded on demand (`PackedSolutionTree.decodeCodeTablesLazy`); the
+charts are loaded, checked and dropped one at a time. Worker threads:
+the runtime's default (hardware threads); set `LEAN_NUM_THREADS` to
+use fewer. Each table is checked in 256 row chunks.
 -/
 
 open Noperts.Pipeline

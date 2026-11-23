@@ -118,7 +118,7 @@ prove the snub cube Nopert. Jason noticed that when you view a
 paper-thin square face-on, there are Rupert passages arbitrarily close
 to the identity. Historic SageMath alert:
 
-![The twice-rotated pink square fitting inside the unrotated blue square](jcreed-sagemath.png)
+![The twice-rotated pink square fitting inside the unrotated blue square](web/jcreed-sagemath.png)
 
 Roughly: When the 2D hull is a convex polygon, all of whose
 vertices are in the same 3D plane, then such a Rupert passage exists.

@@ -31,7 +31,7 @@ The nopert verifications involve a huge case analysis. So when I say "verificati
 
 ## The Septopert
 
-![The Septopert, spinning around with confidence](septopert.gif)
+![The Septopert, spinning around with confidence](web/septopert.gif)
 
 This is the Septopert, a minimal Nopert by vertex count (seven). It has
 very nice integer coordinates:
@@ -50,7 +50,7 @@ It has three-fold symmetry, so you see the same numbers over and over.
 And they are all 7s (3 + 4 = 7)!
 
 The Lean statement (`proof/Septopert/Integer.lean`) is about exactly these
-points, and the vertices in the [STL file](septopert.stl) are exact.
+points, and the vertices in the [STL file](web/septopert.stl) are exact.
 
 - Symmetry: C3v, with the 3-fold axis along (1, 1, 1).
 - Combinatorics: 10 triangular faces, vertex degrees 5,5,5 (0–2), 4,4,4
@@ -71,7 +71,7 @@ family we proved Nopert: [Septopert Classic](septopert-classic.md),
 
 ## Prints Nopert
 
-Here is [septopert.stl](septopert.stl), a model you could 3D print.
+Here is [septopert.stl](web/septopert.stl), a model you could 3D print.
 
 ## Side results
 
@@ -104,4 +104,4 @@ The size of the certificates is annoying because it means you have to re-run the
 Lean code (proof/) is Apache 2.0. The C++ code (search/) is GPLv3
 except where noted.
 
-<center><img src="septopert-dry-salt-bed.jpg" width="868" height="549" alt ="Septopert Classic on the Dry Salt Bed"></center>
+<center><img src="web/septopert-dry-salt-bed.jpg" width="868" height="549" alt ="Septopert Classic on the Dry Salt Bed"></center>

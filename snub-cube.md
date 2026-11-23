@@ -15,14 +15,19 @@ root of t³ = t² + t + 1), the vertices are
 > the even permutations of (±1, ±1/t, ±t) with an even number of plus signs,
 > along with the odd permutations with an odd number of plus signs.
 
-- `snubCube` in [`proof/SnubCube/Statement.lean`](proof/SnubCube/Statement.lean)
-  is this definition, literally: the point of a permutation σ (Mathlib's
-  `Equiv.Perm (Fin 3)`) and signs s has coordinate i equal to
-  s_i · (1, 1/t, t)_{σ(i)}, kept when `Equiv.Perm.sign σ = 1` exactly when
+- `snubCube` in
+  [`proof/SnubCube/Statement.lean`](proof/SnubCube/Statement.lean) is
+  this definition, literally: the point of a permutation σ (Mathlib's
+  `Equiv.Perm (Fin 3)`) and signs s has coordinate i equal to s_i ·
+  (1, 1/t, t)_{σ(i)}, kept when `Equiv.Perm.sign σ = 1` exactly when
   the number of plus signs is even. t is `tribonacci`
-  (`proof/Pipeline/TribQ.lean`), the unique root of the cubic in [1, 2].
+  (`proof/Pipeline/TribQ.lean`), the unique root of the cubic in [1,
+  2].
 - Symmetry O, the octahedral rotation group of order 24, without
   reflections: the solid is chiral and not centrally symmetric.
+
+Here's an [STL file](web/snubcube.stl) that you can 3D print.
+This one has irrational coordinates, so it cannot be exact in float.
 
 ## The statement
 
@@ -45,63 +50,71 @@ certificate with the snub cube's data passes `KCert.check`.
 
 ## How the proof goes
 
-The techniques are described in [How the Nopert proofs work](nopert-proof.md).
-Like the other solids, the search excludes every pose of a whole
-[neighborhood](nopert-proof.md#rational-models-and-neighborhoods) of solids
-around a rational model; unlike the snub
-dodecahedron, the snub cube is **on the edge**, so the neighborhood argument
-alone cannot work:
+The techniques are described in [How the Nopert proofs
+work](nopert-proof.md). Like the other solids, the search excludes
+every pose of a whole
+[neighborhood](nopert-proof.md#rational-models-and-neighborhoods) of
+solids around a rational model; unlike the snub dodecahedron, the snub
+cube is **on the edge**, so the neighborhood argument alone cannot
+work:
 
-- **A zero-margin view.** At the view u* = e_y × p, p = (−t², ±t, 1) (the
-  vertex whose coordinate along a 4-fold axis has the middle magnitude),
-  the first-order margin vanishes: rotations about the 4-fold axis keep the
-  extent along it exactly, and the width across it is critical.
-- **An exact [tie](nopert-proof.md#ties-and-tie-tubes).** From u*, a one-parameter family of poses (outer view on
-  the wall at angle ε past u*, relative rotation R_y(2ε) = H_u H_x) has
-  clearance exactly 0 for ε up to about 0.165 rad: both widths of the two
-  shadows are exactly equal, and no other constraint binds. No search over
-  boxes can certify a neighborhood of such poses.
-- **[Caps](nopert-proof.md#caps) over ℚ(t).** The poses near u* are blown up: view
-  u = x + μ e (A + τ B), Cayley rotation w = μ (s₀ Z + s₁ E₁ + s₂ X), with
-  charts on the faces of a cube (F_e, faces, cones at the identity) and
-  cones around the tie (dividing by the distance to it). Each box of a chart
-  is certified by a [**balanced witness**](nopert-proof.md#balanced-witnesses): contacts whose directions are
-  edge vectors v_b − v_a (exact, and exactly aligned on the tie), weighted
-  pairs or Cramer-weighted triples (the translation cancels), outer support
-  sets with dominance, and one polynomial inequality per tuple of outer
-  vertices, divided by the blow-up variables and bounded by Bernstein
-  coefficients, all exactly over ℚ(t). The tie cones continue past the cap
-  as a **tube** around the tie (μ ≤ 1/3). The cap covers μ ≤ 1/8, R = 2.
-- **The cap claims** (`SnubCube.CapsHold`): no pose of the cap box or the tie
-  tube is Rupert. They are proved for the exact solid from the cap
-  certificate (`KCert.boxClaim`, `KCert.tubeClaim`, the chart cover in
-  `proof/Pipeline/KCapTree.lean`), and the 5D search's cap leaves cite them
-  (`SnubCube.capLeaf_sound`: the leaf's views and Cayley box lie in the
-  domains, checked exactly over ℚ(t)).
-- **The [search](nopert-proof.md#the-5d-search)** (`search/sc`): the views are reduced into the Oh chamber
-  0 ≤ u₁ ≤ u₀ ≤ u₂ (`proof/Pipeline/OctaView.lean`), the relative rotation
-  into the cell of O (`AtlasOctaPrune.lean`); with the cap domains, every
+- **A zero-margin view.** At the view u* = e_y × p, p = (−t², ±t, 1)
+  (the vertex whose coordinate along a 4-fold axis has the middle
+  magnitude), the first-order margin vanishes: rotations about the
+  4-fold axis keep the extent along it exactly, and the width across
+  it is critical.
+- **An exact [tie](nopert-proof.md#ties-and-tie-tubes).** From u*, a
+  one-parameter family of poses (outer view on the wall at angle ε
+  past u*, relative rotation R_y(2ε) = H_u H_x) has clearance exactly
+  0 for ε up to about 0.165 rad: both widths of the two shadows are
+  exactly equal, and no other constraint binds. No search over boxes
+  can certify a neighborhood of such poses.
+- **[Caps](nopert-proof.md#caps) over ℚ(t).** The poses near u* are
+  blown up: view u = x + μ e (A + τ B), Cayley rotation w = μ (s₀ Z +
+  s₁ E₁ + s₂ X), with charts on the faces of a cube (F_e, faces, cones
+  at the identity) and cones around the tie (dividing by the distance
+  to it). Each box of a chart is certified by a [**balanced
+  witness**](nopert-proof.md#balanced-witnesses): contacts whose
+  directions are edge vectors v_b − v_a (exact, and exactly aligned on
+  the tie), weighted pairs or Cramer-weighted triples (the translation
+  cancels), outer support sets with dominance, and one polynomial
+  inequality per tuple of outer vertices, divided by the blow-up
+  variables and bounded by Bernstein coefficients, all exactly over
+  ℚ(t). The tie cones continue past the cap as a **tube** around the
+  tie (μ ≤ 1/3). The cap covers μ ≤ 1/8, R = 2.
+- **The cap claims** (`SnubCube.CapsHold`): no pose of the cap box or
+  the tie tube is Rupert. They are proved for the exact solid from the
+  cap certificate (`KCert.boxClaim`, `KCert.tubeClaim`, the chart
+  cover in `proof/Pipeline/KCapTree.lean`), and the 5D search's cap
+  leaves cite them (`SnubCube.capLeaf_sound`: the leaf's views and
+  Cayley box lie in the domains, checked exactly over ℚ(t)).
+- **The [search](nopert-proof.md#the-5d-search)** (`search/sc`): the
+  views are reduced into the Oh chamber 0 ≤ u₁ ≤ u₀ ≤ u₂
+  (`proof/Pipeline/OctaView.lean`), the relative rotation into the
+  cell of O (`AtlasOctaPrune.lean`); with the cap domains, every
   remaining box is certified, with nothing deferred.
 
 ## A neighborhood of a rational model
 
 The tables are checked against fixed rational vertices
-(`proof/SnubCube/ModelData.lean`, generated by `search/sc/sc-model.cc`): the
-O-orbit of (t, 1, −t²) scaled to circumradius 1 − 10⁻⁹, with one base point
-rounded to multiples of 2⁻⁵², so that the model is exactly O-symmetric
-(within 8·10⁻¹⁷ of the exact solid). The tables exclude every *`OModel`*
-(every O-orbit within 6·10⁻¹⁶ of the model) whose hull satisfies the cap
-claims. The exact solid is one (`snubOModel`; the kernel decides its
-closeness with a rational enclosure of t to 31 digits), and its vertices are
-Wikipedia's scaled by snubScale · t (`snubOModel_verts`; the correspondence
-between the model's slots and Wikipedia's (σ, s) is decided by the kernel).
+(`proof/SnubCube/ModelData.lean`, generated by
+`search/sc/sc-model.cc`): the O-orbit of (t, 1, −t²) scaled to
+circumradius 1 − 10⁻⁹, with one base point rounded to multiples of
+2⁻⁵², so that the model is exactly O-symmetric (within 8·10⁻¹⁷ of the
+exact solid). The tables exclude every *`OModel`* (every O-orbit
+within 6·10⁻¹⁶ of the model) whose hull satisfies the cap claims. The
+exact solid is one (`snubOModel`; the kernel decides its closeness
+with a rational enclosure of t to 31 digits), and its vertices are
+Wikipedia's scaled by snubScale · t (`snubOModel_verts`; the
+correspondence between the model's slots and Wikipedia's (σ, s) is
+decided by the kernel).
 
 ## What is proved and what is verified
 
 This is a **Lean verification**, not a plain Lean proof:
 
-1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
-   kernel and depends only on the standard axioms (`propext`,
+1. **Lean proof.** `isNopert_of_certificatesValid` is checked by
+   Lean's kernel and depends only on the standard axioms (`propext`,
    `Classical.choice`, `Quot.sound`; `proof/Tests/Axioms.lean`).
 2. **Verification of the data.** The data is probably too large for
    the kernel. The program `constructSnubCube` runs the same Lean
@@ -113,23 +126,24 @@ This is a **Lean verification**, not a plain Lean proof:
    runtime to evaluate the checks correctly (the trust `native_decide`
    asks for; `native_decide` is not used).
 
-The C++ code that produced the data does not need to be trusted: a mistake
-there can only produce data that fails the checks.
+The C++ code that produced the data does not need to be trusted: a
+mistake there can only produce data that fails the checks.
 
 ## Status
 
 - **2026-10-13:** verified on the 64-core VM (Lean/Mathlib v4.34.1):
-  `constructSnubCube` checked the cap certificate (60 charts, 7,427 leaves,
-  259 s), the view cover, the 33 tube tables and the four chart tables
-  (chart 0: 209,666 rows, 45 s; charts 1–3 are pruned entirely by the cell
-  of O), and printed
-  `instantiated: IsNopert V for every snub cube V (none is Rupert)`
-  (exit 0, 325 s wall, 366 MB peak).
-- **2026-10-13:** a from-scratch reproduction, `search/sc/rebuild.sh --from
-  model` in a fresh work directory: the model stage regenerated every
-  committed model and Lean data file byte for byte, the search found the
-  same tree (141,670 nodes, 0 deferred), and `constructSnubCube` printed the
-  same line (exit 0). All stages took under 6 min, besides the Lean build.
+  `constructSnubCube` checked the cap certificate (60 charts, 7,427
+  leaves, 259 s), the view cover, the 33 tube tables and the four
+  chart tables (chart 0: 209,666 rows, 45 s; charts 1–3 are pruned
+  entirely by the cell of O), and printed `instantiated: IsNopert V
+  for every snub cube V (none is Rupert)` (exit 0, 325 s wall, 366 MB
+  peak).
+- **2026-10-13:** a from-scratch reproduction, `search/sc/rebuild.sh
+  --from model` in a fresh work directory: the model stage regenerated
+  every committed model and Lean data file byte for byte, the search
+  found the same tree (141,670 nodes, 0 deferred), and
+  `constructSnubCube` printed the same line (exit 0). All stages took
+  under 6 min, besides the Lean build.
 - **2026-10-15:** with the 5D search's shared default, blended inner points
   only where the plain choice fails (`search5d --blend5d 4`, as for the
   other solids), a from-scratch run: 138,516 nodes (was 141,670), chart 0
@@ -147,17 +161,17 @@ The C++ search and the cap certificate generator are in
 search/sc/rebuild.sh --from model --work DIR
 ```
 
-runs the stages model (`sc-model`, `codebdd`, the generated Lean data),
-tube, tubepack, caps (`sccapcert --export`), search, pack and verify
-(`constructSnubCube TUBEPACKS/manifest.txt PACKS CAPS/sc.cert`); each is
-restartable (`--from STAGE`, `--only STAGE`), and `--dry_run` prints the
-commands.
+runs the stages model (`sc-model`, `codebdd`, the generated Lean
+data), tube, tubepack, caps (`sccapcert --export`), search, pack and
+verify (`constructSnubCube TUBEPACKS/manifest.txt PACKS
+CAPS/sc.cert`); each is restartable (`--from STAGE`, `--only STAGE`),
+and `--dry_run` prints the commands.
 
 The stages on 64 cores (2026-10-13; the data of the verified run):
 
 | Stage | Time |
 |---|---|
-| model (sc-model, codebdd, the Lean data) | under 1 min, plus the Lean build |
+| model (sc-model, codebdd, the Lean data) | ~1 min + Lean |
 | tube | 13 s (22 codes) |
 | tubepack | under 1 s |
 | caps | 8 s (7,427 leaves, checked exactly over ℚ(t)) |

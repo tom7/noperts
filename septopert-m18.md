@@ -19,9 +19,9 @@ Lean entry point: [`proof/SeptopertM18.lean`](proof/SeptopertM18.lean).
 
 ## The solid
 
-![The SeptopertM18, spinning around with confidence](septopert-m18.gif)
+![The SeptopertM18, spinning around with confidence](web/septopert-m18.gif)
 
-Here is an exact [STL file](septopert-m18.stl). On github, you can
+Here is an exact [STL file](web/septopert-m18.stl). On github, you can
 rotate it around in your browser by just clicking on that. All the
 members of the Septopert family look identical to human eyes (these
 occupy only a tiny region of parameter space), but around here
@@ -82,16 +82,16 @@ and lengths from the exact squared quantities). Relative edge lengths
 are in units of the Lean coordinates (that is, the integer length
 divided by 32).
 
-![Line drawing of two views of the SeptopertM18, with colored edges](septopert-m18-edges.svg)
+![Line drawing of two views of the SeptopertM18, with colored edges](web/septopert-m18-edges.svg)
 
 (Note: This is a schematic drawing used for any member of the Septopert family, not exact.)
 
 | color | description | edges | dihedral angle | relative edge length |
 |-------|-------------|-------|----------------|----------------------|
-|![blue](swatch-apex.svg)| apex of pyramid | 6–0, 6–1, 6–2 | 90° (exactly) | 0.843750 (= 27/32) |
-|![yellow](swatch-base.svg)| base of pyramid | 0–1, 0–2, 1–2 | 146.496544° | 1.193243 |
-|![green](swatch-triforce-exterior.svg)| triforce exterior | 0–4, 0–5, 1–3, 1–5, 2–3, 2–4 | 106.945562° | 0.726856 |
-|![red](swatch-triforce-center.svg)| triforce center | 3–4, 3–5, 4–5 | 140.882929° | 0.618718 |
+|![blue](web/swatch-apex.svg)| apex of pyramid | 6–0, 6–1, 6–2 | 90° (exactly) | 0.843750 (= 27/32) |
+|![yellow](web/swatch-base.svg)| base of pyramid | 0–1, 0–2, 1–2 | 146.496544° | 1.193243 |
+|![green](web/swatch-triforce-exterior.svg)| triforce exterior | 0–4, 0–5, 1–3, 1–5, 2–3, 2–4 | 106.945562° | 0.726856 |
+|![red](web/swatch-triforce-center.svg)| triforce center | 3–4, 3–5, 4–5 | 140.882929° | 0.618718 |
 
 (For comparison, Septopert Classic's apex dihedral is 90.333818°. The
 squared lengths over 32² are 729, 1458, 541 and 392, so the apex edge

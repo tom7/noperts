@@ -18,9 +18,9 @@ Lean entry point: [`proof/SeptopertClassic.lean`](proof/SeptopertClassic.lean).
 
 ## The solid
 
-![Septopert Classic, spinning around with confidence](septopert-classic.gif)
+![Septopert Classic, spinning around with confidence](web/septopert-classic.gif)
 
-Here is an exact [STL file](septopert-classic.stl). The coordinates
+Here is an exact [STL file](web/septopert-classic.stl). The coordinates
 are exact floats. On github, you can rotate it around in your browser by just
 clicking on that.
 
@@ -66,14 +66,14 @@ In lowest terms (the form used in Lean, `septopertClassic` in
 
 ### Edge info
 
-![Line drawing of two views of Septopert Classic, with colored edges](septopert-classic-edges.svg)
+![Line drawing of two views of Septopert Classic, with colored edges](web/septopert-classic-edges.svg)
 
 | color | description | dihedral angle | relative edge length        |
 |-------|-------------|----------------|-----------------------------|
-|![blue](swatch-apex.svg)| apex of pyramid | 90.333818° | 1.206047 |
-|![yellow](swatch-base.svg)| base of pyramid | 146.145261° | 1.710540 |
-|![green](swatch-triforce-exterior.svg)| triforce exterior | 107.080553° | 1.043358 |
-|![red](swatch-triforce-center.svg)| triforce center | 140.788349° | 0.884989 |
+|![blue](web/swatch-apex.svg)| apex of pyramid | 90.333818° | 1.206047 |
+|![yellow](web/swatch-base.svg)| base of pyramid | 146.145261° | 1.710540 |
+|![green](web/swatch-triforce-exterior.svg)| triforce exterior | 107.080553° | 1.043358 |
+|![red](web/swatch-triforce-center.svg)| triforce center | 140.788349° | 0.884989 |
 
 ## The statement
 

@@ -7,8 +7,8 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 /-!
-This file states the main theorem using only Mathlib imports, following the conventions
-proposed on Zulip here:
+This file states the main theorem using only Mathlib imports,
+following the conventions proposed on Zulip here:
 https://leanprover.zulipchat.com/#narrow/channel/219941-Machine-Learning-for-Theorem-Proving/topic/Discussion.3A.20AI-written.20mathematical.20proofs/near/556956066
 
 See also the Formal Conjectures version of the theorem statement:

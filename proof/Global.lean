@@ -49,12 +49,17 @@ theorem hull_scalar_prod {n : ℕ} (V : Finset (E n)) (Vne : V.Nonempty)
     ⟪w, S⟫ ≤ Finset.max' (V.image (⟪w, ·⟫)) (Finset.image_nonempty.mpr Vne) := by
   exact finset_hull_linear_max Vne S hs (InnerProductSpace.toDual ℝ (E n) w |>.toLinearMap)
 
--- rotproj_inner, rotproj_inner_unit, rotproj_outer_unit, rotation_partials_exist,
--- rotation_partials_exist_outer are now imported from Noperts.Global.Definitions
--- (via Noperts.Global.RotationPartials)
+/-
+rotproj_inner, rotproj_inner_unit, rotproj_outer_unit,
+rotation_partials_exist, rotation_partials_exist_outer are now
+imported from Noperts.Global.Definitions (via
+Noperts.Global.RotationPartials)
 
--- rotation_third_partials_bounded, rotation_third_partials_bounded_outer ([SY25] Lemma 19) are
--- now imported from Noperts.Global.RotationPartials (via SecondPartialInner/SecondPartialOuter)
+rotation_third_partials_bounded, rotation_third_partials_bounded_outer
+([SY25] Lemma 19) are now imported from
+Noperts.Global.RotationPartials (via
+SecondPartialInner/SecondPartialOuter)
+-/
 
 /--
 A measure of how far an inner-shadow vertex S can "stick out".
