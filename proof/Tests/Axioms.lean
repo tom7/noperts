@@ -56,6 +56,7 @@ import Minimality.Type29T1Escape
 import Minimality.Type29T1Res
 import Minimality.Type29CellII
 import Minimality.Type29CellII41
+import Minimality.Type29CellII42
 import Minimality.SVCLex
 import Minimality.Type24A1Small
 import Minimality.Type24A2Band
@@ -1868,6 +1869,41 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.l41_rows_W
 #assert_standard_axioms Minimality.NF29.l41_F12_eq
 #assert_standard_axioms Minimality.NF29.l41_Anorm_pos
+#assert_standard_axioms Minimality.NF29.fa_rows_of_R4R5
+#assert_standard_axioms Minimality.NF29.l42_KY_form
+#assert_standard_axioms Minimality.NF29.l42_Q4neg_form
+#assert_standard_axioms Minimality.NF29.l42_Q5pos_form
+#assert_standard_axioms Minimality.NF29.l42_R204_form
+#assert_standard_axioms Minimality.NF29.l42_M15_form
+#assert_standard_axioms Minimality.NF29.l42_u20_entries
+#assert_standard_axioms Minimality.NF29.l42_m34star_ge
+#assert_standard_axioms Minimality.NF29.l42_m34star_lt
+#assert_standard_axioms Minimality.NF29.l42_U20star_ge
+#assert_standard_axioms Minimality.NF29.l42_U20star_lt
+#assert_standard_axioms Minimality.NF29.l42_bq20_blocks
+#assert_standard_axioms Minimality.NF29.l42_BQ2_form
+#assert_standard_axioms Minimality.NF29.l42_mQ55_form
+#assert_standard_axioms Minimality.NF29.l42_mQ55_neg
+#assert_standard_axioms Minimality.NF29.l42_PFA_form
+#assert_standard_axioms Minimality.NF29.l42_F_form
+#assert_standard_axioms Minimality.NF29.l42_BQ2_nonneg
+#assert_standard_axioms Minimality.NF29.l42_F_nonneg
+#assert_standard_axioms Minimality.NF29.l42_Q2_routeF
+#assert_standard_axioms Minimality.NF29.l42_Q2_routeQa
+#assert_standard_axioms Minimality.NF29.l42_Q2_routeE
+#assert_standard_axioms Minimality.NF29.cert_FA_CQ2_false
+#assert_standard_axioms Minimality.NF29.l42_Hp_rows
+#assert_standard_axioms Minimality.NF29.l42_rel_G55
+#assert_standard_axioms Minimality.NF29.l42_rel_g45
+#assert_standard_axioms Minimality.NF29.l42_SU4H
+#assert_standard_axioms Minimality.NF29.l42_SU4Hp
+#assert_standard_axioms Minimality.NF29.l42_Zstar
+#assert_standard_axioms Minimality.NF29.l42_Q4n_nonneg
+#assert_standard_axioms Minimality.NF29.l42_Q04_nonneg
+#assert_standard_axioms Minimality.NF29.l42_B05_nonneg
+#assert_standard_axioms Minimality.NF29.l42_B04_nonneg
+#assert_standard_axioms Minimality.NF29.cert_FB_Z3_false
+#assert_standard_axioms Minimality.NF29.l42_v012_form
 #print axioms Minimality.NF29.order_WI_cones
 
 -- TRI29L: triple closures (Type29Tri*), Hole29R6
