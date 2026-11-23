@@ -696,4 +696,40 @@ theorem lexAny29_pair6 {x : Fin 7 → ℝ³} (N : NF29 x)
     Minimality.H29.LexAny29 (s0x_fac29 N.facets) :=
   lexAny_pair6 _ (lv29 N 1 2) (by rw [real_inner_comm]; exact Minimality.inner_cross_left _ _) (by rw [real_inner_comm]; exact Minimality.inner_cross_right _ _) h1 h2 h3 h4 h5 h6
 
+/-! ### Tie-tolerant (`_lex`) versions of `pair1`, `pair3`, `pair4`, `pair6` (`PSVC.pair_closure_lex`) -/
+
+def allPairs (p : ℕ) : List (Fin p × Fin p) :=
+  (List.finRange p).flatMap fun i => (List.finRange p).map fun j => (i, j)
+
+theorem hT_allPairs {p : ℕ} {x : Fin 7 → ℝ³} {P : Fin p → Fin 7} {w : ℝ³}
+    (i j : Fin p) (_hij : i ≠ j) (_heq : ⟪x (P i), w⟫ = ⟪x (P j), w⟫) :
+    (i, j) ∈ allPairs p ∨ (j, i) ∈ allPairs p := by
+  left
+  simp only [allPairs, List.mem_flatMap, List.mem_map, List.mem_finRange, true_and]
+  exact ⟨i, j, rfl⟩
+
+theorem hR_two_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (sw : Fin m → SignType) (R : List (SVC.Rim m p))
+    (w : ℝ³) (hw : w ≠ 0)
+    (t1 t2 : Fin m) (o v1 v2 : Fin n) (ho1 : o ∈ S t1)
+    (ho2 : o ∈ S t2) (hv1a : v1 ∉ S t1) (hv1b : v1 ∈ S t2) (hv2a : v2 ∈ S t1)
+    (hv2b : v2 ∉ S t2) (hz : ∀ t, sw t = 0 → t = t1 ∨ t = t2)
+    (hsd : R.all (fun ρ => decide (ρ.sd t1 ≠ 0 ∧ ρ.sd t2 ≠ 0)) = true)
+    (ht1 : sw t1 = 0) (hnw : ⟪F.N t1, w⟫ = 0) :
+    ∀ ρ ∈ R, ∃ d1 d2 : ℝ³,
+      (∀ t, sw t = 0 → SignType.sign ⟪F.N t, d1⟫ = ρ.sd t) ∧ Split.det3 w d1 d2 ≠ 0 := by
+  intro ρ hρ
+  obtain ⟨d1, hd1⟩ := hR_two F sw R t1 t2 o v1 v2 ho1 ho2 hv1a hv1b hv2a hv2b hz hsd ρ hρ
+  have hsd1 : ρ.sd t1 ≠ 0 := by
+    simp only [List.all_eq_true, decide_eq_true_eq] at hsd
+    exact (hsd ρ hρ).1
+  have hnd : ⟪F.N t1, d1⟫ ≠ 0 := by
+    intro h0
+    have hs := hd1 t1 ht1
+    rw [h0, sign_zero] at hs
+    exact hsd1 hs.symm
+  obtain ⟨d2, hdet⟩ := SVC.exists_det3_ne_zero_of_orth hw hnw hnd
+  exact ⟨d1, d2, hd1, hdet⟩
+
+
 end Minimality.PL29

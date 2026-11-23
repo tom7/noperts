@@ -20,6 +20,12 @@ public import Minimality.Type29Tri5
 public import Minimality.Type29Tri1
 public import Minimality.Type29Tri9
 public import Minimality.Type29Tri4
+public import Minimality.Type29SingleLex
+public import Minimality.Type29Pair1Lex
+public import Minimality.Type29Pair3Lex
+public import Minimality.Type29PairLex
+public import Minimality.Type29Pair2Lex
+public import Minimality.Type29Pair5Lex
 
 @[expose] public section
 
@@ -244,17 +250,15 @@ theorem type29_rupert_or_hole'' {x : Fin 7 → ℝ³} (N : NF29 x)
     IsRupert (univ.image x) ∨ Hole29R2 x N :=
   (type29_rupert_or_hole' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R1_reduce h))
 
-/-- K1a single-view closure hypotheses at `x 0 - x 1` (`PL29.lexAny29_K1a_e01`): facings and distinct depths. -/
+/-- K1a single-view closure hypotheses at `x 0 - x 1` (`PL29.lexAny29_K1a_e01_lex`): facings and forbidden tie. -/
 def E01Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.a2 < 0 ∧ ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧ ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫
+    ⟪x (PL29.PA 3), x 0 - x 1⟫ ≠ ⟪x (PL29.PA 4), x 0 - x 1⟫
 
-/-- K1a single-view closure hypotheses at `x 2 - x 4` (`PL29.lexAny29_K1a_e24`): facings and distinct depths. -/
+/-- K1a single-view closure hypotheses at `x 2 - x 4` (`PL29.lexAny29_K1a_e24_lex`): facings and forbidden tie. -/
 def E24Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.b0 ∧ ⟪(s0x_fac29 N.facets).N 1, x 2 - x 4⟫ < 0 ∧ ⟪(s0x_fac29 N.facets).N 3, x 2 - x 4⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 2 - x 4⟫ ≠ ⟪x j, x 2 - x 4⟫
+    ⟪x (PL29.PB 1), x 2 - x 4⟫ ≠ ⟪x (PL29.PB 3), x 2 - x 4⟫
 
 /-- Shrunken Type-29 open hole proposition, excluding the two K1a single-view cells (PAIRLEAN29). -/
 def Hole29R3 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
@@ -264,14 +268,14 @@ def Hole29R3 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
 theorem hole29_of_hole29R3 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R3 x N) : Hole29 x N :=
   hole29_of_hole29R2 h.1
 
-/-- **Reduction of `Hole29R2` to `Hole29R3`**: `PL29.lexAny29_K1a_e01` / `_e24` against `¬ LexAny29`. -/
+/-- **Reduction of `Hole29R2` to `Hole29R3`**: `PL29.lexAny29_K1a_e01_lex` / `_e24_lex` against `¬ LexAny29`. -/
 theorem hole29R2_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R2 x N) : Hole29R3 x N := by
   have hnl := (hole29_of_hole29R2 h).2.2.2.2.2.1
   refine ⟨h, ?_, ?_⟩
   · rintro ⟨ha2, a, b, c⟩
-    exact hnl (PL29.lexAny29_K1a_e01 N ha2 a b c)
+    exact hnl (PL29.lexAny29_K1a_e01_lex N ha2 a b c)
   · rintro ⟨hb0, a, b, c⟩
-    exact hnl (PL29.lexAny29_K1a_e24 N hb0 a b c)
+    exact hnl (PL29.lexAny29_K1a_e24_lex N hb0 a b c)
 
 /-- Main Type-29 reduction leaving `Hole29R3`. -/
 theorem type29_rupert_or_hole''' {x : Fin 7 → ℝ³} (N : NF29 x)
@@ -281,145 +285,158 @@ theorem type29_rupert_or_hole''' {x : Fin 7 → ℝ³} (N : NF29 x)
 
 /-! ### SINGLE29: sixteen more single-view cells (`Type29Single.lean`, SINGLE29 part) -/
 
-/-- Single-view cell `e05b` (SINGLE29; `PL29.lexAny_e05b`, view `x 0 - x 5`, K1b). -/
+/-- Single-view cell `e05b` (SINGLE29; `PL29.lexAny29_K1b_e05_lex`, view `x 0 - x 5`, K1b). -/
 def E05bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.a2 ∧
     ⟪(s0x_fac29 N.facets).N 4, x 0 - x 5⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 6, x 0 - x 5⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 0 - x 5⟫ ≠ ⟪x j, x 0 - x 5⟫
+    ⟪x (PL29.e05b_P 1), x 0 - x 5⟫ ≠ ⟪x (PL29.e05b_P 4), x 0 - x 5⟫ ∧
+    ⟪x (PL29.e05b_P 2), x 0 - x 5⟫ ≠ ⟪x (PL29.e05b_P 3), x 0 - x 5⟫ ∧
+    ⟪x (PL29.e05b_P 3), x 0 - x 5⟫ ≠ ⟪x (PL29.e05b_P 4), x 0 - x 5⟫
 
-/-- Single-view cell `e12b` (SINGLE29; `PL29.lexAny_e12b`, view `x 1 - x 2`, K1b). -/
+/-- Single-view cell `e12b` (SINGLE29; `PL29.lexAny29_K1b_e12_lex`, view `x 1 - x 2`, K1b). -/
 def E12bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.b0 < 0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 3, x 1 - x 2⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 7, x 1 - x 2⟫ ∧
-    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 2⟫ ≠ ⟪x j, x 1 - x 2⟫
+    ⟪x (PL29.e12b_P 1), x 1 - x 2⟫ ≠ ⟪x (PL29.e12b_P 2), x 1 - x 2⟫ ∧
+    ⟪x (PL29.e12b_P 3), x 1 - x 2⟫ ≠ ⟪x (PL29.e12b_P 4), x 1 - x 2⟫
 
-/-- Single-view cell `e02a` (SINGLE29; `PL29.lexAny_e02a`, view `x 0 - x 2`, K1a). -/
+/-- Single-view cell `e02a` (SINGLE29; `PL29.lexAny29_K1a_e02_lex`, view `x 0 - x 2`, K1a). -/
 def E02aHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.b0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 5, x 0 - x 2⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 7, x 0 - x 2⟫ ∧
-    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 0 - x 2⟫ ≠ ⟪x j, x 0 - x 2⟫
+    ⟪x (PL29.e02a_P 1), x 0 - x 2⟫ ≠ ⟪x (PL29.e02a_P 2), x 0 - x 2⟫ ∧
+    ⟪x (PL29.e02a_P 2), x 0 - x 2⟫ ≠ ⟪x (PL29.e02a_P 3), x 0 - x 2⟫ ∧
+    ⟪x (PL29.e02a_P 3), x 0 - x 2⟫ ≠ ⟪x (PL29.e02a_P 4), x 0 - x 2⟫
 
-/-- Single-view cell `e15a` (SINGLE29; `PL29.lexAny_e15a`, view `x 1 - x 5`, K1a). -/
+/-- Single-view cell `e15a` (SINGLE29; `PL29.lexAny29_K1a_e15_lex`, view `x 1 - x 5`, K1a). -/
 def E15aHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.V < 0 ∧
     ⟪(s0x_fac29 N.facets).N 2, x 1 - x 5⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 6, x 1 - x 5⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 7, x 1 - x 5⟫ < 0 ∧
     0 < PL29.PlaneSide x 2 5 6 0 1 ∧
-    ∀ i ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 5⟫ ≠ ⟪x j, x 1 - x 5⟫
+    ⟪x (PL29.e15a_P 1), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a_P 4), x 1 - x 5⟫ ∧
+    ⟪x (PL29.e15a_P 2), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a_P 3), x 1 - x 5⟫ ∧
+    ⟪x (PL29.e15a_P 3), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a_P 5), x 1 - x 5⟫
 
-/-- Single-view cell `e15a2` (SINGLE29; `PL29.lexAny_e15a2`, view `x 1 - x 5`, K1a). -/
+/-- Single-view cell `e15a2` (SINGLE29; `PL29.lexAny29_K1a_e15_2_lex`, view `x 1 - x 5`, K1a). -/
 def E15a2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.b0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 5⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 7, x 1 - x 5⟫ ∧
-    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 5⟫ ≠ ⟪x j, x 1 - x 5⟫
+    ⟪x (PL29.e15a2_P 1), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a2_P 4), x 1 - x 5⟫ ∧
+    ⟪x (PL29.e15a2_P 2), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a2_P 5), x 1 - x 5⟫ ∧
+    ⟪x (PL29.e15a2_P 4), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a2_P 5), x 1 - x 5⟫
 
-/-- Single-view cell `e02b` (SINGLE29; `PL29.lexAny_e02b`, view `x 0 - x 2`, K1b). -/
+/-- Single-view cell `e02b` (SINGLE29; `PL29.lexAny29_K1b_e02_lex`, view `x 0 - x 2`, K1b). -/
 def E02bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.a2 ∧
     ⟪(s0x_fac29 N.facets).N 5, x 0 - x 2⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 8, x 0 - x 2⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 0 - x 2⟫ ≠ ⟪x j, x 0 - x 2⟫
+    ⟪x (PL29.e02b_P 1), x 0 - x 2⟫ ≠ ⟪x (PL29.e02b_P 2), x 0 - x 2⟫ ∧
+    ⟪x (PL29.e02b_P 2), x 0 - x 2⟫ ≠ ⟪x (PL29.e02b_P 3), x 0 - x 2⟫ ∧
+    ⟪x (PL29.e02b_P 3), x 0 - x 2⟫ ≠ ⟪x (PL29.e02b_P 4), x 0 - x 2⟫
 
-/-- Single-view cell `e14b` (SINGLE29; `PL29.lexAny_e14b`, view `x 1 - x 4`, K1b). -/
+/-- Single-view cell `e14b` (SINGLE29; `PL29.lexAny29_K1b_e14_lex`, view `x 1 - x 4`, K1b). -/
 def E14bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.V ∧
     ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 3, x 1 - x 4⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ < 0 ∧
     PL29.PlaneSide x 2 4 6 0 1 < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+    ⟪x (PL29.e14b_P 2), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b_P 3), x 1 - x 4⟫ ∧
+    ⟪x (PL29.e14b_P 2), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b_P 4), x 1 - x 4⟫ ∧
+    ⟪x (PL29.e14b_P 4), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b_P 5), x 1 - x 4⟫
 
-/-- Single-view cell `e14b2` (SINGLE29; `PL29.lexAny_e14b2`, view `x 1 - x 4`, K1b). -/
+/-- Single-view cell `e14b2` (SINGLE29; `PL29.lexAny29_K1b_e14_2_lex`, view `x 1 - x 4`, K1b). -/
 def E14b2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.a2 ∧
     0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ ∧
-    ∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+    ⟪x (PL29.e14b2_P 1), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b2_P 3), x 1 - x 4⟫ ∧
+    ⟪x (PL29.e14b2_P 2), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b2_P 5), x 1 - x 4⟫ ∧
+    ⟪x (PL29.e14b2_P 4), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b2_P 5), x 1 - x 4⟫
 
-/-- Single-view cell `e15a3` (SINGLE29; `PL29.lexAny_e15a3`, view `x 1 - x 5`, K1a). -/
+/-- Single-view cell `e15a3` (SINGLE29; `PL29.lexAny29_K1a_e15_3_lex`, view `x 1 - x 5`, K1a). -/
 def E15a3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.b0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 5⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 6, x 1 - x 5⟫ ∧
     ⟪(s0x_fac29 N.facets).N 7, x 1 - x 5⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 5⟫ ≠ ⟪x j, x 1 - x 5⟫
+    ⟪x (PL29.e15a3_P 1), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a3_P 4), x 1 - x 5⟫ ∧
+    ⟪x (PL29.e15a3_P 2), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a3_P 3), x 1 - x 5⟫ ∧
+    ⟪x (PL29.e15a3_P 3), x 1 - x 5⟫ ≠ ⟪x (PL29.e15a3_P 5), x 1 - x 5⟫
 
-/-- Single-view cell `e14b3` (SINGLE29; `PL29.lexAny_e14b3`, view `x 1 - x 4`, K1b). -/
+/-- Single-view cell `e14b3` (SINGLE29; `PL29.lexAny29_K1b_e14_3_lex`, view `x 1 - x 4`, K1b). -/
 def E14b3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.a2 ∧
     0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 3, x 1 - x 4⟫ ∧
     ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ < 0 ∧
-    ∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+    ⟪x (PL29.e14b3_P 1), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b3_P 3), x 1 - x 4⟫ ∧
+    ⟪x (PL29.e14b3_P 2), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b3_P 4), x 1 - x 4⟫ ∧
+    ⟪x (PL29.e14b3_P 4), x 1 - x 4⟫ ≠ ⟪x (PL29.e14b3_P 5), x 1 - x 4⟫
 
-/-- Single-view cell `e24a2` (SINGLE29; `PL29.lexAny_e24a2`, view `x 2 - x 4`, K1a). -/
+/-- Single-view cell `e24a2` (SINGLE29; `PL29.lexAny29_K1a_e24_2_lex`, view `x 2 - x 4`, K1a). -/
 def E24a2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.a2 < 0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 1, x 2 - x 4⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 3, x 2 - x 4⟫ ∧
     ⟪(s0x_fac29 N.facets).N 8, x 2 - x 4⟫ < 0 ∧
-    ∀ i ∈ ({1, 2, 3, 4, 5} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 2 - x 4⟫ ≠ ⟪x j, x 2 - x 4⟫
+    ⟪x (PL29.e24a2_P 1), x 2 - x 4⟫ ≠ ⟪x (PL29.e24a2_P 3), x 2 - x 4⟫ ∧
+    ⟪x (PL29.e24a2_P 2), x 2 - x 4⟫ ≠ ⟪x (PL29.e24a2_P 4), x 2 - x 4⟫
 
-/-- Single-view cell `e05b2` (SINGLE29; `PL29.lexAny_e05b2`, view `x 0 - x 5`, K1b). -/
+/-- Single-view cell `e05b2` (SINGLE29; `PL29.lexAny29_K1b_e05_2_lex`, view `x 0 - x 5`, K1b). -/
 def E05b2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.b0 < 0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 4, x 0 - x 5⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 6, x 0 - x 5⟫ ∧
     ⟪(s0x_fac29 N.facets).N 7, x 0 - x 5⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 3, 4, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 0 - x 5⟫ ≠ ⟪x j, x 0 - x 5⟫
+    ⟪x (PL29.e05b2_P 1), x 0 - x 5⟫ ≠ ⟪x (PL29.e05b2_P 4), x 0 - x 5⟫ ∧
+    ⟪x (PL29.e05b2_P 2), x 0 - x 5⟫ ≠ ⟪x (PL29.e05b2_P 3), x 0 - x 5⟫ ∧
+    ⟪x (PL29.e05b2_P 2), x 0 - x 5⟫ ≠ ⟪x (PL29.e05b2_P 4), x 0 - x 5⟫
 
-/-- Single-view cell `e03a` (SINGLE29; `PL29.lexAny_e03a`, view `x 0 - x 3`, K1a). -/
+/-- Single-view cell `e03a` (SINGLE29; `PL29.lexAny29_K1a_e03_lex`, view `x 0 - x 3`, K1a). -/
 def E03aHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.a2 < 0 ∧
     ⟪(s0x_fac29 N.facets).N 4, x 0 - x 3⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 5, x 0 - x 3⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 0 - x 3⟫ ≠ ⟪x j, x 0 - x 3⟫
+    ⟪x (PL29.e03a_P 2), x 0 - x 3⟫ ≠ ⟪x (PL29.e03a_P 3), x 0 - x 3⟫ ∧
+    ⟪x (PL29.e03a_P 2), x 0 - x 3⟫ ≠ ⟪x (PL29.e03a_P 4), x 0 - x 3⟫ ∧
+    ⟪x (PL29.e03a_P 3), x 0 - x 3⟫ ≠ ⟪x (PL29.e03a_P 4), x 0 - x 3⟫
 
-/-- Single-view cell `e23b` (SINGLE29; `PL29.lexAny_e23b`, view `x 2 - x 3`, K1b). -/
+/-- Single-view cell `e23b` (SINGLE29; `PL29.lexAny29_K1b_e23_lex`, view `x 2 - x 3`, K1b). -/
 def E23bHyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.b0 < 0 ∧
     ⟪(s0x_fac29 N.facets).N 1, x 2 - x 3⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 5, x 2 - x 3⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 2 - x 3⟫ ≠ ⟪x j, x 2 - x 3⟫
+    ⟪x (PL29.e23b_P 1), x 2 - x 3⟫ ≠ ⟪x (PL29.e23b_P 4), x 2 - x 3⟫ ∧
+    ⟪x (PL29.e23b_P 2), x 2 - x 3⟫ ≠ ⟪x (PL29.e23b_P 3), x 2 - x 3⟫
 
-/-- Single-view cell `l1456x234` (SINGLE29; `PL29.lexAny_l1456x234`, view `cross N1456 N234`, no class fact). -/
+/-- Single-view cell `l1456x234` (SINGLE29; `PL29.lexAny29_l1456x234_lex`, view `cross N1456 N234`, no class fact). -/
 def L1456x234Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 5 6⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 5 6⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 5 6⟫ < 0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 5 6⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 5 6⟫ ∧
-    ∀ i ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, PL29.lv29 N 5 6⟫ ≠ ⟪x j, PL29.lv29 N 5 6⟫
+    ⟪x (PL29.l1456x234_P 2), PL29.lv29 N 5 6⟫ ≠ ⟪x (PL29.l1456x234_P 3), PL29.lv29 N 5 6⟫ ∧
+    ⟪x (PL29.l1456x234_P 2), PL29.lv29 N 5 6⟫ ≠ ⟪x (PL29.l1456x234_P 4), PL29.lv29 N 5 6⟫ ∧
+    ⟪x (PL29.l1456x234_P 3), PL29.lv29 N 5 6⟫ ≠ ⟪x (PL29.l1456x234_P 4), PL29.lv29 N 5 6⟫
 
-/-- Single-view cell `l035x1456` (SINGLE29; `PL29.lexAny_l035x1456`, view `cross N035 N1456`, no class fact). -/
+/-- Single-view cell `l035x1456` (SINGLE29; `PL29.lexAny29_l035x1456_lex`, view `cross N035 N1456`, no class fact). -/
 def L035x1456Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   ⟪(s0x_fac29 N.facets).N 1, PL29.lv29 N 3 5⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 3 5⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 3 5⟫ < 0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 7, PL29.lv29 N 3 5⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 8, PL29.lv29 N 3 5⟫ ∧
-    ∀ i ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, PL29.lv29 N 3 5⟫ ≠ ⟪x j, PL29.lv29 N 3 5⟫
+    ⟪x (PL29.l035x1456_P 2), PL29.lv29 N 3 5⟫ ≠ ⟪x (PL29.l035x1456_P 3), PL29.lv29 N 3 5⟫ ∧
+    ⟪x (PL29.l035x1456_P 2), PL29.lv29 N 3 5⟫ ≠ ⟪x (PL29.l035x1456_P 4), PL29.lv29 N 3 5⟫ ∧
+    ⟪x (PL29.l035x1456_P 3), PL29.lv29 N 3 5⟫ ≠ ⟪x (PL29.l035x1456_P 4), PL29.lv29 N 3 5⟫
 
 
 /-- Union of the SINGLE29 single-view cells. -/
@@ -454,38 +471,38 @@ theorem hole29_of_hole29R4 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R4 x N)
 theorem hole29R3_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R3 x N) : Hole29R4 x N := by
   have hnl := (hole29_of_hole29R3 h).2.2.2.2.2.1
   refine ⟨h, ?_⟩
-  rintro (⟨h1, h2, h3, h4⟩
-    | ⟨h1, h2, h3, h4⟩
-    | ⟨h1, h2, h3, h4⟩
+  rintro (⟨h1, h2, h3, h4, h5, h6⟩
+    | ⟨h1, h2, h3, h4, h5⟩
     | ⟨h1, h2, h3, h4, h5, h6⟩
-    | ⟨h1, h2, h3, h4⟩
-    | ⟨h1, h2, h3, h4⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
     | ⟨h1, h2, h3, h4, h5, h6⟩
-    | ⟨h1, h2, h3, h4⟩
-    | ⟨h1, h2, h3, h4, h5⟩
-    | ⟨h1, h2, h3, h4, h5⟩
-    | ⟨h1, h2, h3, h4, h5⟩
-    | ⟨h1, h2, h3, h4, h5⟩
-    | ⟨h1, h2, h3, h4⟩
-    | ⟨h1, h2, h3, h4⟩
     | ⟨h1, h2, h3, h4, h5, h6⟩
-    | ⟨h1, h2, h3, h4, h5, h6⟩)
-  · exact hnl (PL29.lexAny29_K1b_e05 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_K1b_e12 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_K1a_e02 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_K1a_e15 N h1 h2 h3 h4 h5 h6)
-  · exact hnl (PL29.lexAny29_K1a_e15_2 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_K1b_e02 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_K1b_e14 N h1 h2 h3 h4 h5 h6)
-  · exact hnl (PL29.lexAny29_K1b_e14_2 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_K1a_e15_3 N h1 h2 h3 h4 h5)
-  · exact hnl (PL29.lexAny29_K1b_e14_3 N h1 h2 h3 h4 h5)
-  · exact hnl (PL29.lexAny29_K1a_e24_2 N h1 h2 h3 h4 h5)
-  · exact hnl (PL29.lexAny29_K1b_e05_2 N h1 h2 h3 h4 h5)
-  · exact hnl (PL29.lexAny29_K1a_e03 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_K1b_e23 N h1 h2 h3 h4)
-  · exact hnl (PL29.lexAny29_l1456x234 N h1 h2 h3 h4 h5 h6)
-  · exact hnl (PL29.lexAny29_l035x1456 N h1 h2 h3 h4 h5 h6)
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7⟩
+    | ⟨h1, h2, h3, h4, h5, h6⟩
+    | ⟨h1, h2, h3, h4, h5⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩)
+  · exact hnl (PL29.lexAny29_K1b_e05_lex N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1b_e12_lex N h1 h2 h3 h4 h5)
+  · exact hnl (PL29.lexAny29_K1a_e02_lex N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1a_e15_lex N h1 h2 h3 h4 h5 h6 h7 h8)
+  · exact hnl (PL29.lexAny29_K1a_e15_2_lex N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1b_e02_lex N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1b_e14_lex N h1 h2 h3 h4 h5 h6 h7 h8)
+  · exact hnl (PL29.lexAny29_K1b_e14_2_lex N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1a_e15_3_lex N h1 h2 h3 h4 h5 h6 h7)
+  · exact hnl (PL29.lexAny29_K1b_e14_3_lex N h1 h2 h3 h4 h5 h6 h7)
+  · exact hnl (PL29.lexAny29_K1a_e24_2_lex N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1b_e05_2_lex N h1 h2 h3 h4 h5 h6 h7)
+  · exact hnl (PL29.lexAny29_K1a_e03_lex N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_K1b_e23_lex N h1 h2 h3 h4 h5)
+  · exact hnl (PL29.lexAny29_l1456x234_lex N h1 h2 h3 h4 h5 h6 h7 h8)
+  · exact hnl (PL29.lexAny29_l035x1456_lex N h1 h2 h3 h4 h5 h6 h7 h8)
 
 /-- Main Type-29 reduction leaving `Hole29R4`. -/
 theorem type29_rupert_or_hole'''' {x : Fin 7 → ℝ³} (N : NF29 x)
@@ -495,7 +512,7 @@ theorem type29_rupert_or_hole'''' {x : Fin 7 → ℝ³} (N : NF29 x)
 
 /-! ### PAIR29: two-view (pair) closures (`Type29Pair*.lean`) -/
 
-/-- Pair `w1` + `x 5 - x 6` (lines F124xF346, F1456xF356) (PAIR29; `PL29.lexAny_pair1`). -/
+/-- Pair `w1` + `x 5 - x 6` (lines F124xF346, F1456xF356) (PAIR29; `PL29.lexAny29_pair1_lex`). -/
 def Pair1Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.a2 < 0 ∧
     ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 4 7⟫ < 0 ∧
@@ -506,12 +523,15 @@ def Pair1Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
     0 < ⟪(s0x_fac29 N.facets).N 2, x 5 - x 6⟫ ∧
     ⟪(s0x_fac29 N.facets).N 4, x 5 - x 6⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 6, x 5 - x 6⟫ < 0 ∧
-    (∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, PL29.lv29 N 4 7⟫ ≠ ⟪x j, PL29.lv29 N 4 7⟫) ∧
-    ∀ i ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 5 - x 6⟫ ≠ ⟪x j, x 5 - x 6⟫
+    ⟪PL29.lv29 N 4 7, x 5 - x 6⟫ ≠ 0 ∧
+    ⟪x (PL29.pair1_P 0), x 5 - x 6⟫ ≠ ⟪x (PL29.pair1_P 1), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair1_P 0), x 5 - x 6⟫ ≠ ⟪x (PL29.pair1_P 4), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair1_P 1), x 5 - x 6⟫ ≠ ⟪x (PL29.pair1_P 2), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair1_P 2), x 5 - x 6⟫ ≠ ⟪x (PL29.pair1_P 4), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair1_P 2), x 5 - x 6⟫ ≠ ⟪x (PL29.pair1_P 5), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair1_P 3), x 5 - x 6⟫ ≠ ⟪x (PL29.pair1_P 5), x 5 - x 6⟫
 
-/-- Pair `x 1 - x 2` + `x 5 - x 6` (lines F012xF124, F1456xF356) (PAIR29; `PL29.lexAny_pair2`). -/
+/-- Pair `x 1 - x 2` + `x 5 - x 6` (lines F012xF124, F1456xF356) (PAIR29; `PL29.lexAny29_pair2_lex`). -/
 def Pair2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.V < 0 ∧
     ⟪(s0x_fac29 N.facets).N 3, x 1 - x 2⟫ < 0 ∧
@@ -524,12 +544,16 @@ def Pair2Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
     0 < PL29.PlaneSide x 2 5 6 0 1 ∧
     0 < PL29.PlaneSide x 2 3 6 1 5 ∧
     0 < PL29.PlaneSide x 2 3 5 1 6 ∧
-    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 2⟫ ≠ ⟪x j, x 1 - x 2⟫) ∧
-    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 5 - x 6⟫ ≠ ⟪x j, x 5 - x 6⟫
+    ⟪x 1 - x 2, x 5 - x 6⟫ ≠ 0 ∧
+    ⟪x (PL29.pair2_P 1), x 1 - x 2⟫ ≠ ⟪x (PL29.pair2_P 4), x 1 - x 2⟫ ∧
+    ⟪x (PL29.pair2_P 4), x 1 - x 2⟫ ≠ ⟪x (PL29.pair2_P 6), x 1 - x 2⟫ ∧
+    ⟪x (PL29.pair2_P 5), x 1 - x 2⟫ ≠ ⟪x (PL29.pair2_P 6), x 1 - x 2⟫ ∧
+    ⟪x (PL29.pair2_P 1), x 5 - x 6⟫ ≠ ⟪x (PL29.pair2_P 2), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair2_P 1), x 5 - x 6⟫ ≠ ⟪x (PL29.pair2_P 5), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair2_P 2), x 5 - x 6⟫ ≠ ⟪x (PL29.pair2_P 3), x 5 - x 6⟫ ∧
+    ⟪x (PL29.pair2_P 3), x 5 - x 6⟫ ≠ ⟪x (PL29.pair2_P 5), x 5 - x 6⟫
 
-/-- Pair `w1` + `x 4 - x 6` (lines F015xF356, F1456xF346) (PAIR29; `PL29.lexAny_pair3`). -/
+/-- Pair `w1` + `x 4 - x 6` (lines F015xF356, F1456xF346) (PAIR29; `PL29.lexAny29_pair3_lex`). -/
 def Pair3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   N.b0 < 0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 1 8⟫ ∧
@@ -540,19 +564,20 @@ def Pair3Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
     ⟪(s0x_fac29 N.facets).N 1, x 4 - x 6⟫ < 0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 2, x 4 - x 6⟫ ∧
     ⟪(s0x_fac29 N.facets).N 3, x 4 - x 6⟫ < 0 ∧
-    (∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, PL29.lv29 N 1 8⟫ ≠ ⟪x j, PL29.lv29 N 1 8⟫) ∧
-    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 4 - x 6⟫ ≠ ⟪x j, x 4 - x 6⟫
+    ⟪PL29.lv29 N 1 8, x 4 - x 6⟫ ≠ 0 ∧
+    ⟪x (PL29.pair3_P 0), x 4 - x 6⟫ ≠ ⟪x (PL29.pair3_P 1), x 4 - x 6⟫ ∧
+    ⟪x (PL29.pair3_P 0), x 4 - x 6⟫ ≠ ⟪x (PL29.pair3_P 2), x 4 - x 6⟫ ∧
+    ⟪x (PL29.pair3_P 1), x 4 - x 6⟫ ≠ ⟪x (PL29.pair3_P 3), x 4 - x 6⟫ ∧
+    ⟪x (PL29.pair3_P 2), x 4 - x 6⟫ ≠ ⟪x (PL29.pair3_P 3), x 4 - x 6⟫ ∧
+    ⟪x (PL29.pair3_P 2), x 4 - x 6⟫ ≠ ⟪x (PL29.pair3_P 5), x 4 - x 6⟫ ∧
+    ⟪x (PL29.pair3_P 4), x 4 - x 6⟫ ≠ ⟪x (PL29.pair3_P 5), x 4 - x 6⟫
 
-/-- Single view `x 3 - x 6` (line F346xF356) (PAIR29; `PL29.lexAny_pair4`, no class fact). -/
+/-- Single view `x 3 - x 6` (line F346xF356) (PAIR29; `PL29.lexAny29_pair4_lex`, no class fact). -/
 def Pair4Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < ⟪(s0x_fac29 N.facets).N 1, x 3 - x 6⟫ ∧
-    0 < ⟪(s0x_fac29 N.facets).N 4, x 3 - x 6⟫ ∧
-    ∀ i ∈ ({0, 1, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫
+    0 < ⟪(s0x_fac29 N.facets).N 4, x 3 - x 6⟫
 
-/-- Pair `w1` + `x 1 - x 4` (lines F035xF346, F124xF1456) (PAIR29; `PL29.lexAny_pair5`). -/
+/-- Pair `w1` + `x 1 - x 4` (lines F035xF346, F124xF1456) (PAIR29; `PL29.lexAny29_pair5_lex`). -/
 def Pair5Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < N.b0 ∧
     0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 3 7⟫ ∧
@@ -565,20 +590,22 @@ def Pair5Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
     0 < ⟪(s0x_fac29 N.facets).N 2, x 1 - x 4⟫ ∧
     0 < ⟪(s0x_fac29 N.facets).N 8, x 1 - x 4⟫ ∧
     PL29.PlaneSide x 2 3 6 1 4 < 0 ∧
-    (∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, PL29.lv29 N 3 7⟫ ≠ ⟪x j, PL29.lv29 N 3 7⟫) ∧
-    ∀ i ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, x 1 - x 4⟫ ≠ ⟪x j, x 1 - x 4⟫
+    ⟪PL29.lv29 N 3 7, x 1 - x 4⟫ ≠ 0 ∧
+    ⟪x (PL29.pair5_P 1), PL29.lv29 N 3 7⟫ ≠ ⟪x (PL29.pair5_P 4), PL29.lv29 N 3 7⟫ ∧
+    ⟪x (PL29.pair5_P 5), PL29.lv29 N 3 7⟫ ≠ ⟪x (PL29.pair5_P 6), PL29.lv29 N 3 7⟫ ∧
+    ⟪x (PL29.pair5_P 2), x 1 - x 4⟫ ≠ ⟪x (PL29.pair5_P 3), x 1 - x 4⟫ ∧
+    ⟪x (PL29.pair5_P 2), x 1 - x 4⟫ ≠ ⟪x (PL29.pair5_P 4), x 1 - x 4⟫ ∧
+    ⟪x (PL29.pair5_P 3), x 1 - x 4⟫ ≠ ⟪x (PL29.pair5_P 6), x 1 - x 4⟫ ∧
+    ⟪x (PL29.pair5_P 4), x 1 - x 4⟫ ≠ ⟪x (PL29.pair5_P 6), x 1 - x 4⟫
 
-/-- Single view `w1` with SELF (line F015xF023) (PAIR29; `PL29.lexAny_pair6`, no class fact). -/
+/-- Single view `w1` with SELF (line F015xF023) (PAIR29; `PL29.lexAny29_pair6_lex`, no class fact). -/
 def Pair6Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
   0 < ⟪(s0x_fac29 N.facets).N 0, PL29.lv29 N 1 2⟫ ∧
     ⟪(s0x_fac29 N.facets).N 3, PL29.lv29 N 1 2⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 4, PL29.lv29 N 1 2⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 5, PL29.lv29 N 1 2⟫ < 0 ∧
     ⟪(s0x_fac29 N.facets).N 6, PL29.lv29 N 1 2⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
-      i ≠ j → ⟪x i, PL29.lv29 N 1 2⟫ ≠ ⟪x j, PL29.lv29 N 1 2⟫
+    ⟪x (PL29.pair6_P 1), PL29.lv29 N 1 2⟫ ≠ ⟪x (PL29.pair6_P 2), PL29.lv29 N 1 2⟫
 
 /-- Union of the PAIR29 pair-closure instances. -/
 def Pair29Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
@@ -602,18 +629,18 @@ theorem hole29_of_hole29R5 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R5 x N)
 theorem hole29R4_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R4 x N) : Hole29R5 x N := by
   have hnl := (hole29_of_hole29R4 h).2.2.2.2.2.1
   refine ⟨h, ?_⟩
-  rintro (⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩
-    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13⟩
-    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩
-    | ⟨h1, h2, h3⟩
-    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13⟩
+  rintro (⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16⟩
+    | ⟨h1, h2⟩
+    | ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18⟩
     | ⟨h1, h2, h3, h4, h5, h6⟩)
-  · exact hnl (PL29.lexAny29_pair1 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11)
-  · exact hnl (PL29.lexAny29_pair2 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13)
-  · exact hnl (PL29.lexAny29_pair3 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11)
-  · exact hnl (PL29.lexAny29_pair4 N h1 h2 h3)
-  · exact hnl (PL29.lexAny29_pair5 N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13)
-  · exact hnl (PL29.lexAny29_pair6 N h1 h2 h3 h4 h5 h6)
+  · exact hnl (PL29.lexAny29_pair1_lex N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16)
+  · exact hnl (PL29.lexAny29_pair2_lex N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19)
+  · exact hnl (PL29.lexAny29_pair3_lex N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16)
+  · exact hnl (PL29.lexAny29_pair4_lex N h1 h2)
+  · exact hnl (PL29.lexAny29_pair5_lex N h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18)
+  · exact hnl (PL29.lexAny29_pair6_lex N h1 h2 h3 h4 h5 h6)
 
 /-- Main Type-29 reduction leaving `Hole29R5`. -/
 theorem type29_rupert_or_hole''''' {x : Fin 7 → ℝ³} (N : NF29 x)

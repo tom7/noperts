@@ -1,0 +1,22 @@
+module
+
+public import Minimality.Type29Pair5Lex1Masks
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option maxHeartbeats 400000
+
+namespace Minimality.PL29
+
+theorem pair5_w1_h0_0 :
+    SVC.allCliquesF pair5_T1 [] (List.finRange 7) (fun B =>
+      if B.head? == some 0 && decide (2 ≤ B.length) then
+        SVC.allWeakOrdersF pair5_T1 6 ((List.finRange 7).filter fun x => !B.contains x) (fun W =>
+          (let exts := SVC.linExts (B :: W);
+          pair5_rMs1.any (fun rM => exts.all fun L => Nat.testBit rM (SVC.lehmerAux L)) ||
+            exts.all fun L => Nat.testBit pair5_m21 (SVC.lehmerAux L)))
+      else true) = true := by
+  decide +kernel
+
+end Minimality.PL29

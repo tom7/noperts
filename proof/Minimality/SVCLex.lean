@@ -326,6 +326,249 @@ def linExts {p : ℕ} : List (List (Fin p)) → List (List (Fin p))
   | [] => [[]]
   | B :: W => B.permutations'.flatMap fun perm => (linExts W).map (perm ++ ·)
 
+private theorem addCliques_ne_nil {p : ℕ} {T : List (Fin p × Fin p)}
+    {cur rem B : List (Fin p)} (hB : B ∈ addCliques T cur rem) : B ≠ [] := by
+  induction rem generalizing cur with
+  | nil =>
+    simp only [addCliques] at hB
+    split_ifs at hB with h
+    · simp at hB
+    · simp only [List.mem_singleton] at hB
+      subst hB
+      intro hrev
+      have : cur = [] := by simpa using congrArg List.reverse hrev
+      simp [this] at h
+  | cons y ys ih =>
+    simp only [addCliques] at hB
+    split_ifs at hB
+    · rcases List.mem_append.mp hB with h1 | h2
+      · exact ih h1
+      · exact ih h2
+    · exact ih hB
+
+/-- Split a Boolean check over `weakOrders p T` by the minimum element `a : Fin p` of the first block. -/
+theorem weakOrders_split {p : ℕ} (hp : 0 < p) (T : List (Fin p × Fin p))
+    (f : List (List (Fin p)) → Bool)
+    (h : ∀ a : Fin p,
+      ((addCliques T [] (List.finRange p)).filter (fun B => B.head? == some a)).all (fun B =>
+        (weakOrdersAux T (p - 1) ((List.finRange p).filter fun x => !B.contains x)).all fun W =>
+          f (B :: W)) = true) :
+    (weakOrders p T).all f = true := by
+  obtain ⟨q, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hp.ne'
+  have hne : (List.finRange (q + 1)).isEmpty = false := by
+    rw [List.isEmpty_eq_false_iff, ← List.length_pos_iff_ne_nil]
+    simp
+  rw [weakOrders, weakOrdersAux, hne]
+  simp only [Bool.false_eq_true, ite_false, List.all_eq_true, List.mem_flatMap, List.mem_map]
+  rintro W ⟨B, hB, W', hW', rfl⟩
+  have hBne : B ≠ [] := addCliques_ne_nil hB
+  cases hBeq : B with
+  | nil => exact absurd hBeq hBne
+  | cons a bs =>
+    have ha := h a
+    simp only [List.all_eq_true, List.mem_filter, beq_iff_eq] at ha
+    simpa [hBeq] using ha B ⟨hB, by simp [hBeq]⟩ W' hW'
+
+/-- Fused `addCliques` + `List.all` (avoids materializing clique lists in kernel `whnf`). -/
+def allCliquesF {p : ℕ} (T : List (Fin p × Fin p)) (cur : List (Fin p)) :
+    List (Fin p) → (List (Fin p) → Bool) → Bool
+  | [], f => if cur.isEmpty then true else f cur.reverse
+  | y :: ys, f =>
+    allCliquesF T cur ys f &&
+      if cur.all (fun x => allowPair T x y) then allCliquesF T (y :: cur) ys f else true
+
+theorem allCliquesF_eq {p : ℕ} (T : List (Fin p × Fin p)) (cur rem : List (Fin p))
+    (f : List (Fin p) → Bool) :
+    (addCliques T cur rem).all f = allCliquesF T cur rem f := by
+  induction rem generalizing cur with
+  | nil =>
+    simp only [addCliques, allCliquesF]
+    cases cur.isEmpty <;> simp
+  | cons y ys ih =>
+    simp only [addCliques, allCliquesF]
+    split_ifs with h
+    · rw [List.all_append, ih, ih, Bool.and_comm]
+    · simp [ih cur]
+
+/-- Fused `weakOrdersAux` + `List.all` (avoids materializing weak-order lists in kernel `whnf`). -/
+def allWeakOrdersF {p : ℕ} (T : List (Fin p × Fin p)) :
+    ℕ → List (Fin p) → (List (List (Fin p)) → Bool) → Bool
+  | 0, _, f => f []
+  | fuel + 1, rem, f =>
+    if rem.isEmpty then f []
+    else allCliquesF T [] rem fun B =>
+      allWeakOrdersF T fuel (rem.filter fun x => !B.contains x) (fun W => f (B :: W))
+
+theorem allWeakOrdersF_eq {p : ℕ} (T : List (Fin p × Fin p)) (fuel : ℕ)
+    (rem : List (Fin p)) (f : List (List (Fin p)) → Bool) :
+    (weakOrdersAux T fuel rem).all f = allWeakOrdersF T fuel rem f := by
+  induction fuel generalizing rem f with
+  | zero => simp [weakOrdersAux, allWeakOrdersF]
+  | succ fuel ih =>
+    simp only [weakOrdersAux, allWeakOrdersF]
+    split_ifs with h
+    · simp
+    · rw [List.all_flatMap, allCliquesF_eq]
+      congr 1; funext B
+      rw [List.all_map]
+      exact ih _ _
+
+/-- Split `(weakOrders p T).all f = true` by `a : Fin p` (first block's head) and
+`k : Fin 3` (`k = 0`: `B.length ≥ 2`; `k = 1`: `B = [a]` and second block's head `< p / 2` or empty;
+`k = 2`: `B = [a]` and second block's head `≥ p / 2`). -/
+theorem weakOrders_split3 {p : ℕ} (hp : 0 < p) (T : List (Fin p × Fin p))
+    (f : List (List (Fin p)) → Bool)
+    (h0 : ∀ a : Fin p,
+      allCliquesF T [] (List.finRange p) (fun B =>
+        if B.head? == some a && decide (2 ≤ B.length) then
+          allWeakOrdersF T (p - 1) ((List.finRange p).filter fun x => !B.contains x) (fun W => f (B :: W))
+        else true) = true)
+    (h1 : ∀ a : Fin p,
+      allWeakOrdersF T (p - 1) ((List.finRange p).filter fun x => x != a) (fun W =>
+        if W.head?.bind List.head? |>.all (fun b => decide (b.val < p / 2)) then f ([a] :: W)
+        else true) = true)
+    (h2 : ∀ a : Fin p,
+      allWeakOrdersF T (p - 1) ((List.finRange p).filter fun x => x != a) (fun W =>
+        if W.head?.bind List.head? |>.any (fun b => decide (p / 2 ≤ b.val)) then f ([a] :: W)
+        else true) = true) :
+    (weakOrders p T).all f = true := by
+  refine weakOrders_split hp T f (fun a => ?_)
+  have ha0 := h0 a
+  have ha1 := h1 a
+  have ha2 := h2 a
+  rw [← allCliquesF_eq] at ha0
+  rw [← allWeakOrdersF_eq] at ha1 ha2
+  simp only [List.all_eq_true, List.mem_filter, beq_iff_eq] at ha0 ha1 ha2 ⊢
+  intro B ⟨hB, hhead⟩ W hW
+  by_cases hlen : 2 ≤ B.length
+  · have := ha0 B hB
+    simp only [hhead, beq_self_eq_true, decide_true, Bool.and_self, ↓reduceIte,
+      ← allWeakOrdersF_eq, List.all_eq_true, hlen] at this
+    exact this W hW
+  · have hBne : B ≠ [] := addCliques_ne_nil hB
+    cases hBeq : B with
+    | nil => exact absurd hBeq hBne
+    | cons a' bs =>
+      have hbs : bs = [] := by
+        cases bs with
+        | nil => rfl
+        | cons _ _ => simp [hBeq] at hlen
+      subst hbs
+      have ha_eq : a' = a := by simpa [hBeq] using hhead
+      subst ha_eq
+      have hfilt : (List.finRange p).filter (fun x => !([a'].contains x)) =
+          (List.finRange p).filter (fun x => x != a') := by
+        congr 1; funext x; by_cases hx : x = a' <;> simp [hx]
+      rw [hBeq] at hW
+      rw [hfilt] at hW
+      cases hWhead : W.head?.bind List.head? with
+      | none =>
+        have := ha1 W hW
+        simpa [hWhead] using this
+      | some b =>
+        by_cases hb : b.val < p / 2
+        · have := ha1 W hW
+          simpa [hWhead, hb] using this
+        · have := ha2 W hW
+          have hb' : p / 2 ≤ b.val := Nat.le_of_not_lt hb
+          simpa [hWhead, hb'] using this
+
+private theorem addCliques_sub_nodup {p : ℕ} {T : List (Fin p × Fin p)} {cur rem B : List (Fin p)}
+    (hB : B ∈ addCliques T cur rem) (hc : cur.Nodup) (hr : rem.Nodup)
+    (hdisj : ∀ x ∈ cur, x ∉ rem) :
+    (∀ x ∈ B, x ∈ cur ∨ x ∈ rem) ∧ B.Nodup := by
+  induction rem generalizing cur with
+  | nil =>
+    simp only [addCliques] at hB
+    split_ifs at hB
+    · simp at hB
+    · simp only [List.mem_singleton] at hB
+      subst hB
+      exact ⟨fun x hx => Or.inl (List.mem_reverse.mp hx), List.nodup_reverse.mpr hc⟩
+  | cons y ys ih =>
+    simp only [addCliques] at hB
+    have hry : y ∉ ys := (List.nodup_cons.mp hr).1
+    have hrys : ys.Nodup := (List.nodup_cons.mp hr).2
+    have hdisj' : ∀ x ∈ cur, x ∉ ys := fun x hx hxy => hdisj x hx (List.mem_cons_of_mem y hxy)
+    split_ifs at hB
+    · rcases List.mem_append.mp hB with h1 | h1
+      · have hyc : y ∉ cur := fun hy => hdisj y hy List.mem_cons_self
+        have hc' : (y :: cur).Nodup := List.nodup_cons.mpr ⟨hyc, hc⟩
+        have hdisj'' : ∀ x ∈ y :: cur, x ∉ ys := by
+          intro x hx hxy
+          rcases List.mem_cons.mp hx with rfl | hx
+          · exact hry hxy
+          · exact hdisj' x hx hxy
+        obtain ⟨hsub, hnd⟩ := ih h1 hc' hrys hdisj''
+        refine ⟨fun x hx => ?_, hnd⟩
+        rcases hsub x hx with hx | hx
+        · rcases List.mem_cons.mp hx with rfl | hx
+          · exact Or.inr List.mem_cons_self
+          · exact Or.inl hx
+        · exact Or.inr (List.mem_cons_of_mem y hx)
+      · obtain ⟨hsub, hnd⟩ := ih h1 hc hrys hdisj'
+        exact ⟨fun x hx => (hsub x hx).imp_right (List.mem_cons_of_mem y), hnd⟩
+    · obtain ⟨hsub, hnd⟩ := ih hB hc hrys hdisj'
+      exact ⟨fun x hx => (hsub x hx).imp_right (List.mem_cons_of_mem y), hnd⟩
+
+private theorem weakOrdersAux_perm {p : ℕ} {T : List (Fin p × Fin p)} :
+    ∀ {fuel : ℕ} {rem : List (Fin p)} {W : List (List (Fin p))} {L : List (Fin p)},
+      W ∈ weakOrdersAux T fuel rem → rem.length ≤ fuel → rem.Nodup → L ∈ linExts W → L.Perm rem
+  | 0, rem, W, L, hW, hlen, _, hL => by
+    have hrem : rem = [] := List.eq_nil_of_length_eq_zero (Nat.le_zero.mp hlen)
+    subst hrem
+    simp only [weakOrdersAux, List.mem_singleton] at hW
+    subst hW
+    simp only [linExts, List.mem_singleton] at hL
+    subst hL
+    exact List.Perm.refl []
+  | fuel + 1, rem, W, L, hW, hlen, hnd, hL => by
+    simp only [weakOrdersAux] at hW
+    split_ifs at hW with hemp
+    · have hrem : rem = [] := List.isEmpty_iff.mp hemp
+      subst hrem
+      simp only [List.mem_singleton] at hW
+      subst hW
+      simp only [linExts, List.mem_singleton] at hL
+      subst hL
+      exact List.Perm.refl []
+    · simp only [List.mem_flatMap, List.mem_map] at hW
+      obtain ⟨B, hB, W', hW', rfl⟩ := hW
+      simp only [linExts, List.mem_flatMap, List.mem_map] at hL
+      obtain ⟨perm, hperm, L', hL', rfl⟩ := hL
+      obtain ⟨hBsub, hBnd⟩ := addCliques_sub_nodup hB List.nodup_nil hnd (fun _ h => by simp at h)
+      have hBsub' : ∀ x ∈ B, x ∈ rem := fun x hx => (hBsub x hx).resolve_left (by simp)
+      have hBne : B ≠ [] := addCliques_ne_nil hB
+      have hlt : (rem.filter fun x => !B.contains x).length < rem.length := by
+        obtain ⟨b, hb⟩ := List.exists_mem_of_ne_nil B hBne
+        apply List.length_filter_lt_length_iff_exists.mpr
+        exact ⟨b, hBsub' b hb, by simp [hb]⟩
+      have hL'perm : L'.Perm (rem.filter fun x => !B.contains x) :=
+        weakOrdersAux_perm hW' (Nat.le_of_lt_succ (lt_of_lt_of_le hlt hlen)) (hnd.filter _) hL'
+      have hperm' : perm.Perm B := List.mem_permutations'.mp hperm
+      refine (hperm'.append hL'perm).trans ?_
+      refine (List.perm_ext_iff_of_nodup ?_ hnd).mpr ?_
+      · refine List.nodup_append.mpr ⟨hBnd, hnd.filter _, fun x hx y hy hxy => ?_⟩
+        subst hxy
+        simp only [List.mem_filter, Bool.not_eq_true'] at hy
+        exact absurd hx (by simpa using hy.2)
+      · intro x
+        simp only [List.mem_append, List.mem_filter, Bool.not_eq_true']
+        constructor
+        · rintro (hx | ⟨hx, _⟩)
+          · exact hBsub' x hx
+          · exact hx
+        · intro hx
+          by_cases hxB : x ∈ B
+          · exact Or.inl hxB
+          · exact Or.inr ⟨hx, Bool.eq_false_iff.mpr fun h => hxB (List.contains_iff_mem.mp h)⟩
+
+theorem mem_linExts_of_weakOrders {p : ℕ} {T : List (Fin p × Fin p)}
+    {W : List (List (Fin p))} {L : List (Fin p)}
+    (hW : W ∈ weakOrders p T) (hL : L ∈ linExts W) :
+    L ∈ (List.finRange p).permutations' :=
+  List.mem_permutations'.mpr (weakOrdersAux_perm hW (by simp) (List.nodup_finRange p) hL)
+
 private theorem mem_addCliques_nil {p : ℕ} (T : List (Fin p × Fin p))
     (cur : List (Fin p)) (hne : cur ≠ []) (rem : List (Fin p)) :
     cur.reverse ∈ addCliques T cur rem := by
@@ -958,5 +1201,49 @@ theorem svc_local_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n �
       rw [← hrM_get] at hrim_bit
       have hok := (buildMasks_sound hinj hLp).2.2 ri hri hrim_bit
       exact lexAny_of_rimOK_lex F P w d1 d2 sw ρ (hsw ρ hρ) hd1 (hval ρ hρ) hrk hok
+
+/-- If `w ≠ 0` and `n` is orthogonal to `w` but not to `d`, then `w` and `d` are linearly
+independent, so there exists `d2` with `Split.det3 w d d2 ≠ 0`. -/
+theorem exists_det3_ne_zero_of_orth {w d n : ℝ³} (hw : w ≠ 0) (hnw : ⟪n, w⟫ = 0)
+    (hnd : ⟪n, d⟫ ≠ 0) : ∃ d2 : ℝ³, Split.det3 w d d2 ≠ 0 := by
+  let d2 : ℝ³ := EuclideanSpace.single 0 (w 1 * d 2 - w 2 * d 1) +
+    EuclideanSpace.single 1 (w 2 * d 0 - w 0 * d 2) +
+    EuclideanSpace.single 2 (w 0 * d 1 - w 1 * d 0)
+  refine ⟨d2, fun hdet => ?_⟩
+  have heq : Split.det3 w d d2 =
+      (w 1 * d 2 - w 2 * d 1) ^ 2 + (w 2 * d 0 - w 0 * d 2) ^ 2 +
+      (w 0 * d 1 - w 1 * d 0) ^ 2 := by
+    dsimp only [Split.det3, d2]
+    simp only [PiLp.add_apply, PiLp.single_apply]
+    norm_num; ring
+  have hsq : (w 1 * d 2 - w 2 * d 1) ^ 2 + (w 2 * d 0 - w 0 * d 2) ^ 2 +
+      (w 0 * d 1 - w 1 * d 0) ^ 2 = 0 := by linarith
+  have hc0 : w 1 * d 2 = w 2 * d 1 := by
+    have : (w 1 * d 2 - w 2 * d 1) ^ 2 = 0 := by nlinarith
+    linarith [sq_eq_zero_iff.mp this]
+  have hc1 : w 2 * d 0 = w 0 * d 2 := by
+    have : (w 2 * d 0 - w 0 * d 2) ^ 2 = 0 := by nlinarith
+    linarith [sq_eq_zero_iff.mp this]
+  have hc2 : w 0 * d 1 = w 1 * d 0 := by
+    have : (w 0 * d 1 - w 1 * d 0) ^ 2 = 0 := by nlinarith
+    linarith [sq_eq_zero_iff.mp this]
+  have hcomp : w 0 ≠ 0 ∨ w 1 ≠ 0 ∨ w 2 ≠ 0 := by
+    by_contra h; push Not at h; apply hw; ext i; fin_cases i <;> simp [h]
+  rcases hcomp with h0 | h1 | h2
+  · have hlin : w 0 • d = d 0 • w := by
+      ext i; fin_cases i <;> simp [PiLp.smul_apply] <;> linarith
+    have := congrArg (fun v => ⟪n, v⟫) hlin
+    simp only [real_inner_smul_right, hnw, mul_zero] at this
+    exact hnd ((mul_eq_zero.mp this).resolve_left h0)
+  · have hlin : w 1 • d = d 1 • w := by
+      ext i; fin_cases i <;> simp [PiLp.smul_apply] <;> linarith
+    have := congrArg (fun v => ⟪n, v⟫) hlin
+    simp only [real_inner_smul_right, hnw, mul_zero] at this
+    exact hnd ((mul_eq_zero.mp this).resolve_left h1)
+  · have hlin : w 2 • d = d 2 • w := by
+      ext i; fin_cases i <;> simp [PiLp.smul_apply] <;> linarith
+    have := congrArg (fun v => ⟪n, v⟫) hlin
+    simp only [real_inner_smul_right, hnw, mul_zero] at this
+    exact hnd ((mul_eq_zero.mp this).resolve_left h2)
 
 end Minimality.SVC
