@@ -177,6 +177,7 @@ import ProofOfMainTheorem
 import Minimality.SVC
 import Minimality.Type24NxSign
 import Minimality.Type24SVCCells
+import Minimality.Type24T2b
 
 /-!
 # The headline theorems use only the standard axioms
@@ -1650,3 +1651,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.SVCC.Cells.cell_235_236_pppmmpzzm
 #assert_standard_axioms Minimality.SVCC.Cells.cell_235_346_pppmppzpz
 #assert_standard_axioms Minimality.SVCC.Cells.cell_236_346_mmppmmpzz
+
+-- T2b: the triple-tie locus at w63 / E23 (T2BLEAN)
+#assert_standard_axioms Minimality.T24.A20.t2b_closes
+#assert_standard_axioms Minimality.T24.A20.t2b_closes_e23
