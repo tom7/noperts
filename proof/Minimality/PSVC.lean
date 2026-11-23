@@ -1,6 +1,6 @@
 module
 
-public import Minimality.SVC
+public import Minimality.SVCLex
 
 @[expose] public section
 
@@ -991,5 +991,457 @@ theorem triple_closure_p {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n
   · exact lexAny_of_rimOK F P u su ρ (Vu.hsw ρ hρ) (Vu.hR ρ hρ) (hvu ρ hρ) hrku hok
   · exact (triOKp_false Vu.hE Vv.hE Vw.hE hRuv hRuw hRvw (by simpa using hmv)
       (by simpa using hmw) hrku hrkv hrkw ht).elim
+
+/-! ### Tie-tolerant pair and triple closure (`lexKey` + weak orders) -/
+
+theorem lexKey_fst_le {y z w d1 d2 : ℝ³} (h : lexKey y w d1 d2 < lexKey z w d1 d2) :
+    ⟪y, w⟫ ≤ ⟪z, w⟫ := by
+  unfold lexKey at h
+  rw [Prod.Lex.toLex_lt_toLex] at h
+  rcases h with h | ⟨h, _⟩
+  · exact h.le
+  · exact h.le
+
+theorem zipWith_nonneg {p : ℕ} (cs : List ℝ) (d : List (Fin p × Fin p)) (g : Fin p × Fin p → ℝ)
+    (hl : cs.length = d.length) (hc : ∀ c ∈ cs, 0 < c) (hg : ∀ ij ∈ d, 0 ≤ g ij) :
+    0 ≤ (List.zipWith (fun c ij => c * g ij) cs d).sum := by
+  induction cs generalizing d with
+  | nil => simp
+  | cons c cs ih =>
+    cases d with
+    | nil => simp at hl
+    | cons ij d =>
+      simp only [List.zipWith_cons_cons, List.sum_cons]
+      have h1 : 0 ≤ c * g ij := mul_nonneg (hc c (by simp)).le (hg ij (by simp))
+      have h2 := ih d (by simpa using hl) (fun c' h => hc c' (by simp [h]))
+        (fun ij' h => hg ij' (by simp [h]))
+      linarith
+
+theorem zipWith_nonpos {p : ℕ} (cs : List ℝ) (d : List (Fin p × Fin p)) (g : Fin p × Fin p → ℝ)
+    (hl : cs.length = d.length) (hc : ∀ c ∈ cs, 0 < c) (hg : ∀ ij ∈ d, g ij ≤ 0) :
+    (List.zipWith (fun c ij => c * g ij) cs d).sum ≤ 0 := by
+  induction cs generalizing d with
+  | nil => simp
+  | cons c cs ih =>
+    cases d with
+    | nil => simp at hl
+    | cons ij d =>
+      simp only [List.zipWith_cons_cons, List.sum_cons]
+      have h1 : c * g ij ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (hc c (by simp)).le (hg ij (by simp))
+      have h2 := ih d (by simpa using hl) (fun c' h => hc c' (by simp [h]))
+        (fun ij' h => hg ij' (by simp [h]))
+      linarith
+
+theorem evPos_lex_sound {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {w u d1 d2 : ℝ³}
+    {d : List (Fin p × Fin p)} (hd : DecOK x P w d) {L : List (Fin p)}
+    (hrk : ∀ i j, rk L i < rk L j → lexKey (x (P i)) u d1 d2 < lexKey (x (P j)) u d1 d2)
+    (h : evPos L d = true) : 0 ≤ ⟪w, u⟫ := by
+  obtain ⟨cs, hl, hc, he⟩ := hd
+  simp only [evPos, Bool.and_eq_true, Bool.not_eq_true', List.isEmpty_eq_false_iff,
+    List.all_eq_true, Nat.blt_eq] at h
+  rw [decOK_inner cs hl he u]
+  exact zipWith_nonneg cs d (fun ij => ⟪x (P ij.1), u⟫ - ⟪x (P ij.2), u⟫) hl hc
+    (fun ij hij => sub_nonneg.mpr (lexKey_fst_le (hrk _ _ (h.2 ij hij))))
+
+theorem evNeg_lex_sound {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {w u d1 d2 : ℝ³}
+    {d : List (Fin p × Fin p)} (hd : DecOK x P w d) {L : List (Fin p)}
+    (hrk : ∀ i j, rk L i < rk L j → lexKey (x (P i)) u d1 d2 < lexKey (x (P j)) u d1 d2)
+    (h : evNeg L d = true) : ⟪w, u⟫ ≤ 0 := by
+  obtain ⟨cs, hl, hc, he⟩ := hd
+  simp only [evNeg, Bool.and_eq_true, Bool.not_eq_true', List.isEmpty_eq_false_iff,
+    List.all_eq_true, Nat.blt_eq] at h
+  rw [decOK_inner cs hl he u]
+  exact zipWith_nonpos cs d (fun ij => ⟪x (P ij.1), u⟫ - ⟪x (P ij.2), u⟫) hl hc
+    (fun ij hij => sub_nonpos.mpr (lexKey_fst_le (hrk _ _ (h.2 ij hij))))
+
+theorem exclOK_lex_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {w d1 d2 : ℝ³}
+    (hw : w ≠ 0)
+    {forced : List (Fin p × Fin p)} (hforced : ∀ ij ∈ forced, ⟪x (P ij.2), w⟫ < ⟪x (P ij.1), w⟫)
+    {deps : List (Fin p → SignType)}
+    (hdeps : ∀ s ∈ deps, ∃ mu : Fin p → ℝ, ∑ i, mu i = 0 ∧ ∑ i, mu i • x (P i) = 0 ∧
+      ∀ i, SignType.sign (mu i) = s i)
+    {E : List (List (Fin p × Fin p))} (hE : ∀ d ∈ E, DecOK x P w d) {L : List (Fin p)}
+    (hrk : ∀ i j, rk L i < rk L j → lexKey (x (P i)) w d1 d2 < lexKey (x (P j)) w d1 d2)
+    (h : exclOK forced deps E L = true) : False := by
+  simp only [exclOK, Bool.or_eq_true, List.any_eq_true] at h
+  rcases h with (⟨ij, hij, hlt⟩ | ⟨s, hs, hsep⟩) | ⟨d, hd, hneg⟩
+  · rw [Nat.blt_eq] at hlt
+    exact absurd (hrk _ _ hlt) (lt_asymm (lexKey_lt_of_lt (hforced ij hij)))
+  · obtain ⟨mu, hsum, hdep, hsg⟩ := hdeps s hs
+    rcases hsep with h | h
+    · exact sepR_lex_sound hrk hsg hsum hdep h
+    · refine sepR_lex_sound hrk (mu := fun i => -mu i) (fun i => ?_) ?_ ?_ h
+      · rw [Left.sign_neg, hsg]
+      · rw [Finset.sum_neg_distrib, hsum, neg_zero]
+      · simp only [neg_smul, Finset.sum_neg_distrib, hdep, neg_zero]
+  · have hle := evNeg_lex_sound (hE d hd) hrk hneg
+    have hpos : 0 < ⟪w, w⟫ :=
+      lt_of_le_of_ne real_inner_self_nonneg (fun e => hw (inner_self_eq_zero.mp e.symm))
+    linarith
+
+theorem gramBad_lex_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n}
+    {w1 w2 d11 d12 d21 d22 : ℝ³} (hw : ⟪w1, w2⟫ ≠ 0)
+    {E1 E2 : List (List (Fin p × Fin p))} (hE1 : ∀ d ∈ E1, DecOK x P w1 d)
+    (hE2 : ∀ d ∈ E2, DecOK x P w2 d) {L1 L2 : List (Fin p)}
+    (hrk1 : ∀ i j, rk L1 i < rk L1 j → lexKey (x (P i)) w1 d11 d12 < lexKey (x (P j)) w1 d11 d12)
+    (hrk2 : ∀ i j, rk L2 i < rk L2 j → lexKey (x (P i)) w2 d21 d22 < lexKey (x (P j)) w2 d21 d22)
+    (h : gramBad E1 E2 L1 L2 = true) : False := by
+  have hc : ⟪w2, w1⟫ = ⟪w1, w2⟫ := real_inner_comm _ _
+  simp only [gramBad, Bool.and_eq_true, Bool.or_eq_true, List.any_eq_true] at h
+  obtain ⟨hp, hn⟩ := h
+  have hnonneg : 0 ≤ ⟪w1, w2⟫ := by
+    rcases hp with ⟨d, hd, he⟩ | ⟨d, hd, he⟩
+    · exact evPos_lex_sound (hE1 d hd) hrk2 he
+    · rw [← hc]; exact evPos_lex_sound (hE2 d hd) hrk1 he
+  have hnonpos : ⟪w1, w2⟫ ≤ 0 := by
+    rcases hn with ⟨d, hd, he⟩ | ⟨d, hd, he⟩
+    · exact evNeg_lex_sound (hE1 d hd) hrk2 he
+    · rw [← hc]; exact evNeg_lex_sound (hE2 d hd) hrk1 he
+  exact hw (le_antisymm hnonpos hnonneg)
+
+def pencKillW {p : ℕ} (r : Penc p) (L1 L2 : List (Fin p)) : Bool :=
+  (r.i != r.j) && pencKill r L1 L2
+
+theorem term_lex_le {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n} {v d1 d2 : ℝ³}
+    {L : List (Fin p)}
+    (hrk : ∀ i j, rk L i < rk L j → lexKey (x (P i)) v d1 d2 < lexKey (x (P j)) v d1 d2)
+    {i j : Fin p} {α : ℝ}
+    (h : (negT (SignType.sign α) L i j || SignType.sign α == 0) = true) :
+    α * (⟪x (P i), v⟫ - ⟪x (P j), v⟫) ≤ 0 := by
+  rcases Bool.or_eq_true _ _ |>.mp h with h | h
+  · simp only [negT, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, Nat.blt_eq] at h
+    rcases h with ⟨hs, hl⟩ | ⟨hs, hl⟩
+    · exact mul_nonpos_of_nonneg_of_nonpos (sign_eq_one_iff.mp hs).le
+        (sub_nonpos.mpr (lexKey_fst_le (hrk _ _ hl)))
+    · exact mul_nonpos_of_nonpos_of_nonneg (sign_eq_neg_one_iff.mp hs).le
+        (sub_nonneg.mpr (lexKey_fst_le (hrk _ _ hl)))
+  · rw [beq_iff_eq, sign_eq_zero_iff] at h
+    rw [h, zero_mul]
+
+theorem pencKillW_lex_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n}
+    (hP : Function.Injective (fun i => x (P i))) {v1 v2 d11 d12 d21 d22 : ℝ³}
+    {r : Penc p} (hr : PencOK x P v1 v2 r) {L1 L2 : List (Fin p)}
+    (hrk1 : ∀ i j, rk L1 i < rk L1 j → lexKey (x (P i)) v1 d11 d12 < lexKey (x (P j)) v1 d11 d12)
+    (hrk2 : ∀ i j, rk L2 i < rk L2 j → lexKey (x (P i)) v2 d21 d22 < lexKey (x (P j)) v2 d21 d22)
+    (h : pencKillW r L1 L2 = true) : False := by
+  simp only [pencKillW, Bool.and_eq_true, bne_iff_ne] at h
+  obtain ⟨hne, hk⟩ := h
+  obtain ⟨α, β, he, sα, sβ⟩ := hr
+  have hee : ⟪x (P r.i) - x (P r.j), x (P r.i) - x (P r.j)⟫ =
+      α * (⟪x (P r.i), v1⟫ - ⟪x (P r.j), v1⟫) + β * (⟪x (P r.i), v2⟫ - ⟪x (P r.j), v2⟫) := by
+    calc _ = ⟪x (P r.i) - x (P r.j), α • v1 + β • v2⟫ := by rw [← he]
+      _ = _ := by
+        rw [inner_add_right, real_inner_smul_right, real_inner_smul_right, inner_sub_left,
+          inner_sub_left]
+  have hpos : 0 < ⟪x (P r.i) - x (P r.j), x (P r.i) - x (P r.j)⟫ :=
+    lt_of_le_of_ne real_inner_self_nonneg
+      (fun e => sub_ne_zero.mpr (fun h => hne (hP h)) (inner_self_eq_zero.mp e.symm))
+  simp only [pencKill, Bool.and_eq_true] at hk
+  obtain ⟨⟨ha, hb⟩, _⟩ := hk
+  rw [← sα] at ha
+  rw [← sβ] at hb
+  have t1 := term_lex_le hrk1 ha
+  have t2 := term_lex_le hrk2 hb
+  linarith
+
+def pairBadW {p : ℕ} (E1 E2 : List (List (Fin p × Fin p))) (R : List (Penc p))
+    (L1 L2 : List (Fin p)) : Bool :=
+  gramBad E1 E2 L1 L2 || R.any fun r => pencKillW r L1 L2
+
+theorem pairBadW_lex_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n}
+    (hP : Function.Injective (fun i => x (P i))) {w1 w2 d11 d12 d21 d22 : ℝ³} (hw : ⟪w1, w2⟫ ≠ 0)
+    {E1 E2 : List (List (Fin p × Fin p))} (hE1 : ∀ d ∈ E1, DecOK x P w1 d)
+    (hE2 : ∀ d ∈ E2, DecOK x P w2 d) {R : List (Penc p)} (hR : ∀ r ∈ R, PencOK x P w1 w2 r)
+    {L1 L2 : List (Fin p)}
+    (hrk1 : ∀ i j, rk L1 i < rk L1 j → lexKey (x (P i)) w1 d11 d12 < lexKey (x (P j)) w1 d11 d12)
+    (hrk2 : ∀ i j, rk L2 i < rk L2 j → lexKey (x (P i)) w2 d21 d22 < lexKey (x (P j)) w2 d21 d22)
+    (h : pairBadW E1 E2 R L1 L2 = true) : False := by
+  simp only [pairBadW, Bool.or_eq_true, List.any_eq_true] at h
+  rcases h with h | ⟨r, hr, hk⟩
+  · exact gramBad_lex_false hw hE1 hE2 hrk1 hrk2 h
+  · exact pencKillW_lex_false hP (hR r hr) hrk1 hrk2 hk
+
+def triOKpW {p : ℕ} (Eu Ev Ew : List (List (Fin p × Fin p))) (Ruv Ruw Rvw : List (Penc p))
+    (Bv Bw : List (List (Fin p))) (L : List (Fin p)) : Bool :=
+  Bv.all (pairBadW Eu Ev Ruv L) || Bw.all (pairBadW Eu Ew Ruw L) ||
+    Bv.all fun b => pairBadW Eu Ev Ruv L b || Bw.all fun c =>
+      pairBadW Eu Ew Ruw L c || pairBadW Ev Ew Rvw b c
+
+def check2W {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n) (sw : Fin m → SignType)
+    (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (E : List (List (Fin p × Fin p))) (R : List (Rim m p)) (T : List (Fin p × Fin p))
+    (B2 : List (List (Fin p))) : Bool :=
+  R.all (rimValid S P sw) &&
+    (weakOrders p T).all fun W =>
+      rimClosedW R (exclOK forced deps E) (linExts W) ||
+        (linExts W).all fun L => exclOK forced deps E L || B2.contains L
+
+def check1W {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n) (sw : Fin m → SignType)
+    (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (E1 E2 : List (List (Fin p × Fin p))) (R : List (Rim m p)) (T : List (Fin p × Fin p))
+    (B2 : List (List (Fin p))) : Bool :=
+  R.all (rimValid S P sw) &&
+    (weakOrders p T).all fun W =>
+      rimClosedW R (exclOK forced deps E1) (linExts W) ||
+        (linExts W).all fun L => exclOK forced deps E1 L || B2.all (gramBad E1 E2 L)
+
+def checkTW {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n) (sw : Fin m → SignType)
+    (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (Eu Ev Ew : List (List (Fin p × Fin p))) (R : List (Rim m p)) (T : List (Fin p × Fin p))
+    (Bv Bw : List (List (Fin p))) : Bool :=
+  R.all (rimValid S P sw) &&
+    (weakOrders p T).all fun W =>
+      rimClosedW R (exclOK forced deps Eu) (linExts W) ||
+        (linExts W).all fun L => exclOK forced deps Eu L || triOK Eu Ev Ew Bv Bw L
+
+def checkTpW {m n p : ℕ} (S : Fin m → Finset (Fin n)) (P : Fin p → Fin n) (sw : Fin m → SignType)
+    (forced : List (Fin p × Fin p)) (deps : List (Fin p → SignType))
+    (Eu Ev Ew : List (List (Fin p × Fin p))) (Ruv Ruw Rvw : List (Penc p))
+    (R : List (Rim m p)) (T : List (Fin p × Fin p)) (Bv Bw : List (List (Fin p))) : Bool :=
+  R.all (rimValid S P sw) &&
+    (weakOrders p T).all fun W =>
+      rimClosedW R (exclOK forced deps Eu) (linExts W) ||
+        (linExts W).all fun L => exclOK forced deps Eu L || triOKpW Eu Ev Ew Ruv Ruw Rvw Bv Bw L
+
+/-- Tie-tolerant `ViewData`: replaces `hgen` with per-rim `(d1, d2)` (`Split.det3 w d1 d2 ≠ 0`),
+injectivity of `x ∘ P`, and allowed tie pairs `T`. -/
+structure ViewDataLex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (w : ℝ³) (sw : Fin m → SignType)
+    (R : List (Rim m p)) (forced : List (Fin p × Fin p)) (E : List (List (Fin p × Fin p)))
+    (T : List (Fin p × Fin p)) : Prop where
+  hne : R ≠ []
+  hsw : ∀ ρ ∈ R, ∀ t, t ∈ ρ.U ∨ t ∈ ρ.Dn → SignType.sign ⟪F.N t, w⟫ = sw t
+  hR : ∀ ρ ∈ R, ∃ d1 d2 : ℝ³,
+    (∀ t, sw t = 0 → SignType.sign ⟪F.N t, d1⟫ = ρ.sd t) ∧ Split.det3 w d1 d2 ≠ 0
+  hforced : ∀ ij ∈ forced, ⟪x (P ij.2), w⟫ < ⟪x (P ij.1), w⟫
+  hE : ∀ d ∈ E, DecOK x P w d
+  hP : Function.Injective (fun i => x (P i))
+  hT : ∀ i j, i ≠ j → ⟪x (P i), w⟫ = ⟪x (P j), w⟫ → (i, j) ∈ T ∨ (j, i) ∈ T
+
+private theorem check2W_extract {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    {F : S0xFac m S x} {P : Fin p → Fin n} {w : ℝ³} {sw : Fin m → SignType}
+    {R : List (Rim m p)} {forced : List (Fin p × Fin p)} {E : List (List (Fin p × Fin p))}
+    {T : List (Fin p × Fin p)} (V : ViewDataLex F P w sw R forced E T)
+    {deps : List (Fin p → SignType)}
+    (hdeps : ∀ s ∈ deps, ∃ mu : Fin p → ℝ, ∑ i, mu i = 0 ∧ ∑ i, mu i • x (P i) = 0 ∧
+      ∀ i, SignType.sign (mu i) = s i)
+    {B2 : List (List (Fin p))} (hc : check2W S P sw forced deps E R T B2 = true) :
+    Minimality.Gen.LexAny F ∨
+      ∃ d1 d2 : ℝ³, ∃ L ∈ B2,
+        ∀ i j, rk L i < rk L j → lexKey (x (P i)) w d1 d2 < lexKey (x (P j)) w d1 d2 := by
+  classical
+  obtain ⟨W, hW, hW_ext⟩ := weakOrders_sound (fun i => ⟪x (P i), w⟫) T V.hT
+  simp only [check2W, Bool.and_eq_true, List.all_eq_true] at hc
+  obtain ⟨hval, hcW⟩ := hc
+  rcases Bool.or_eq_true _ _ |>.mp (hcW W hW) with hrim | hall
+  · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
+    rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
+    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R V.hne
+      obtain ⟨d1, d2, _, hdet⟩ := V.hR ρ0 hρ0
+      obtain ⟨L, hL, _, hrk⟩ := hW_ext (fun i => lexKey (x (P i)) w d1 d2)
+        (fun _ _ h => lexKey_lt_of_lt h)
+        (fun i j h => by by_contra hne'; exact lexKey_ne hdet (fun e => hne' (V.hP e)) h)
+      exact absurd (exclOK_lex_false (w_ne_zero_of_det3 hdet) V.hforced hdeps V.hE hrk (hexcl L hL)) False.elim
+    · obtain ⟨d1, d2, hd1, hdet⟩ := V.hR ρ hρ
+      obtain ⟨L, hL, _, hrk⟩ := hW_ext (fun i => lexKey (x (P i)) w d1 d2)
+        (fun _ _ h => lexKey_lt_of_lt h)
+        (fun i j h => by by_contra hne'; exact lexKey_ne hdet (fun e => hne' (V.hP e)) h)
+      rcases hrim L hL with hexcl | hok
+      · exact absurd (exclOK_lex_false (w_ne_zero_of_det3 hdet) V.hforced hdeps V.hE hrk hexcl) False.elim
+      · exact Or.inl (lexAny_of_rimOK_lex F P w d1 d2 sw ρ (V.hsw ρ hρ) hd1 (hval ρ hρ) hrk hok)
+  · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R V.hne
+    obtain ⟨d1, d2, _, hdet⟩ := V.hR ρ0 hρ0
+    obtain ⟨L, hL, _, hrk⟩ := hW_ext (fun i => lexKey (x (P i)) w d1 d2)
+      (fun _ _ h => lexKey_lt_of_lt h)
+      (fun i j h => by by_contra hne'; exact lexKey_ne hdet (fun e => hne' (V.hP e)) h)
+    rcases Bool.or_eq_true _ _ |>.mp (List.all_eq_true.mp hall L hL) with hexcl | hmem
+    · exact absurd (exclOK_lex_false (w_ne_zero_of_det3 hdet) V.hforced hdeps V.hE hrk hexcl) False.elim
+    · exact Or.inr ⟨d1, d2, L, by simpa using hmem, hrk⟩
+
+/-- **Pair closure, tie-tolerant.** -/
+theorem pair_closure_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (w1 w2 : ℝ³) (sw1 sw2 : Fin m → SignType)
+    (R1 R2 : List (Rim m p)) (f1 f2 : List (Fin p × Fin p))
+    (E1 E2 : List (List (Fin p × Fin p))) (T1 T2 : List (Fin p × Fin p))
+    (V1 : ViewDataLex F P w1 sw1 R1 f1 E1 T1) (V2 : ViewDataLex F P w2 sw2 R2 f2 E2 T2)
+    (hw : ⟪w1, w2⟫ ≠ 0)
+    (deps : List (Fin p → SignType))
+    (hdeps : ∀ s ∈ deps, ∃ mu : Fin p → ℝ, ∑ i, mu i = 0 ∧ ∑ i, mu i • x (P i) = 0 ∧
+      ∀ i, SignType.sign (mu i) = s i)
+    (B2 : List (List (Fin p)))
+    (hc1 : check1W S P sw1 f1 deps E1 E2 R1 T1 B2 = true)
+    (hc2 : check2W S P sw2 f2 deps E2 R2 T2 B2 = true) : Minimality.Gen.LexAny F := by
+  classical
+  rcases check2W_extract V2 hdeps hc2 with hlex | ⟨d21, d22, L2, hL2, hrk2⟩
+  · exact hlex
+  · obtain ⟨W1, hW1, hW1_ext⟩ := weakOrders_sound (fun i => ⟪x (P i), w1⟫) T1 V1.hT
+    simp only [check1W, Bool.and_eq_true, List.all_eq_true] at hc1
+    obtain ⟨hval1, hcW1⟩ := hc1
+    rcases Bool.or_eq_true _ _ |>.mp (hcW1 W1 hW1) with hrim | hall
+    · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
+      rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
+      · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R1 V1.hne
+        obtain ⟨d11, d12, _, hdet1⟩ := V1.hR ρ0 hρ0
+        obtain ⟨L1, hL1, _, hrk1⟩ := hW1_ext (fun i => lexKey (x (P i)) w1 d11 d12)
+          (fun _ _ h => lexKey_lt_of_lt h)
+          (fun i j h => by by_contra hne'; exact lexKey_ne hdet1 (fun e => hne' (V1.hP e)) h)
+        exact (exclOK_lex_false (w_ne_zero_of_det3 hdet1) V1.hforced hdeps V1.hE hrk1 (hexcl L1 hL1)).elim
+      · obtain ⟨d11, d12, hd1, hdet1⟩ := V1.hR ρ hρ
+        obtain ⟨L1, hL1, _, hrk1⟩ := hW1_ext (fun i => lexKey (x (P i)) w1 d11 d12)
+          (fun _ _ h => lexKey_lt_of_lt h)
+          (fun i j h => by by_contra hne'; exact lexKey_ne hdet1 (fun e => hne' (V1.hP e)) h)
+        rcases hrim L1 hL1 with hexcl | hok
+        · exact (exclOK_lex_false (w_ne_zero_of_det3 hdet1) V1.hforced hdeps V1.hE hrk1 hexcl).elim
+        · exact lexAny_of_rimOK_lex F P w1 d11 d12 sw1 ρ (V1.hsw ρ hρ) hd1 (hval1 ρ hρ) hrk1 hok
+    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil R1 V1.hne
+      obtain ⟨d11, d12, _, hdet1⟩ := V1.hR ρ0 hρ0
+      obtain ⟨L1, hL1, _, hrk1⟩ := hW1_ext (fun i => lexKey (x (P i)) w1 d11 d12)
+        (fun _ _ h => lexKey_lt_of_lt h)
+        (fun i j h => by by_contra hne'; exact lexKey_ne hdet1 (fun e => hne' (V1.hP e)) h)
+      rcases Bool.or_eq_true _ _ |>.mp (List.all_eq_true.mp hall L1 hL1) with hexcl | hgram
+      · exact (exclOK_lex_false (w_ne_zero_of_det3 hdet1) V1.hforced hdeps V1.hE hrk1 hexcl).elim
+      · exact (gramBad_lex_false hw V1.hE V2.hE hrk1 hrk2 (List.all_eq_true.mp hgram L2 hL2)).elim
+
+theorem triOK_lex_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n}
+    {u v w du1 du2 dv1 dv2 dw1 dw2 : ℝ³}
+    (huv : ⟪u, v⟫ ≠ 0) (huw : ⟪u, w⟫ ≠ 0) (hvw : ⟪v, w⟫ ≠ 0)
+    {Eu Ev Ew : List (List (Fin p × Fin p))} (hEu : ∀ d ∈ Eu, DecOK x P u d)
+    (hEv : ∀ d ∈ Ev, DecOK x P v d) (hEw : ∀ d ∈ Ew, DecOK x P w d)
+    {Bv Bw : List (List (Fin p))} {Lu Lv Lw : List (Fin p)} (hv : Lv ∈ Bv) (hw : Lw ∈ Bw)
+    (hrku : ∀ i j, rk Lu i < rk Lu j → lexKey (x (P i)) u du1 du2 < lexKey (x (P j)) u du1 du2)
+    (hrkv : ∀ i j, rk Lv i < rk Lv j → lexKey (x (P i)) v dv1 dv2 < lexKey (x (P j)) v dv1 dv2)
+    (hrkw : ∀ i j, rk Lw i < rk Lw j → lexKey (x (P i)) w dw1 dw2 < lexKey (x (P j)) w dw1 dw2)
+    (h : triOK Eu Ev Ew Bv Bw Lu = true) : False := by
+  simp only [triOK, Bool.or_eq_true, List.all_eq_true] at h
+  rcases h with (h | h) | h
+  · exact gramBad_lex_false huv hEu hEv hrku hrkv (h Lv hv)
+  · exact gramBad_lex_false huw hEu hEw hrku hrkw (h Lw hw)
+  · rcases h Lv hv with h1 | h1
+    · exact gramBad_lex_false huv hEu hEv hrku hrkv h1
+    · rcases h1 Lw hw with h2 | h2
+      · exact gramBad_lex_false huw hEu hEw hrku hrkw h2
+      · exact gramBad_lex_false hvw hEv hEw hrkv hrkw h2
+
+theorem triOKpW_lex_false {n p : ℕ} {x : Fin n → ℝ³} {P : Fin p → Fin n}
+    (hP : Function.Injective (fun i => x (P i)))
+    {u v w du1 du2 dv1 dv2 dw1 dw2 : ℝ³}
+    (huv : ⟪u, v⟫ ≠ 0) (huw : ⟪u, w⟫ ≠ 0) (hvw : ⟪v, w⟫ ≠ 0)
+    {Eu Ev Ew : List (List (Fin p × Fin p))} (hEu : ∀ d ∈ Eu, DecOK x P u d)
+    (hEv : ∀ d ∈ Ev, DecOK x P v d) (hEw : ∀ d ∈ Ew, DecOK x P w d)
+    {Ruv Ruw Rvw : List (Penc p)} (hRuv : ∀ r ∈ Ruv, PencOK x P u v r)
+    (hRuw : ∀ r ∈ Ruw, PencOK x P u w r) (hRvw : ∀ r ∈ Rvw, PencOK x P v w r)
+    {Bv Bw : List (List (Fin p))} {Lu Lv Lw : List (Fin p)} (hv : Lv ∈ Bv) (hw : Lw ∈ Bw)
+    (hrku : ∀ i j, rk Lu i < rk Lu j → lexKey (x (P i)) u du1 du2 < lexKey (x (P j)) u du1 du2)
+    (hrkv : ∀ i j, rk Lv i < rk Lv j → lexKey (x (P i)) v dv1 dv2 < lexKey (x (P j)) v dv1 dv2)
+    (hrkw : ∀ i j, rk Lw i < rk Lw j → lexKey (x (P i)) w dw1 dw2 < lexKey (x (P j)) w dw1 dw2)
+    (h : triOKpW Eu Ev Ew Ruv Ruw Rvw Bv Bw Lu = true) : False := by
+  simp only [triOKpW, Bool.or_eq_true, List.all_eq_true] at h
+  rcases h with (h | h) | h
+  · exact pairBadW_lex_false hP huv hEu hEv hRuv hrku hrkv (h Lv hv)
+  · exact pairBadW_lex_false hP huw hEu hEw hRuw hrku hrkw (h Lw hw)
+  · rcases h Lv hv with h1 | h1
+    · exact pairBadW_lex_false hP huv hEu hEv hRuv hrku hrkv h1
+    · rcases h1 Lw hw with h2 | h2
+      · exact pairBadW_lex_false hP huw hEu hEw hRuw hrku hrkw h2
+      · exact pairBadW_lex_false hP hvw hEv hEw hRvw hrkv hrkw h2
+
+/-- **Triple closure, tie-tolerant.** -/
+theorem triple_closure_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (u v w : ℝ³) (su sv sw : Fin m → SignType)
+    (Ru Rv Rw : List (Rim m p)) (fu fv fw : List (Fin p × Fin p))
+    (Eu Ev Ew : List (List (Fin p × Fin p))) (Tu Tv Tw : List (Fin p × Fin p))
+    (Vu : ViewDataLex F P u su Ru fu Eu Tu) (Vv : ViewDataLex F P v sv Rv fv Ev Tv)
+    (Vw : ViewDataLex F P w sw Rw fw Ew Tw)
+    (huv : ⟪u, v⟫ ≠ 0) (huw : ⟪u, w⟫ ≠ 0) (hvw : ⟪v, w⟫ ≠ 0)
+    (deps : List (Fin p → SignType))
+    (hdeps : ∀ s ∈ deps, ∃ mu : Fin p → ℝ, ∑ i, mu i = 0 ∧ ∑ i, mu i • x (P i) = 0 ∧
+      ∀ i, SignType.sign (mu i) = s i)
+    (Bv Bw : List (List (Fin p)))
+    (hcu : checkTW S P su fu deps Eu Ev Ew Ru Tu Bv Bw = true)
+    (hcv : check2W S P sv fv deps Ev Rv Tv Bv = true)
+    (hcw : check2W S P sw fw deps Ew Rw Tw Bw = true) : Minimality.Gen.LexAny F := by
+  classical
+  rcases check2W_extract Vv hdeps hcv with hlex | ⟨dv1, dv2, Lv, hLv, hrkv⟩
+  · exact hlex
+  rcases check2W_extract Vw hdeps hcw with hlex | ⟨dw1, dw2, Lw, hLw, hrkw⟩
+  · exact hlex
+  obtain ⟨Wu, hWu, hWu_ext⟩ := weakOrders_sound (fun i => ⟪x (P i), u⟫) Tu Vu.hT
+  simp only [checkTW, Bool.and_eq_true, List.all_eq_true] at hcu
+  obtain ⟨hvu, hcuW⟩ := hcu
+  rcases Bool.or_eq_true _ _ |>.mp (hcuW Wu hWu) with hrim | hall
+  · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
+    rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
+    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
+      obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+      obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
+        (fun _ _ h => lexKey_lt_of_lt h)
+        (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
+      exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku (hexcl Lu hLu)).elim
+    · obtain ⟨du1, du2, hd1, hdetu⟩ := Vu.hR ρ hρ
+      obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
+        (fun _ _ h => lexKey_lt_of_lt h)
+        (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
+      rcases hrim Lu hLu with hexcl | hok
+      · exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku hexcl).elim
+      · exact lexAny_of_rimOK_lex F P u du1 du2 su ρ (Vu.hsw ρ hρ) hd1 (hvu ρ hρ) hrku hok
+  · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
+    obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+    obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
+      (fun _ _ h => lexKey_lt_of_lt h)
+      (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
+    rcases Bool.or_eq_true _ _ |>.mp (List.all_eq_true.mp hall Lu hLu) with hexcl | ht
+    · exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku hexcl).elim
+    · exact (triOK_lex_false huv huw hvw Vu.hE Vv.hE Vw.hE hLv hLw hrku hrkv hrkw ht).elim
+
+/-- **Triple closure with PENC, tie-tolerant.** -/
+theorem triple_closure_p_lex {m n p : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n → ℝ³}
+    (F : S0xFac m S x) (P : Fin p → Fin n) (u v w : ℝ³) (su sv sw : Fin m → SignType)
+    (Ru Rv Rw : List (Rim m p)) (fu fv fw : List (Fin p × Fin p))
+    (Eu Ev Ew : List (List (Fin p × Fin p))) (Tu Tv Tw : List (Fin p × Fin p))
+    (Vu : ViewDataLex F P u su Ru fu Eu Tu) (Vv : ViewDataLex F P v sv Rv fv Ev Tv)
+    (Vw : ViewDataLex F P w sw Rw fw Ew Tw)
+    (huv : ⟪u, v⟫ ≠ 0) (huw : ⟪u, w⟫ ≠ 0) (hvw : ⟪v, w⟫ ≠ 0)
+    (deps : List (Fin p → SignType))
+    (hdeps : ∀ s ∈ deps, ∃ mu : Fin p → ℝ, ∑ i, mu i = 0 ∧ ∑ i, mu i • x (P i) = 0 ∧
+      ∀ i, SignType.sign (mu i) = s i)
+    (Ruv Ruw Rvw : List (Penc p)) (hRuv : ∀ r ∈ Ruv, PencOK x P u v r)
+    (hRuw : ∀ r ∈ Ruw, PencOK x P u w r) (hRvw : ∀ r ∈ Rvw, PencOK x P v w r)
+    (Bv Bw : List (List (Fin p)))
+    (hcu : checkTpW S P su fu deps Eu Ev Ew Ruv Ruw Rvw Ru Tu Bv Bw = true)
+    (hcv : check2W S P sv fv deps Ev Rv Tv Bv = true)
+    (hcw : check2W S P sw fw deps Ew Rw Tw Bw = true) : Minimality.Gen.LexAny F := by
+  classical
+  rcases check2W_extract Vv hdeps hcv with hlex | ⟨dv1, dv2, Lv, hLv, hrkv⟩
+  · exact hlex
+  rcases check2W_extract Vw hdeps hcw with hlex | ⟨dw1, dw2, Lw, hLw, hrkw⟩
+  · exact hlex
+  obtain ⟨Wu, hWu, hWu_ext⟩ := weakOrders_sound (fun i => ⟪x (P i), u⟫) Tu Vu.hT
+  simp only [checkTpW, Bool.and_eq_true, List.all_eq_true] at hcu
+  obtain ⟨hvu, hcuW⟩ := hcu
+  rcases Bool.or_eq_true _ _ |>.mp (hcuW Wu hWu) with hrim | hall
+  · simp only [rimClosedW, Bool.or_eq_true, List.all_eq_true, List.any_eq_true] at hrim
+    rcases hrim with hexcl | ⟨ρ, hρ, hrim⟩
+    · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
+      obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+      obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
+        (fun _ _ h => lexKey_lt_of_lt h)
+        (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
+      exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku (hexcl Lu hLu)).elim
+    · obtain ⟨du1, du2, hd1, hdetu⟩ := Vu.hR ρ hρ
+      obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
+        (fun _ _ h => lexKey_lt_of_lt h)
+        (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
+      rcases hrim Lu hLu with hexcl | hok
+      · exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku hexcl).elim
+      · exact lexAny_of_rimOK_lex F P u du1 du2 su ρ (Vu.hsw ρ hρ) hd1 (hvu ρ hρ) hrku hok
+  · obtain ⟨ρ0, hρ0⟩ := List.exists_mem_of_ne_nil Ru Vu.hne
+    obtain ⟨du1, du2, _, hdetu⟩ := Vu.hR ρ0 hρ0
+    obtain ⟨Lu, hLu, _, hrku⟩ := hWu_ext (fun i => lexKey (x (P i)) u du1 du2)
+      (fun _ _ h => lexKey_lt_of_lt h)
+      (fun i j h => by by_contra hne'; exact lexKey_ne hdetu (fun e => hne' (Vu.hP e)) h)
+    rcases Bool.or_eq_true _ _ |>.mp (List.all_eq_true.mp hall Lu hLu) with hexcl | ht
+    · exact (exclOK_lex_false (w_ne_zero_of_det3 hdetu) Vu.hforced hdeps Vu.hE hrku hexcl).elim
+    · exact (triOKpW_lex_false Vu.hP huv huw hvw Vu.hE Vv.hE Vw.hE hRuv hRuw hRvw hLv hLw
+        hrku hrkv hrkw ht).elim
 
 end Minimality.PSVC
