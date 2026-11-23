@@ -19,10 +19,7 @@ public import Minimality.Type24SVCCellsLex_c06
 public import Minimality.Type24SVCCellsLex_c10
 public import Minimality.Type24SVCCellsLex_c16
 public import Minimality.Type24SVCCellsLex_c21
-public import Minimality.Type24SVCCellsLex_c01
-public import Minimality.Type24SVCCellsLex_c03
-public import Minimality.Type24SVCCellsLex_c12
-public import Minimality.Type24SVCCellsLex_c14
+public import Minimality.Type24TBCells
 public import Minimality.Type24PairL3u27
 public import Minimality.Type24Triple1
 public import Minimality.Type24Triple2
@@ -34,6 +31,20 @@ public import Minimality.Type24Triple7
 public import Minimality.Type24Triple8
 public import Minimality.Type24Triple9
 public import Minimality.Type24Triple10
+public import Minimality.Type24Triple11
+public import Minimality.Type24Triple12
+public import Minimality.Type24Triple13
+public import Minimality.Type24Triple14
+public import Minimality.Type24Triple15
+public import Minimality.Type24Triple16
+public import Minimality.Type24Triple17
+public import Minimality.Type24Triple18
+public import Minimality.Type24Triple19
+public import Minimality.Type24Triple20
+public import Minimality.Type24Triple21
+public import Minimality.Type24Triple22
+public import Minimality.Type24Triple23
+public import Minimality.Type24Triple24
 
 @[expose] public section
 
@@ -520,18 +531,15 @@ theorem e23_closes_star_or_facetCell {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³
 
 def Cell_012_0345_zpmzppmpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, ⟪F.N 0, w⟫ = 0 ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
-    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ⟪x 2, w⟫ ≠ ⟪x 3, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫
 
 def Cell_0345_236_ppmzppmzp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
-    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 7, w⟫ = 0 ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ⟪x 2, w⟫ ≠ ⟪x 3, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 7, w⟫ = 0 ∧ 0 < ⟪F.N 8, w⟫
 
 def Cell_0345_236_pppzmppzm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 1, w⟫ ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧ ⟪F.N 4, w⟫ < 0 ∧
-    0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ ⟪F.N 7, w⟫ = 0 ∧ ⟪F.N 8, w⟫ < 0 ∧
-    ⟪x 3, w⟫ ≠ ⟪x 6, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ ⟪F.N 7, w⟫ = 0 ∧ ⟪F.N 8, w⟫ < 0
 
 def Cell_025_046_ppzmzpppp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ = 0 ∧ ⟪F.N 3, w⟫ < 0 ∧
@@ -567,8 +575,7 @@ def Cell_236_346_mmppmmpzz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop
 
 def Cell_016_0345_pzpzmpppm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 1, w⟫ = 0 ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧
-    ⟪F.N 4, w⟫ < 0 ∧ 0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ < 0 ∧
-    ⟪x 3, w⟫ ≠ ⟪x 6, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
+    ⟪F.N 4, w⟫ < 0 ∧ 0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ < 0
 
 /-- Disjunction of the 12 non-triangle SVC cells from `Minimality.Type24SVCCells`. -/
 def SVCCellHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
@@ -589,9 +596,9 @@ def SVCCellHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
 theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     (h : SVCCellHyp x F) : Gen.LexAny F := by
   rcases h with
-      ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, h23, h45⟩
-    | ⟨w, h0, h2, h3, h4, h5, h6, h7, h8, h23, h45⟩
-    | ⟨w, h1, h2, h3, h4, h5, h6, h7, h8, h36, h45⟩
+      ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8⟩
+    | ⟨w, h0, h2, h3, h4, h5, h6, h7, h8⟩
+    | ⟨w, h1, h2, h3, h4, h5, h6, h7, h8⟩
     | ⟨w, h0, h1, h2, h3, h4, h6, h8⟩
     | ⟨h4, h8⟩
     | ⟨w, h0, h2, h3, h4, h6, h7, h8, hD⟩
@@ -600,10 +607,10 @@ theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     | ⟨h1, h4, h56⟩
     | ⟨w, h2, h3, h4, h6, h7, h8⟩
     | ⟨h0, h2, h24⟩
-    | ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, h36, h45⟩
-  · exact SVCC.CellsLex.cell_012_0345_zpmzppmpp_lex F w h0 h1 h2 h3 h4 h5 h6 h7 h8 h23 h45
-  · exact SVCC.CellsLex.cell_0345_236_ppmzppmzp_lex F w h0 h2 h3 h4 h5 h6 h7 h8 h23 h45
-  · exact SVCC.CellsLex.cell_0345_236_pppzmppzm_lex F w h1 h2 h3 h4 h5 h6 h7 h8 h36 h45
+    | ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8⟩
+  · exact SVCC.CellsTB.cell_012_0345_zpmzppmpp_tb F w h0 h1 h2 h3 h4 h5 h6 h7 h8
+  · exact SVCC.CellsTB.cell_0345_236_ppmzppmzp_tb F w h0 h2 h3 h4 h5 h6 h7 h8
+  · exact SVCC.CellsTB.cell_0345_236_pppzmppzm_tb F w h1 h2 h3 h4 h5 h6 h7 h8
   · exact SVCC.CellsLex.cell_025_046_ppzmzpppp_lex F w h0 h1 h2 h3 h4 h6 h8
   · exact SVCC.CellsLex.cell_025_235_ppzmppzpp_lex F h4 h8
   · exact SVCC.CellsLex.cell_025_346_ppzmppppz_lex F w h0 h2 h3 h4 h6 h7 h8 hD
@@ -612,7 +619,7 @@ theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   · exact SVCC.CellsLex.cell_235_236_pppmmpzzm_lex F h1 h4 h56
   · exact SVCC.CellsLex.cell_235_346_pppmppzpz_lex F w h2 h3 h4 h6 h7 h8
   · exact SVCC.CellsLex.cell_236_346_mmppmmpzz_lex F h0 h2 h24
-  · exact SVCC.CellsLex.cell_016_0345_pzpzmpppm_lex F w h0 h1 h2 h3 h4 h5 h6 h7 h8 h36 h45
+  · exact SVCC.CellsTB.cell_016_0345_pzpzmpppm_tb F w h0 h1 h2 h3 h4 h5 h6 h7 h8
 
 /-- Hypothesis bundle for the two-view pair closure `Minimality.PSVC.L3u27.lexAny_L3_u27`
 (`L3 = F016xF0345` at `w1`, `u27 = F025xF236` at `w2`). -/
@@ -834,6 +841,174 @@ theorem triple_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     exact PSVC.T10.lexAny_T10 F w1 w2 a0 a1 a2 a5 a6 a7 a8 b0 b2 b3 b4 b5 b6 b7 b8
       c0 c1 c2 c3 c4 c5 c6 c8 hg0 hg1 hg2
 
+/-! ### Further three-view triple closures (`Type24Triple11..24`, tri3 stage 2) -/
+
+def Triple11Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 w2 : ℝ³,
+    (0 < ⟪F.N 0, (x 0 - x 6)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 6)⟫ ∧ ⟪F.N 5, (x 0 - x 6)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 6)⟫ ∧ ⟪F.N 7, (x 0 - x 6)⟫ < 0 ∧ ⟪F.N 8, (x 0 - x 6)⟫ < 0) ∧
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ = 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ < 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (⟪F.N 0, w2⟫ = 0 ∧ 0 < ⟪F.N 1, w2⟫ ∧ ⟪F.N 2, w2⟫ < 0 ∧ ⟪F.N 3, w2⟫ = 0 ∧ 0 < ⟪F.N 4, w2⟫ ∧ ⟪F.N 5, w2⟫ < 0 ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ < 0 ∧ 0 < ⟪F.N 8, w2⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 6)⟫ ≠ ⟪x j, (x 0 - x 6)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+def Triple12Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 : ℝ³,
+    (0 < ⟪F.N 1, w0⟫ ∧ 0 < ⟪F.N 2, w0⟫ ∧ ⟪F.N 3, w0⟫ < 0 ∧ ⟪F.N 4, w0⟫ < 0 ∧ ⟪F.N 6, w0⟫ = 0 ∧ 0 < ⟪F.N 7, w0⟫ ∧ ⟪F.N 8, w0⟫ = 0) ∧
+    (⟪F.N 0, (x 3 - x 5)⟫ < 0 ∧ ⟪F.N 1, (x 3 - x 5)⟫ < 0 ∧ ⟪F.N 2, (x 3 - x 5)⟫ < 0 ∧ ⟪F.N 4, (x 3 - x 5)⟫ < 0 ∧ 0 < ⟪F.N 5, (x 3 - x 5)⟫ ∧ 0 < ⟪F.N 7, (x 3 - x 5)⟫ ∧ 0 < ⟪F.N 8, (x 3 - x 5)⟫) ∧
+    (0 < ⟪F.N 0, (x 0 - x 6)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 6)⟫ ∧ ⟪F.N 5, (x 0 - x 6)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 6)⟫ ∧ ⟪F.N 7, (x 0 - x 6)⟫ < 0 ∧ ⟪F.N 8, (x 0 - x 6)⟫ < 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 3 - x 5)⟫ ≠ ⟪x j, (x 3 - x 5)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 6)⟫ ≠ ⟪x j, (x 0 - x 6)⟫)
+
+def Triple13Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w1 : ℝ³,
+    (⟪F.N 0, w0⟫ = 0 ∧ 0 < ⟪F.N 1, w0⟫ ∧ ⟪F.N 2, w0⟫ < 0 ∧ ⟪F.N 3, w0⟫ = 0 ∧ 0 < ⟪F.N 4, w0⟫ ∧ 0 < ⟪F.N 5, w0⟫ ∧ ⟪F.N 6, w0⟫ < 0 ∧ ⟪F.N 7, w0⟫ < 0 ∧ ⟪F.N 8, w0⟫ < 0) ∧
+    (0 < ⟪F.N 1, w1⟫ ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ = 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 2, (x 0 - x 1)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 1)⟫ ∧ 0 < ⟪F.N 4, (x 0 - x 1)⟫ ∧ ⟪F.N 5, (x 0 - x 1)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 1)⟫ ∧ ⟪F.N 7, (x 0 - x 1)⟫ < 0 ∧ 0 < ⟪F.N 8, (x 0 - x 1)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 1)⟫ ≠ ⟪x j, (x 0 - x 1)⟫)
+
+def Triple14Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 : ℝ³,
+    (0 < ⟪F.N 0, (x 0 - x 6)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 6)⟫ ∧ ⟪F.N 5, (x 0 - x 6)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 6)⟫ ∧ ⟪F.N 7, (x 0 - x 6)⟫ < 0 ∧ ⟪F.N 8, (x 0 - x 6)⟫ < 0) ∧
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ = 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ < 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ ⟪F.N 6, w1⟫ < 0 ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 1, (x 1 - x 2)⟫ ∧ ⟪F.N 2, (x 1 - x 2)⟫ < 0 ∧ 0 < ⟪F.N 3, (x 1 - x 2)⟫ ∧ 0 < ⟪F.N 4, (x 1 - x 2)⟫ ∧ ⟪F.N 6, (x 1 - x 2)⟫ < 0 ∧ ⟪F.N 7, (x 1 - x 2)⟫ < 0 ∧ ⟪F.N 8, (x 1 - x 2)⟫ < 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 6)⟫ ≠ ⟪x j, (x 0 - x 6)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 1 - x 2)⟫ ≠ ⟪x j, (x 1 - x 2)⟫)
+
+def Triple15Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 : ℝ³,
+    (⟪F.N 0, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 1, (x 3 - x 4)⟫ < 0 ∧ 0 < ⟪F.N 2, (x 3 - x 4)⟫ ∧ ⟪F.N 4, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 5, (x 3 - x 4)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 7, (x 3 - x 4)⟫) ∧
+    (0 < ⟪F.N 1, w1⟫ ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ = 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 1, (x 1 - x 2)⟫ ∧ ⟪F.N 2, (x 1 - x 2)⟫ < 0 ∧ 0 < ⟪F.N 3, (x 1 - x 2)⟫ ∧ 0 < ⟪F.N 4, (x 1 - x 2)⟫ ∧ ⟪F.N 6, (x 1 - x 2)⟫ < 0 ∧ ⟪F.N 7, (x 1 - x 2)⟫ < 0 ∧ 0 < ⟪F.N 8, (x 1 - x 2)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 3 - x 4)⟫ ≠ ⟪x j, (x 3 - x 4)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 1 - x 2)⟫ ≠ ⟪x j, (x 1 - x 2)⟫)
+
+def Triple16Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w2 : ℝ³,
+    (0 < ⟪F.N 0, w0⟫ ∧ ⟪F.N 2, w0⟫ < 0 ∧ ⟪F.N 3, w0⟫ < 0 ∧ 0 < ⟪F.N 4, w0⟫ ∧ ⟪F.N 6, w0⟫ = 0 ∧ 0 < ⟪F.N 7, w0⟫ ∧ ⟪F.N 8, w0⟫ = 0) ∧
+    (⟪F.N 0, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 1, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 2, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 4, (x 3 - x 4)⟫ < 0 ∧ 0 < ⟪F.N 5, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 6, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 7, (x 3 - x 4)⟫) ∧
+    (⟪F.N 0, w2⟫ = 0 ∧ 0 < ⟪F.N 1, w2⟫ ∧ ⟪F.N 2, w2⟫ < 0 ∧ ⟪F.N 3, w2⟫ < 0 ∧ ⟪F.N 4, w2⟫ = 0 ∧ 0 < ⟪F.N 5, w2⟫ ∧ 0 < ⟪F.N 6, w2⟫ ∧ 0 < ⟪F.N 7, w2⟫ ∧ ⟪F.N 8, w2⟫ < 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 3 - x 4)⟫ ≠ ⟪x j, (x 3 - x 4)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+def Triple17Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w1 : ℝ³,
+    (0 < ⟪F.N 0, w0⟫ ∧ ⟪F.N 2, w0⟫ < 0 ∧ ⟪F.N 3, w0⟫ < 0 ∧ 0 < ⟪F.N 4, w0⟫ ∧ ⟪F.N 6, w0⟫ = 0 ∧ 0 < ⟪F.N 7, w0⟫ ∧ ⟪F.N 8, w0⟫ = 0) ∧
+    (⟪F.N 0, w1⟫ = 0 ∧ 0 < ⟪F.N 1, w1⟫ ∧ ⟪F.N 2, w1⟫ < 0 ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ = 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ 0 < ⟪F.N 8, w1⟫) ∧
+    (⟪F.N 0, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 1, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 2, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 4, (x 3 - x 4)⟫ < 0 ∧ 0 < ⟪F.N 5, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 6, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 7, (x 3 - x 4)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 3 - x 4)⟫ ≠ ⟪x j, (x 3 - x 4)⟫)
+
+def Triple18Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w1 : ℝ³,
+    (⟪F.N 0, w0⟫ = 0 ∧ 0 < ⟪F.N 1, w0⟫ ∧ ⟪F.N 2, w0⟫ < 0 ∧ ⟪F.N 3, w0⟫ = 0 ∧ 0 < ⟪F.N 4, w0⟫ ∧ 0 < ⟪F.N 5, w0⟫ ∧ ⟪F.N 6, w0⟫ < 0 ∧ ⟪F.N 7, w0⟫ < 0 ∧ ⟪F.N 8, w0⟫ < 0) ∧
+    (0 < ⟪F.N 1, w1⟫ ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ = 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 2, (x 0 - x 1)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 1)⟫ ∧ 0 < ⟪F.N 4, (x 0 - x 1)⟫ ∧ ⟪F.N 5, (x 0 - x 1)⟫ < 0 ∧ ⟪F.N 6, (x 0 - x 1)⟫ < 0 ∧ ⟪F.N 7, (x 0 - x 1)⟫ < 0 ∧ 0 < ⟪F.N 8, (x 0 - x 1)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 1)⟫ ≠ ⟪x j, (x 0 - x 1)⟫)
+
+def Triple19Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 w2 : ℝ³,
+    (0 < ⟪F.N 0, (x 0 - x 6)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 6)⟫ ∧ ⟪F.N 5, (x 0 - x 6)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 6)⟫ ∧ ⟪F.N 7, (x 0 - x 6)⟫ < 0 ∧ ⟪F.N 8, (x 0 - x 6)⟫ < 0) ∧
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ = 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ < 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 0, w2⟫ ∧ 0 < ⟪F.N 1, w2⟫ ∧ ⟪F.N 2, w2⟫ < 0 ∧ ⟪F.N 3, w2⟫ = 0 ∧ 0 < ⟪F.N 4, w2⟫ ∧ ⟪F.N 5, w2⟫ = 0 ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ < 0 ∧ 0 < ⟪F.N 8, w2⟫) ∧
+    (⟪F.N 3, F.N 3⟫ * ⟪F.N 5, F.N 5⟫ - ⟪F.N 3, F.N 5⟫ ^ 2 ≠ 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 6)⟫ ≠ ⟪x j, (x 0 - x 6)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+def Triple20Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w1 w2 : ℝ³,
+    (0 < ⟪F.N 0, w0⟫ ∧ 0 < ⟪F.N 1, w0⟫ ∧ ⟪F.N 2, w0⟫ = 0 ∧ ⟪F.N 3, w0⟫ < 0 ∧ ⟪F.N 4, w0⟫ = 0 ∧ 0 < ⟪F.N 6, w0⟫ ∧ 0 < ⟪F.N 7, w0⟫ ∧ ⟪F.N 8, w0⟫ < 0) ∧
+    (⟪F.N 0, w1⟫ = 0 ∧ 0 < ⟪F.N 1, w1⟫ ∧ ⟪F.N 2, w1⟫ < 0 ∧ ⟪F.N 3, w1⟫ = 0 ∧ 0 < ⟪F.N 4, w1⟫ ∧ 0 < ⟪F.N 5, w1⟫ ∧ ⟪F.N 6, w1⟫ < 0 ∧ ⟪F.N 7, w1⟫ < 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (⟪F.N 0, w2⟫ = 0 ∧ 0 < ⟪F.N 1, w2⟫ ∧ ⟪F.N 2, w2⟫ < 0 ∧ ⟪F.N 3, w2⟫ < 0 ∧ 0 < ⟪F.N 4, w2⟫ ∧ 0 < ⟪F.N 5, w2⟫ ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ = 0 ∧ ⟪F.N 8, w2⟫ < 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+def Triple21Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 w2 : ℝ³,
+    (0 < ⟪F.N 0, (x 0 - x 6)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 6)⟫ ∧ ⟪F.N 5, (x 0 - x 6)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 6)⟫ ∧ ⟪F.N 7, (x 0 - x 6)⟫ < 0 ∧ ⟪F.N 8, (x 0 - x 6)⟫ < 0) ∧
+    (⟪F.N 0, w1⟫ = 0 ∧ 0 < ⟪F.N 1, w1⟫ ∧ ⟪F.N 2, w1⟫ < 0 ∧ ⟪F.N 3, w1⟫ = 0 ∧ 0 < ⟪F.N 4, w1⟫ ∧ 0 < ⟪F.N 5, w1⟫ ∧ ⟪F.N 6, w1⟫ < 0 ∧ ⟪F.N 7, w1⟫ < 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 0, w2⟫ ∧ ⟪F.N 1, w2⟫ = 0 ∧ 0 < ⟪F.N 2, w2⟫ ∧ ⟪F.N 3, w2⟫ < 0 ∧ ⟪F.N 4, w2⟫ < 0 ∧ 0 < ⟪F.N 5, w2⟫ ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ = 0 ∧ ⟪F.N 8, w2⟫ < 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 6)⟫ ≠ ⟪x j, (x 0 - x 6)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+def Triple22Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 w2 : ℝ³,
+    (0 < ⟪F.N 0, (x 0 - x 6)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 6)⟫ ∧ ⟪F.N 5, (x 0 - x 6)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 6)⟫ ∧ ⟪F.N 7, (x 0 - x 6)⟫ < 0 ∧ ⟪F.N 8, (x 0 - x 6)⟫ < 0) ∧
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ < 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ = 0 ∧ ⟪F.N 4, w1⟫ < 0 ∧ ⟪F.N 5, w1⟫ = 0 ∧ 0 < ⟪F.N 6, w1⟫ ∧ 0 < ⟪F.N 7, w1⟫ ∧ 0 < ⟪F.N 8, w1⟫) ∧
+    (0 < ⟪F.N 0, w2⟫ ∧ ⟪F.N 1, w2⟫ = 0 ∧ 0 < ⟪F.N 2, w2⟫ ∧ ⟪F.N 3, w2⟫ < 0 ∧ ⟪F.N 4, w2⟫ < 0 ∧ 0 < ⟪F.N 5, w2⟫ ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ = 0 ∧ ⟪F.N 8, w2⟫ < 0) ∧
+    (⟪F.N 3, F.N 3⟫ * ⟪F.N 5, F.N 5⟫ - ⟪F.N 3, F.N 5⟫ ^ 2 ≠ 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 6)⟫ ≠ ⟪x j, (x 0 - x 6)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+def Triple23Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w1 : ℝ³,
+    (0 < ⟪F.N 0, (x 0 - x 6)⟫ ∧ 0 < ⟪F.N 3, (x 0 - x 6)⟫ ∧ ⟪F.N 5, (x 0 - x 6)⟫ < 0 ∧ 0 < ⟪F.N 6, (x 0 - x 6)⟫ ∧ ⟪F.N 7, (x 0 - x 6)⟫ < 0 ∧ ⟪F.N 8, (x 0 - x 6)⟫ < 0) ∧
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ = 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ < 0 ∧ ⟪F.N 4, w1⟫ < 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ 0 < ⟪F.N 6, w1⟫ ∧ ⟪F.N 7, w1⟫ = 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (⟪F.N 0, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 1, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 2, (x 3 - x 4)⟫ < 0 ∧ ⟪F.N 4, (x 3 - x 4)⟫ < 0 ∧ 0 < ⟪F.N 5, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 6, (x 3 - x 4)⟫ ∧ 0 < ⟪F.N 7, (x 3 - x 4)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 0 - x 6)⟫ ≠ ⟪x j, (x 0 - x 6)⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, (x 3 - x 4)⟫ ≠ ⟪x j, (x 3 - x 4)⟫)
+
+def Triple24Hyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ w0 w1 w2 : ℝ³,
+    (0 < ⟪F.N 0, w0⟫ ∧ 0 < ⟪F.N 1, w0⟫ ∧ ⟪F.N 2, w0⟫ = 0 ∧ ⟪F.N 3, w0⟫ < 0 ∧ ⟪F.N 4, w0⟫ = 0 ∧ ⟪F.N 6, w0⟫ < 0 ∧ 0 < ⟪F.N 7, w0⟫ ∧ 0 < ⟪F.N 8, w0⟫) ∧
+    (0 < ⟪F.N 0, w1⟫ ∧ ⟪F.N 1, w1⟫ = 0 ∧ 0 < ⟪F.N 2, w1⟫ ∧ ⟪F.N 3, w1⟫ = 0 ∧ ⟪F.N 4, w1⟫ < 0 ∧ 0 < ⟪F.N 5, w1⟫ ∧ ⟪F.N 6, w1⟫ < 0 ∧ ⟪F.N 7, w1⟫ < 0 ∧ ⟪F.N 8, w1⟫ < 0) ∧
+    (0 < ⟪F.N 0, w2⟫ ∧ ⟪F.N 1, w2⟫ = 0 ∧ 0 < ⟪F.N 2, w2⟫ ∧ ⟪F.N 3, w2⟫ < 0 ∧ ⟪F.N 4, w2⟫ < 0 ∧ 0 < ⟪F.N 5, w2⟫ ∧ ⟪F.N 6, w2⟫ < 0 ∧ ⟪F.N 7, w2⟫ = 0 ∧ ⟪F.N 8, w2⟫ < 0) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w0⟫ ≠ ⟪x j, w0⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w1⟫ ≠ ⟪x j, w1⟫) ∧
+    (∀ i j : Fin 7, i ≠ j → ⟪x i, w2⟫ ≠ ⟪x j, w2⟫)
+
+
+/-- Disjunction of the 14 further three-view triple closure hypotheses. -/
+def TripleHyp2 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Triple11Hyp x F ∨ Triple12Hyp x F ∨ Triple13Hyp x F ∨ Triple14Hyp x F ∨ Triple15Hyp x F ∨ Triple16Hyp x F ∨ Triple17Hyp x F ∨ Triple18Hyp x F ∨ Triple19Hyp x F ∨ Triple20Hyp x F ∨ Triple21Hyp x F ∨ Triple22Hyp x F ∨ Triple23Hyp x F ∨ Triple24Hyp x F
+
+/-- Any of the 14 further three-view triple closures gives `Gen.LexAny F`. -/
+theorem triple2_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : TripleHyp2 x F) : Gen.LexAny F := by
+  rcases h with h11 | h12 | h13 | h14 | h15 | h16 | h17 | h18 | h19 | h20 | h21 | h22 | h23 | h24
+  · obtain ⟨w1, w2, ⟨h0_0, h0_3, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h11
+    exact PSVC.T11.lexAny_T11 F w1 w2 h0_0 h0_3 h0_5 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w0, ⟨h0_1, h0_2, h0_3, h0_4, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_4, h1_5, h1_7, h1_8⟩, ⟨h2_0, h2_3, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h12
+    exact PSVC.T12.lexAny_T12 F w0 h0_1 h0_2 h0_3 h0_4 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_4 h1_5 h1_7 h1_8 h2_0 h2_3 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w0, w1, ⟨h0_0, h0_1, h0_2, h0_3, h0_4, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h13
+    exact PSVC.T13.lexAny_T13 F w0 w1 h0_0 h0_1 h0_2 h0_3 h0_4 h0_5 h0_6 h0_7 h0_8 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w1, ⟨h0_0, h0_3, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_1, h2_2, h2_3, h2_4, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h14
+    exact PSVC.T14.lexAny_T14 F w1 h0_0 h0_3 h0_5 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_1 h2_2 h2_3 h2_4 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w1, ⟨h0_0, h0_1, h0_2, h0_4, h0_5, h0_6, h0_7⟩, ⟨h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_1, h2_2, h2_3, h2_4, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h15
+    exact PSVC.T15.lexAny_T15 F w1 h0_0 h0_1 h0_2 h0_4 h0_5 h0_6 h0_7 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_1 h2_2 h2_3 h2_4 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w0, w2, ⟨h0_0, h0_2, h0_3, h0_4, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_4, h1_5, h1_6, h1_7⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h16
+    exact PSVC.T16.lexAny_T16 F w0 w2 h0_0 h0_2 h0_3 h0_4 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_4 h1_5 h1_6 h1_7 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w0, w1, ⟨h0_0, h0_2, h0_3, h0_4, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_4, h2_5, h2_6, h2_7⟩, hg0, hg1, hg2⟩ := h17
+    exact PSVC.T17.lexAny_T17 F w0 w1 h0_0 h0_2 h0_3 h0_4 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_8 h2_0 h2_1 h2_2 h2_4 h2_5 h2_6 h2_7 hg0 hg1 hg2
+  · obtain ⟨w0, w1, ⟨h0_0, h0_1, h0_2, h0_3, h0_4, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h18
+    exact PSVC.T18.lexAny_T18 F w0 w1 h0_0 h0_1 h0_2 h0_3 h0_4 h0_5 h0_6 h0_7 h0_8 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w1, w2, ⟨h0_0, h0_3, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hD2, hg0, hg1, hg2⟩ := h19
+    exact PSVC.T19.lexAny_T19 F w1 w2 h0_0 h0_3 h0_5 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hD2 hg0 hg1 hg2
+  · obtain ⟨w0, w1, w2, ⟨h0_0, h0_1, h0_2, h0_3, h0_4, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h20
+    exact PSVC.T20.lexAny_T20 F w0 w1 w2 h0_0 h0_1 h0_2 h0_3 h0_4 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w1, w2, ⟨h0_0, h0_3, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h21
+    exact PSVC.T21.lexAny_T21 F w1 w2 h0_0 h0_3 h0_5 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+  · obtain ⟨w1, w2, ⟨h0_0, h0_3, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hD1, hg0, hg1, hg2⟩ := h22
+    exact PSVC.T22.lexAny_T22 F w1 w2 h0_0 h0_3 h0_5 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hD1 hg0 hg1 hg2
+  · obtain ⟨w1, ⟨h0_0, h0_3, h0_5, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_4, h2_5, h2_6, h2_7⟩, hg0, hg1, hg2⟩ := h23
+    exact PSVC.T23.lexAny_T23 F w1 h0_0 h0_3 h0_5 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_4 h2_5 h2_6 h2_7 hg0 hg1 hg2
+  · obtain ⟨w0, w1, w2, ⟨h0_0, h0_1, h0_2, h0_3, h0_4, h0_6, h0_7, h0_8⟩, ⟨h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8⟩, ⟨h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8⟩, hg0, hg1, hg2⟩ := h24
+    exact PSVC.T24.lexAny_T24 F w0 w1 w2 h0_0 h0_1 h0_2 h0_3 h0_4 h0_6 h0_7 h0_8 h1_0 h1_1 h1_2 h1_3 h1_4 h1_5 h1_6 h1_7 h1_8 h2_0 h2_1 h2_2 h2_3 h2_4 h2_5 h2_6 h2_7 h2_8 hg0 hg1 hg2
+
 /-- Further shrunken residual of `Hole24R6` removing the 10 three-view triple closures. -/
 def Hole24R7 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24R6 x F ∧ ¬ TripleHyp x F
@@ -856,11 +1031,33 @@ theorem hole24Q45R6_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
   · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (triple_lexAny htri))
   · exact Or.inr ⟨h, htri⟩
 
+/-- Further shrunken residual of `Hole24R7` removing the further three-view triple closures. -/
+def Hole24R8 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24R7 x F ∧ ¬ TripleHyp2 x F
+
+/-- Every point of `Hole24R7` is Rupert or reduces to `Hole24R8`. -/
+theorem hole24R7_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24R7 x F) : IsRupert (univ.image x) ∨ Hole24R8 x F := by
+  by_cases htri : TripleHyp2 x F
+  · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (triple2_lexAny htri))
+  · exact Or.inr ⟨h, htri⟩
+
+/-- Further shrunken `Q45` residual of `Hole24Q45R7` removing the further three-view triple closures. -/
+def Hole24Q45R8 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  Hole24Q45R7 x F ∧ ¬ TripleHyp2 x F
+
+/-- Every point of `Hole24Q45R7` is Rupert or reduces to `Hole24Q45R8`. -/
+theorem hole24Q45R7_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24Q45R7 x F) : IsRupert (univ.image x) ∨ Hole24Q45R8 x F := by
+  by_cases htri : TripleHyp2 x F
+  · exact Or.inl (Gen.lexAny_isRupert F (EdgeViewLink.inj_of_fac24 F) (triple2_lexAny htri))
+  · exact Or.inr ⟨h, htri⟩
+
 /-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24Q45R7`,
 `Hole24R7`, and the two star-closed `{1 < c3, 0 < mustar}` / `{1 < b3, 0 < mu23}` exclusions
 discharged via `Hole24Flags.1` (`¬ FacetCell24 fs`) and `Type24T2b`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24Flags x fs ∧ (Hole24Q45R7 x F ∨ Hole24R7 x F) ∧
+  Hole24Flags x fs ∧ (Hole24Q45R8 x F ∨ Hole24R8 x F) ∧
     ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x) ∧
     ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x)
 
@@ -879,32 +1076,32 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
       ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 6⟫ = ⟪x j, x 3 - x 6⟫) ∨
     (A20.mu23 x = 0 ∧ ∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
-  rcases hH with ⟨hflags, hQ | hR7, hnow, hnoe⟩
+  rcases hH with ⟨hflags, hQ | hR8, hnow, hnoe⟩
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · rcases eq_or_lt_of_le hmu with hzero | hpos
       · left
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hQ.1.1.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
+        exact hQ.1.1.1.2.2.2.2.1 ⟨hc3, hzero.symm, hno⟩
       · exact False.elim (hnow ⟨hc3, hpos⟩)
     · rcases eq_or_lt_of_le hmu23 with hzero | hpos
       · right
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hQ.1.1.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
+        exact hQ.1.1.1.2.2.2.2.2 ⟨hb3, hzero.symm, hno⟩
       · exact False.elim (hnoe ⟨hb3, hpos⟩)
   · rcases A20.mustar_or_mu23_nonneg fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
     · rcases eq_or_lt_of_le hmu with hzero | hpos
       · left
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hR7.1.1.2.1 ⟨hc3, hzero.symm, hno⟩
+        exact hR8.1.1.1.2.1 ⟨hc3, hzero.symm, hno⟩
       · exact False.elim (hnow ⟨hc3, hpos⟩)
     · rcases eq_or_lt_of_le hmu23 with hzero | hpos
       · right
         refine ⟨hzero.symm, ?_⟩
         by_contra hno; push Not at hno
-        exact hR7.1.1.2.2 ⟨hb3, hzero.symm, hno⟩
+        exact hR8.1.1.1.2.2 ⟨hb3, hzero.symm, hno⟩
       · exact False.elim (hnoe ⟨hb3, hpos⟩)
 
 /-- The strict region `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be < 1, al < 1}` is
@@ -921,7 +1118,7 @@ theorem hole24_b3_c3_st_lt_empty {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →
   · exact hnow ⟨hc3, hmu⟩
   · exact hnoe ⟨hb3, hmu23⟩
 
-/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R7`, `Hole24R7`, and the star-closed
+/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R8`, `Hole24R8`, and the star-closed
 exclusions). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -964,7 +1161,9 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
         · exact Or.inl hRup
         · rcases hole24Q45R6_reduce hQ6 with hRup | hQ7
           · exact Or.inl hRup
-          · exact Or.inr ⟨hh, hflags, Or.inl hQ7, hnow, hnoe⟩
+          · rcases hole24Q45R7_reduce hQ7 with hRup | hQ8
+            · exact Or.inl hRup
+            · exact Or.inr ⟨hh, hflags, Or.inl hQ8, hnow, hnoe⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
     · by_cases hnow : 1 < oblX6 x 3 ∧ 0 < A20.mustar x
@@ -980,6 +1179,8 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
           · exact Or.inl hRup
           · rcases hole24R6_reduce hR6 with hRup | hR7
             · exact Or.inl hRup
-            · exact Or.inr ⟨hh, hflags, Or.inr hR7, hnow, hnoe⟩
+            · rcases hole24R7_reduce hR7 with hRup | hR8
+              · exact Or.inl hRup
+              · exact Or.inr ⟨hh, hflags, Or.inr hR8, hnow, hnoe⟩
 
 end Minimality.T24

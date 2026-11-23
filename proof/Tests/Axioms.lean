@@ -1811,3 +1811,24 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF29.not_M_neg_of_circuit
 #assert_standard_axioms Minimality.NF29.M_cone
 #print axioms Minimality.NF29.order_WI_cones
+
+-- Task TRI24B: further three-view triple closures T11..T26 (tri3 stage 2)
+#assert_standard_axioms Minimality.PSVC.T11.lexAny_T11
+#assert_standard_axioms Minimality.PSVC.T12.lexAny_T12
+#assert_standard_axioms Minimality.PSVC.T13.lexAny_T13
+#assert_standard_axioms Minimality.PSVC.T14.lexAny_T14
+#assert_standard_axioms Minimality.PSVC.T15.lexAny_T15
+#assert_standard_axioms Minimality.PSVC.T16.lexAny_T16
+#assert_standard_axioms Minimality.PSVC.T17.lexAny_T17
+#assert_standard_axioms Minimality.PSVC.T18.lexAny_T18
+#assert_standard_axioms Minimality.PSVC.T19.lexAny_T19
+#assert_standard_axioms Minimality.PSVC.T20.lexAny_T20
+#assert_standard_axioms Minimality.PSVC.T21.lexAny_T21
+#assert_standard_axioms Minimality.PSVC.T22.lexAny_T22
+#assert_standard_axioms Minimality.PSVC.T23.lexAny_T23
+#assert_standard_axioms Minimality.PSVC.T24.lexAny_T24
+#assert_standard_axioms Minimality.PSVC.T25.lexAny_T25
+#assert_standard_axioms Minimality.PSVC.T26.lexAny_T26
+#assert_standard_axioms Minimality.T24.triple2_lexAny
+#assert_standard_axioms Minimality.T24.hole24R7_reduce
+#assert_standard_axioms Minimality.T24.hole24Q45R7_reduce
