@@ -7,6 +7,7 @@ public import Minimality.Type29Exact
 public import Minimality.Type29T1Pair
 public import Minimality.Type29Quad
 public import Minimality.Type29SubPencil
+public import Minimality.Type29Single
 
 @[expose] public section
 
@@ -230,5 +231,40 @@ theorem type29_rupert_or_hole'' {x : Fin 7 → ℝ³} (N : NF29 x)
     (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
     IsRupert (univ.image x) ∨ Hole29R2 x N :=
   (type29_rupert_or_hole' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R1_reduce h))
+
+/-- K1a single-view closure hypotheses at `x 0 - x 1` (`PL29.lexAny29_K1a_e01`): facings and distinct depths. -/
+def E01Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  N.a2 < 0 ∧ ⟪(s0x_fac29 N.facets).N 6, x 0 - x 1⟫ < 0 ∧ ⟪(s0x_fac29 N.facets).N 8, x 0 - x 1⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 5} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 0 - x 1⟫ ≠ ⟪x j, x 0 - x 1⟫
+
+/-- K1a single-view closure hypotheses at `x 2 - x 4` (`PL29.lexAny29_K1a_e24`): facings and distinct depths. -/
+def E24Hyp (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  0 < N.b0 ∧ ⟪(s0x_fac29 N.facets).N 1, x 2 - x 4⟫ < 0 ∧ ⟪(s0x_fac29 N.facets).N 3, x 2 - x 4⟫ < 0 ∧
+    ∀ i ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)), ∀ j ∈ ({0, 1, 2, 3, 4} : Finset (Fin 7)),
+      i ≠ j → ⟪x i, x 2 - x 4⟫ ≠ ⟪x j, x 2 - x 4⟫
+
+/-- Shrunken Type-29 open hole proposition, excluding the two K1a single-view cells (PAIRLEAN29). -/
+def Hole29R3 (x : Fin 7 → ℝ³) (N : NF29 x) : Prop :=
+  Hole29R2 x N ∧ ¬ E01Hyp x N ∧ ¬ E24Hyp x N
+
+/-- Every point of `Hole29R3` lies in `Hole29`. -/
+theorem hole29_of_hole29R3 {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R3 x N) : Hole29 x N :=
+  hole29_of_hole29R2 h.1
+
+/-- **Reduction of `Hole29R2` to `Hole29R3`**: `PL29.lexAny29_K1a_e01` / `_e24` against `¬ LexAny29`. -/
+theorem hole29R2_reduce {x : Fin 7 → ℝ³} {N : NF29 x} (h : Hole29R2 x N) : Hole29R3 x N := by
+  have hnl := (hole29_of_hole29R2 h).2.2.2.2.2.1
+  refine ⟨h, ?_, ?_⟩
+  · rintro ⟨ha2, a, b, c⟩
+    exact hnl (PL29.lexAny29_K1a_e01 N ha2 a b c)
+  · rintro ⟨hb0, a, b, c⟩
+    exact hnl (PL29.lexAny29_K1a_e24 N hb0 a b c)
+
+/-- Main Type-29 reduction leaving `Hole29R3`. -/
+theorem type29_rupert_or_hole''' {x : Fin 7 → ℝ³} (N : NF29 x)
+    (hK1 : K1_29 N) (hZ : ¬ Z29 x) (hOB : OB6 x) :
+    IsRupert (univ.image x) ∨ Hole29R3 x N :=
+  (type29_rupert_or_hole'' N hK1 hZ hOB).elim Or.inl (fun h => Or.inr (hole29R2_reduce h))
 
 end Minimality.H29
