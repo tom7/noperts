@@ -14,6 +14,15 @@ public import Minimality.Type24E23
 public import Minimality.Type24W63Ties
 public import Minimality.Type24T2b
 public import Minimality.Type24SVCCells
+public import Minimality.Type24SVCCellsLex5
+public import Minimality.Type24SVCCellsLex_c06
+public import Minimality.Type24SVCCellsLex_c10
+public import Minimality.Type24SVCCellsLex_c16
+public import Minimality.Type24SVCCellsLex_c21
+public import Minimality.Type24SVCCellsLex_c01
+public import Minimality.Type24SVCCellsLex_c03
+public import Minimality.Type24SVCCellsLex_c12
+public import Minimality.Type24SVCCellsLex_c14
 public import Minimality.Type24PairL3u27
 public import Minimality.Type24Triple1
 public import Minimality.Type24Triple2
@@ -512,72 +521,54 @@ theorem e23_closes_star_or_facetCell {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³
 def Cell_012_0345_zpmzppmpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, ⟪F.N 0, w⟫ = 0 ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
     0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ∀ i ∈ ({0, 1, 2, 3, 4, 5} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 1, 2, 3, 4, 5} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    ⟪x 2, w⟫ ≠ ⟪x 3, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
 
 def Cell_0345_236_ppmzppmzp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 2, w⟫ < 0 ∧ ⟪F.N 3, w⟫ = 0 ∧
     0 < ⟪F.N 4, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 7, w⟫ = 0 ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    ⟪x 2, w⟫ ≠ ⟪x 3, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
 
 def Cell_0345_236_pppzmppzm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 1, w⟫ ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧ ⟪F.N 4, w⟫ < 0 ∧
     0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ ⟪F.N 7, w⟫ = 0 ∧ ⟪F.N 8, w⟫ < 0 ∧
-    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    ⟪x 3, w⟫ ≠ ⟪x 6, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
 
 def Cell_025_046_ppzmzpppp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ 0 < ⟪F.N 1, w⟫ ∧ ⟪F.N 2, w⟫ = 0 ∧ ⟪F.N 3, w⟫ < 0 ∧
-    ⟪F.N 4, w⟫ = 0 ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    ⟪F.N 4, w⟫ = 0 ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 8, w⟫
 
 def Cell_025_235_ppzmppzpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  0 < ⟪F.N 4, x 2 - x 5⟫ ∧ 0 < ⟪F.N 8, x 2 - x 5⟫ ∧
-    ∀ i ∈ ({0, 2, 3, 4, 5} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 5} : Finset (Fin 7)), i ≠ j → ⟪x i, x 2 - x 5⟫ ≠ ⟪x j, x 2 - x 5⟫
+  0 < ⟪F.N 4, x 2 - x 5⟫ ∧ 0 < ⟪F.N 8, x 2 - x 5⟫
 
 def Cell_025_346_ppzmppppz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 2, w⟫ = 0 ∧ ⟪F.N 3, w⟫ < 0 ∧ 0 < ⟪F.N 4, w⟫ ∧
     0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ = 0 ∧
-    ⟪F.N 2, F.N 2⟫ * ⟪F.N 8, F.N 8⟫ - ⟪F.N 2, F.N 8⟫ ^ 2 ≠ 0 ∧
-    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    ⟪F.N 2, F.N 2⟫ * ⟪F.N 8, F.N 8⟫ - ⟪F.N 2, F.N 8⟫ ^ 2 ≠ 0
 
 def Cell_046_235_pppmzpzpp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 1, w⟫ ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ < 0 ∧ ⟪F.N 4, w⟫ = 0 ∧
     ⟪F.N 6, w⟫ = 0 ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫ ∧
-    ⟪F.N 4, F.N 4⟫ * ⟪F.N 6, F.N 6⟫ - ⟪F.N 4, F.N 6⟫ ^ 2 ≠ 0 ∧
-    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    ⟪F.N 4, F.N 4⟫ * ⟪F.N 6, F.N 6⟫ - ⟪F.N 4, F.N 6⟫ ^ 2 ≠ 0
 
 def Cell_046_346_mmmpzmmmz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  ⟪F.N 2, x 4 - x 6⟫ < 0 ∧ ⟪F.N 6, x 4 - x 6⟫ < 0 ∧
-    ∀ i ∈ ({0, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, x 4 - x 6⟫ ≠ ⟪x j, x 4 - x 6⟫
+  ⟪F.N 2, x 4 - x 6⟫ < 0 ∧ ⟪F.N 6, x 4 - x 6⟫ < 0
 
 def Cell_235_236_pppmmpzzm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   0 < ⟪F.N 1, x 2 - x 3⟫ ∧ ⟪F.N 4, x 2 - x 3⟫ < 0 ∧
-    ∀ i ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, x 2 - x 3⟫ ≠ ⟪x j, x 2 - x 3⟫
+    ⟪x 5, x 2 - x 3⟫ ≠ ⟪x 6, x 2 - x 3⟫
 
 def Cell_235_346_pppmppzpz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ < 0 ∧ 0 < ⟪F.N 4, w⟫ ∧ ⟪F.N 6, w⟫ = 0 ∧
-    0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ = 0 ∧
-    ∀ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ = 0
 
 def Cell_236_346_mmppmmpzz (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ⟪F.N 0, x 3 - x 6⟫ < 0 ∧ 0 < ⟪F.N 2, x 3 - x 6⟫ ∧
-    ∀ i ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 2, 3, 4, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, x 3 - x 6⟫ ≠ ⟪x j, x 3 - x 6⟫
+    ⟪x 2, x 3 - x 6⟫ ≠ ⟪x 4, x 3 - x 6⟫
 
 def Cell_016_0345_pzpzmpppm (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   ∃ w : ℝ³, 0 < ⟪F.N 0, w⟫ ∧ ⟪F.N 1, w⟫ = 0 ∧ 0 < ⟪F.N 2, w⟫ ∧ ⟪F.N 3, w⟫ = 0 ∧
     ⟪F.N 4, w⟫ < 0 ∧ 0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ ⟪F.N 8, w⟫ < 0 ∧
-    ∀ i ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)),
-      ∀ j ∈ ({0, 1, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j → ⟪x i, w⟫ ≠ ⟪x j, w⟫
+    ⟪x 3, w⟫ ≠ ⟪x 6, w⟫ ∧ ⟪x 4, w⟫ ≠ ⟪x 5, w⟫
 
 /-- Disjunction of the 12 non-triangle SVC cells from `Minimality.Type24SVCCells`. -/
 def SVCCellHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
@@ -598,30 +589,30 @@ def SVCCellHyp (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
 theorem svcCell_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     (h : SVCCellHyp x F) : Gen.LexAny F := by
   rcases h with
-      ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, hgen⟩
-    | ⟨w, h0, h2, h3, h4, h5, h6, h7, h8, hgen⟩
-    | ⟨w, h1, h2, h3, h4, h5, h6, h7, h8, hgen⟩
-    | ⟨w, h0, h1, h2, h3, h4, h6, h8, hgen⟩
-    | ⟨h4, h8, hgen⟩
-    | ⟨w, h0, h2, h3, h4, h6, h7, h8, hD, hgen⟩
-    | ⟨w, h1, h2, h3, h4, h6, h7, h8, hD, hgen⟩
-    | ⟨h2, h6, hgen⟩
-    | ⟨h1, h4, hgen⟩
-    | ⟨w, h2, h3, h4, h6, h7, h8, hgen⟩
-    | ⟨h0, h2, hgen⟩
-    | ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, hgen⟩
-  · exact SVCC.Cells.cell_012_0345_zpmzppmpp F w h0 h1 h2 h3 h4 h5 h6 h7 h8 hgen
-  · exact SVCC.Cells.cell_0345_236_ppmzppmzp F w h0 h2 h3 h4 h5 h6 h7 h8 hgen
-  · exact SVCC.Cells.cell_0345_236_pppzmppzm F w h1 h2 h3 h4 h5 h6 h7 h8 hgen
-  · exact SVCC.Cells.cell_025_046_ppzmzpppp F w h0 h1 h2 h3 h4 h6 h8 hgen
-  · exact SVCC.Cells.cell_025_235_ppzmppzpp F h4 h8 hgen
-  · exact SVCC.Cells.cell_025_346_ppzmppppz F w h0 h2 h3 h4 h6 h7 h8 hD hgen
-  · exact SVCC.Cells.cell_046_235_pppmzpzpp F w h1 h2 h3 h4 h6 h7 h8 hD hgen
-  · exact SVCC.Cells.cell_046_346_mmmpzmmmz F h2 h6 hgen
-  · exact SVCC.Cells.cell_235_236_pppmmpzzm F h1 h4 hgen
-  · exact SVCC.Cells.cell_235_346_pppmppzpz F w h2 h3 h4 h6 h7 h8 hgen
-  · exact SVCC.Cells.cell_236_346_mmppmmpzz F h0 h2 hgen
-  · exact SVCC.Cells.cell_016_0345_pzpzmpppm F w h0 h1 h2 h3 h4 h5 h6 h7 h8 hgen
+      ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, h23, h45⟩
+    | ⟨w, h0, h2, h3, h4, h5, h6, h7, h8, h23, h45⟩
+    | ⟨w, h1, h2, h3, h4, h5, h6, h7, h8, h36, h45⟩
+    | ⟨w, h0, h1, h2, h3, h4, h6, h8⟩
+    | ⟨h4, h8⟩
+    | ⟨w, h0, h2, h3, h4, h6, h7, h8, hD⟩
+    | ⟨w, h1, h2, h3, h4, h6, h7, h8, hD⟩
+    | ⟨h2, h6⟩
+    | ⟨h1, h4, h56⟩
+    | ⟨w, h2, h3, h4, h6, h7, h8⟩
+    | ⟨h0, h2, h24⟩
+    | ⟨w, h0, h1, h2, h3, h4, h5, h6, h7, h8, h36, h45⟩
+  · exact SVCC.CellsLex.cell_012_0345_zpmzppmpp_lex F w h0 h1 h2 h3 h4 h5 h6 h7 h8 h23 h45
+  · exact SVCC.CellsLex.cell_0345_236_ppmzppmzp_lex F w h0 h2 h3 h4 h5 h6 h7 h8 h23 h45
+  · exact SVCC.CellsLex.cell_0345_236_pppzmppzm_lex F w h1 h2 h3 h4 h5 h6 h7 h8 h36 h45
+  · exact SVCC.CellsLex.cell_025_046_ppzmzpppp_lex F w h0 h1 h2 h3 h4 h6 h8
+  · exact SVCC.CellsLex.cell_025_235_ppzmppzpp_lex F h4 h8
+  · exact SVCC.CellsLex.cell_025_346_ppzmppppz_lex F w h0 h2 h3 h4 h6 h7 h8 hD
+  · exact SVCC.CellsLex.cell_046_235_pppmzpzpp_lex F w h1 h2 h3 h4 h6 h7 h8 hD
+  · exact SVCC.CellsLex.cell_046_346_mmmpzmmmz_lex F h2 h6
+  · exact SVCC.CellsLex.cell_235_236_pppmmpzzm_lex F h1 h4 h56
+  · exact SVCC.CellsLex.cell_235_346_pppmppzpz_lex F w h2 h3 h4 h6 h7 h8
+  · exact SVCC.CellsLex.cell_236_346_mmppmmpzz_lex F h0 h2 h24
+  · exact SVCC.CellsLex.cell_016_0345_pzpzmpppm_lex F w h0 h1 h2 h3 h4 h5 h6 h7 h8 h36 h45
 
 /-- Hypothesis bundle for the two-view pair closure `Minimality.PSVC.L3u27.lexAny_L3_u27`
 (`L3 = F016xF0345` at `w1`, `u27 = F025xF236` at `w2`). -/

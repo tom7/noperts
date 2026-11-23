@@ -1709,3 +1709,21 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.PSVC.T9.lexAny_T9
 #assert_standard_axioms Minimality.PSVC.T10.lexAny_T10
 #assert_standard_axioms Minimality.T24.triple_lexAny
+
+-- Task DN: tie-tolerant SVC / PSVC closures
+#assert_standard_axioms Minimality.SVC.svc_local_lex
+#assert_standard_axioms Minimality.PSVC.pair_closure_lex
+#assert_standard_axioms Minimality.PSVC.triple_closure_lex
+#assert_standard_axioms Minimality.PSVC.triple_closure_p_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_025_235_ppzmppzpp_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_046_346_mmmpzmmmz_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_235_236_pppmmpzzm_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_236_346_mmppmmpzz_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_025_046_ppzmzpppp_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_025_346_ppzmppppz_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_046_235_pppmzpzpp_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_235_346_pppmppzpz_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_012_0345_zpmzppmpp_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_016_0345_pzpzmpppm_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_0345_236_ppmzppmzp_lex
+#assert_standard_axioms Minimality.SVCC.CellsLex.cell_0345_236_pppzmppzm_lex
