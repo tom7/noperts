@@ -42,6 +42,7 @@ public import Minimality.Type24Face
 public import Minimality.Type24Hole
 public import Minimality.Type24HoleReduce
 public import Minimality.Type29HoleReduce
+public import Minimality.Type29CellII
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV

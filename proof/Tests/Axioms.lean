@@ -54,6 +54,7 @@ import Minimality.Type29T1Pair
 import Minimality.Type29T1Close
 import Minimality.Type29T1Escape
 import Minimality.Type29T1Res
+import Minimality.Type29CellII
 import Minimality.SVCLex
 import Minimality.Type24A1Small
 import Minimality.Type24A2Band
@@ -1790,3 +1791,23 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.PL29.lexAny29_pair6
 #assert_standard_axioms Minimality.H29.hole29R4_reduce
 #assert_standard_axioms Minimality.H29.type29_rupert_or_hole'''''
+
+-- Task DO: Type 29 K1a ∩ G* ∩ Cell II refereed pieces
+#assert_standard_axioms Minimality.NF29.C35_pos
+#assert_standard_axioms Minimality.NF29.KW_neg
+#assert_standard_axioms Minimality.NF29.Pol_pos
+#assert_standard_axioms Minimality.NF29.c1_pos
+#assert_standard_axioms Minimality.NF29.v4_neg_of_KY_nonneg
+#assert_standard_axioms Minimality.NF29.w4_w5_pos
+#assert_standard_axioms Minimality.NF29.phi346_u1523_gt_one
+#assert_standard_axioms Minimality.NF29.cert_WI_Q8_false
+#assert_standard_axioms Minimality.NF29.cert_WI_Q7_false
+#assert_standard_axioms Minimality.NF29.cert_WIII_1523_false
+#assert_standard_axioms Minimality.NF29.cert_QII_FA_sub_false
+#assert_standard_axioms Minimality.NF29.cert_WI_CaseA_F012_FA_false
+#assert_standard_axioms Minimality.NF29.cert_WI_CaseA_W21_false
+#assert_standard_axioms Minimality.NF29.cert_WI_CaseA_W23_false
+#assert_standard_axioms Minimality.NF29.F015xF124_closes
+#assert_standard_axioms Minimality.NF29.not_M_neg_of_circuit
+#assert_standard_axioms Minimality.NF29.M_cone
+#print axioms Minimality.NF29.order_WI_cones
