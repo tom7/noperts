@@ -190,6 +190,8 @@ import Minimality.Type24SVCCells
 import Minimality.Type24T2b
 import Minimality.CornerEQCertOB1
 import Minimality.ThinBox
+import Minimality.ThinArc
+import Minimality.ThinCases
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2101,3 +2103,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.boxApplies_of_triangle
 #assert_standard_axioms Minimality.exists_diam_pair
 #assert_standard_axioms Minimality.inner_mem_of_diam
+#assert_standard_axioms Minimality.exists_dir_small_dots
+#assert_standard_axioms Minimality.exists_line_fit
+#assert_standard_axioms Minimality.boxApplies_of_needle
+#assert_standard_axioms Minimality.boxApplies_of_plate
+#assert_standard_axioms Minimality.boxApplies_of_thin
+#assert_standard_axioms Minimality.boxApplies_of_thin_fin
+#assert_standard_axioms Minimality.thinAlpha_seven
