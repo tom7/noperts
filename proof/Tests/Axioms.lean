@@ -2089,3 +2089,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.plateApplies_boxApplies
 #assert_standard_axioms Minimality.CornerEQ.isRupert_of_eq_cert_ob1
 #assert_standard_axioms Minimality.CornerEQ.splitRows_emb_iff
+#assert_standard_axioms Minimality.CornerEQ.isRupert_of_eq_cert_ob1_cases
+#assert_standard_axioms Minimality.CornerEQ.splitRow_eq_pairing
+#assert_standard_axioms Minimality.CornerEQ.not_splitRowsG_iff

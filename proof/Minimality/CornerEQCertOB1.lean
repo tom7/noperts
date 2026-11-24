@@ -104,6 +104,76 @@ theorem splitRows_emb_iff {k : ℕ} (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E
 
 end SplitRowsG
 
+section OB1Cases
+
+/-- **OB1-cone EQ certificate with case rows.**  `certMatrix L + μ - ∑ l, ν l • C l` positive
+semidefinite and nonzero with off-diagonal `μ ≥ 0`, zero diagonal, `ν ≥ 0`, and
+`0 ≤ ⟨C l, Eᵀ * E⟩`: every `E` with `det E > 0` and `(Eᵀ * E) a b ≤ 0` for `a ≠ b` gives a
+Rupert `E Y`. -/
+theorem isRupert_of_eq_cert_ob1_cases {Y : Finset (Fin 3 → ℝ)} {ι κ : Type*} [Fintype ι] [Fintype κ]
+    (L : ι → EQLeaf Y) (μ : Matrix (Fin 3) (Fin 3) ℝ) (hμ : ∀ a b, a ≠ b → 0 ≤ μ a b)
+    (hμd : ∀ a, μ a a = 0) (C : κ → Matrix (Fin 3) (Fin 3) ℝ) (ν : κ → ℝ) (hν : ∀ l, 0 ≤ ν l)
+    (hS : (certMatrix L + μ - ∑ l, ν l • C l).PosSemidef) (hS0 : certMatrix L + μ - ∑ l, ν l • C l ≠ 0)
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det) (hob : ∀ a b, a ≠ b → (Eᵀ * E) a b ≤ 0)
+    (hC : ∀ l, 0 ≤ ∑ a, ∑ b, C l a b * (Eᵀ * E) a b) :
+    IsRupert (Y.image (emb E)) := by
+  have hpos := pairing_pos_of_psd (certMatrix L + μ - ∑ l, ν l • C l) hS hS0 E hE
+  have hμ_nonpos : ∑ a, ∑ b, μ a b * (Eᵀ * E) a b ≤ 0 := by
+    refine Finset.sum_nonpos fun a _ => Finset.sum_nonpos fun b _ => ?_
+    by_cases hab : a = b
+    · subst hab; simp [hμd a]
+    · exact mul_nonpos_of_nonneg_of_nonpos (hμ a b hab) (hob a b hab)
+  have hC_nonneg : 0 ≤ ∑ a, ∑ b, (∑ l, ν l • C l) a b * (Eᵀ * E) a b := by
+    have hswap : ∑ a, ∑ b, (∑ l, ν l • C l) a b * (Eᵀ * E) a b =
+        ∑ l, ν l * ∑ a, ∑ b, C l a b * (Eᵀ * E) a b := by
+      simp only [Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, Finset.sum_mul]
+      calc ∑ a, ∑ b, ∑ l, ν l * C l a b * (Eᵀ * E) a b
+          = ∑ a, ∑ l, ∑ b, ν l * (C l a b * (Eᵀ * E) a b) := by
+              refine Finset.sum_congr rfl fun a _ => ?_
+              rw [Finset.sum_comm]
+              refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun b _ => by ring
+        _ = ∑ l, ∑ a, ∑ b, ν l * (C l a b * (Eᵀ * E) a b) := Finset.sum_comm
+        _ = ∑ l, ν l * ∑ a, ∑ b, C l a b * (Eᵀ * E) a b := by simp_rw [← Finset.mul_sum]
+    rw [hswap]
+    exact Finset.sum_nonneg fun l _ => mul_nonneg (hν l) (hC l)
+  have hS_pos : 0 < ∑ a, ∑ b, certMatrix L a b * (Eᵀ * E) a b := by
+    have hsplit : ∑ a, ∑ b, (certMatrix L + μ - ∑ l, ν l • C l) a b * (Eᵀ * E) a b =
+        (∑ a, ∑ b, certMatrix L a b * (Eᵀ * E) a b) +
+          (∑ a, ∑ b, μ a b * (Eᵀ * E) a b) -
+          (∑ a, ∑ b, (∑ l, ν l • C l) a b * (Eᵀ * E) a b) := by
+      simp only [Matrix.sub_apply, Matrix.add_apply, add_mul, sub_mul,
+        Finset.sum_add_distrib, Finset.sum_sub_distrib]
+    linarith
+  exact isRupert_of_neg_leaf L E hE hS_pos
+
+end OB1Cases
+
+section SplitRowMat
+
+/-- Symmetric `3 × 3` matrix representing a single row `(i, j)` of `SplitRowsG` in the
+Frobenius pairing `∑ p, ∑ q, M p q * G p q`. -/
+noncomputable def splitRowMat {k : ℕ} (y : ZMod k → Fin 3 → ℝ) (u : Fin 3 → ℝ) (a c i j : ZMod k)
+    (σ : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
+  fun p q => σ * (Matrix.of ![y (i + 1) - y i, y (a + 1) - y a, u]).det *
+    (u p * (y j - y c) q + u q * (y j - y c) p) / 2
+
+theorem splitRow_eq_pairing {k : ℕ} (G : Matrix (Fin 3) (Fin 3) ℝ) (hsym : ∀ p q, G p q = G q p)
+    (y : ZMod k → Fin 3 → ℝ) (u : Fin 3 → ℝ) (a c i j : ZMod k) (σ : ℝ) :
+    σ * (((G *ᵥ u) ⬝ᵥ (y j - y c)) * (Matrix.of ![y (i + 1) - y i, y (a + 1) - y a, u]).det) =
+      ∑ p, ∑ q, splitRowMat y u a c i j σ p q * G p q := by
+  simp only [splitRowMat, dotProduct, Matrix.mulVec, Fin.sum_univ_three]
+  rw [hsym 1 0, hsym 2 0, hsym 2 1]
+  ring
+
+theorem not_splitRowsG_iff {k : ℕ} (G : Matrix (Fin 3) (Fin 3) ℝ) (hsym : ∀ p q, G p q = G q p)
+    (y : ZMod k → Fin 3 → ℝ) (u : Fin 3 → ℝ) (a c : ZMod k) (σ : ℝ) :
+    ¬ SplitRowsG G y u a c σ ↔ ∃ i j : ZMod k, i ≠ a ∧ (j = i ∨ j = i + 1) ∧ j ≠ c ∧
+      0 ≤ ∑ p, ∑ q, (-splitRowMat y u a c i j σ) p q * G p q := by
+  simp only [SplitRowsG, not_forall, not_lt, exists_prop, Matrix.neg_apply, neg_mul,
+    Finset.sum_neg_distrib, ← splitRow_eq_pairing G hsym, neg_nonneg]
+
+end SplitRowMat
+
 end
 
 end Minimality.CornerEQ
