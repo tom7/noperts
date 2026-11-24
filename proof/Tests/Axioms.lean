@@ -197,6 +197,7 @@ import Minimality.Type24QuadNormal
 import Minimality.Type24MerC1
 import Minimality.Type24MerC2C5
 import Minimality.Type24MerC6C10
+import Minimality.Q4Leaf
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2153,3 +2154,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Mer.inner_cross_typeII
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_of_rimCert_cr
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_of_rimCert_slide
+#assert_standard_axioms Minimality.GenPlus.q4Any_isRupert
+#assert_standard_axioms Minimality.GenPlus.hole24_q4
