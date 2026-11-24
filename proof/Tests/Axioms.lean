@@ -189,6 +189,7 @@ import Minimality.Type24NxSign
 import Minimality.Type24SVCCells
 import Minimality.Type24T2b
 import Minimality.CornerEQCertOB1
+import Minimality.ThinBox
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2093,3 +2094,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CornerEQ.splitRow_eq_pairing
 #assert_standard_axioms Minimality.CornerEQ.not_splitRowsG_iff
 #assert_standard_axioms Minimality.CornerEQ.isRupert_of_splitRowsG_shape
+#assert_standard_axioms Minimality.not_collinear_of_interior_nonempty
+#assert_standard_axioms Minimality.hullComb_of_mem
+#assert_standard_axioms Minimality.hullComb_segment
+#assert_standard_axioms Minimality.posComb_of_bary_hull
+#assert_standard_axioms Minimality.boxApplies_of_triangle
+#assert_standard_axioms Minimality.exists_diam_pair
+#assert_standard_axioms Minimality.inner_mem_of_diam
