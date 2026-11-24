@@ -59,6 +59,7 @@ public import Minimality.Type29Bridge
 public import Minimality.Generic.PV.PVMain
 public import Minimality.Generic.PV.FaceCircle
 public import Minimality.BoxLemma
+public import Minimality.PlateRule
 public import Minimality.TripleTieObtuse
 public import Minimality.TripleTieAdjacent
 public import Minimality.ParDichotomy

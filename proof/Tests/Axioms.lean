@@ -2082,3 +2082,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.PL29.lexAny29_tri20
 #assert_standard_axioms Minimality.H29.hole29R6_reduce
 #assert_standard_axioms Minimality.H29.type29_rupert_or_hole'''''''
+#print axioms Minimality.isRupert_of_plate_triangle
+#print axioms Minimality.isRupert_of_plate_P0
