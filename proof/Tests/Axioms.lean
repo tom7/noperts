@@ -192,6 +192,7 @@ import Minimality.CornerEQCertOB1
 import Minimality.ThinBox
 import Minimality.ThinArc
 import Minimality.ThinCases
+import Minimality.ThinGram
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2110,3 +2111,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.boxApplies_of_thin
 #assert_standard_axioms Minimality.boxApplies_of_thin_fin
 #assert_standard_axioms Minimality.thinAlpha_seven
+#assert_standard_axioms Minimality.boxApplies_of_thin_gram
