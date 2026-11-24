@@ -194,6 +194,7 @@ import Minimality.ThinArc
 import Minimality.ThinCases
 import Minimality.ThinGram
 import Minimality.Type24QuadNormal
+import Minimality.Type24MerC1
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2114,3 +2115,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.thinAlpha_seven
 #assert_standard_axioms Minimality.boxApplies_of_thin_gram
 #assert_standard_axioms Minimality.T24.QN.lexAny_quadNormal
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C1
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C1'
+#assert_standard_axioms Minimality.T24.Mer.chord_middle_of_mer
