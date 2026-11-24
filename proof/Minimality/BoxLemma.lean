@@ -126,6 +126,26 @@ theorem isRupert_of_box_frame (V : Finset ℝ³)
     simp [frameMat, Matrix.mulVec, dotProduct, Fin.sum_univ_three, PiLp.inner_apply]; ring
   rw [h0, h1]; exact hbox v hv
 
+/-- The box lemma applies to `V`: all the data and hypotheses of `isRupert_of_box_frame` other than
+the interior hypothesis.  This is the strongest single closed-form exclusion (the plate rule and
+every glob rule are instances). -/
+def BoxApplies (V : Finset ℝ³) : Prop :=
+  ∃ (e n : ℝ³), ⟪e, e⟫ = 1 ∧ ⟪n, n⟫ = 1 ∧ ⟪e, n⟫ = 0 ∧
+    ∃ R₂ : Matrix (Fin 3) (Fin 3) ℝ, R₂ ∈ SO3 ∧
+    ∃ (a b μ w c₀ c₁ L H : ℝ), 0 < L ∧ 0 < H ∧ μ ≤ L ∧ w ≤ H ∧
+      (∀ v ∈ V, a ≤ ⟪e, v⟫ ∧ ⟪e, v⟫ ≤ a + μ ∧ b ≤ ⟪n, v⟫ ∧ ⟪n, v⟫ ≤ b + w) ∧
+      ∀ s t : ℝ, (s = 0 ∨ s = 1) → (t = 0 ∨ t = 1) →
+        PosComb V R₂ !₂[c₀ + s * L, c₁ + t * H]
+
+/-- If the box lemma applies to `V` (and `V` is solid), `V` is Rupert. -/
+theorem isRupert_of_boxApplies (V : Finset ℝ³)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (h : BoxApplies V) :
+    IsRupert V := by
+  obtain ⟨e, n, hee, hnn, hen, R₂, hR₂, a, b, μ, w, c₀, c₁, L, H, hL, hH, hμL, hwH, hbox,
+    hcorner⟩ := h
+  exact isRupert_of_box_frame V hsol e n hee hnn hen hR₂ a b μ w c₀ c₁ L H hL hH hμL hwH hbox
+    hcorner
+
 end Minimality
 
 end

@@ -100,8 +100,7 @@ theorem proj_frameMat (u u' v : ℝ³) :
 `⟪e,v⟫ ∈ [a,a+μ]`, `⟪n,v⟫ ∈ [b,b+w]`.  Outer view: orthonormal `u, u'`; three vertices project
 to `(x₀,y₀)`, `(x₀+D,y₀)` (base of length `D`) and `(x₃,y₀+h)` (apex at height `h`, foot
 `x₃ ∈ [x₀, x₀+D]`).  If `μ/D + w/h < 1`, a `μ × w` rectangle fits strictly inside the triangle. -/
-theorem isRupert_of_plate_triangle (V : Finset ℝ³)
-    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
+theorem boxApplies_of_plate_triangle (V : Finset ℝ³)
     (e n u u' : ℝ³) (hee : ⟪e, e⟫ = 1) (hnn : ⟪n, n⟫ = 1) (hen : ⟪e, n⟫ = 0)
     (huu : ⟪u, u⟫ = 1) (hu'u' : ⟪u', u'⟫ = 1) (huu' : ⟪u, u'⟫ = 0)
     (a b μ w D h x₀ y₀ x₃ : ℝ) (hμ : 0 < μ) (hw : 0 < w) (hD : 0 < D) (hh : 0 < h)
@@ -112,7 +111,7 @@ theorem isRupert_of_plate_triangle (V : Finset ℝ³)
     (hp₃ : ⟪u, p₃⟫ = x₃ ∧ ⟪u', p₃⟫ = y₀ + h)
     (hx₃ : x₀ ≤ x₃ ∧ x₃ ≤ x₀ + D)
     (hsmall : μ / D + w / h < 1) :
-    IsRupert V := by
+    BoxApplies V := by
   have hR₂ := frameMat_mem_SO3 u u' huu hu'u' huu'
   obtain ⟨ρ, hρ⟩ : ∃ ρ, ρ = μ / D := ⟨_, rfl⟩
   obtain ⟨r, hr⟩ : ∃ r, r = w / h := ⟨_, rfl⟩
@@ -129,8 +128,8 @@ theorem isRupert_of_plate_triangle (V : Finset ℝ³)
   let l₃ : ℝ² → ℝ := fun z => (z 1 - y₀) / h
   let l₂ : ℝ² → ℝ := fun z => (z 0 - x₀ - l₃ z * (x₃ - x₀)) / D
   let l₁ : ℝ² → ℝ := fun z => 1 - l₂ z - l₃ z
-  refine isRupert_of_box_frame V hsol e n hee hnn hen hR₂ a b μ w
-    (x₀ + (σ / 2 + r) * (θ * D) + D * σ / 4) (y₀ + σ * h / 2) μ w hμ hw le_rfl le_rfl hbox ?_
+  refine ⟨e, n, hee, hnn, hen, frameMat u u', hR₂, a, b, μ, w,
+    x₀ + (σ / 2 + r) * (θ * D) + D * σ / 4, y₀ + σ * h / 2, μ, w, hμ, hw, le_rfl, le_rfl, hbox, ?_⟩
   intro s t hs ht
   have hs' : 0 ≤ s ∧ s ≤ 1 := by rcases hs with rfl | rfl <;> norm_num
   have ht' : 0 ≤ t ∧ t ≤ 1 := by rcases ht with rfl | rfl <;> norm_num
@@ -164,6 +163,24 @@ theorem isRupert_of_plate_triangle (V : Finset ℝ³)
   · rw [e3]
     nlinarith [mul_nonneg ht'.1 hr0.le]
 
+/-- **Plate rule, triangle form** (see `boxApplies_of_plate_triangle`): `V` is Rupert. -/
+theorem isRupert_of_plate_triangle (V : Finset ℝ³)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
+    (e n u u' : ℝ³) (hee : ⟪e, e⟫ = 1) (hnn : ⟪n, n⟫ = 1) (hen : ⟪e, n⟫ = 0)
+    (huu : ⟪u, u⟫ = 1) (hu'u' : ⟪u', u'⟫ = 1) (huu' : ⟪u, u'⟫ = 0)
+    (a b μ w D h x₀ y₀ x₃ : ℝ) (hμ : 0 < μ) (hw : 0 < w) (hD : 0 < D) (hh : 0 < h)
+    (hbox : ∀ v ∈ V, a ≤ ⟪e, v⟫ ∧ ⟪e, v⟫ ≤ a + μ ∧ b ≤ ⟪n, v⟫ ∧ ⟪n, v⟫ ≤ b + w)
+    (p₁ p₂ p₃ : ℝ³) (h₁ : p₁ ∈ V) (h₂ : p₂ ∈ V) (h₃ : p₃ ∈ V)
+    (hp₁ : ⟪u, p₁⟫ = x₀ ∧ ⟪u', p₁⟫ = y₀)
+    (hp₂ : ⟪u, p₂⟫ = x₀ + D ∧ ⟪u', p₂⟫ = y₀)
+    (hp₃ : ⟪u, p₃⟫ = x₃ ∧ ⟪u', p₃⟫ = y₀ + h)
+    (hx₃ : x₀ ≤ x₃ ∧ x₃ ≤ x₀ + D)
+    (hsmall : μ / D + w / h < 1) :
+    IsRupert V :=
+  isRupert_of_boxApplies V hsol
+    (boxApplies_of_plate_triangle V e n u u' hee hnn hen huu hu'u' huu' a b μ w D h x₀ y₀ x₃ hμ hw
+      hD hh hbox p₁ p₂ p₃ h₁ h₂ h₃ hp₁ hp₂ hp₃ hx₃ hsmall)
+
 /-- The plate rule applies to `V`: all the data and hypotheses of `isRupert_of_plate_triangle`
 other than the interior hypothesis. -/
 def PlateApplies (V : Finset ℝ³) : Prop :=
@@ -176,6 +193,13 @@ def PlateApplies (V : Finset ℝ³) : Prop :=
         (⟪u, p₂⟫ = x₀ + D ∧ ⟪u', p₂⟫ = y₀) ∧
         (⟪u, p₃⟫ = x₃ ∧ ⟪u', p₃⟫ = y₀ + h) ∧
         (x₀ ≤ x₃ ∧ x₃ ≤ x₀ + D) ∧ μ / D + w / h < 1
+
+/-- The plate rule is an instance of the box lemma. -/
+theorem plateApplies_boxApplies {V : Finset ℝ³} (h : PlateApplies V) : BoxApplies V := by
+  obtain ⟨e, n, u, u', hee, hnn, hen, huu, hu'u', huu', a, b, μ, w, D, h, x₀, y₀, x₃, hμ, hw, hD,
+    hh, hbox, p₁, p₂, p₃, h₁, h₂, h₃, hp₁, hp₂, hp₃, hx₃, hsmall⟩ := h
+  exact boxApplies_of_plate_triangle V e n u u' hee hnn hen huu hu'u' huu' a b μ w D h x₀ y₀ x₃
+    hμ hw hD hh hbox p₁ p₂ p₃ h₁ h₂ h₃ hp₁ hp₂ hp₃ hx₃ hsmall
 
 /-- If the plate rule applies to `V` (and `V` is solid), `V` is Rupert. -/
 theorem isRupert_of_plateApplies (V : Finset ℝ³)

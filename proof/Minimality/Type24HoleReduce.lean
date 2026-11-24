@@ -1115,12 +1115,12 @@ theorem hole24Q45R8_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
 
 /-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24Q45R7`,
 `Hole24R7`, and the two star-closed `{1 < c3, 0 < mustar}` / `{1 < b3, 0 < mu23}` exclusions
-discharged via `Hole24Flags.1` (`¬ FacetCell24 fs`) and `Type24T2b`; and the plate rule
-(`isRupert_of_plateApplies`) excluded: `¬ PlateApplies (univ.image x)`. -/
+discharged via `Hole24Flags.1` (`¬ FacetCell24 fs`) and `Type24T2b`; and the box-lemma exclusion
+(covers the plate rule and every glob rule; `isRupert_of_boxApplies`): `¬ BoxApplies (univ.image x)`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Flags x fs ∧ (Hole24Q45R9 x F ∨ Hole24R9 x F) ∧
     ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x) ∧
-    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x) ∧ ¬ PlateApplies (Finset.univ.image x)
+    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x) ∧ ¬ BoxApplies (Finset.univ.image x)
 
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be ≤ 1, al ≤ 1}` (where `al, be` are the
 `par2546_quad` coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`),
@@ -1208,8 +1208,8 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
         Hole24 x ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
           (mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] hh) := by
   let fs := ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
-  by_cases hplate : PlateApplies (Finset.univ.image x)
-  · exact Or.inl (isRupert_of_plateApplies _ hsol hplate)
+  by_cases hplate : BoxApplies (Finset.univ.image x)
+  · exact Or.inl (isRupert_of_boxApplies _ hsol hplate)
   rcases type24_rupert_or_holeR fA fB fC fD fE fF fG fH fI hA hB hC hD hE hF hG hH hI with
     hRup | ⟨hh, hflags, hQ | hR⟩
   · exact Or.inl hRup

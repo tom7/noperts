@@ -401,7 +401,7 @@ vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional
 a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside `Minimality.T24.Hole24`
-(`Hole24Flags` together with `Hole24Q45Special ∨ Hole24R`, and `¬ PlateApplies` (plate rule, PlateRule.lean); outside `C̄ ∪ Σ_B` is closed by `isRupert_type24_outside_Cbar`
+(`Hole24Flags` together with `Hole24Q45Special ∨ Hole24R`, and `¬ BoxApplies` (box-lemma exclusion, covers the plate rule and every glob rule; BoxLemma.lean); outside `C̄ ∪ Σ_B` is closed by `isRupert_type24_outside_Cbar`
 and `Q45-Half` off `Q45Special` by `isRupert_q45_half`, while off-`OB1` outside `mpppz`/`mpppp`/`mpppm` is closed by
 `Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); and type 29 inside `Minimality.H29.Hole29` (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`, class K1 on `OB6` off `Z`, under
@@ -1121,8 +1121,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 24: `Minimality.T24.type24_rupert_or_hole` combines `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`
     -- (SAT + no facet cell, Root T0, Lemma NC, Adjacency, Lemma E2), `isRupert_type24_outside_Cbar` (closes outside
     -- `C̄ ∪ Σ_B`), and `Q45.isRupert_q45_half` (closes `Q45-Half` off `Q45Special`), leaving `Minimality.T24.Hole24`:
-    -- `Hole24Flags` together with `Hole24Q45Special ∨ Hole24R`, and the plate rule (`isRupert_of_plateApplies`,
-    -- PlateRule.lean) excluded: `¬ PlateApplies`.
+    -- `Hole24Flags` together with `Hole24Q45Special ∨ Hole24R`, and the box-lemma exclusion (covers the plate rule and every glob rule;
+    -- `isRupert_of_boxApplies`, BoxLemma.lean): `¬ BoxApplies`.
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {1, 2, 6} (by decide)
