@@ -5,6 +5,8 @@ public import Minimality.CornerEQCert
 public import Minimality.CornerKernel
 public import Minimality.RimCellView
 public import Minimality.SplitRows
+public import Minimality.GenericLeaves
+public import Minimality.SilS0XC
 
 /-!
 # Metric-free EQ certificates for the OB1 cone and shape-coordinate SplitRows
@@ -20,7 +22,7 @@ set_option autoImplicit false
 namespace Minimality.CornerEQ
 
 open Finset Matrix
-open Minimality.RimCell
+open Minimality.RimCell Minimality.H21 Minimality.Gen
 open scoped RealInnerProductSpace
 
 @[expose] public section
@@ -173,6 +175,49 @@ theorem not_splitRowsG_iff {k : ℕ} (G : Matrix (Fin 3) (Fin 3) ℝ) (hsym : �
     Finset.sum_neg_distrib, ← splitRow_eq_pairing G hsym, neg_nonneg]
 
 end SplitRowMat
+
+section SplitRowsGShape
+
+theorem isRupert_of_splitRowsG_shape {m n : ℕ} (S : Fin m → Finset (Fin n))
+    (hsep : ∀ i j : Fin n, j ≠ i → ∃ t : Fin m, i ∈ S t ∧ j ∉ S t)
+    (X : Fin n → Fin 3 → ℝ) (hX : Function.Injective X)
+    (nf : Fin m → Fin 3 → ℝ) (hf : Fin m → ℝ)
+    (hzero : ∀ t, ∀ i ∈ S t, nf t ⬝ᵥ X i = hf t) (hneg : ∀ t, ∀ i ∉ S t, nf t ⬝ᵥ X i < hf t)
+    {k : ℕ} [NeZero k] (hk : 3 ≤ k) (c : ZMod k → Fin n) (hc : Function.Injective c)
+    (pat : Fin m → Bool) (hcyc : S0xCycOK S c pat) (u v : Fin 3 → ℝ)
+    (hfac : ∀ t, (pat t = true → h21b_LP (nf t ⬝ᵥ u) (nf t ⬝ᵥ v)) ∧
+      (pat t = false → h21b_LP (-(nf t ⬝ᵥ u)) (-(nf t ⬝ᵥ v))))
+    (a cc : ZMod k) (σ : ℝ) (hca : cc ≠ a) (hca1 : cc ≠ a + 1)
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
+    (hrows : SplitRowsG (Eᵀ * E) (fun i => X (c i)) u a cc σ) :
+    IsRupert (Finset.univ.image (fun i => emb E (X i))) := by
+  have hU : IsUnit E := (Matrix.isUnit_iff_isUnit_det _).2 (isUnit_iff_ne_zero.2 hE.ne')
+  have hinv : E⁻¹ * E = 1 :=
+    Matrix.nonsing_inv_mul _ ((Matrix.isUnit_iff_isUnit_det _).1 hU)
+  let N : Fin m → ℝ³ := fun t => WithLp.toLp 2 (E⁻¹ᵀ *ᵥ nf t)
+  let f : Fin m → ℝ³ → ℝ := fun t z => ⟪N t, z⟫ - hf t
+  have hinner : ∀ t (w : Fin 3 → ℝ), ⟪N t, emb E w⟫ = nf t ⬝ᵥ w := by
+    intro t w
+    have h1 : ⟪N t, emb E w⟫ = (E *ᵥ w) ⬝ᵥ (E⁻¹ᵀ *ᵥ nf t) := by
+      simp [N, emb, PiLp.inner_apply, dotProduct]
+    rw [h1, Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, Matrix.mulVec_mulVec,
+      Matrix.transpose_transpose, hinv, Matrix.one_mulVec, dotProduct_comm]
+  let F : S0xFac m S (fun i => emb E (X i)) :=
+    { f := f
+      N := N
+      hN := fun t y z => by simp [f, inner_sub_right]
+      zero := fun t i hi => by simp only [f, hinner]; rw [hzero t i hi, sub_self]
+      neg := fun t i hi => by simp only [f, hinner]; exact sub_neg.2 (hneg t i hi) }
+  have hfac' : S0xFacOK F pat (emb E u) (emb E v) := by
+    intro t
+    simpa only [F, hinner] using hfac t
+  have hrows' : Minimality.Split.SplitRows (fun i => emb E (X (c i))) (emb E u) a cc σ :=
+    (splitRows_emb_iff E hE (fun i => X (c i)) u a cc σ).2 hrows
+  have hx' : Function.Injective (fun i => emb E (X i)) := (emb_injective hE.ne').comp hX
+  exact splitAny_isRupert F hx' hsep
+    ⟨k, inferInstance, c, pat, emb E u, emb E v, a, cc, σ, hk, hc, hcyc, hfac', hca, hca1, hrows'⟩
+
+end SplitRowsGShape
 
 end
 
