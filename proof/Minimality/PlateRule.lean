@@ -164,6 +164,28 @@ theorem isRupert_of_plate_triangle (V : Finset ℝ³)
   · rw [e3]
     nlinarith [mul_nonneg ht'.1 hr0.le]
 
+/-- The plate rule applies to `V`: all the data and hypotheses of `isRupert_of_plate_triangle`
+other than the interior hypothesis. -/
+def PlateApplies (V : Finset ℝ³) : Prop :=
+  ∃ (e n u u' : ℝ³), ⟪e, e⟫ = 1 ∧ ⟪n, n⟫ = 1 ∧ ⟪e, n⟫ = 0 ∧
+    ⟪u, u⟫ = 1 ∧ ⟪u', u'⟫ = 1 ∧ ⟪u, u'⟫ = 0 ∧
+    ∃ (a b μ w D h x₀ y₀ x₃ : ℝ), 0 < μ ∧ 0 < w ∧ 0 < D ∧ 0 < h ∧
+      (∀ v ∈ V, a ≤ ⟪e, v⟫ ∧ ⟪e, v⟫ ≤ a + μ ∧ b ≤ ⟪n, v⟫ ∧ ⟪n, v⟫ ≤ b + w) ∧
+      ∃ p₁ p₂ p₃ : ℝ³, p₁ ∈ V ∧ p₂ ∈ V ∧ p₃ ∈ V ∧
+        (⟪u, p₁⟫ = x₀ ∧ ⟪u', p₁⟫ = y₀) ∧
+        (⟪u, p₂⟫ = x₀ + D ∧ ⟪u', p₂⟫ = y₀) ∧
+        (⟪u, p₃⟫ = x₃ ∧ ⟪u', p₃⟫ = y₀ + h) ∧
+        (x₀ ≤ x₃ ∧ x₃ ≤ x₀ + D) ∧ μ / D + w / h < 1
+
+/-- If the plate rule applies to `V` (and `V` is solid), `V` is Rupert. -/
+theorem isRupert_of_plateApplies (V : Finset ℝ³)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (h : PlateApplies V) :
+    IsRupert V := by
+  obtain ⟨e, n, u, u', hee, hnn, hen, huu, hu'u', huu', a, b, μ, w, D, h, x₀, y₀, x₃, hμ, hw, hD,
+    hh, hbox, p₁, p₂, p₃, h₁, h₂, h₃, hp₁, hp₂, hp₃, hx₃, hsmall⟩ := h
+  exact isRupert_of_plate_triangle V hsol e n u u' hee hnn hen huu hu'u' huu' a b μ w D h x₀ y₀ x₃
+    hμ hw hD hh hbox p₁ p₂ p₃ h₁ h₂ h₃ hp₁ hp₂ hp₃ hx₃ hsmall
+
 /-- **Plate rule, P0 form.**  If the apex height satisfies `μ ≤ 2h` (as when `μ` is the minimum
 width and `h` is at least half of it), then `2w/μ + μ/D < 1` suffices.  (`μ ≤ 2h` is the only use of
 the minimal-width property.) -/
