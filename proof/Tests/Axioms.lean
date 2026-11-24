@@ -198,6 +198,7 @@ import Minimality.Type24MerC1
 import Minimality.Type24MerC2C5
 import Minimality.Type24MerC6C10
 import Minimality.Q4Leaf
+import Minimality.EdgeLeaf
 import Minimality.Type24HoleConfined
 
 /-!
@@ -2157,6 +2158,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_of_rimCert_slide
 #assert_standard_axioms Minimality.GenPlus.q4Any_isRupert
 #assert_standard_axioms Minimality.GenPlus.hole24_q4
+#assert_standard_axioms Minimality.GenPlus.robUni_of_edgeCone
+#assert_standard_axioms Minimality.GenPlus.exists_pos_of_overlap
+#assert_standard_axioms Minimality.GenPlus.edgeAny_isRupert
+#assert_standard_axioms Minimality.GenPlus.hole24_edge
+#assert_standard_axioms Minimality.GenPlus.edgeAny_sym
 #assert_standard_axioms Minimality.GenPlus.q4Any_sym
 #assert_standard_axioms Minimality.T24.hole24_leaves
 #assert_standard_axioms Minimality.T24.merHyps_off

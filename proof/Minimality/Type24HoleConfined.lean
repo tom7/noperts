@@ -521,17 +521,18 @@ def MerC10Hyp' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop
 /-! ### The confinement -/
 
 /-- The generic negated leaves carried by `Hole24`: `C̄`, no face-chord view, no lex cell, no split cell (from
-`Hole24R` or `Hole24Q45Special` at the bottom of the reduction chains), no box lemma and no Q4 cell. -/
+`Hole24R` or `Hole24Q45Special` at the bottom of the reduction chains), no box lemma, no Q4 cell and no edge-cone
+cell. -/
 theorem hole24_leaves {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ} {F : S0xFac 9 s0x_S24 x}
     (h : Hole24 x fs F) :
     CbarIn x ∧ ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F ∧ ¬ RCell.SplitAny24 F ∧
-      ¬ BoxApplies (univ.image x) ∧ ¬ GenPlus.Q4Any F := by
-  obtain ⟨_, hQR, _, _, hbox, hq4⟩ := h
+      ¬ BoxApplies (univ.image x) ∧ ¬ GenPlus.Q4Any F ∧ ¬ GenPlus.EdgeAny F := by
+  obtain ⟨_, hQR, _, _, hbox, hq4, hedge⟩ := h
   rcases hQR with hQ | hR
   · obtain ⟨hC, -, -, -, hA, hL, hS⟩ := hQ.1.1.1.1.1
-    exact ⟨hC, hA, hL, hS, hbox, hq4⟩
+    exact ⟨hC, hA, hL, hS, hbox, hq4, hedge⟩
   · obtain ⟨hC, -, -, hA, hL, hS⟩ := hole24R_of_hole24R1 hR.1.1.1.1.1.1.1.1
-    exact ⟨hC, hA, hL, hS, hbox, hq4⟩
+    exact ⟨hC, hA, hL, hS, hbox, hq4, hedge⟩
 
 /-- Off `AnyFaceChord` (any `S0xFac` of type 24, no region hypotheses), the hypotheses of every meridian /
 tie-view lemma `Mer.faceChordView_C*` fail. -/
