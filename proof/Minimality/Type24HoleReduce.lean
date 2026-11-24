@@ -48,6 +48,7 @@ public import Minimality.Type24Triple23
 public import Minimality.Type24Triple24
 public import Minimality.Type24Triple25
 public import Minimality.Type24Triple26
+public import Minimality.Q4Leaf
 
 @[expose] public section
 
@@ -1116,11 +1117,12 @@ theorem hole24Q45R8_reduce {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
 /-- The single named Type-24 open hole proposition for `Minimality.lean`, with `Hole24Q45R7`,
 `Hole24R7`, and the two star-closed `{1 < c3, 0 < mustar}` / `{1 < b3, 0 < mu23}` exclusions
 discharged via `Hole24Flags.1` (`¬ FacetCell24 fs`) and `Type24T2b`; and the box-lemma exclusion
-(covers the plate rule and every glob rule; `isRupert_of_boxApplies`): `¬ BoxApplies (univ.image x)`. -/
+(covers the plate rule and every glob rule; `isRupert_of_boxApplies`): `¬ BoxApplies (univ.image x)`; and the Q4
+closed-rim-cone leaf (`GenPlus.hole24_q4`, Q4Leaf.lean): `¬ GenPlus.Q4Any F`. -/
 def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Flags x fs ∧ (Hole24Q45R9 x F ∨ Hole24R9 x F) ∧
     ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x) ∧
-    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x) ∧ ¬ BoxApplies (Finset.univ.image x)
+    ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x) ∧ ¬ BoxApplies (Finset.univ.image x) ∧ ¬ GenPlus.Q4Any F
 
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be ≤ 1, al ≤ 1}` (where `al, be` are the
 `par2546_quad` coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`),
@@ -1179,8 +1181,8 @@ theorem hole24_b3_c3_st_lt_empty {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →
   · exact hnow ⟨hc3, hmu⟩
   · exact hnoe ⟨hb3, hmu23⟩
 
-/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R9`, `Hole24R9`, and the star-closed
-exclusions). -/
+/-- Main Type-24 reduction leaving `Hole24` (with `Hole24Q45R9`, `Hole24R9`, the star-closed
+exclusions, `¬ BoxApplies`, and `¬ GenPlus.Q4Any`). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (hsol : (interior (convexHull ℝ ((Finset.univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty)
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1211,8 +1213,11 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
   by_cases hplate : BoxApplies (Finset.univ.image x)
   · exact Or.inl (isRupert_of_boxApplies _ hsol hplate)
   rcases type24_rupert_or_holeR fA fB fC fD fE fF fG fH fI hA hB hC hD hE hF hG hH hI with
-    hRup | ⟨hh, hflags, hQ | hR⟩
+    hRup | ⟨hh, hflags, hQR⟩
   · exact Or.inl hRup
+  by_cases hq4 : GenPlus.Q4Any (mkFac24 fs hh)
+  · exact Or.inl (GenPlus.hole24_q4 (mkFac24 fs hh) (EdgeViewLink.inj_of_fac24 (mkFac24 fs hh)) hq4)
+  rcases hQR with hQ | hR
   · by_cases hnow : 1 < oblX6 x 3 ∧ 0 < A20.mustar x
     · rcases w63_closes_star_or_facetCell fs hh hnow.1 hnow.2 with hLex | hFac
       · exact Or.inl (Gen.lexAny_isRupert (mkFac24 fs hh) (EdgeViewLink.inj_of_fac24 (mkFac24 fs hh)) hLex)
@@ -1229,7 +1234,7 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
             · exact Or.inl hRup
             · rcases hole24Q45R8_reduce hQ8 with hRup | hQ9
               · exact Or.inl hRup
-              · exact Or.inr ⟨hh, hflags, Or.inl hQ9, hnow, hnoe, hplate⟩
+              · exact Or.inr ⟨hh, hflags, Or.inl hQ9, hnow, hnoe, hplate, hq4⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
     · by_cases hnow : 1 < oblX6 x 3 ∧ 0 < A20.mustar x
@@ -1249,6 +1254,6 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
               · exact Or.inl hRup
               · rcases hole24R8_reduce hR8 with hRup | hR9
                 · exact Or.inl hRup
-                · exact Or.inr ⟨hh, hflags, Or.inr hR9, hnow, hnoe, hplate⟩
+                · exact Or.inr ⟨hh, hflags, Or.inr hR9, hnow, hnoe, hplate, hq4⟩
 
 end Minimality.T24
