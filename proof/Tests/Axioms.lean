@@ -188,6 +188,7 @@ import Minimality.SVC
 import Minimality.Type24NxSign
 import Minimality.Type24SVCCells
 import Minimality.Type24T2b
+import Minimality.CornerEQCertOB1
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2086,3 +2087,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #print axioms Minimality.isRupert_of_plate_P0
 #print axioms Minimality.isRupert_of_boxApplies
 #print axioms Minimality.plateApplies_boxApplies
+#assert_standard_axioms Minimality.CornerEQ.isRupert_of_eq_cert_ob1
+#assert_standard_axioms Minimality.CornerEQ.splitRows_emb_iff
