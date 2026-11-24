@@ -196,6 +196,7 @@ import Minimality.ThinGram
 import Minimality.Type24QuadNormal
 import Minimality.Type24MerC1
 import Minimality.Type24MerC2C5
+import Minimality.Type24MerC6C10
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2129,3 +2130,26 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C5'
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_of_rimCert
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_mer4
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C6a
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C6b
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C7a
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C7a'
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C8
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C8'
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C6c
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C6d
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C6d'
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C7b
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C7b'
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C9
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C9'
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C10
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_C10'
+#assert_standard_axioms Minimality.T24.Mer.cross_normal_edge_eq
+#assert_standard_axioms Minimality.T24.Mer.inner_tieRay
+#assert_standard_axioms Minimality.T24.Mer.tieRay_236_04
+#assert_standard_axioms Minimality.T24.Mer.chord_middle_iff_facet_signs
+#assert_standard_axioms Minimality.T24.Mer.cross_ne_zero_of_facet_signs
+#assert_standard_axioms Minimality.T24.Mer.inner_cross_typeII
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_of_rimCert_cr
+#assert_standard_axioms Minimality.T24.Mer.faceChordView_of_rimCert_slide
