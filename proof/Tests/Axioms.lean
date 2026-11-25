@@ -218,6 +218,7 @@ import Minimality.Type24QuadCell
 import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
 import Minimality.Type24HoleAtlas
+import Minimality.Type24RayQuad
 import Minimality.Type24HoleStatement
 
 /-!
@@ -2117,6 +2118,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_c0125
 #assert_standard_axioms Minimality.T24.Atlas.hole24_m42
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_m42
+#assert_standard_axioms Minimality.T24.RQ.up_signs
+#assert_standard_axioms Minimality.T24.RQ.lexAny_rqFace
+#assert_standard_axioms Minimality.T24.RQ.lexAny_of_rqFace
+#assert_standard_axioms Minimality.T24.RQ.lexAny_of_rqFaceTwin
+#assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqFace
+#assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqFaceTwin
 #assert_standard_axioms Minimality.T24.Atlas.hole24_u32
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_u32
 #assert_standard_axioms Minimality.T24.Atlas.hole24_R1
