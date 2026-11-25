@@ -222,6 +222,8 @@ import Minimality.Type24HoleAtlas
 import Minimality.Type24RayQuad
 import Minimality.Type24SplitFamily
 import Minimality.Type24EPWall
+import Minimality.SplitEdgePlane
+import Minimality.Type24HoleMin
 import Minimality.Type24Apex
 import Minimality.Type24HoleStatement
 
@@ -2217,3 +2219,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Apex.freeAt_insert_of_cone_mono
 #assert_standard_axioms Minimality.T24.Apex.freeAt_insert_apex
 #assert_standard_axioms Minimality.T24.Apex.isRupert_insert_apex
+#assert_standard_axioms Minimality.Split.EV.epRows_of_splitRows
+#assert_standard_axioms Minimality.Split.EV.split_core_ep
+#assert_standard_axioms Minimality.Gen.splitAny_edgePlaneAny
+#assert_standard_axioms Minimality.T24.holeLeaf_iff_min
