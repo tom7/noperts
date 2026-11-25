@@ -335,7 +335,7 @@ circles: at every view `u` off the facet circles, the silhouette's depths are no
 split rows; on the facet circles there is no face-chord view. -/
 def HoleChamber (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ ¬ Z0.FacetCellF F ∧ ¬ Gen.AnyFaceChord F ∧ ¬ OpenCellRob F ∧ ¬ OpenCellSplit F ∧
-    ¬ BoxApplies (univ.image x)
+    ¬ BoxApplies (univ.image x) ∧ ¬ Gen.EdgePlaneAny x
 
 /-- [PROVED] `HoleLeaf → HoleChamber`. -/
 theorem holeChamber_of_holeLeaf {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : HoleLeaf x F) :
@@ -531,6 +531,6 @@ theorem holeLeaf_fat {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : HoleLea
     (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty)
     (n : ℝ³) (hnn : ⟪n, n⟫ = 1) (w : ℝ) (hpair : ∀ i j, |⟪n, x i - x j⟫| ≤ w) (i j : Fin 7) :
     thinAlpha 7 * ‖x i - x j‖ ≤ w :=
-  le_of_not_gt fun hlt => h.2.2.2.2.2 (boxApplies_of_thin_fin x hsol n hnn w hpair i j hlt)
+  le_of_not_gt fun hlt => h.2.2.2.2.2.1 (boxApplies_of_thin_fin x hsol n hnn w hpair i j hlt)
 
 end Minimality.T24.Stmt

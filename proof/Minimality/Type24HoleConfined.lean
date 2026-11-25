@@ -550,11 +550,11 @@ theorem c10'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) :
 /-! ### The confinement -/
 
 /-- The generic negated leaves carried by `HoleLeaf`: `C̄`, no face-chord view, no lex cell, no split cell and no
-box lemma. (`¬ Q4Any`, `¬ EdgeAny` follow from `¬ LexAny` by `GenRev.lexAny_of_q4Any` / `lexAny_of_edgeAny`.) -/
+box lemma (`HoleLeaf` also carries `¬ Gen.EdgePlaneAny x`, see `holeLeaf_not_edgePlaneAny`). (`¬ Q4Any`, `¬ EdgeAny` follow from `¬ LexAny` by `GenRev.lexAny_of_q4Any` / `lexAny_of_edgeAny`.) -/
 theorem holeLeaf_leaves {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : HoleLeaf x F) :
     CbarIn x ∧ ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F ∧ ¬ RCell.SplitAny24 F ∧
       ¬ BoxApplies (univ.image x) :=
-  ⟨h.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩
+  ⟨h.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2.1⟩
 
 /-- The generic negated leaves carried by `Hole24` (`holeLeaf_leaves`). -/
 theorem hole24_leaves {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) :

@@ -2101,6 +2101,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Atlas.hole24_noWeakChord'
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_noWeakChord'
 #assert_standard_axioms Minimality.T24.Atlas.hole_inputs
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_not_edgePlaneAny
+#assert_standard_axioms Minimality.T24.Atlas.hole24_not_edgePlaneAny
+#assert_standard_axioms Minimality.Gen.edgePlaneAny_isRupert
+#assert_standard_axioms Minimality.Split.freeAt_of_edgePlane
+#assert_standard_axioms Minimality.Split.freeAt_of_edgePlane_vertex
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_inputs
 #assert_standard_axioms Minimality.T24.Atlas.hole24_noFaceChordView
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_noFaceChordView

@@ -401,7 +401,7 @@ vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional
 a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside `Minimality.T24.Hole24`
-(`HoleLeaf`: inside `C̄` with no facet cell, face-chord view, lex cell, split cell, and `¬ BoxApplies`; together with the proved-lemma flags `Hole24Lemmas`, `Resid24` and the region tag `Region24`, i.e. `Q45Special'` or the twelve `R1` pieces; the box exclusion (box-lemma exclusion, covers the plate rule and every glob rule; BoxLemma.lean); outside `C̄` is closed by `isRupert_type24_outside_Cbar'` (window triangle or Lemma CV; no Σ_B)
+(`HoleLeaf`: inside `C̄` with no facet cell, face-chord view, lex cell, split cell, no Edge-Plane view `Gen.EdgePlaneAny`, and `¬ BoxApplies`; together with the proved-lemma flags `Hole24Lemmas`, `Resid24` and the region tag `Region24`, i.e. `Q45Special'` or the twelve `R1` pieces; the box exclusion (box-lemma exclusion, covers the plate rule and every glob rule; BoxLemma.lean); outside `C̄` is closed by `isRupert_type24_outside_Cbar'` (window triangle or Lemma CV; no Σ_B)
 and `Q45-Half` off `Q45Special` by `isRupert_q45_half`, while off-`OB1` outside `mpppz`/`mpppp`/`mpppm` is closed by
 `Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); and type 29 inside `Minimality.H29.Hole29` (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`, class K1 on `OB6` off `Z`, under
@@ -1121,7 +1121,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 24: `Minimality.T24.type24_rupert_or_hole` combines `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`
     -- (SAT + no facet cell, Root T0, Lemma NC, Adjacency, Lemma E2), `isRupert_type24_outside_Cbar'` (closes outside
     -- `C̄`), and `Q45.isRupert_q45_half` (closes `Q45-Half` off `Q45Special`), leaving `Minimality.T24.Hole24`:
-    -- `HoleLeaf` (inside `C̄`, no facet cell, face-chord view, lex cell, split cell, and the box-lemma exclusion
+    -- `HoleLeaf` (inside `C̄`, no facet cell, face-chord view, lex cell, split cell, Edge-Plane view (`Gen.EdgePlaneAny`,
+    -- Edge-Plane Lemma), and the box-lemma exclusion
     -- `¬ BoxApplies`, which covers the plate rule and every glob rule; `isRupert_of_boxApplies`, BoxLemma.lean),
     -- the four proved-lemma flags `Hole24Lemmas`, `Resid24`, and the region tag `Region24` (`Q45Special'` or the twelve
     -- `R1` pieces).

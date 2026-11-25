@@ -3,6 +3,7 @@ module
 public import Minimality.FaceChordFac
 public import Minimality.LexCell
 public import Minimality.SplitLeaf
+public import Minimality.EdgePlane
 
 @[expose] public section
 
@@ -59,5 +60,34 @@ theorem splitAny_isRupert {m n : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n 
   rcases h with ⟨k, hne, c, pat, u, v, a, cc, σ, hk, hc, hcyc, hfac, hca, hca1, hrows⟩
   have := hne
   exact split_tope_rupert F hx (noBetween_of_fac F hsep) v hc hk hcyc hfac a cc σ hca hca1 hrows
+
+/-- **Generic Edge-Plane view** (`k ≥ 3`) of a point family `x : Fin n → ℝ³` (any solid `univ.image x`; no
+facet data is needed, the rim `lab` is a strict rim of the view `w` with every other point hidden in a projected
+triangle).  The data are those of the Edge-Plane Lemma (`Minimality.Split.freeAt_of_edgePlane`): a rim edge
+`a` with `⟪x (lab (a+1)) - x (lab a), w⟫ ≠ 0` and parameters `(s, α, μ)` such that every row (every other edge `i`
+at each of its two ends `j`) is positive.  Such a view is first-order free.
+
+Census (FREECERT 11-25, FACENORM24.md): at points of the hidden-cap cone with no Lex / Split / face-chord leaf,
+free views exist and ALL are Edge-Plane views.  Every `SplitRows` view tested was also an Edge-Plane view (1624 of
+1624 on a C-covered sample).  CONJECTURE (not proved): `SplitAny F → EdgePlaneAny x`, i.e. this leaf subsumes
+`SplitAny`. -/
+def EdgePlaneAny {n : ℕ} (x : Fin n → ℝ³) : Prop :=
+  ∃ (k : ℕ) (_ : NeZero k) (lab : ZMod k → Fin n) (w : ℝ³) (a : ZMod k) (s α μ : ℝ),
+    3 ≤ k ∧ Function.Injective lab ∧ StrictRimN x w lab ∧ HiddenInTriangles x w lab ∧
+    ⟪x (lab (a + 1)) - x (lab a), w⟫ ≠ 0 ∧
+    ∀ i j : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < (α + μ * ⟪x (lab j) - x (lab a), w⟫) *
+          Split.det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w +
+        s * Split.edgePlaneSpin (fun i => x (lab i)) w a i j
+
+/-- Every generic Edge-Plane view yields `IsRupert` (`FreeAt.isRupert`; `w ≠ 0` follows from the edge condition
+`hD`).  No injectivity of `x`, no facets. -/
+theorem edgePlaneAny_isRupert {n : ℕ} {x : Fin n → ℝ³} (h : EdgePlaneAny x) :
+    IsRupert (univ.image x) := by
+  rcases h with ⟨k, hne, lab, w, a, s, α, μ, hk, hinj, hrim, hhid, hD, hrows⟩
+  have hw : w ≠ 0 := by
+    rintro rfl
+    simp at hD
+  exact FreeAt.isRupert hw (freeAt_of_edgePlane hk x w lab hinj hrim hhid a s α μ hD hrows)
 
 end Minimality.Gen

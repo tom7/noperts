@@ -167,6 +167,15 @@ theorem hole24_noWeakChord' (h : Hole24 x F) {t : Fin 9} (ht : t ≠ 3) :
 theorem holeLeaf_inputs (h : HoleLeaf x F) : CbarIn x ∧ Function.Injective x ∧ ¬ Gen.LexAny F :=
   ⟨h.1, Minimality.H24.SAT.inj_of_fac F, holeLeaf_not_lexAny h⟩
 
+/-- On `HoleLeaf` there is no Edge-Plane view (`Gen.EdgePlaneAny`, first-order free by the Edge-Plane Lemma).
+Census (FREECERT 11-25): every free view found at hole-candidate points was an Edge-Plane view.  CONJECTURE (not
+proved): `Gen.SplitAny F → Gen.EdgePlaneAny x` (1624 of 1624 `SplitRows` views tested on a C-covered sample were
+also Edge-Plane views), so `¬ EdgePlaneAny` would subsume `¬ SplitAny`. -/
+theorem holeLeaf_not_edgePlaneAny (h : HoleLeaf x F) : ¬ Gen.EdgePlaneAny x := h.2.2.2.2.2.2
+
+/-- `Hole24` form of `holeLeaf_not_edgePlaneAny`. -/
+theorem hole24_not_edgePlaneAny (h : Hole24 x F) : ¬ Gen.EdgePlaneAny x := holeLeaf_not_edgePlaneAny h.1
+
 theorem hole_inputs (h : Hole24 x F) : CbarIn x ∧ Function.Injective x ∧ ¬ Gen.LexAny F :=
   holeLeaf_inputs h.1
 

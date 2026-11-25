@@ -398,16 +398,18 @@ theorem e23_closes_star_or_facetCell {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³
 the same set of points, `hole24_iff_core`).  The flags (`Hole24Flags`, including `¬ FacetCell24`), the `Q45` special
 locus or the shrunken residual `Hole24R1`, and the box-lemma exclusion `¬ BoxApplies (univ.image x)`. -/
 def Hole24Core (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
-  Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R1 x F) ∧ ¬ BoxApplies (Finset.univ.image x)
+  Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R1 x F) ∧ ¬ BoxApplies (Finset.univ.image x) ∧
+    ¬ Gen.EdgePlaneAny x
 
 /-! ### `Hole24` as mathematics: generic leaves, proved lemmas, bookkeeping -/
 
 /-- **`HoleLeaf`**: the generic part of the hole.  Inside `C̄`; no facet cell (one facet front, all its edge
 neighbours back); no face-chord view on any facet; no lexicographic closed cell (`k ≥ 4`); no split cell
-(`k ≥ 3`); the box lemma does not apply.  Stated for an arbitrary facet witness `F` (no `fs`). -/
+(`k ≥ 3`); the box lemma does not apply; no Edge-Plane view (`Gen.EdgePlaneAny`, a first-order free view by the
+Edge-Plane Lemma).  Stated for an arbitrary facet witness `F` (no `fs`). -/
 def HoleLeaf (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   CbarIn x ∧ ¬ FacetCellF F ∧ ¬ Gen.AnyFaceChord F ∧ ¬ Gen.LexAny F ∧ ¬ Gen.SplitAny F ∧
-    ¬ BoxApplies (Finset.univ.image x)
+    ¬ BoxApplies (Finset.univ.image x) ∧ ¬ Gen.EdgePlaneAny x
 
 /-- The four flags that are proved lemmas of the reduction (Root T0, Lemma NC, Adjacency, Lemma E2 face pair). -/
 def Hole24Lemmas (x : Fin 7 → ℝ³) : Prop := ¬ T024 x ∧ ¬ NC24 x ∧ ¬ Adj24 x ∧ ¬ Face.Face24 x
@@ -512,16 +514,16 @@ theorem hole24_iff_core {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] 
     Hole24 x (mkFac24 fs hh) ↔ Hole24Core x fs (mkFac24 fs hh) := by
   have e := facetCellF_iff_facetCell24 fs hh
   constructor
-  · rintro ⟨⟨hC, hfc, hA, hL, hS, hB⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, hreg⟩
-    refine ⟨⟨fun hf => hfc (e.2 hf), hT, hNC, hAdj, hFace⟩, ?_, hB⟩
+  · rintro ⟨⟨hC, hfc, hA, hL, hS, hB, hEP⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, hreg⟩
+    refine ⟨⟨fun hf => hfc (e.2 hf), hT, hNC, hAdj, hFace⟩, ?_, hB, hEP⟩
     rcases hreg with ⟨hQ, hS'⟩ | ⟨hQ, hreg⟩
     · exact Or.inl ⟨hC, hRs, hQ, hS', hA, hL, hS⟩
     · exact Or.inr (hole24R1_iff.2 ⟨⟨hC, hRs, hQ, hA, hL, hS⟩, hreg⟩)
-  · rintro ⟨⟨hfc, hT, hNC, hAdj, hFace⟩, hQR, hB⟩
+  · rintro ⟨⟨hfc, hT, hNC, hAdj, hFace⟩, hQR, hB, hEP⟩
     rcases hQR with ⟨hC, hRs, hQ, hS', hA, hL, hS⟩ | hR1
-    · exact ⟨⟨hC, fun hf => hfc (e.1 hf), hA, hL, hS, hB⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, Or.inl ⟨hQ, hS'⟩⟩
+    · exact ⟨⟨hC, fun hf => hfc (e.1 hf), hA, hL, hS, hB, hEP⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, Or.inl ⟨hQ, hS'⟩⟩
     · obtain ⟨⟨hC, hRs, hQ, hA, hL, hS⟩, hreg⟩ := hole24R1_iff.1 hR1
-      exact ⟨⟨hC, fun hf => hfc (e.1 hf), hA, hL, hS, hB⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, Or.inr ⟨hQ, hreg⟩⟩
+      exact ⟨⟨hC, fun hf => hfc (e.1 hf), hA, hL, hS, hB, hEP⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, Or.inr ⟨hQ, hreg⟩⟩
 
 /-- Not `LexAny` on the generic part of the hole. -/
 theorem holeLeaf_not_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : HoleLeaf x F) : ¬ RCell.LexAny F :=
@@ -611,13 +613,15 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
   let fs := ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
   by_cases hplate : BoxApplies (Finset.univ.image x)
   · exact Or.inl (isRupert_of_boxApplies _ hsol hplate)
+  by_cases hEP : Gen.EdgePlaneAny x
+  · exact Or.inl (Gen.edgePlaneAny_isRupert hEP)
   rcases type24_rupert_or_holeR fA fB fC fD fE fF fG fH fI hA hB hC hD hE hF hG hH hI with
     hRup | ⟨hh, hflags, hQR⟩
   · exact Or.inl hRup
   rcases hQR with hQ | hR
-  · exact Or.inr ⟨hh, hole24_iff_core.2 ⟨hflags, Or.inl hQ, hplate⟩⟩
+  · exact Or.inr ⟨hh, hole24_iff_core.2 ⟨hflags, Or.inl hQ, hplate, hEP⟩⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
-    · exact Or.inr ⟨hh, hole24_iff_core.2 ⟨hflags, Or.inr hR', hplate⟩⟩
+    · exact Or.inr ⟨hh, hole24_iff_core.2 ⟨hflags, Or.inr hR', hplate, hEP⟩⟩
 
 end Minimality.T24
