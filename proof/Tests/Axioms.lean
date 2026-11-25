@@ -219,6 +219,7 @@ import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
 import Minimality.Type24HoleAtlas
 import Minimality.Type24RayQuad
+import Minimality.Type24Apex
 import Minimality.Type24HoleStatement
 
 /-!
@@ -2179,3 +2180,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Stmt.open24_of_quant
 #assert_standard_axioms Minimality.T24.Stmt.openCube_of_nearRight
 #assert_standard_axioms Minimality.T24.Stmt.holeLeaf_fat
+#assert_standard_axioms Minimality.T24.Apex.det3_apex
+#assert_standard_axioms Minimality.T24.Apex.cone_mono
+#assert_standard_axioms Minimality.T24.Apex.freeAt_insert_of_cone_mono
+#assert_standard_axioms Minimality.T24.Apex.freeAt_insert_apex
+#assert_standard_axioms Minimality.T24.Apex.isRupert_insert_apex
