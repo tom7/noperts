@@ -209,6 +209,7 @@ import Minimality.Type24Sectors236
 import Minimality.Type24J54
 import Minimality.Type24C0125
 import Minimality.Type24LexRc
+import Minimality.RimOrderInst
 import Minimality.Type24QuadCell
 import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
@@ -2011,3 +2012,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EM.lexAny_R5m
 #assert_standard_axioms Minimality.T24.EM.lexAny_R5p
 #assert_standard_axioms Minimality.T24.EM.isRupert_of_lexAny
+#assert_standard_axioms Minimality.RimOrderInst.robUni_of_monoCorners_viaNoAlt
+#assert_standard_axioms Minimality.RimOrderInst.robUni_of_edgeCone_viaNoAlt
+#assert_standard_axioms Minimality.RimOrderInst.robUni_of_splitRows4_viaNoAlt
+#assert_standard_axioms Minimality.RimOrderInst.robUniLex_adjTie_viaNoAlt
+#assert_standard_axioms Minimality.RimOrderInst.robUniLex_four_of_mixed_viaNoAlt
