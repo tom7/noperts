@@ -205,6 +205,7 @@ import Minimality.Type24HiddenCone
 import Minimality.RimOrder
 import Minimality.GenRev24
 import Minimality.Type24Pieces236
+import Minimality.Type24Piece2
 import Minimality.Type24Sectors236
 import Minimality.Type24J54
 import Minimality.Type24C0125
@@ -1976,6 +1977,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EG.regionIII
 #assert_standard_axioms Minimality.T24.EG.isRupert_pieceI
 #assert_standard_axioms Minimality.T24.EG.isRupert_pieceIII
+#assert_standard_axioms Minimality.T24.ES.lexAny_pieceII
+#assert_standard_axioms Minimality.T24.ES.isRupert_pieceII
+#assert_standard_axioms Minimality.T24.ES.regionII
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_pieceII
+#assert_standard_axioms Minimality.T24.Atlas.hole24_pieceII
 #assert_standard_axioms Minimality.T24.EI.cycA
 #assert_standard_axioms Minimality.T24.EI.cycB
 #assert_standard_axioms Minimality.T24.EI.injA

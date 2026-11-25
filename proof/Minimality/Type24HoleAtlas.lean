@@ -13,6 +13,7 @@ public import Minimality.RimOrder
 public import Minimality.RimOrderInst
 public import Minimality.Type24M42
 public import Minimality.Type24Pieces236
+public import Minimality.Type24Piece2
 public import Minimality.Type24NoWallDA
 public import Minimality.Type24Sectors236
 public import Minimality.Type24J54
@@ -220,6 +221,19 @@ theorem holeLeaf_pieceIII (h : HoleLeaf x F) (h2 : 0 < ⟪F.N 2, x 3 - x 6⟫) :
 theorem hole24_pieceIII (h : Hole24 x F) (h2 : 0 < ⟪F.N 2, x 3 - x 6⟫) :
     ¬ TwoEndCrit x T24.EG.cIII (T24.EG.viewM27 x) (T24.EG.endIIIR x) :=
   holeLeaf_pieceIII h.1 h2
+
+/-- **Circle 236, piece II** (5-rim `0 4 6 2 5`; contrapositive of `ES.isRupert_pieceII`, Hydrogen Task ES): in the
+hole, with `Delta24 > 0` and the break `brk24 ≠ 0`, the A5 row fails at both ends of the piece. -/
+theorem holeLeaf_pieceII (h : HoleLeaf x F) (hD : 0 < Delta24 x) (hb : T24.ES.brk24 x ≠ 0) :
+    ¬ (⟪x (T24.ES.apexV x), T24.ES.endIIL x⟫ < ⟪x 0, T24.ES.endIIL x⟫ ∨
+      ⟪x (T24.ES.apexV x), T24.ES.endIIR x⟫ < ⟪x 0, T24.ES.endIIR x⟫) := fun hrow =>
+  holeLeaf_not_lexAny h (T24.ES.lexAny_pieceII F h.1 hD hb hrow)
+
+/-- `hole24_pieceII` from `holeLeaf_pieceII`. -/
+theorem hole24_pieceII (h : Hole24 x F) (hD : 0 < Delta24 x) (hb : T24.ES.brk24 x ≠ 0) :
+    ¬ (⟪x (T24.ES.apexV x), T24.ES.endIIL x⟫ < ⟪x 0, T24.ES.endIIL x⟫ ∨
+      ⟪x (T24.ES.apexV x), T24.ES.endIIR x⟫ < ⟪x 0, T24.ES.endIIR x⟫) :=
+  holeLeaf_pieceII h.1 hD hb
 
 /-- **Piece I at the wall end** (contrapositive of `EP.isRupert_pieceI_wall`).  Under `OB1` and `b_3 ≤ 1`, on the
 hole no diagonal form of `0 5 2 6` is positive at `endIL` or at `viewM74`: `D_B` holds at both ends.  (`OB1` and
