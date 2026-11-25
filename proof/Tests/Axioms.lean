@@ -200,6 +200,7 @@ import Minimality.Type24MerC6C10
 import Minimality.Q4Leaf
 import Minimality.EdgeLeaf
 import Minimality.MonoCorner
+import Minimality.WeakChord
 import Minimality.Type24HoleConfined
 
 /-!
@@ -2165,6 +2166,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.GenPlus.hole24_edge
 #assert_standard_axioms Minimality.GenPlus.edgeAny_sym
 #assert_standard_axioms Minimality.GenPlus.robUni_of_monoCorners
+#assert_standard_axioms Minimality.GenPlus.lexAny_or_splitAny24_of_weakChordArc
+#assert_standard_axioms Minimality.T24.hole24_noWeakChord
 #assert_standard_axioms Minimality.GenPlus.q4Any_sym
 #assert_standard_axioms Minimality.T24.hole24_leaves
 #assert_standard_axioms Minimality.T24.merHyps_off

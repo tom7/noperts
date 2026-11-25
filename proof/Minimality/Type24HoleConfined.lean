@@ -3,6 +3,7 @@ module
 public import Minimality.Type24HoleReduce
 public import Minimality.Type24QuadNormal
 public import Minimality.Type24MerC6C10
+public import Minimality.WeakChord
 
 /-!
 # Type 24: confinement of `Hole24` by the proved region lemmas
@@ -533,6 +534,16 @@ theorem hole24_leaves {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] �
     exact ⟨hC, hA, hL, hS, hbox, hq4, hedge⟩
   · obtain ⟨hC, -, -, hA, hL, hS⟩ := hole24R_of_hole24R1 hR.1.1.1.1.1.1.1.1
     exact ⟨hC, hA, hL, hS, hbox, hq4, hedge⟩
+
+/-- On `Hole24` no triangle facet carries a weak chord arc (`GenPlus.lexAny_or_splitAny24_of_weakChordArc`, Carbon
+A59 Theorem 1.1): the face-chord fields `hcyc`, `hin`, `hmid` with `RobUni` / `DepthSepAt` / injective depths fail. -/
+theorem hole24_noWeakChord {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24 x fs F) {t : Fin 9} (ht : t ≠ 3) : ¬ GenPlus.WeakChordArc F t := by
+  intro hw
+  obtain ⟨-, -, hL, hS, -⟩ := hole24_leaves h
+  rcases GenPlus.lexAny_or_splitAny24_of_weakChordArc F ht hw with h1 | h1
+  · exact hL h1
+  · exact hS h1
 
 /-- Off `AnyFaceChord` (any `S0xFac` of type 24, no region hypotheses), the hypotheses of every meridian /
 tie-view lemma `Mer.faceChordView_C*` fail. -/
