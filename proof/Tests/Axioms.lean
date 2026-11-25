@@ -208,6 +208,7 @@ import Minimality.Type24Pieces236
 import Minimality.Type24Sectors236
 import Minimality.Type24J54
 import Minimality.Type24C0125
+import Minimality.Type24LexRc
 import Minimality.Type24QuadCell
 import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
@@ -1994,3 +1995,19 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EL.regionC
 #assert_standard_axioms Minimality.T24.EL.isRupert_c0125_robUni
 #assert_standard_axioms Minimality.T24.EL.isRupert_c0125
+#assert_standard_axioms Minimality.T24.EM.orderR1
+#assert_standard_axioms Minimality.T24.EM.orderR2
+#assert_standard_axioms Minimality.T24.EM.orderR3
+#assert_standard_axioms Minimality.T24.EM.orderR4_of_lt
+#assert_standard_axioms Minimality.T24.EM.orderR4_pos_iff
+#assert_standard_axioms Minimality.T24.EM.orderR4_neg_iff
+#assert_standard_axioms Minimality.T24.EM.orderR5m
+#assert_standard_axioms Minimality.T24.EM.orderR5p
+#assert_standard_axioms Minimality.T24.EM.lexAny_R1
+#assert_standard_axioms Minimality.T24.EM.lexAny_R2
+#assert_standard_axioms Minimality.T24.EM.lexAny_R3
+#assert_standard_axioms Minimality.T24.EM.lexAny_R4p
+#assert_standard_axioms Minimality.T24.EM.lexAny_R4m
+#assert_standard_axioms Minimality.T24.EM.lexAny_R5m
+#assert_standard_axioms Minimality.T24.EM.lexAny_R5p
+#assert_standard_axioms Minimality.T24.EM.isRupert_of_lexAny
