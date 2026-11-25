@@ -203,6 +203,7 @@ import Minimality.MonoCorner
 import Minimality.WeakChord
 import Minimality.SplitRim4
 import Minimality.AdjTie4
+import Minimality.SplitApex
 import Minimality.Type24HoleConfined
 import Minimality.Type24HiddenCone
 
@@ -2173,6 +2174,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.hole24_noWeakChord
 #assert_standard_axioms Minimality.GenPlus.robUni_of_splitRows4
 #assert_standard_axioms Minimality.GenPlus.robUniLex_adjTie
+#assert_standard_axioms Minimality.Split.splitRows_of_unimodal_separated
 #assert_standard_axioms Minimality.GenPlus.q4Any_sym
 #assert_standard_axioms Minimality.T24.hole24_leaves
 #assert_standard_axioms Minimality.T24.merHyps_off
