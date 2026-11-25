@@ -220,6 +220,8 @@ import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
 import Minimality.Type24HoleAtlas
 import Minimality.Type24RayQuad
+import Minimality.Type24SplitFamily
+import Minimality.Type24EPWall
 import Minimality.Type24Apex
 import Minimality.Type24HoleStatement
 
@@ -2146,6 +2148,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.RQ.lexAny_of_rqWallTwin
 #assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqWall
 #assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqWallTwin
+#assert_standard_axioms Minimality.T24.SF.splitFamily_splitAny
+#assert_standard_axioms Minimality.T24.SF.splitFamilyTwin_splitAny
+#assert_standard_axioms Minimality.T24.SF.holeLeaf_not_splitFamily
+#assert_standard_axioms Minimality.T24.SF.holeLeaf_not_splitFamilyTwin
+#assert_standard_axioms Minimality.T24.EU.rows_of_vertex
+#assert_standard_axioms Minimality.T24.EU.freeAt_of_epWall
+#assert_standard_axioms Minimality.T24.EU.isRupert_of_epWall
+#assert_standard_axioms Minimality.T24.EU.edgePlaneAny_of_epWall
+#assert_standard_axioms Minimality.T24.EU.holeLeaf_not_epWall
 #assert_standard_axioms Minimality.T24.Atlas.hole24_u32
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_u32
 #assert_standard_axioms Minimality.T24.Atlas.hole24_R1
