@@ -12,7 +12,7 @@ public import Minimality.Type24Z0
 # EO: the meridian view `M_42 = N_4 × N_2` of the type-24 hidden-cap cover
 
 Formalization of `EOSpec.lean` in module form (Hydrogen Task EO):
-- `viewM42`, `FacetCellF`
+- `viewM42` (`FacetCellF` moved to Type24Z0.lean)
 - Cells `M1, M2, M3`, cycles `cycM1..cycM3`, injectivity `injM1..injM3`
 - `(i)` `m42_n4`, `m42_n2`, `m42_signs`, `m42_not_both`
 - `(ii)` `m42_cellLe_M1..M3`, `tilt_pp`, `tilt_mp`, `tilt_pm`, `m42_cellAt_M1..M3`
@@ -25,20 +25,15 @@ open Finset
 
 namespace Minimality.T24.EO
 
-open Minimality Minimality.H21 Minimality.T24.SAT Minimality.RimCell Minimality.T24.HC
+open Minimality Minimality.H21 Minimality.T24.SAT Minimality.RimCell Minimality.T24.HC Minimality.T24.Z0
 
 variable {x : Fin 7 → ℝ³}
 
-/-! ## The view and the facet-cell hypothesis -/
+/-! ## The view -/
 
 /-- `M_42 = N_4 x N_2 = (ω4 ω5 - 1, ω5 + 1, ω4 + 1)` in corner coordinates. -/
 noncomputable def viewM42 (x : Fin 7 → ℝ³) : ℝ³ :=
   capView x (omega4 x * omega5 x - 1) (omega5 x + 1) (omega4 x + 1)
-
-/-- `FacetCell24` in terms of the facet data `F` (some facet `t` faces a view `u` while every facet across an
-edge of `t` faces away from it); `Minimality.T24.Z0.nb` is the neighbour table of `FacetCell24`. -/
-def FacetCellF (F : S0xFac 9 s0x_S24 x) : Prop :=
-  ∃ t : Fin 9, ∃ u : ℝ³, 0 < ⟪F.N t, u⟫ ∧ ∀ s ∈ Minimality.T24.Z0.nb t, ⟪F.N s, u⟫ < 0
 
 /-! ## Cells and cycles -/
 
@@ -440,17 +435,5 @@ theorem isRupert_m42 (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x) (hD : 0 < Delta24 
         push Not at h
         exact h2 ⟨h6.le, h⟩
       exact isRupert_m42_M1 F hC hD h6 h8 (hM1 h6 h8)
-
-/-- Remark: `FacetCellF (mkFac24 fs h)` is equivalent to `FacetCell24 fs`. -/
-theorem facetCellF_iff_facetCell24 (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
-    (h : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0)) :
-    FacetCellF (Minimality.T24.mkFac24 fs h) ↔ Minimality.T24.Z0.FacetCell24 fs := by
-  have hN : ∀ s u, ⟪(Minimality.T24.mkFac24 fs h).N s, u⟫ = (fs s).linear u := by
-    intro s u
-    have h1 := (Minimality.T24.mkFac24 fs h).hN s u 0
-    have h2 : (fs s).linear u = fs s u - fs s 0 := by simpa using (fs s).linear_apply_vsub u 0
-    rw [sub_zero] at h1
-    rw [h2]; exact h1.symm
-  simp only [FacetCellF, Minimality.T24.Z0.FacetCell24, hN]
 
 end Minimality.T24.EO

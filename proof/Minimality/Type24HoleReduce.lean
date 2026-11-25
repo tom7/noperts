@@ -394,28 +394,150 @@ theorem e23_closes_star_or_facetCell {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³
     · exact Or.inr (facetCell24_of_n235 fs hh hu)
   · exact Or.inl (A20.e23_closes_star (mkFac24 fs hh) hb3 hmu hE)
 
-/-- The single named Type-24 open hole proposition for `Minimality.lean` (GENREV24-HOLE item 2, pass 2):
-the flags (`Hole24Flags`, including `¬ FacetCell24`), the `Q45` special locus or the shrunken residual
-`Hole24R1`, and the box-lemma exclusion `¬ BoxApplies (univ.image x)` (covers the plate rule and every glob
-rule). All other former conjuncts (star / wall / tie loci, SVC cells, pair and triple closures, `¬ Q4Any`,
-`¬ EdgeAny`) follow from `¬ LexAny` and `Hole24Flags.1`. -/
-def Hole24 (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
+/-- The old form of the hole, with the facet functionals `fs` (kept for the reduction proofs; `Hole24` below is
+the same set of points, `hole24_iff_core`).  The flags (`Hole24Flags`, including `¬ FacetCell24`), the `Q45` special
+locus or the shrunken residual `Hole24R1`, and the box-lemma exclusion `¬ BoxApplies (univ.image x)`. -/
+def Hole24Core (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) (F : S0xFac 9 s0x_S24 x) : Prop :=
   Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R1 x F) ∧ ¬ BoxApplies (Finset.univ.image x)
 
+/-! ### `Hole24` as mathematics: generic leaves, proved lemmas, bookkeeping -/
+
+/-- **`HoleLeaf`**: the generic part of the hole.  Inside `C̄`; no facet cell (one facet front, all its edge
+neighbours back); no face-chord view on any facet; no lexicographic closed cell (`k ≥ 4`); no split cell
+(`k ≥ 3`); the box lemma does not apply.  Stated for an arbitrary facet witness `F` (no `fs`). -/
+def HoleLeaf (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  CbarIn x ∧ ¬ FacetCellF F ∧ ¬ Gen.AnyFaceChord F ∧ ¬ Gen.LexAny F ∧ ¬ Gen.SplitAny F ∧
+    ¬ BoxApplies (Finset.univ.image x)
+
+/-- The four flags that are proved lemmas of the reduction (Root T0, Lemma NC, Adjacency, Lemma E2 face pair). -/
+def Hole24Lemmas (x : Fin 7 → ℝ³) : Prop := ¬ T024 x ∧ ¬ NC24 x ∧ ¬ Adj24 x ∧ ¬ Face.Face24 x
+
+/-- Region part of `OffWallRes` (without its `Hole24R` conjunct). -/
+def OffWallEx (x : Fin 7 → ℝ³) : Prop := Reg.OffWall x
+
+/-- Region part of `A1Res`. -/
+def A1Ex (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  H24K.SAT.OB1 x ∧ Reg.A1 x F ∧
+    ¬ ((if 0 < det24 x then A1.A1TieSmall x F else A1.A1TieSmall (fun i => -x i) (A1.facNeg F)) ∧
+       (if 0 < det24 x then A1.A1E25Small x F else A1.A1E25Small (fun i => -x i) (A1.facNeg F)) ∧
+       A1.A1Z54Sample x F)
+
+/-- Region part of `A2Res`. -/
+def A2Ex (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  H24K.SAT.OB1 x ∧ Reg.A2 x F ∧ ¬ A2BandHyp x F
+
+/-- Region part of `WallA45Res`. -/
+def WallA45Ex (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  H24K.SAT.OB1 x ∧ oblX0 x 5 = 1 ∧ oblX0 x 4 = 1 ∧ ¬ A2BandHyp x F
+
+/-- Region part of `WallA5BRes`. -/
+def WallA5BEx (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  H24K.SAT.OB1 x ∧ oblX0 x 5 = 1 ∧ oblX0 x 4 < 1 ∧
+    ¬ (oblX6 x 3 < 1 ∧ ⟪F.N 8, A10.ustar x⟫ < 0 ∧
+       max 0 ⟪x 6 - x 1, A10.ustar x⟫ < ⟪x 5 - x 1, A10.ustar x⟫) ∧
+    ¬ A2BandHyp x F
+
+/-- Region part of `BE0416Res`. -/
+def BE0416Ex (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  H24K.SAT.OB1 x ∧ Reg.BE0416 x F ∧
+    ¬ UstarW26Hyp x F ∧ ¬ UstarHyp x F ∧ ¬ Ustar2Hyp x F ∧ ¬ E0416Hyp x F
+
+/-- Region part of `BRestRes`. -/
+def BRestEx (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  H24K.SAT.OB1 x ∧ Reg.BRest x F ∧ ¬ UstarW26Hyp x F ∧ ¬ UstarHyp x F ∧ ¬ Ustar2Hyp x F
+
+/-- Region part of `CCSelfRes`. -/
+def CCSelfEx (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  H24K.SAT.OB1 x ∧ Reg.CC x F ∧ oblX0 x 4 < 1 ∧ F.f 6 (x 4) ≤ F.f 6 (x 0)
+
+/-- **The `R1` region tag**: the twelve residual region predicates of `Hole24R1` with the common `Hole24R`
+conjunct factored out (the last four are `pi24` images). -/
+def R1Region (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  OffWallEx x ∨ A1Ex x F ∨ A2Ex x F ∨ WallA45Ex x F ∨ WallA5BEx x F ∨ BE0416Ex x F ∨ BRestEx x F ∨
+  CCSelfEx x F ∨ A1Ex (x ∘ Sym.pi24) (Sym.sym24 F) ∨ A2Ex (x ∘ Sym.pi24) (Sym.sym24 F) ∨
+  WallA5BEx (x ∘ Sym.pi24) (Sym.sym24 F) ∨ BRestEx (x ∘ Sym.pi24) (Sym.sym24 F)
+
+/-- `Hole24R1 = Hole24R ∧ R1Region`. -/
+theorem hole24R1_iff {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} :
+    Hole24R1 x F ↔ Hole24R x F ∧ R1Region x F := by
+  constructor
+  · intro h
+    refine ⟨hole24R_of_hole24R1 h, ?_⟩
+    rcases h with h | h | h | h | h | h | h | h | h | h | h | h
+    · exact Or.inl h.2
+    · exact Or.inr (Or.inl h.2)
+    · exact Or.inr (Or.inr (Or.inl h.2))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h.2)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.2))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.2)))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.2))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.2)))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.2))))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.2)))))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
+        (Or.inl h.2))))))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
+        (Or.inr h.2))))))))))
+  · rintro ⟨hR, h⟩
+    have hR' := Reg.hole24R_comp_pi24 hR
+    rcases h with h | h | h | h | h | h | h | h | h | h | h | h
+    · exact Or.inl ⟨hR, h⟩
+    · exact Or.inr (Or.inl ⟨hR, h⟩)
+    · exact Or.inr (Or.inr (Or.inl ⟨hR, h⟩))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, h⟩)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, h⟩))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, h⟩)))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, h⟩))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR, h⟩)))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR', h⟩))))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hR', h⟩)))))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
+        (Or.inl ⟨hR', h⟩))))))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
+        (Or.inr ⟨hR', h⟩))))))))))
+
+/-- **The region tag of `Hole24`**: either the `Q45` special locus inside `Q45-Half`, or outside `Q45-Half` one of
+the twelve `R1` region pieces.  Pure bookkeeping of which proved lemmas were already used. -/
+def Region24 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  (Q45HalfPred F ∧ Q45.Q45Special' F) ∨ (¬ Q45HalfPred F ∧ R1Region x F)
+
+/-- **The type-24 hole** (the single open proposition of type 24 in `Minimality.lean`): the generic leaf
+negations `HoleLeaf`, the four proved-lemma flags, `Resid24`, and the region tag `Region24`. -/
+def Hole24 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  HoleLeaf x F ∧ Hole24Lemmas x ∧ Resid24 x ∧ Region24 x F
+
+/-- `Hole24` is the old `Hole24Core` at the facet data `mkFac24 fs hh`. -/
+theorem hole24_iff_core {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
+    {hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0)} :
+    Hole24 x (mkFac24 fs hh) ↔ Hole24Core x fs (mkFac24 fs hh) := by
+  have e := facetCellF_iff_facetCell24 fs hh
+  constructor
+  · rintro ⟨⟨hC, hfc, hA, hL, hS, hB⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, hreg⟩
+    refine ⟨⟨fun hf => hfc (e.2 hf), hT, hNC, hAdj, hFace⟩, ?_, hB⟩
+    rcases hreg with ⟨hQ, hS'⟩ | ⟨hQ, hreg⟩
+    · exact Or.inl ⟨hC, hRs, hQ, hS', hA, hL, hS⟩
+    · exact Or.inr (hole24R1_iff.2 ⟨⟨hC, hRs, hQ, hA, hL, hS⟩, hreg⟩)
+  · rintro ⟨⟨hfc, hT, hNC, hAdj, hFace⟩, hQR, hB⟩
+    rcases hQR with ⟨hC, hRs, hQ, hS', hA, hL, hS⟩ | hR1
+    · exact ⟨⟨hC, fun hf => hfc (e.1 hf), hA, hL, hS, hB⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, Or.inl ⟨hQ, hS'⟩⟩
+    · obtain ⟨⟨hC, hRs, hQ, hA, hL, hS⟩, hreg⟩ := hole24R1_iff.1 hR1
+      exact ⟨⟨hC, fun hf => hfc (e.1 hf), hA, hL, hS, hB⟩, ⟨hT, hNC, hAdj, hFace⟩, hRs, Or.inr ⟨hQ, hreg⟩⟩
+
+/-- Not `LexAny` on the generic part of the hole. -/
+theorem holeLeaf_not_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : HoleLeaf x F) : ¬ RCell.LexAny F :=
+  h.2.2.2.1
+
 /-- Not `LexAny` on the hole. -/
-theorem hole24_not_lexAny {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24 x fs F) : ¬ RCell.LexAny F := by
-  rcases h.2.1 with hQ | hR
-  · exact hQ.2.2.2.2.2.1
-  · exact (hole24R_of_hole24R1 hR).2.2.2.2.1
+theorem hole24_not_lexAny {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24 x F) : ¬ RCell.LexAny F := h.1.2.2.2.1
 
 /-- On `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be ≤ 1, al ≤ 1}` (where `al, be` are the
 `par2546_quad` coefficients `s = be, t = al` in `x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0)`),
-any point of `Hole24 x fs (mkFac24 fs hh)` lies in the wall `{mustar = 0}` / `{mu23 = 0}` tie loci
+any point of `Hole24 x (mkFac24 fs hh)` lies in the wall `{mustar = 0}` / `{mu23 = 0}` tie loci
 on `{0, 2, 3, 4, 5, 6}` (the star loci are closed by `Type24T2b` + `¬ FacetCell24 fs`). -/
 theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
-    (hH : Hole24 x fs (mkFac24 fs hh))
+    (hH : Hole24 x (mkFac24 fs hh))
     (hb3 : 1 < oblX2 x 3) (hc3 : 1 < oblX6 x 3)
     {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
@@ -425,7 +547,7 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
     (A20.mu23 x = 0 ∧ ∃ i ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)),
       ∃ j ∈ ({0, 2, 3, 4, 5, 6} : Finset (Fin 7)), i ≠ j ∧ ⟪x i, x 3 - x 2⟫ = ⟪x j, x 3 - x 2⟫) := by
   have hL := hole24_not_lexAny hH
-  have hflags := hH.1
+  have hflags := (hole24_iff_core.1 hH).1
   have hnow : ¬ (1 < oblX6 x 3 ∧ 0 < A20.mustar x) := fun h =>
     (w63_closes_star_or_facetCell fs hh h.1 h.2).elim hL hflags.1
   have hnoe : ¬ (1 < oblX2 x 3 ∧ 0 < A20.mu23 x) := fun h =>
@@ -445,21 +567,22 @@ theorem hole24_b3_c3_st_le_ties {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →�
     · exact False.elim (hnoe ⟨hb3, hpos⟩)
 
 /-- The strict region `{1 < oblX2 x 3, 1 < oblX6 x 3, 0 ≤ al, 0 ≤ be, be < 1, al < 1}` is
-**empty** in `Hole24 x fs (mkFac24 fs hh)`. -/
+**empty** in `Hole24 x (mkFac24 fs hh)`. -/
 theorem hole24_b3_c3_st_lt_empty {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ}
     (hh : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
-    (hH : Hole24 x fs (mkFac24 fs hh))
+    (hH : Hole24 x (mkFac24 fs hh))
     (hb3 : 1 < oblX2 x 3) (hc3 : 1 < oblX6 x 3)
     {al be : ℝ} (halp : 0 ≤ al) (hbep : 0 ≤ be)
     (hq : x 3 - x 0 = al • (x 5 - x 0) + be • (x 4 - x 0))
     (hbe : be < 1) (hal : al < 1) : False := by
   have hL := hole24_not_lexAny hH
-  have hflags := hH.1
+  have hflags := (hole24_iff_core.1 hH).1
   rcases A20.mustar_or_mu23_pos fs hh hflags.1 halp hbep hq hbe hal with hmu | hmu23
   · exact (w63_closes_star_or_facetCell fs hh hc3 hmu).elim hL hflags.1
   · exact (e23_closes_star_or_facetCell fs hh hb3 hmu23).elim hL hflags.1
 
-/-- Main Type-24 reduction leaving `Hole24` (flags, `Q45` special locus or `Hole24R1`, `¬ BoxApplies`). -/
+/-- Main Type-24 reduction: every type-24 solid is Rupert or lies in `Hole24` (for some facet witness
+`mkFac24 fs hh`). -/
 theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     (hsol : (interior (convexHull ℝ ((Finset.univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty)
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -484,8 +607,7 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     IsRupert (univ.image x) ∨
       ∃ hh : ∀ t i, (i ∈ s0x_S24 t → ![fA, fB, fF, fG, fE, fC, fH, fD, fI] t (x i) = 0) ∧
         (i ∉ s0x_S24 t → ![fA, fB, fF, fG, fE, fC, fH, fD, fI] t (x i) < 0),
-        Hole24 x ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
-          (mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] hh) := by
+        Hole24 x (mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] hh) := by
   let fs := ![fA, fB, fF, fG, fE, fC, fH, fD, fI]
   by_cases hplate : BoxApplies (Finset.univ.image x)
   · exact Or.inl (isRupert_of_boxApplies _ hsol hplate)
@@ -493,9 +615,9 @@ theorem type24_rupert_or_hole {x : Fin 7 → ℝ³}
     hRup | ⟨hh, hflags, hQR⟩
   · exact Or.inl hRup
   rcases hQR with hQ | hR
-  · exact Or.inr ⟨hh, hflags, Or.inl hQ, hplate⟩
+  · exact Or.inr ⟨hh, hole24_iff_core.2 ⟨hflags, Or.inl hQ, hplate⟩⟩
   · rcases hole24R_reduce hR with hRup | hR'
     · exact Or.inl hRup
-    · exact Or.inr ⟨hh, hflags, Or.inr hR', hplate⟩
+    · exact Or.inr ⟨hh, hole24_iff_core.2 ⟨hflags, Or.inr hR', hplate⟩⟩
 
 end Minimality.T24

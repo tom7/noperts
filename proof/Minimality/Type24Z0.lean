@@ -147,6 +147,11 @@ theorem rupert_of_quadG (F : S0xFac 9 s0x_S24 x) {a : ℝ³} (ha : CellAt F {3} 
 def FacetCell24 (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
   ∃ t : Fin 9, ∃ u : ℝ³, 0 < (fs t).linear u ∧ ∀ s ∈ nb t, (fs s).linear u < 0
 
+/-- `FacetCell24` in terms of the facet data `F` (some facet `t` faces a view `u` while every facet across an
+edge of `t` faces away from it); `nb` is the neighbour table of `FacetCell24`. -/
+def FacetCellF (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ t : Fin 9, ∃ u : ℝ³, 0 < ⟪F.N t, u⟫ ∧ ∀ s ∈ nb t, ⟪F.N s, u⟫ < 0
+
 /-- **A facet cell closes the case** (Lemma Z0 at the solid's own apex). -/
 theorem isRupert_of_facetCell24 (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
     (h : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0))
@@ -198,5 +203,17 @@ theorem rupert_or_resid24_noFacetCell {x : Fin 7 → ℝ³} (fA fB fC fD fE fF f
   · rcases rupert_or_resid24 fA fB fC fD fE fF fG fH fI hA hB hC hD hE hF hG hH hI with h | h
     · exact Or.inl h
     · exact Or.inr ⟨h, hz⟩
+
+/-- Remark: `FacetCellF (mkFac24 fs h)` is equivalent to `FacetCell24 fs`. -/
+theorem facetCellF_iff_facetCell24 (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
+    (h : ∀ t i, (i ∈ s0x_S24 t → fs t (x i) = 0) ∧ (i ∉ s0x_S24 t → fs t (x i) < 0)) :
+    FacetCellF (Minimality.T24.mkFac24 fs h) ↔ FacetCell24 fs := by
+  have hN : ∀ s u, ⟪(Minimality.T24.mkFac24 fs h).N s, u⟫ = (fs s).linear u := by
+    intro s u
+    have h1 := (Minimality.T24.mkFac24 fs h).hN s u 0
+    have h2 : (fs s).linear u = fs s u - fs s 0 := by simpa using (fs s).linear_apply_vsub u 0
+    rw [sub_zero] at h1
+    rw [h2]; exact h1.symm
+  simp only [FacetCellF, FacetCell24, hN]
 
 end Minimality.T24.Z0

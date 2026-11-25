@@ -549,29 +549,33 @@ theorem c10'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) :
 
 /-! ### The confinement -/
 
-/-- The generic negated leaves carried by `Hole24`: `C̄`, no face-chord view, no lex cell, no split cell (from
-`Hole24R1` or `Hole24Q45Special`) and no box lemma. (`¬ Q4Any`, `¬ EdgeAny` follow from `¬ LexAny` by
-`GenRev.lexAny_of_q4Any` / `lexAny_of_edgeAny`.) -/
-theorem hole24_leaves {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24 x fs F) :
+/-- The generic negated leaves carried by `HoleLeaf`: `C̄`, no face-chord view, no lex cell, no split cell and no
+box lemma. (`¬ Q4Any`, `¬ EdgeAny` follow from `¬ LexAny` by `GenRev.lexAny_of_q4Any` / `lexAny_of_edgeAny`.) -/
+theorem holeLeaf_leaves {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : HoleLeaf x F) :
     CbarIn x ∧ ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F ∧ ¬ RCell.SplitAny24 F ∧
-      ¬ BoxApplies (univ.image x) := by
-  obtain ⟨_, hQR, hbox⟩ := h
-  rcases hQR with hQ | hR
-  · obtain ⟨hC, -, -, -, hA, hL, hS⟩ := hQ
-    exact ⟨hC, hA, hL, hS, hbox⟩
-  · obtain ⟨hC, -, -, hA, hL, hS⟩ := hole24R_of_hole24R1 hR
-    exact ⟨hC, hA, hL, hS, hbox⟩
+      ¬ BoxApplies (univ.image x) :=
+  ⟨h.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩
 
-/-- On `Hole24` no triangle facet carries a weak chord arc (`GenPlus.lexAny_or_splitAny24_of_weakChordArc`, Carbon
+/-- The generic negated leaves carried by `Hole24` (`holeLeaf_leaves`). -/
+theorem hole24_leaves {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) :
+    CbarIn x ∧ ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F ∧ ¬ RCell.SplitAny24 F ∧
+      ¬ BoxApplies (univ.image x) :=
+  holeLeaf_leaves h.1
+
+/-- On `HoleLeaf` no triangle facet carries a weak chord arc (`GenPlus.lexAny_or_splitAny24_of_weakChordArc`, Carbon
 A59 Theorem 1.1): the face-chord fields `hcyc`, `hin`, `hmid` with `RobUni` / `DepthSepAt` / injective depths fail. -/
-theorem hole24_noWeakChord {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24 x fs F) {t : Fin 9} (ht : t ≠ 3) : ¬ GenPlus.WeakChordArc F t := by
+theorem holeLeaf_noWeakChord {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : HoleLeaf x F) {t : Fin 9} (ht : t ≠ 3) : ¬ GenPlus.WeakChordArc F t := by
   intro hw
-  obtain ⟨-, -, hL, hS, -⟩ := hole24_leaves h
+  obtain ⟨-, -, hL, hS, -⟩ := holeLeaf_leaves h
   rcases GenPlus.lexAny_or_splitAny24_of_weakChordArc F ht hw with h1 | h1
   · exact hL h1
   · exact hS h1
+
+/-- On `Hole24` no triangle facet carries a weak chord arc (`holeLeaf_noWeakChord`). -/
+theorem hole24_noWeakChord {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24 x F) {t : Fin 9} (ht : t ≠ 3) : ¬ GenPlus.WeakChordArc F t :=
+  holeLeaf_noWeakChord h.1 ht
 
 /-- Off `AnyFaceChord` (any `S0xFac` of type 24, no region hypotheses), the hypotheses of every meridian /
 tie-view lemma `Mer.faceChordView_C*` fail. -/
@@ -639,10 +643,10 @@ theorem merHyps_off {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hA : ¬ RCel
       obtain ⟨h0, h1, h2, h3, h4⟩ := (c10'_iff F u).1 h
       exact hA (Reg.anyFaceChord_of_sym F ⟨_, Mer.faceChordView_C10 (Sym.sym24 F) u h0 h1 h2 h3 h4⟩)⟩
 
-/-- **Confinement of `Hole24`.**  On `Hole24` (inside `C̄`), the hypotheses of `QN.lexAny_quadNormal` and of
+/-- **Confinement of `HoleLeaf`.**  On `HoleLeaf` (inside `C̄`), the hypotheses of `QN.lexAny_quadNormal` and of
 every meridian / tie-view lemma `Mer.faceChordView_C*` fail (for C9, C9', C10, C10' at every view `u`). -/
-theorem hole24_confined {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ} {F : S0xFac 9 s0x_S24 x}
-    (h : Hole24 x fs F) :
+theorem holeLeaf_confined {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : HoleLeaf x F) :
     CbarIn x ∧ ¬ QNHyp F ∧
     ¬ MerC1Hyp F ∧
     ¬ MerC1Hyp' F ∧
@@ -669,7 +673,38 @@ theorem hole24_confined {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] 
     (∀ u, ¬ MerC9Hyp' F u) ∧
     (∀ u, ¬ MerC10Hyp F u) ∧
     (∀ u, ¬ MerC10Hyp' F u) := by
-  obtain ⟨hC, hA, hL, -⟩ := hole24_leaves h
+  obtain ⟨hC, hA, hL, -⟩ := holeLeaf_leaves h
   exact ⟨hC, fun ⟨hob, hnB, hnC, hTE⟩ => hL (QN.lexAny_quadNormal F hC hob hnB hnC hTE), merHyps_off hA⟩
+
+/-- Confinement of `Hole24` (`holeLeaf_confined`). -/
+theorem hole24_confined {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
+    (h : Hole24 x F) :
+    CbarIn x ∧ ¬ QNHyp F ∧
+    ¬ MerC1Hyp F ∧
+    ¬ MerC1Hyp' F ∧
+    ¬ MerC2Hyp F ∧
+    ¬ MerC2Hyp' F ∧
+    ¬ MerC3Hyp F ∧
+    ¬ MerC3Hyp' F ∧
+    ¬ MerC4Hyp F ∧
+    ¬ MerC4Hyp' F ∧
+    ¬ MerC5Hyp F ∧
+    ¬ MerC5Hyp' F ∧
+    ¬ MerC6aHyp F ∧
+    ¬ MerC6bHyp F ∧
+    ¬ MerC7aHyp F ∧
+    ¬ MerC7aHyp' F ∧
+    ¬ MerC8Hyp F ∧
+    ¬ MerC8Hyp' F ∧
+    ¬ MerC6cHyp F ∧
+    ¬ MerC6dHyp F ∧
+    ¬ MerC6dHyp' F ∧
+    ¬ MerC7bHyp F ∧
+    ¬ MerC7bHyp' F ∧
+    (∀ u, ¬ MerC9Hyp F u) ∧
+    (∀ u, ¬ MerC9Hyp' F u) ∧
+    (∀ u, ¬ MerC10Hyp F u) ∧
+    (∀ u, ¬ MerC10Hyp' F u) :=
+  holeLeaf_confined h.1
 
 end Minimality.T24
