@@ -204,6 +204,7 @@ import Minimality.WeakChord
 import Minimality.SplitRim4
 import Minimality.AdjTie4
 import Minimality.Type24HoleConfined
+import Minimality.Type24HiddenCone
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2176,3 +2177,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.hole24_leaves
 #assert_standard_axioms Minimality.T24.merHyps_off
 #assert_standard_axioms Minimality.T24.hole24_confined
+#assert_standard_axioms Minimality.T24.HC.hiddenAt24_of_cone
+#assert_standard_axioms Minimality.T24.HC.freeAt24_of_cone
+#assert_standard_axioms Minimality.T24.HC.cone24_of_zeta
+#assert_standard_axioms Minimality.T24.HC.depth24_metric_free
+#assert_standard_axioms Minimality.T24.HC.back24_of_cone
+#assert_standard_axioms Minimality.T24.HC.cone24_of_back
