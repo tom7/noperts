@@ -1111,31 +1111,6 @@ theorem faceChordView_C6d {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · refine ⟨4, by decide, fun m hm hmr => ?_, hoff⟩
       fin_cases m <;> first | exact absurd rfl hm | exact absurd hmr (by decide) | exact hf2_0 | exact hf2_1
 
-theorem faceChordView_C6d' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hM1 : ⟪F.N 1, mer F 5 7⟫ < 0 ∧ 0 < ⟪F.N 0, mer F 5 7⟫ ∧ 0 < ⟪F.N 2, mer F 5 7⟫)
-    (hM2 : 0 < ⟪x 3 - x 6, x 2 - x 6⟫ ∧ 0 < ⟪x 3 - x 2, x 6 - x 2⟫)
-    (hinj : ∀ i j : ZMod 5, i ≠ j → ({i, j} : Finset (ZMod 5)) ≠ {2, 3} →
-      ⟪x (rimC6d' i), mer F 5 7⟫ ≠ ⟪x (rimC6d' j), mer F 5 7⟫)
-    (hz : ∃ σ : ℝ, σ ≠ 0 ∧ ∀ᶠ t in 𝓝[>] (0 : ℝ),
-      UniOrSep (fun i : ZMod 5 => x (rimC6d' i)) (mer F 5 7 + t • (σ • (x 2 - x 6))))
-    (hM4 :
-      (F.f 7 (x 0) < F.f 7 (x 1) ∧ F.f 7 (x 0) < F.f 7 (x 5) ∧
-        (⟪F.N 7, cross (x 2 - x 6) (x 0 - x 6)⟫ ≠ 0 ∨ ⟪x 0 - x 6, x 2 - x 6⟫ < 0 ∨
-          ⟪x 0 - x 2, x 6 - x 2⟫ < 0)) ∨
-      (F.f 7 (x 1) < F.f 7 (x 0) ∧ F.f 7 (x 1) < F.f 7 (x 5) ∧
-        (⟪F.N 7, cross (x 2 - x 6) (x 1 - x 6)⟫ ≠ 0 ∨ ⟪x 1 - x 6, x 2 - x 6⟫ < 0 ∨
-          ⟪x 1 - x 2, x 6 - x 2⟫ < 0)) ∨
-      (F.f 7 (x 5) < F.f 7 (x 0) ∧ F.f 7 (x 5) < F.f 7 (x 1) ∧
-        (⟪F.N 7, cross (x 2 - x 6) (x 5 - x 6)⟫ ≠ 0 ∨ ⟪x 5 - x 6, x 2 - x 6⟫ < 0 ∨
-          ⟪x 5 - x 2, x 6 - x 2⟫ < 0))) :
-    FaceChordView F 7 := by
-  have hr : ∀ i : ZMod 5, (x ∘ pi24) (rimC6d i) = x (rimC6d' i) := by
-    intro i; fin_cases i <;> rfl
-  have hm : mer (sym24 F) 5 7 = mer F 5 7 := rfl
-  have h := faceChordView_C6d (sym24 F) (x := x ∘ pi24) hM1 hM2
-    (by simp only [hr, hm]; exact hinj) (by simp only [hr, hm]; exact hz) hM4
-  exact faceChordView_sym F h
-
 theorem faceChordView_C7b {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hM1 : 0 < ⟪F.N 0, mer F 6 7⟫ ∧ 0 < ⟪F.N 3, mer F 6 7⟫)
     (hM2 : 0 < ⟪x 6 - x 2, x 3 - x 2⟫ ∧ 0 < ⟪x 6 - x 3, x 2 - x 3⟫)
@@ -1200,31 +1175,6 @@ theorem faceChordView_C7b {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · refine ⟨4, by decide, fun m hm hmr => ?_, hoff⟩
       fin_cases m <;> first | exact absurd rfl hm | exact absurd hmr (by decide) | exact hf2_0 | exact hf2_1
 
-theorem faceChordView_C7b' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hM1 : 0 < ⟪F.N 1, mer F 8 7⟫ ∧ 0 < ⟪F.N 3, mer F 8 7⟫)
-    (hM2 : 0 < ⟪x 2 - x 6, x 3 - x 6⟫ ∧ 0 < ⟪x 2 - x 3, x 6 - x 3⟫)
-    (hinj : ∀ i j : ZMod 5, i ≠ j → ({i, j} : Finset (ZMod 5)) ≠ {2, 3} →
-      ⟪x (rimC1' i), mer F 8 7⟫ ≠ ⟪x (rimC1' j), mer F 8 7⟫)
-    (hz : ∃ σ : ℝ, σ ≠ 0 ∧ ∀ᶠ t in 𝓝[>] (0 : ℝ),
-      UniOrSep (fun i : ZMod 5 => x (rimC1' i)) (mer F 8 7 + t • (σ • (x 3 - x 6))))
-    (hM4 :
-      (F.f 7 (x 0) < F.f 7 (x 1) ∧ F.f 7 (x 0) < F.f 7 (x 5) ∧
-        (⟪F.N 7, cross (x 3 - x 6) (x 0 - x 6)⟫ ≠ 0 ∨ ⟪x 0 - x 6, x 3 - x 6⟫ < 0 ∨
-          ⟪x 0 - x 3, x 6 - x 3⟫ < 0)) ∨
-      (F.f 7 (x 1) < F.f 7 (x 0) ∧ F.f 7 (x 1) < F.f 7 (x 5) ∧
-        (⟪F.N 7, cross (x 3 - x 6) (x 1 - x 6)⟫ ≠ 0 ∨ ⟪x 1 - x 6, x 3 - x 6⟫ < 0 ∨
-          ⟪x 1 - x 3, x 6 - x 3⟫ < 0)) ∨
-      (F.f 7 (x 5) < F.f 7 (x 0) ∧ F.f 7 (x 5) < F.f 7 (x 1) ∧
-        (⟪F.N 7, cross (x 3 - x 6) (x 5 - x 6)⟫ ≠ 0 ∨ ⟪x 5 - x 6, x 3 - x 6⟫ < 0 ∨
-          ⟪x 5 - x 3, x 6 - x 3⟫ < 0))) :
-    FaceChordView F 7 := by
-  have hr : ∀ i : ZMod 5, (x ∘ pi24) (rimC1 i) = x (rimC1' i) := by
-    intro i; fin_cases i <;> rfl
-  have hm : mer (sym24 F) 6 7 = mer F 8 7 := rfl
-  have h := faceChordView_C7b (sym24 F) (x := x ∘ pi24) hM1 hM2
-    (by simp only [hr, hm]; exact hinj) (by simp only [hr, hm]; exact hz) hM4
-  exact faceChordView_sym F h
-
 theorem faceChordView_C9 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (hnu : ⟪F.N 2, u⟫ = 0)
     (hM1 : 0 < ⟪F.N 5, u⟫ ∧ 0 < ⟪F.N 6, u⟫ ∧ 0 < ⟪F.N 7, u⟫ ∧
       ⟪F.N 0, u⟫ < 0 ∧ ⟪F.N 1, u⟫ < 0 ∧ ⟪F.N 3, u⟫ < 0 ∧ ⟪F.N 8, u⟫ < 0)
@@ -1266,28 +1216,6 @@ theorem faceChordView_C9 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ
       fin_cases m <;> first | exact absurd rfl hm | exact absurd hmr (by decide) | exact hf1_0 | exact hf1_1
     · refine ⟨0, by decide, fun m hm hmr => ?_, hoff⟩
       fin_cases m <;> first | exact absurd rfl hm | exact absurd hmr (by decide) | exact hf2_0 | exact hf2_1
-
-theorem faceChordView_C9' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (hnu : ⟪F.N 4, u⟫ = 0)
-    (hM1 : 0 < ⟪F.N 5, u⟫ ∧ 0 < ⟪F.N 8, u⟫ ∧ 0 < ⟪F.N 7, u⟫ ∧
-      ⟪F.N 1, u⟫ < 0 ∧ ⟪F.N 0, u⟫ < 0 ∧ ⟪F.N 3, u⟫ < 0 ∧ ⟪F.N 6, u⟫ < 0)
-    (hinj : Function.Injective fun i : ZMod 5 => ⟪x (rimC5' i), u⟫)
-    (hz : UniOrSep (fun i : ZMod 5 => x (rimC5' i)) u)
-    (hM4 :
-      (F.f 4 (x 2) < F.f 4 (x 1) ∧ F.f 4 (x 2) < F.f 4 (x 3) ∧
-        (⟪F.N 4, cross (x 4 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨ ⟪x 2 - x 6, x 4 - x 6⟫ < 0 ∨
-          ⟪x 2 - x 4, x 6 - x 4⟫ < 0)) ∨
-      (F.f 4 (x 3) < F.f 4 (x 1) ∧ F.f 4 (x 3) < F.f 4 (x 2) ∧
-        (⟪F.N 4, cross (x 4 - x 6) (x 3 - x 6)⟫ ≠ 0 ∨ ⟪x 3 - x 6, x 4 - x 6⟫ < 0 ∨
-          ⟪x 3 - x 4, x 6 - x 4⟫ < 0)) ∨
-      (F.f 4 (x 1) < F.f 4 (x 3) ∧ F.f 4 (x 1) < F.f 4 (x 2) ∧
-        (⟪F.N 4, cross (x 4 - x 6) (x 1 - x 6)⟫ ≠ 0 ∨ ⟪x 1 - x 6, x 4 - x 6⟫ < 0 ∨
-          ⟪x 1 - x 4, x 6 - x 4⟫ < 0))) :
-    FaceChordView F 4 := by
-  have hr : ∀ i : ZMod 5, (x ∘ pi24) (rimC5 i) = x (rimC5' i) := by
-    intro i; fin_cases i <;> rfl
-  have h := faceChordView_C9 (sym24 F) (x := x ∘ pi24) u hnu hM1
-    (by simp only [hr]; exact hinj) (by simp only [hr]; exact hz) hM4
-  exact faceChordView_sym F h
 
 theorem faceChordView_C10 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (hnu : ⟪F.N 3, u⟫ = 0)
     (hM1 : 0 < ⟪F.N 5, u⟫ ∧ 0 < ⟪F.N 6, u⟫ ∧ 0 < ⟪F.N 8, u⟫ ∧
@@ -1336,27 +1264,5 @@ theorem faceChordView_C10 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : �
       fin_cases m <;> first | exact absurd rfl hm | exact absurd hmr (by decide) | exact hf1_0 | exact hf1_1
     · refine ⟨3, by decide, fun m hm hmr => ?_, hoff⟩
       fin_cases m <;> first | exact absurd rfl hm | exact absurd hmr (by decide) | exact hf2_0 | exact hf2_1
-
-theorem faceChordView_C10' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (hnu : ⟪F.N 3, u⟫ = 0)
-    (hM1 : 0 < ⟪F.N 5, u⟫ ∧ 0 < ⟪F.N 8, u⟫ ∧ 0 < ⟪F.N 6, u⟫ ∧
-      ⟪F.N 1, u⟫ < 0 ∧ ⟪F.N 0, u⟫ < 0 ∧ ⟪F.N 4, u⟫ < 0 ∧ ⟪F.N 2, u⟫ < 0)
-    (hinj : Function.Injective fun i : ZMod 5 => ⟪x (rimC10' i), u⟫)
-    (hz : UniOrSep (fun i : ZMod 5 => x (rimC10' i)) u)
-    (hM4 :
-      (F.f 3 (x 2) < F.f 3 (x 1) ∧ F.f 3 (x 2) < F.f 3 (x 6) ∧
-        (⟪F.N 3, cross (x 5 - x 4) (x 2 - x 4)⟫ ≠ 0 ∨ ⟪x 2 - x 4, x 5 - x 4⟫ < 0 ∨
-          ⟪x 2 - x 5, x 4 - x 5⟫ < 0)) ∨
-      (F.f 3 (x 1) < F.f 3 (x 2) ∧ F.f 3 (x 1) < F.f 3 (x 6) ∧
-        (⟪F.N 3, cross (x 5 - x 4) (x 1 - x 4)⟫ ≠ 0 ∨ ⟪x 1 - x 4, x 5 - x 4⟫ < 0 ∨
-          ⟪x 1 - x 5, x 4 - x 5⟫ < 0)) ∨
-      (F.f 3 (x 6) < F.f 3 (x 2) ∧ F.f 3 (x 6) < F.f 3 (x 1) ∧
-        (⟪F.N 3, cross (x 5 - x 4) (x 6 - x 4)⟫ ≠ 0 ∨ ⟪x 6 - x 4, x 5 - x 4⟫ < 0 ∨
-          ⟪x 6 - x 5, x 4 - x 5⟫ < 0))) :
-    FaceChordView F 3 := by
-  have hr : ∀ i : ZMod 5, (x ∘ pi24) (rimC10 i) = x (rimC10' i) := by
-    intro i; fin_cases i <;> rfl
-  have h := faceChordView_C10 (sym24 F) (x := x ∘ pi24) u hnu hM1
-    (by simp only [hr]; exact hinj) (by simp only [hr]; exact hz) hM4
-  exact faceChordView_sym F h
 
 end Minimality.T24.Mer

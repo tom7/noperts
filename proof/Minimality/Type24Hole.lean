@@ -2,7 +2,7 @@ module
 
 public import Minimality.Type24Face
 public import Minimality.Type24SAT.K24.Wire24Res
-public import Minimality.Type24
+public import Minimality.Type24OutsideCbar
 public import Minimality.Q45
 public import Minimality.RCell24
 public import Minimality.RDispatch24
@@ -25,7 +25,7 @@ namespace Minimality.T24
 Refines the Type-24 branch of `Minimality.lean` by combining:
 1. `Minimality.T24.Face.rupert_or_resid24_noFacetCell_noNC_noAdj_noFace` (SAT + no facet cell,
    no Root T0, no Lemma NC, no Adjacency Lemma, no Lemma E2 face pair),
-2. `Minimality.isRupert_type24_outside_Cbar'` (closes all of `¬ CbarIn`, `Type24.lean` / Lemma CV),
+2. `Minimality.isRupert_type24_outside_Cbar''` (closes all of `¬ CbarIn`, `Type24.lean` / Lemma CV),
 3. `Q45.q45_half_cell` (closes `Q45-Half` off `Q45Special'`, `Q45.lean`),
 4. Generic closed-cell / face-chord leaves `RCell.AnyFaceChord` and `RCell.LexAny` (`RCell24.lean`).
 
@@ -54,7 +54,7 @@ def Hole24Unreduced (x : Fin 7 → ℝ³) (fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ)
   Hole24Flags x fs ∧ (Hole24Q45Special x F ∨ Hole24R x F)
 
 /-- Unreduced Type-24 reduction using `rupert_or_resid24_noFacetCell_noNC_noAdj_noFace`,
-`isRupert_type24_outside_Cbar'`, `Q45.q45_half_cell`, `RCell.anyFaceChord_isRupert`, and
+`isRupert_type24_outside_Cbar''`, `Q45.q45_half_cell`, `RCell.anyFaceChord_isRupert`, and
 `RCell.lexAny_isRupert` (`mkFac24` constructs `F`). -/
 theorem type24_rupert_or_holeR {x : Fin 7 → ℝ³}
     (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -105,7 +105,7 @@ theorem type24_rupert_or_holeR {x : Fin 7 → ℝ³}
               · exact Or.inl hRup
               · exact Or.inr ⟨hh, hflags, Or.inl ⟨hCbar, hres, hHalf, hSp, hAfc, hLex, hSp24⟩⟩
             · exact Or.inr ⟨hh, hflags, Or.inr ⟨hCbar, hres, hHalf, hAfc, hLex, hSp24⟩⟩
-    · exact Or.inl (Minimality.isRupert_type24_outside_Cbar'
+    · exact Or.inl (Minimality.isRupert_type24_outside_Cbar''
         (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar)
 
 end Minimality.T24

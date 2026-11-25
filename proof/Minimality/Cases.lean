@@ -41,6 +41,7 @@ public import Minimality.Global
 public import Minimality.ParallelFar
 public import Minimality.ParallelFacets
 public import Minimality.Type24
+public import Minimality.Type24OutsideCbar
 public import Minimality.Type24Corner
 public import Minimality.Type24WP
 public import Minimality.Type24Chain
@@ -174,7 +175,7 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hZ1 hT2 hT6)
 
 /-- **Type 24 outside `C̄`** (Corollary 15.8 of `FEWER-FACES-PROOFS.md` §15, in the form of Lemma CV,
-`Minimality.isRupert_type24_outside_Cbar'`): a nopert does not have seven points labelled so that
+`Minimality.isRupert_type24_outside_Cbar''`): a nopert does not have seven points labelled so that
 `012`, `016`, `126` (the cap at `1`) and `236`, `046`, `025` (the side faces) are facets (given by
 functionals negative off them), unless it lies in `C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0}`.  The coefficients
 `ω3 = Minimality.omega3 x`, `ω4`, `ω5` of the side faces and `Δ = Minimality.Delta24 x` are
@@ -198,7 +199,7 @@ theorem not_type24_outside_Cbar_of_isNopert (x : Fin 7 → ℝ³)
       (i ∉ ({0, 2, 5} : Finset (Fin 7)) → fF (x i) < 0))
     (hCbar : ¬ (0 < Minimality.omega3 x ∧ 0 < Minimality.omega4 x ∧ 0 < Minimality.omega5 x ∧
       0 ≤ Minimality.Delta24 x)) : False :=
-  h.2 (Minimality.isRupert_type24_outside_Cbar'
+  h.2 (Minimality.isRupert_type24_outside_Cbar''
     (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar)
 
 /-- **Type 21 outside codimension 2** (§18.6 step 2 and §22 of `FEWER-FACES-PROOFS.md`): a nopert

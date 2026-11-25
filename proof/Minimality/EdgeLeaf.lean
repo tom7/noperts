@@ -12,7 +12,7 @@ makes that leaf checkable from two closure views `g`, `g'` (signs and 2x2 determ
 
 * `robUni_of_edgeCone`: edge cone `E_{k,i}^ε` implies `RobUni` for all `k ≥ 4`.
 * `Overlap`, `exists_pos_of_overlap`: 1D Helly for affine functions on `[0, 1]`.
-* `edgeVec`, `EdgeAny`, `edgeAny_isRupert`, `hole24_edge`, `edgeAny_sym`: closed-cell edge-cone leaf.
+* `edgeVec`, `EdgeAny`, `edgeAny_isRupert`, `hole24_edge`: closed-cell edge-cone leaf.
 -/
 
 set_option autoImplicit false
@@ -345,29 +345,5 @@ theorem edgeAny_isRupert {m n : ℕ} {S : Fin m → Finset (Fin n)} {x : Fin n �
 theorem hole24_edge {x : Fin 7 → ℝ³} (F : S0xFac 9 Minimality.T24.SAT.s0x_S24 x)
     (hx : Function.Injective x) (h : EdgeAny F) : IsRupert (univ.image x) :=
   edgeAny_isRupert F hx h
-
-open Minimality.T24.SAT Minimality.T24.Sym in
-/-- **APPROVED.**  Transport along `sym24`, as `q4Any_sym`. -/
-theorem edgeAny_sym {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : EdgeAny (sym24 F)) : EdgeAny F := by
-  rcases h with ⟨k, hk_ne, c, U, Dn, a, g, g', i, ε, hk, hc, hcyc, ha, hg, hg', hε, hov⟩
-  have hcell : ∀ (P : ℝ → Prop) {W : Finset (Fin 9)} {v : ℝ³}, (∀ t ∈ W, P ⟪(sym24 F).N t, v⟫) →
-      ∀ t ∈ W.map sig24.toEmbedding, P ⟪F.N t, v⟫ := by
-    intro P W v hW t' ht'
-    rcases mem_map.mp ht' with ⟨t, ht, rfl⟩
-    exact hW t ht
-  refine ⟨k, hk_ne, pi24 ∘ c, U.map sig24.toEmbedding, Dn.map sig24.toEmbedding, a, g, g', i, ε,
-    hk, pi24.injective.comp hc, ?_, ⟨hcell (0 < ·) ha.1, hcell (· < 0) ha.2⟩,
-    ⟨hcell (0 ≤ ·) hg.1, hcell (· ≤ 0) hg.2⟩, ⟨hcell (0 ≤ ·) hg'.1, hcell (· ≤ 0) hg'.2⟩,
-    hε, hov⟩
-  intro m
-  obtain ⟨ea, hea, eb, heb, h1, h2, h3, h4, h5⟩ := hcyc m
-  refine ⟨sig24 ea, mem_map_of_mem _ hea, sig24 eb, mem_map_of_mem _ heb,
-    (s24_sym ea (c m)).1 h1, (s24_sym eb (c m)).1 h2,
-    (s24_sym ea (c (m + 1))).1 h3, (s24_sym eb (c (m + 1))).1 h4, ?_⟩
-  intro q hqi hqi1
-  obtain ⟨q', rfl⟩ := pi24.surjective q
-  rcases h5 q' (fun h => hqi (by simp [h])) (fun h => hqi1 (by simp [h])) with hq | hq
-  · exact Or.inl (fun h => hq ((s24_sym ea q').2 h))
-  · exact Or.inr (fun h => hq ((s24_sym eb q').2 h))
 
 end Minimality.GenPlus

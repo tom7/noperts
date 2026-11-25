@@ -340,31 +340,4 @@ theorem faceChordView_C1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     fin_cases m <;> (first | exact absurd rfl hm | exact absurd hmr (by decide) |
       simpa [rimC1] using h10 | simpa [rimC1] using h14)
 
-/-- **Mirror case C1' (`M012>236`)**: `faceChordView_C1` for `sym24 F` (the `(2 6)(4 5)` relabelling,
-facets `0↔1, 2↔4, 6↔8`), written out in `F`.  View `mer F 0 7`, rim `0 1 6 3 5`, chord `6 → 3`,
-far vertex `w ∈ {0, 5, 1}`. -/
-theorem faceChordView_C1' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hM1 : ⟪F.N 1, mer F 0 7⟫ < 0 ∧ 0 < ⟪F.N 5, mer F 0 7⟫ ∧ ⟪F.N 8, mer F 0 7⟫ < 0 ∧
-      ⟪F.N 3, mer F 0 7⟫ < 0 ∧ 0 < ⟪F.N 6, mer F 0 7⟫ ∧ 0 < ⟪F.N 2, mer F 0 7⟫)
-    (hM2 : 0 < ⟪x 2 - x 6, cross (F.N 7) (F.N 0)⟫ * ⟪x 3 - x 2, cross (F.N 7) (F.N 0)⟫)
-    (hinj : Function.Injective fun i : ZMod 5 => ⟪x (rimC1' i), mer F 0 7⟫)
-    (hz : UniOrSep (fun i : ZMod 5 => x (rimC1' i)) (mer F 0 7))
-    (hM4 :
-      (F.f 7 (x 0) < F.f 7 (x 1) ∧ F.f 7 (x 0) < F.f 7 (x 5) ∧
-        (⟪F.N 7, cross (x 3 - x 6) (x 0 - x 6)⟫ ≠ 0 ∨ ⟪x 0 - x 6, x 3 - x 6⟫ < 0 ∨
-          ⟪x 0 - x 3, x 6 - x 3⟫ < 0)) ∨
-      (F.f 7 (x 5) < F.f 7 (x 0) ∧ F.f 7 (x 5) < F.f 7 (x 1) ∧
-        (⟪F.N 7, cross (x 3 - x 6) (x 5 - x 6)⟫ ≠ 0 ∨ ⟪x 5 - x 6, x 3 - x 6⟫ < 0 ∨
-          ⟪x 5 - x 3, x 6 - x 3⟫ < 0)) ∨
-      (F.f 7 (x 1) < F.f 7 (x 0) ∧ F.f 7 (x 1) < F.f 7 (x 5) ∧
-        (⟪F.N 7, cross (x 3 - x 6) (x 1 - x 6)⟫ ≠ 0 ∨ ⟪x 1 - x 6, x 3 - x 6⟫ < 0 ∨
-          ⟪x 1 - x 3, x 6 - x 3⟫ < 0))) :
-    FaceChordView F 7 := by
-  have hr : ∀ i : ZMod 5, (x ∘ pi24) (rimC1 i) = x (rimC1' i) := by
-    intro i; fin_cases i <;> rfl
-  have hm : mer (sym24 F) 1 7 = mer F 0 7 := rfl
-  have h := faceChordView_C1 (sym24 F) (x := x ∘ pi24) hM1 hM2
-    (by simp only [hr, hm]; exact hinj) (by simp only [hr, hm]; exact hz) hM4
-  exact faceChordView_sym F h
-
 end Minimality.T24.Mer

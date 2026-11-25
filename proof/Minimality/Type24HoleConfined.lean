@@ -519,21 +519,49 @@ def MerC10Hyp' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop
         (⟪F.N 3, cross (x 5 - x 4) (x 6 - x 4)⟫ ≠ 0 ∨ ⟪x 6 - x 4, x 5 - x 4⟫ < 0 ∨
           ⟪x 6 - x 5, x 4 - x 5⟫ < 0)))
 
+/-! ### Primed meridian bundles are `pi24` images of the unprimed ones (MERTWIN)
+
+The only mismatch is the rim function: `rimK' = pi24 ∘ rimK` pointwise. -/
+
+theorem rimC1'_eq : rimC1' = fun i => Sym.pi24 (rimC1 i) := by funext i; fin_cases i <;> decide
+theorem rimC5'_eq : rimC5' = fun i => Sym.pi24 (rimC5 i) := by funext i; fin_cases i <;> decide
+theorem rimC6d'_eq : rimC6d' = fun i => Sym.pi24 (rimC6d i) := by funext i; fin_cases i <;> decide
+theorem rimC10'_eq : rimC10' = fun i => Sym.pi24 (rimC10 i) := by funext i; fin_cases i <;> decide
+
+theorem c1'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    MerC1Hyp' F ↔ MerC1Hyp (x := x ∘ Sym.pi24) (Sym.sym24 F) := by
+  unfold MerC1Hyp' MerC1Hyp; rw [rimC1'_eq]; exact Iff.rfl
+theorem c5'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    MerC5Hyp' F ↔ MerC5Hyp (x := x ∘ Sym.pi24) (Sym.sym24 F) := by
+  unfold MerC5Hyp' MerC5Hyp; rw [rimC5'_eq]; exact Iff.rfl
+theorem c6d'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    MerC6dHyp' F ↔ MerC6dHyp (x := x ∘ Sym.pi24) (Sym.sym24 F) := by
+  unfold MerC6dHyp' MerC6dHyp; rw [rimC6d'_eq]; exact Iff.rfl
+theorem c7b'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
+    MerC7bHyp' F ↔ MerC7bHyp (x := x ∘ Sym.pi24) (Sym.sym24 F) := by
+  unfold MerC7bHyp' MerC7bHyp; rw [rimC1'_eq]; exact Iff.rfl
+theorem c9'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) :
+    MerC9Hyp' F u ↔ MerC9Hyp (x := x ∘ Sym.pi24) (Sym.sym24 F) u := by
+  unfold MerC9Hyp' MerC9Hyp; rw [rimC5'_eq]; exact Iff.rfl
+theorem c10'_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) :
+    MerC10Hyp' F u ↔ MerC10Hyp (x := x ∘ Sym.pi24) (Sym.sym24 F) u := by
+  unfold MerC10Hyp' MerC10Hyp; rw [rimC10'_eq]; exact Iff.rfl
+
 /-! ### The confinement -/
 
 /-- The generic negated leaves carried by `Hole24`: `C̄`, no face-chord view, no lex cell, no split cell (from
-`Hole24R` or `Hole24Q45Special` at the bottom of the reduction chains), no box lemma, no Q4 cell and no edge-cone
-cell. -/
+`Hole24R1` or `Hole24Q45Special`) and no box lemma. (`¬ Q4Any`, `¬ EdgeAny` follow from `¬ LexAny` by
+`GenRev.lexAny_of_q4Any` / `lexAny_of_edgeAny`.) -/
 theorem hole24_leaves {x : Fin 7 → ℝ³} {fs : Fin 9 → ℝ³ →ᵃ[ℝ] ℝ} {F : S0xFac 9 s0x_S24 x}
     (h : Hole24 x fs F) :
     CbarIn x ∧ ¬ RCell.AnyFaceChord F ∧ ¬ RCell.LexAny F ∧ ¬ RCell.SplitAny24 F ∧
-      ¬ BoxApplies (univ.image x) ∧ ¬ GenPlus.Q4Any F ∧ ¬ GenPlus.EdgeAny F := by
-  obtain ⟨_, hQR, _, _, hbox, hq4, hedge⟩ := h
+      ¬ BoxApplies (univ.image x) := by
+  obtain ⟨_, hQR, hbox⟩ := h
   rcases hQR with hQ | hR
-  · obtain ⟨hC, -, -, -, hA, hL, hS⟩ := hQ.1.1.1.1.1
-    exact ⟨hC, hA, hL, hS, hbox, hq4, hedge⟩
-  · obtain ⟨hC, -, -, hA, hL, hS⟩ := hole24R_of_hole24R1 hR.1.1.1.1.1.1.1.1
-    exact ⟨hC, hA, hL, hS, hbox, hq4, hedge⟩
+  · obtain ⟨hC, -, -, -, hA, hL, hS⟩ := hQ
+    exact ⟨hC, hA, hL, hS, hbox⟩
+  · obtain ⟨hC, -, -, hA, hL, hS⟩ := hole24R_of_hole24R1 hR
+    exact ⟨hC, hA, hL, hS, hbox⟩
 
 /-- On `Hole24` no triangle facet carries a weak chord arc (`GenPlus.lexAny_or_splitAny24_of_weakChordArc`, Carbon
 A59 Theorem 1.1): the face-chord fields `hcyc`, `hin`, `hmid` with `RobUni` / `DepthSepAt` / injective depths fail. -/
@@ -574,7 +602,9 @@ theorem merHyps_off {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hA : ¬ RCel
     (∀ u, ¬ MerC10Hyp F u) ∧
     (∀ u, ¬ MerC10Hyp' F u) :=
   ⟨fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C1 F h0 h1 h2 h3 h4⟩,
-    fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C1' F h0 h1 h2 h3 h4⟩,
+    fun h => by
+      obtain ⟨h0, h1, h2, h3, h4⟩ := (c1'_iff F).1 h
+      exact hA (Reg.anyFaceChord_of_sym F ⟨_, Mer.faceChordView_C1 (Sym.sym24 F) h0 h1 h2 h3 h4⟩),
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C2 F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C2' F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C3 F h0 h1 h2 h3 h4⟩,
@@ -582,7 +612,9 @@ theorem merHyps_off {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hA : ¬ RCel
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C4 F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C4' F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C5 F h0 h1 h2 h3 h4⟩,
-    fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C5' F h0 h1 h2 h3 h4⟩,
+    fun h => by
+      obtain ⟨h0, h1, h2, h3, h4⟩ := (c5'_iff F).1 h
+      exact hA (Reg.anyFaceChord_of_sym F ⟨_, Mer.faceChordView_C5 (Sym.sym24 F) h0 h1 h2 h3 h4⟩),
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C6a F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C6b F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C7a F h0 h1 h2 h3 h4⟩,
@@ -591,13 +623,21 @@ theorem merHyps_off {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hA : ¬ RCel
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C8' F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C6c F h0 h1 h2 h3 h4⟩,
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C6d F h0 h1 h2 h3 h4⟩,
-    fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C6d' F h0 h1 h2 h3 h4⟩,
+    fun h => by
+      obtain ⟨h0, h1, h2, h3, h4⟩ := (c6d'_iff F).1 h
+      exact hA (Reg.anyFaceChord_of_sym F ⟨_, Mer.faceChordView_C6d (Sym.sym24 F) h0 h1 h2 h3 h4⟩),
     fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C7b F h0 h1 h2 h3 h4⟩,
-    fun ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C7b' F h0 h1 h2 h3 h4⟩,
+    fun h => by
+      obtain ⟨h0, h1, h2, h3, h4⟩ := (c7b'_iff F).1 h
+      exact hA (Reg.anyFaceChord_of_sym F ⟨_, Mer.faceChordView_C7b (Sym.sym24 F) h0 h1 h2 h3 h4⟩),
     fun u ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C9 F u h0 h1 h2 h3 h4⟩,
-    fun u ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C9' F u h0 h1 h2 h3 h4⟩,
+    fun u h => by
+      obtain ⟨h0, h1, h2, h3, h4⟩ := (c9'_iff F u).1 h
+      exact hA (Reg.anyFaceChord_of_sym F ⟨_, Mer.faceChordView_C9 (Sym.sym24 F) u h0 h1 h2 h3 h4⟩),
     fun u ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C10 F u h0 h1 h2 h3 h4⟩,
-    fun u ⟨h0, h1, h2, h3, h4⟩ => hA ⟨_, Mer.faceChordView_C10' F u h0 h1 h2 h3 h4⟩⟩
+    fun u h => by
+      obtain ⟨h0, h1, h2, h3, h4⟩ := (c10'_iff F u).1 h
+      exact hA (Reg.anyFaceChord_of_sym F ⟨_, Mer.faceChordView_C10 (Sym.sym24 F) u h0 h1 h2 h3 h4⟩)⟩
 
 /-- **Confinement of `Hole24`.**  On `Hole24` (inside `C̄`), the hypotheses of `QN.lexAny_quadNormal` and of
 every meridian / tie-view lemma `Mer.faceChordView_C*` fail (for C9, C9', C10, C10' at every view `u`). -/

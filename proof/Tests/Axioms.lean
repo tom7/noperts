@@ -206,7 +206,6 @@ import Minimality.AdjTie4
 import Minimality.SplitApex
 import Minimality.Type24HoleConfined
 import Minimality.Q4Lex
-import Minimality.Type24HoleCore
 import Minimality.Type24HiddenCone
 import Minimality.Type24QuadCell
 import Minimality.GenSigned
@@ -383,17 +382,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.cramer_vec
 #assert_standard_axioms Minimality.det3_comb
 #assert_standard_axioms Minimality.vol3_mul_inner
-#assert_standard_axioms Minimality.det3_frame_view
-#assert_standard_axioms Minimality.nodup3
-#assert_standard_axioms Minimality.NoHDNAt.smul
-#assert_standard_axioms Minimality.isRupert_vertexTri
-#assert_standard_axioms Minimality.exists_window_t
-#assert_standard_axioms Minimality.isRupert_window_frame
 #assert_standard_axioms Minimality.isRupert_obliqueView_frame
 #assert_standard_axioms Minimality.isRupert_cornerView_frame
 #assert_standard_axioms Minimality.Face16.mem_iff
 #assert_standard_axioms Minimality.Type24.inj
-#assert_standard_axioms Minimality.omega_identity
 #assert_standard_axioms Minimality.omega_prod_gt_one
 #assert_standard_axioms Minimality.Type24.det_ne
 #assert_standard_axioms Minimality.Type24.rep
@@ -413,12 +405,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type24.lt046
 #assert_standard_axioms Minimality.Type24.le025
 #assert_standard_axioms Minimality.Type24.lt025
-#assert_standard_axioms Minimality.isRupert_type24_window6
-#assert_standard_axioms Minimality.isRupert_type24_window2
-#assert_standard_axioms Minimality.isRupert_type24_window0
-#assert_standard_axioms Minimality.isRupert_type24_window
-#assert_standard_axioms Minimality.isRupert_type24_corner
-#assert_standard_axioms Minimality.isRupert_type24_outside_Cbar'
 #assert_standard_axioms Minimality.exists_arch
 #assert_standard_axioms Minimality.isCyclicUnimodal_of_arch
 #assert_standard_axioms Minimality.capStep_of_cos
@@ -1436,7 +1422,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.w63_eq_smul_u07
 #assert_standard_axioms Minimality.T24.A20.w63_facings_c3eq1
 #assert_standard_axioms Minimality.T24.A20.c3eq1_closed
-#assert_standard_axioms Minimality.T24.hole24R2_reduce
 #assert_standard_axioms Minimality.T24.A20.mustar_comp_pi24
 #assert_standard_axioms Minimality.T24.A20.e23_closes_mu23_pos
 #assert_standard_axioms Minimality.T24.A20.mustar_mu23_coupling
@@ -1446,7 +1431,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.facetCell_0345
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_nonneg
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_pos
-#assert_standard_axioms Minimality.T24.hole24R3_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.A20.w63_facings_wall
 #assert_standard_axioms Minimality.T24.A20.radon0345_depth
@@ -1456,8 +1440,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.one_add_omega3_pos
 #assert_standard_axioms Minimality.T24.A20.one_add_omega4_pos
 #assert_standard_axioms Minimality.T24.A20.one_add_omega5_pos
-#assert_standard_axioms Minimality.T24.hole24R4_reduce
-#assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
 #assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos_nt
 #assert_standard_axioms Minimality.T24.A20.w63_closes_triple
@@ -1489,7 +1471,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.w63_eq_smul_u07
 #assert_standard_axioms Minimality.T24.A20.w63_facings_c3eq1
 #assert_standard_axioms Minimality.T24.A20.c3eq1_closed
-#assert_standard_axioms Minimality.T24.hole24R2_reduce
 #assert_standard_axioms Minimality.T24.A20.mustar_comp_pi24
 #assert_standard_axioms Minimality.T24.A20.e23_closes_mu23_pos
 #assert_standard_axioms Minimality.T24.A20.mustar_mu23_coupling
@@ -1499,7 +1480,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.facetCell_0345
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_nonneg
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_pos
-#assert_standard_axioms Minimality.T24.hole24R3_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.A20.w63_facings_wall
 #assert_standard_axioms Minimality.T24.A20.radon0345_depth
@@ -1509,8 +1489,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.one_add_omega3_pos
 #assert_standard_axioms Minimality.T24.A20.one_add_omega4_pos
 #assert_standard_axioms Minimality.T24.A20.one_add_omega5_pos
-#assert_standard_axioms Minimality.T24.hole24R4_reduce
-#assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
 #assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos_nt
 #assert_standard_axioms Minimality.T24.A20.w63_closes_triple
@@ -1628,7 +1606,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.radon02346_signs
 #assert_standard_axioms Minimality.T24.A20.w63_facings_gt
 #assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos
-#assert_standard_axioms Minimality.T24.hole24R1_reduce
 #assert_standard_axioms Minimality.T24.type24_rupert_or_hole
 #assert_standard_axioms Minimality.T24.A20.pencil236_decomp
 #assert_standard_axioms Minimality.T24.A20.syz_E23
@@ -1638,7 +1615,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.w63_eq_smul_u07
 #assert_standard_axioms Minimality.T24.A20.w63_facings_c3eq1
 #assert_standard_axioms Minimality.T24.A20.c3eq1_closed
-#assert_standard_axioms Minimality.T24.hole24R2_reduce
 #assert_standard_axioms Minimality.T24.A20.mustar_comp_pi24
 #assert_standard_axioms Minimality.T24.A20.e23_closes_mu23_pos
 #assert_standard_axioms Minimality.T24.A20.mustar_mu23_coupling
@@ -1648,7 +1624,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.facetCell_0345
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_nonneg
 #assert_standard_axioms Minimality.T24.A20.mustar_or_mu23_pos
-#assert_standard_axioms Minimality.T24.hole24R3_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.A20.w63_facings_wall
 #assert_standard_axioms Minimality.T24.A20.radon0345_depth
@@ -1658,8 +1633,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.A20.one_add_omega3_pos
 #assert_standard_axioms Minimality.T24.A20.one_add_omega4_pos
 #assert_standard_axioms Minimality.T24.A20.one_add_omega5_pos
-#assert_standard_axioms Minimality.T24.hole24R4_reduce
-#assert_standard_axioms Minimality.T24.hole24Q45_reduce
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
 #assert_standard_axioms Minimality.T24.A20.w63_closes_mustar_pos_nt
 #assert_standard_axioms Minimality.T24.A20.w63_closes_triple
@@ -1691,7 +1664,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.SVCC.CellsTB.cell_016_0345_pzpzmpppm_tb
 #assert_standard_axioms Minimality.SVCC.CellsTB.cell_0345_236_ppmzppmzp_tb
 #assert_standard_axioms Minimality.SVCC.CellsTB.cell_0345_236_pppzmppzm_tb
-#assert_standard_axioms Minimality.T24.svcCell_lexAny
 #assert_standard_axioms Minimality.T24.A20.nx_neg
 
 -- SVC cells (SVCCELLS: SIGCHECK sign-closed cells as SVC instances)
@@ -1730,8 +1702,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 -- Task DL: pair closure, SVC cell / pair hole exclusions, star-closed region
 #assert_standard_axioms Minimality.PSVC.pair_closure
 #assert_standard_axioms Minimality.PSVC.L3u27.lexAny_L3_u27
-#assert_standard_axioms Minimality.T24.svcCell_lexAny
-#assert_standard_axioms Minimality.T24.pairL3u27_lexAny
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_lt_empty
 #assert_standard_axioms Minimality.T24.hole24_b3_c3_st_le_ties
 #assert_standard_axioms Minimality.T24.type24_rupert_or_hole
@@ -1804,7 +1774,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.PSVC.T8.lexAny_T8
 #assert_standard_axioms Minimality.PSVC.T9.lexAny_T9
 #assert_standard_axioms Minimality.PSVC.T10.lexAny_T10
-#assert_standard_axioms Minimality.T24.triple_lexAny
 
 -- Task DN: tie-tolerant SVC / PSVC closures
 #assert_standard_axioms Minimality.SVC.svc_local_lex
@@ -2003,9 +1972,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.PSVC.T22.lexAny_T22
 #assert_standard_axioms Minimality.PSVC.T23.lexAny_T23
 #assert_standard_axioms Minimality.PSVC.T24.lexAny_T24
-#assert_standard_axioms Minimality.T24.triple2_lexAny
-#assert_standard_axioms Minimality.T24.hole24R7_reduce
-#assert_standard_axioms Minimality.T24.hole24Q45R7_reduce
 #assert_standard_axioms Minimality.NF29.m_cone_rows
 #assert_standard_axioms Minimality.NF29.alt4_of_not_robUni_four
 #assert_standard_axioms Minimality.NF29.l44_cone_M_identity
@@ -2078,9 +2044,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 -- Task TRI24C: further three-view triple closures T25..T26 (tri3 stage 2 leftovers)
 #assert_standard_axioms Minimality.PSVC.T25.lexAny_T25
 #assert_standard_axioms Minimality.PSVC.T26.lexAny_T26
-#assert_standard_axioms Minimality.T24.triple3_lexAny
-#assert_standard_axioms Minimality.T24.hole24R8_reduce
-#assert_standard_axioms Minimality.T24.hole24Q45R8_reduce
 
 -- TRI29B: triple closures (Type29Tri*), Hole29R7
 #assert_standard_axioms Minimality.PL29.lexAny_tri11
@@ -2132,7 +2095,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.boxApplies_of_thin_gram
 #assert_standard_axioms Minimality.T24.QN.lexAny_quadNormal
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C1
-#assert_standard_axioms Minimality.T24.Mer.faceChordView_C1'
 #assert_standard_axioms Minimality.T24.Mer.chord_middle_of_mer
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C2
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C2'
@@ -2141,7 +2103,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C4
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C4'
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C5
-#assert_standard_axioms Minimality.T24.Mer.faceChordView_C5'
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_of_rimCert
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_mer4
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C6a
@@ -2152,13 +2113,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C8'
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C6c
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C6d
-#assert_standard_axioms Minimality.T24.Mer.faceChordView_C6d'
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C7b
-#assert_standard_axioms Minimality.T24.Mer.faceChordView_C7b'
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C9
-#assert_standard_axioms Minimality.T24.Mer.faceChordView_C9'
 #assert_standard_axioms Minimality.T24.Mer.faceChordView_C10
-#assert_standard_axioms Minimality.T24.Mer.faceChordView_C10'
 #assert_standard_axioms Minimality.T24.Mer.cross_normal_edge_eq
 #assert_standard_axioms Minimality.T24.Mer.inner_tieRay
 #assert_standard_axioms Minimality.T24.Mer.tieRay_236_04
@@ -2173,14 +2130,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.GenPlus.exists_pos_of_overlap
 #assert_standard_axioms Minimality.GenPlus.edgeAny_isRupert
 #assert_standard_axioms Minimality.GenPlus.hole24_edge
-#assert_standard_axioms Minimality.GenPlus.edgeAny_sym
 #assert_standard_axioms Minimality.GenPlus.robUni_of_monoCorners
 #assert_standard_axioms Minimality.GenPlus.lexAny_or_splitAny24_of_weakChordArc
 #assert_standard_axioms Minimality.T24.hole24_noWeakChord
 #assert_standard_axioms Minimality.GenPlus.robUni_of_splitRows4
 #assert_standard_axioms Minimality.GenPlus.robUniLex_adjTie
 #assert_standard_axioms Minimality.Split.splitRows_of_unimodal_separated
-#assert_standard_axioms Minimality.GenPlus.q4Any_sym
 #assert_standard_axioms Minimality.T24.hole24_leaves
 #assert_standard_axioms Minimality.T24.merHyps_off
 #assert_standard_axioms Minimality.T24.hole24_confined
@@ -2193,10 +2148,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.GenRev.lexAny_of_closedCell
 #assert_standard_axioms Minimality.GenRev.lexAny_of_edgeAny
 #assert_standard_axioms Minimality.GenRev.lexAny_of_q4Any
-#assert_standard_axioms Minimality.T24.hole24R9_of_R1
-#assert_standard_axioms Minimality.T24.hole24R9_iff
-#assert_standard_axioms Minimality.T24.hole24Q45R9_iff
-#assert_standard_axioms Minimality.T24.hole24_iff_core
 #assert_standard_axioms Minimality.T24.robUniLex_of_robUni_pad
 #assert_standard_axioms Minimality.T24.lexAny_of_quadCell
 #assert_standard_axioms Minimality.exists_signed_of_pd2

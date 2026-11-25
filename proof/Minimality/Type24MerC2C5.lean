@@ -1140,28 +1140,4 @@ theorem faceChordView_C5 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       fin_cases m <;> first | exact absurd rfl hm | exact absurd hmr (by decide) | exact h13 |
         exact h16
 
-theorem faceChordView_C5' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
-    (hM1 : ⟪F.N 5, mer F 2 4⟫ < 0 ∧ ⟪F.N 8, mer F 2 4⟫ < 0 ∧
-      ⟪F.N 7, mer F 2 4⟫ < 0 ∧ 0 < ⟪F.N 0, mer F 2 4⟫ ∧ 0 < ⟪F.N 6, mer F 2 4⟫)
-    (hM2 : 0 < ⟪x 0 - x 6, cross (F.N 4) (F.N 2)⟫ * ⟪x 4 - x 0, cross (F.N 4) (F.N 2)⟫)
-    (hinj : Function.Injective fun i : ZMod 5 => ⟪x (rimC5' i), mer F 2 4⟫)
-    (hz : UniOrSep (fun i : ZMod 5 => x (rimC5' i)) (mer F 2 4))
-    (hM4 :
-      (F.f 4 (x 2) < F.f 4 (x 1) ∧ F.f 4 (x 2) < F.f 4 (x 3) ∧
-        (⟪F.N 4, cross (x 4 - x 6) (x 2 - x 6)⟫ ≠ 0 ∨ ⟪x 2 - x 6, x 4 - x 6⟫ < 0 ∨
-          ⟪x 2 - x 4, x 6 - x 4⟫ < 0)) ∨
-      (F.f 4 (x 3) < F.f 4 (x 1) ∧ F.f 4 (x 3) < F.f 4 (x 2) ∧
-        (⟪F.N 4, cross (x 4 - x 6) (x 3 - x 6)⟫ ≠ 0 ∨ ⟪x 3 - x 6, x 4 - x 6⟫ < 0 ∨
-          ⟪x 3 - x 4, x 6 - x 4⟫ < 0)) ∨
-      (F.f 4 (x 1) < F.f 4 (x 3) ∧ F.f 4 (x 1) < F.f 4 (x 2) ∧
-        (⟪F.N 4, cross (x 4 - x 6) (x 1 - x 6)⟫ ≠ 0 ∨ ⟪x 1 - x 6, x 4 - x 6⟫ < 0 ∨
-          ⟪x 1 - x 4, x 6 - x 4⟫ < 0))) :
-    FaceChordView F 4 := by
-  have hr : ∀ i : ZMod 5, (x ∘ pi24) (rimC5 i) = x (rimC5' i) := by
-    intro i; fin_cases i <;> rfl
-  have hm : mer (sym24 F) 4 2 = mer F 2 4 := rfl
-  have h := faceChordView_C5 (sym24 F) (x := x ∘ pi24) hM1 hM2
-    (by simp only [hr, hm]; exact hinj) (by simp only [hr, hm]; exact hz) hM4
-  exact faceChordView_sym F h
-
 end Minimality.T24.Mer
