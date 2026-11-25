@@ -1,6 +1,5 @@
 module
 
-public import Minimality.M4gType24
 public import Minimality.M4hType24
 public import Minimality.M4fType24
 public import Minimality.M4Sym24

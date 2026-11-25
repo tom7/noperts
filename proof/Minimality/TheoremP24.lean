@@ -5,7 +5,6 @@ public import Minimality.RimCellClosed
 public import Minimality.OrthoView
 public import Minimality.OrthoView2
 public import Minimality.OrthoView3
-public import Minimality.OrthoCorner
 public import Minimality.QuadCross
 public import Minimality.Type24SAT.Facets24
 public import Minimality.Type24SAT.Geo.Top
