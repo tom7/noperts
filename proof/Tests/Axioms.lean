@@ -2131,6 +2131,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.RQ.lexAny_of_rqFaceTwin
 #assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqFace
 #assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqFaceTwin
+#assert_standard_axioms Minimality.T24.RQ.inner_capView
+#assert_standard_axioms Minimality.T24.RQ.f2_c_neg
+#assert_standard_axioms Minimality.T24.RQ.cellAt_rq
+#assert_standard_axioms Minimality.T24.RQ.lexAny_rqCell
+#assert_standard_axioms Minimality.T24.RQ.robUni_rq_of_mono1
+#assert_standard_axioms Minimality.T24.RQ.lexAny_rqWall
+#assert_standard_axioms Minimality.T24.RQ.lexAny_of_rqWall
+#assert_standard_axioms Minimality.T24.RQ.lexAny_of_rqWallTwin
+#assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqWall
+#assert_standard_axioms Minimality.T24.RQ.holeLeaf_not_rqWallTwin
 #assert_standard_axioms Minimality.T24.Atlas.hole24_u32
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_u32
 #assert_standard_axioms Minimality.T24.Atlas.hole24_R1

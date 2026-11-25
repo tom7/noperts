@@ -22,6 +22,10 @@ of the cap over vertex `1`) and an apex `x`, the open cone of the apex is
   Rupert) for EVERY `x` in the tetrahedron `conv {A, a, b, c}` minus the base triangle.  No
   obtuseness, no metric condition, no type-24 structure.
 
+Relation: `Minimality.CornerEQ.cornerLeaf_lift` (CornerTransfer.lean) is Lemma UP in `(t, p)` coordinates, and
+`lexCell_replace` is UP for Lex leaves with no cone condition.  Hence the hypothesis of APEX (`FreeAt O` at
+a view of `C(A)`) already gives a C-leaf at `x` by UP; APEX is a general Rupert fact only.
+
 TODO (not done): the type-24 instance, `CbarIn` with `Delta > 0` iff the three planes of the
 facets `236, 046, 025` meet at a point `A*` with all frame coordinates negative (referee: exact on
 168807 points; Fable proved it only in the symmetric case).

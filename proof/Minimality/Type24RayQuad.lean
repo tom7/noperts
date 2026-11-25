@@ -17,6 +17,14 @@ projects strictly inside the quadrilateral `(1,0), (0,0), (0,1), (a_5, b_5)` alo
 the view `u = -t e_a - t eta0 e_b + e_c` (small `t`, `eta0 = G_aa/|G_ab| + |G_ab|/G_bb`) lies in the open
 cell with rim `0.1.2.5` (up `016, 126, 235, 0345`, down `012, 025`), vertex `1` is a strict monotone
 corner, so the depths are `RobUni`: `Gen.LexAny F`.
+
+General form (GENREV-RQ-APEX Q1): `cellAt_rq` is the open cell in frame coordinates (octant
+`c_a, c_b < 0 < c_c` plus `0345`, `235` up), `lexAny_rqCell` any view of it with `RobUni` depths,
+`robUni_rq_of_mono1` the monotone corner at vertex `1` (`<e_a,u><e_b,u> < 0`), and `lexAny_rqWall` the
+**wall lemma**: `0345` and `235` face up at `W = capView x 0 (-eta) 1` and `<e_a, W> > 0 > <e_b, W>`
+(no OB1, no sign hypothesis on `G`).  Lemma RQ-face is its corollary (small `eta`).  Data: the wall form
+closes 46-64 % of the no-C sets versus 40-44 % for the face form.  `RQWall F` / `RQWallTwin F` bundle the
+wall hypotheses; the ray form `lexAny_rqRay` is void on data and stays in scratch.
 -/
 
 set_option autoImplicit false
@@ -65,13 +73,6 @@ theorem rq_up (a3 b3 a5 b5 c3 c5 p A B C : ℝ) (ha3 : 0 < a3) (hb3 : 0 < b3) (h
 /-! ## Facet values along the corner frame -/
 
 variable {x : Fin 7 → ℝ³}
-
-/-- `⟪N_t, -ε e_a - η e_b + e_c⟫` in terms of the facet values. -/
-theorem inner_rq (F : S0xFac 9 s0x_S24 x) (t : Fin 9) (ε η : ℝ) :
-    ⟪F.N t, (-ε) • (x 0 - x 1) + (-η) • (x 2 - x 1) + (x 6 - x 1)⟫ =
-      -ε * (F.f t (x 0) - F.f t (x 1)) - η * (F.f t (x 2) - F.f t (x 1)) +
-        (F.f t (x 6) - F.f t (x 1)) := by
-  simp only [inner_add_right, real_inner_smul_right, F.inner_sub]; ring
 
 /-- The rim `0 1 2 5`. -/
 def cRQ : ZMod 4 → Fin 7 := ![0, 1, 2, 5]
@@ -150,21 +151,113 @@ theorem up_signs (F : S0xFac 9 s0x_S24 x) (hw5 : 0 < omega5 x)
     (by rw [F.zero 6 2 (by decide)]; linarith [F.neg 6 0 (by decide)])
     (by rw [F.zero 6 5 (by decide)])⟩
 
-theorem facet_pos (A B C t η0 : ℝ) (ht : 0 < t) (hη : 0 < η0)
-    (h : t * (|A| + η0 * |B|) < C) : 0 < -t * A - (t * η0) * B + C := by
-  have h1 : A ≤ |A| := le_abs_self A
-  have h2 : B ≤ |B| := le_abs_self B
-  have h3 : t * A ≤ t * |A| := mul_le_mul_of_nonneg_left h1 ht.le
-  have h4 : (t * η0) * B ≤ (t * η0) * |B| := mul_le_mul_of_nonneg_left h2 (by positivity)
-  have h5 : t * |A| + (t * η0) * |B| < C := by
-    calc t * |A| + (t * η0) * |B| = t * (|A| + η0 * |B|) := by ring
-      _ < C := h
-  linarith
+theorem inner_capView (F : S0xFac 9 s0x_S24 x) (t : Fin 9) (ca cb cc : ℝ) :
+    ⟪F.N t, capView x ca cb cc⟫ =
+      ca * (F.f t (x 0) - F.f t (x 1)) + cb * (F.f t (x 2) - F.f t (x 1)) +
+        cc * (F.f t (x 6) - F.f t (x 1)) := by
+  simp only [capView, inner_add_right, real_inner_smul_right, F.inner_sub]
 
-/-- **Lemma RQ-face.**  With `G_ac = G_bc = 0`, `G_ab < 0`, `ω5 > 0` and vertex `3` strictly inside the
-shadow quadrilateral `(1,0), (0,0), (0,1), (a_5, b_5)` along `e_c` (given as the two edge inequalities
-`h1`, `h2`; `a_3, b_3 > 0` is automatic), the ray cell `0.1.2.5` gives a lex closed cell with `RobUni`
-depths. -/
+/-- `025` faces down at `e_c` when `ω5 > 0` (extracted from `lexAny_rqFace`). -/
+theorem f2_c_neg (F : S0xFac 9 s0x_S24 x) (hw5 : 0 < omega5 x) :
+    F.f 2 (x 6) - F.f 2 (x 1) < 0 := by
+  have hp2 := F.neg 2 1 (by decide)
+  have hc5 : 0 < oblX6 x 5 := (Minimality.T24.M4.type24OfFac F).X6_pos (v := 5) (by decide)
+  have hs : oblX0 x 5 + oblX2 x 5 - 1 = omega5 x * oblX6 x 5 := by
+    dsimp [omega5]; field_simp [hc5.ne']
+  have e25 := Minimality.T24.M4.fac_eval F 2 5
+  rw [F.zero 2 5 (by decide), F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at e25
+  have e1 : oblX6 x 5 * (F.f 2 (x 6) - F.f 2 (x 1)) =
+      F.f 2 (x 1) * (omega5 x * oblX6 x 5) := by linear_combination -e25 + F.f 2 (x 1) * hs
+  have : oblX6 x 5 * (F.f 2 (x 6) - F.f 2 (x 1)) < 0 := by
+    rw [e1]; exact mul_neg_of_neg_of_pos hp2 (by positivity)
+  exact neg_of_mul_neg_right this hc5.le
+
+/-- The open cell of rim `0.1.2.5` in frame coordinates: the octant `c_a, c_b < 0 < c_c` (facets `126, 016, 012`),
+`025` automatic from `ω5 > 0`, and the two shape conditions `0345`, `235` up. -/
+theorem cellAt_rq (F : S0xFac 9 s0x_S24 x) (hw5 : 0 < omega5 x) {ca cb cc : ℝ}
+    (hca : ca < 0) (hcb : cb < 0) (hcc : 0 < cc)
+    (h3 : 0 < ⟪F.N 3, capView x ca cb cc⟫) (h6 : 0 < ⟪F.N 6, capView x ca cb cc⟫) :
+    CellAt F URQ DnRQ (capView x ca cb cc) := by
+  have hC2 := f2_c_neg F hw5
+  constructor
+  · intro s hs
+    simp only [URQ, Finset.mem_insert, Finset.mem_singleton] at hs
+    rcases hs with rfl | rfl | rfl | rfl
+    · rw [inner_capView, F.zero 1 0 (by decide), F.zero 1 1 (by decide), F.zero 1 6 (by decide)]
+      have := F.neg 1 2 (by decide); nlinarith
+    · rw [inner_capView, F.zero 5 1 (by decide), F.zero 5 2 (by decide), F.zero 5 6 (by decide)]
+      have := F.neg 5 0 (by decide); nlinarith
+    · exact h6
+    · exact h3
+  · intro s hs
+    simp only [DnRQ, Finset.mem_insert, Finset.mem_singleton] at hs
+    rcases hs with rfl | rfl
+    · rw [inner_capView, F.zero 0 0 (by decide), F.zero 0 1 (by decide), F.zero 0 2 (by decide)]
+      have := F.neg 0 6 (by decide); nlinarith
+    · rw [inner_capView, F.zero 2 0 (by decide), F.zero 2 2 (by decide)]
+      have := F.neg 2 1 (by decide); nlinarith
+
+/-- **Lemma RQ (general, one view).**  Any view of the open cell `0.1.2.5` at which the four rim depths are
+`RobUni` (for `k = 4`: some strict monotone corner) gives `LexAny`.  Covers the face, wall and ray regimes. -/
+theorem lexAny_rqCell (F : S0xFac 9 s0x_S24 x) (hw5 : 0 < omega5 x) {ca cb cc : ℝ}
+    (hca : ca < 0) (hcb : cb < 0) (hcc : 0 < cc)
+    (h3 : 0 < ⟪F.N 3, capView x ca cb cc⟫) (h6 : 0 < ⟪F.N 6, capView x ca cb cc⟫)
+    (hz : RobUni (fun i => ⟪x (cRQ i), capView x ca cb cc⟫)) : Gen.LexAny F := by
+  have hc := cellAt_rq F hw5 hca hcb hcc h3 h6
+  exact Minimality.GenRev.lexAny_of_closedCell (by norm_num) F injRQ cycRQ hc hc.cellLe hz
+
+/-- Monotone corner at vertex `1` in metric form: `⟪e_a, u⟫ ⟪e_b, u⟫ < 0`. -/
+theorem robUni_rq_of_mono1 (u : ℝ³) (h : ⟪x 0 - x 1, u⟫ * ⟪x 2 - x 1, u⟫ < 0) :
+    RobUni (fun i => ⟪x (cRQ i), u⟫) := by
+  refine Minimality.GenPlus.robUni_of_monoCorners (by norm_num) {1} (by simp) ?_
+  intro v hv
+  rw [Finset.mem_singleton] at hv
+  subst hv
+  have e1 : ⟪x (cRQ 1), u⟫ - ⟪x (cRQ (1 - 1)), u⟫ = -⟪x 0 - x 1, u⟫ := by
+    simp only [cRQ]
+    have : (1 : ZMod 4) - 1 = 0 := by decide
+    rw [this]; simp [← inner_sub_left]
+    rw [← inner_neg_left, neg_sub]
+  have e2 : ⟪x (cRQ (1 + 1)), u⟫ - ⟪x (cRQ 1), u⟫ = ⟪x 2 - x 1, u⟫ := by
+    simp only [cRQ]
+    have : (1 : ZMod 4) + 1 = 2 := by decide
+    rw [this]; simp [← inner_sub_left]
+  rw [e1, e2]; nlinarith
+
+/-- **Lemma RQ-wall** (door at the wall vertex `W = e_c - η e_b` of facet `126`, off the face).  If `0345`, `235`
+face up at `W` and vertex `1` is a strict monotone corner there, `⟪e_a, W⟫ > 0 > ⟪e_b, W⟫` (for `G ≤ 0`:
+`|G_ac| < η |G_ab|`), then `LexAny`.  The view `W - ε e_a` (small `ε`) is a strict cell point. -/
+theorem lexAny_rqWall (F : S0xFac 9 s0x_S24 x) (hw5 : 0 < omega5 x) {η : ℝ} (hη : 0 < η)
+    (h3 : 0 < ⟪F.N 3, capView x 0 (-η) 1⟫) (h6 : 0 < ⟪F.N 6, capView x 0 (-η) 1⟫)
+    (ha : 0 < ⟪x 0 - x 1, capView x 0 (-η) 1⟫) (hb : ⟪x 2 - x 1, capView x 0 (-η) 1⟫ < 0) :
+    Gen.LexAny F := by
+  have hv : ∀ (w : ℝ³) (ε : ℝ), ⟪w, capView x (-ε) (-η) 1⟫ = ⟪w, capView x 0 (-η) 1⟫ - ε * ⟪w, x 0 - x 1⟫ := by
+    intro w ε; simp only [capView, inner_add_right, real_inner_smul_right]; ring
+  obtain ⟨t1, ht1, h1a, h1b⟩ := exists_small |⟪F.N 3, x 0 - x 1⟫| |⟪F.N 6, x 0 - x 1⟫| _ _
+    (abs_nonneg _) (abs_nonneg _) h3 h6
+  obtain ⟨t2, ht2, h2a, h2b⟩ := exists_small |⟪x 0 - x 1, x 0 - x 1⟫| |⟪x 2 - x 1, x 0 - x 1⟫| _ _
+    (abs_nonneg _) (abs_nonneg _) ha (neg_pos.2 hb)
+  set ε := min t1 t2 with hεdef
+  have hε : 0 < ε := lt_min ht1 ht2
+  have small : ∀ (t A B : ℝ), ε ≤ t → t * |A| < B → 0 < B - ε * A := by
+    intro t A B hle h
+    have : ε * A ≤ t * |A| :=
+      (mul_le_mul_of_nonneg_left (le_abs_self A) hε.le).trans (mul_le_mul_of_nonneg_right hle (abs_nonneg A))
+    linarith
+  have hle1 : ε ≤ t1 := min_le_left _ _
+  have hle2 : ε ≤ t2 := min_le_right _ _
+  refine lexAny_rqCell F hw5 (ca := -ε) (cb := -η) (cc := 1) (by linarith) (by linarith) one_pos ?_ ?_ ?_
+  · rw [hv]; exact small _ _ _ hle1 h1a
+  · rw [hv]; exact small _ _ _ hle1 h1b
+  · refine robUni_rq_of_mono1 _ ?_
+    have p1 : 0 < ⟪x 0 - x 1, capView x (-ε) (-η) 1⟫ := by rw [hv]; exact small _ _ _ hle2 h2a
+    have p2 : ⟪x 2 - x 1, capView x (-ε) (-η) 1⟫ < 0 := by
+      rw [hv]
+      have := small _ (-⟪x 2 - x 1, x 0 - x 1⟫) _ hle2 (by rwa [abs_neg])
+      linarith
+    nlinarith
+
+/-- **Lemma RQ-face**, a corollary of `lexAny_rqWall` (small `η`; no `G_aa` or `η0` needed). -/
 theorem lexAny_rqFace (F : S0xFac 9 s0x_S24 x) (hw5 : 0 < omega5 x)
     (hac : ⟪x 0 - x 1, x 6 - x 1⟫ = 0) (hbc : ⟪x 2 - x 1, x 6 - x 1⟫ = 0)
     (hab : ⟪x 0 - x 1, x 2 - x 1⟫ < 0)
@@ -173,92 +266,22 @@ theorem lexAny_rqFace (F : S0xFac 9 s0x_S24 x) (hw5 : 0 < omega5 x)
     Gen.LexAny F := by
   obtain ⟨hC3, hC6⟩ := up_signs F hw5 h1 h2
   have hinj : Function.Injective x := Minimality.H24.SAT.inj_of_fac F
-  have hGa : 0 < ⟪x 0 - x 1, x 0 - x 1⟫ :=
-    real_inner_self_pos.2 (sub_ne_zero.2 (fun h => by simpa using hinj h))
   have hGb : 0 < ⟪x 2 - x 1, x 2 - x 1⟫ :=
     real_inner_self_pos.2 (sub_ne_zero.2 (fun h => by simpa using hinj h))
-  have hGba : ⟪x 2 - x 1, x 0 - x 1⟫ = ⟪x 0 - x 1, x 2 - x 1⟫ := real_inner_comm _ _
-  have hcb : ⟪x 6 - x 1, x 2 - x 1⟫ = 0 := by rw [real_inner_comm]; exact hbc
-  have hca : ⟪x 6 - x 1, x 0 - x 1⟫ = 0 := by rw [real_inner_comm]; exact hac
-  generalize hGaa : ⟪x 0 - x 1, x 0 - x 1⟫ = Gaa at hGa
-  generalize hGbb : ⟪x 2 - x 1, x 2 - x 1⟫ = Gbb at hGb
-  generalize hGab : ⟪x 0 - x 1, x 2 - x 1⟫ = Gab at hab hGba
-  have hgpos : 0 < -Gab := by linarith
-  set η0 := Gaa / (-Gab) + (-Gab) / Gbb with hη0
-  have hη0pos : 0 < η0 := by positivity
-  obtain ⟨t, ht, ht3, ht6⟩ := exists_small
-    (|F.f 3 (x 0) - F.f 3 (x 1)| + η0 * |F.f 3 (x 2) - F.f 3 (x 1)|)
-    (|F.f 6 (x 0) - F.f 6 (x 1)| + η0 * |F.f 6 (x 2) - F.f 6 (x 1)|) _ _
-    (by positivity) (by positivity) hC3 hC6
-  set u : ℝ³ := (-t) • (x 0 - x 1) + (-(t * η0)) • (x 2 - x 1) + (x 6 - x 1) with hu
-  have hup : ∀ s : Fin 9, ⟪F.N s, u⟫ = -t * (F.f s (x 0) - F.f s (x 1)) -
-      (t * η0) * (F.f s (x 2) - F.f s (x 1)) + (F.f s (x 6) - F.f s (x 1)) :=
-    fun s => inner_rq F s t (t * η0)
-  have hp2 := F.neg 2 1 (by decide)
-  have hC2 : F.f 2 (x 6) - F.f 2 (x 1) < 0 := by
-    have hc5 : 0 < oblX6 x 5 := (Minimality.T24.M4.type24OfFac F).X6_pos (v := 5) (by decide)
-    have hs : oblX0 x 5 + oblX2 x 5 - 1 = omega5 x * oblX6 x 5 := by
-      dsimp [omega5]; field_simp [hc5.ne']
-    have e25 := Minimality.T24.M4.fac_eval F 2 5
-    rw [F.zero 2 5 (by decide), F.zero 2 0 (by decide), F.zero 2 2 (by decide)] at e25
-    have e1 : oblX6 x 5 * (F.f 2 (x 6) - F.f 2 (x 1)) =
-        F.f 2 (x 1) * (omega5 x * oblX6 x 5) := by linear_combination -e25 + F.f 2 (x 1) * hs
-    have : oblX6 x 5 * (F.f 2 (x 6) - F.f 2 (x 1)) < 0 := by
-      rw [e1]; exact mul_neg_of_neg_of_pos hp2 (by positivity)
-    exact neg_of_mul_neg_right this hc5.le
-  have hcell : CellAt F URQ DnRQ u := by
-    constructor
-    · intro s hs
-      simp only [URQ, Finset.mem_insert, Finset.mem_singleton] at hs
-      rw [hup]
-      rcases hs with rfl | rfl | rfl | rfl
-      · rw [F.zero 1 0 (by decide), F.zero 1 1 (by decide), F.zero 1 6 (by decide)]
-        have := F.neg 1 2 (by decide)
-        nlinarith [mul_pos ht hη0pos]
-      · rw [F.zero 5 1 (by decide), F.zero 5 2 (by decide), F.zero 5 6 (by decide)]
-        have := F.neg 5 0 (by decide)
-        nlinarith
-      · exact facet_pos _ _ _ t η0 ht hη0pos ht6
-      · exact facet_pos _ _ _ t η0 ht hη0pos ht3
-    · intro s hs
-      simp only [DnRQ, Finset.mem_insert, Finset.mem_singleton] at hs
-      rw [hup]
-      rcases hs with rfl | rfl
-      · rw [F.zero 0 0 (by decide), F.zero 0 1 (by decide), F.zero 0 2 (by decide)]
-        have := F.neg 0 6 (by decide)
-        linarith
-      · rw [F.zero 2 0 (by decide), F.zero 2 2 (by decide)]
-        nlinarith [mul_pos ht hη0pos]
-  have hz : RobUni (fun i => ⟪x (cRQ i), u⟫) := by
-    refine Minimality.GenPlus.robUni_of_monoCorners (by norm_num) {1} (by simp) ?_
-    intro v hv
-    rw [Finset.mem_singleton] at hv
-    subst hv
-    have e1 : ⟪x (cRQ 1), u⟫ - ⟪x (cRQ (1 - 1)), u⟫ = -⟪x 0 - x 1, u⟫ := by
-      simp only [cRQ]
-      have : (1 : ZMod 4) - 1 = 0 := by decide
-      rw [this]; simp [← inner_sub_left]
-      rw [← inner_neg_left, neg_sub]
-    have e2 : ⟪x (cRQ (1 + 1)), u⟫ - ⟪x (cRQ 1), u⟫ = ⟪x 2 - x 1, u⟫ := by
-      simp only [cRQ]
-      have : (1 : ZMod 4) + 1 = 2 := by decide
-      rw [this]; simp [← inner_sub_left]
-    rw [e1, e2]
-    have ea : ⟪x 0 - x 1, u⟫ = t * ((-Gab) ^ 2 / Gbb) := by
-      simp only [hu, inner_add_right, real_inner_smul_right, hac, hGaa, hGab]
-      have : η0 * (-Gab) = Gaa + (-Gab) ^ 2 / Gbb := by
-        rw [hη0]; field_simp [hab.ne, hGb.ne']
-        try ring
-      linear_combination t * this
-    have eb : ⟪x 2 - x 1, u⟫ = -(t * (Gaa * Gbb / (-Gab))) := by
-      simp only [hu, inner_add_right, real_inner_smul_right, hbc, hGbb, hGba]
-      have : η0 * Gbb = Gaa * Gbb / (-Gab) + (-Gab) := by
-        rw [hη0]; field_simp [hab.ne, hGb.ne']
-      linear_combination (-t) * this
-    rw [ea, eb]
-    have : 0 < t * ((-Gab) ^ 2 / Gbb) * (t * (Gaa * Gbb / (-Gab))) := by positivity
+  obtain ⟨η, hη, h3, h6⟩ := exists_small |F.f 3 (x 2) - F.f 3 (x 1)| |F.f 6 (x 2) - F.f 6 (x 1)| _ _
+    (abs_nonneg _) (abs_nonneg _) hC3 hC6
+  have small : ∀ (A B : ℝ), η * |A| < B → 0 < -η * A + B := by
+    intro A B h
+    have : η * A ≤ η * |A| := mul_le_mul_of_nonneg_left (le_abs_self A) hη.le
     linarith
-  exact Minimality.GenRev.lexAny_of_closedCell (by norm_num) F injRQ cycRQ hcell hcell.cellLe hz
+  refine lexAny_rqWall F hw5 hη ?_ ?_ ?_ ?_
+  · rw [inner_capView]; have := small _ _ h3; linarith
+  · rw [inner_capView]; have := small _ _ h6; linarith
+  · simp only [capView, inner_add_right, real_inner_smul_right, hac]
+    have : ⟪x 0 - x 1, x 2 - x 1⟫ * η < 0 := mul_neg_of_neg_of_pos hab hη
+    linarith
+  · simp only [capView, inner_add_right, real_inner_smul_right, hbc]
+    nlinarith
 
 /-- The hypotheses of Lemma RQ-face (ray `e_c`, rim `0.1.2.5`), in the corner frame at vertex `1`:
 `ω5 > 0` (implied by `CbarIn`), `G_ac = G_bc = 0`, `G_ab < 0`, and vertex `3` strictly inside the
@@ -285,5 +308,27 @@ theorem holeLeaf_not_rqFace {F : S0xFac 9 s0x_S24 x} (h : T24.HoleLeaf x F) : ¬
 
 theorem holeLeaf_not_rqFaceTwin {F : S0xFac 9 s0x_S24 x} (h : T24.HoleLeaf x F) : ¬ RQFaceTwin x :=
   fun hr => (T24.holeLeaf_not_lexAny h) (lexAny_of_rqFaceTwin F hr)
+
+/-- The hypotheses of the wall lemma: `omega5 > 0` and some `eta > 0` with `0345`, `235` up at
+`W = capView x 0 (-eta) 1`, `<e_a, W> > 0 > <e_b, W>`. -/
+def RQWall (F : S0xFac 9 s0x_S24 x) : Prop :=
+  0 < omega5 x ∧ ∃ η : ℝ, 0 < η ∧ 0 < ⟪F.N 3, capView x 0 (-η) 1⟫ ∧ 0 < ⟪F.N 6, capView x 0 (-η) 1⟫ ∧
+    0 < ⟪x 0 - x 1, capView x 0 (-η) 1⟫ ∧ ⟪x 2 - x 1, capView x 0 (-η) 1⟫ < 0
+
+theorem lexAny_of_rqWall (F : S0xFac 9 s0x_S24 x) (h : RQWall F) : Gen.LexAny F := by
+  obtain ⟨hw, η, hη, h3, h6, ha, hb⟩ := h
+  exact lexAny_rqWall F hw hη h3 h6 ha hb
+
+/-- The twin (ray `e_b`, rim `0.1.6.4`): the wall lemma for `x ∘ pi24`. -/
+def RQWallTwin (F : S0xFac 9 s0x_S24 x) : Prop := RQWall (Minimality.T24.Sym.sym24 F)
+
+theorem lexAny_of_rqWallTwin (F : S0xFac 9 s0x_S24 x) (h : RQWallTwin F) : Gen.LexAny F :=
+  Minimality.T24.Sym.lexAny_sym F (lexAny_of_rqWall (Minimality.T24.Sym.sym24 F) h)
+
+theorem holeLeaf_not_rqWall {F : S0xFac 9 s0x_S24 x} (h : T24.HoleLeaf x F) : ¬ RQWall F :=
+  fun hr => (T24.holeLeaf_not_lexAny h) (lexAny_of_rqWall F hr)
+
+theorem holeLeaf_not_rqWallTwin {F : S0xFac 9 s0x_S24 x} (h : T24.HoleLeaf x F) : ¬ RQWallTwin F :=
+  fun hr => (T24.holeLeaf_not_lexAny h) (lexAny_of_rqWallTwin F hr)
 
 end Minimality.T24.RQ
