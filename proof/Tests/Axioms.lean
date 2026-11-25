@@ -217,6 +217,7 @@ import Minimality.FiveRimApex
 import Minimality.Type24QuadCell
 import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
+import Minimality.Type24HoleAtlas
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2056,3 +2057,47 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.A5.a5_two_peaked
 #assert_standard_axioms Minimality.A5.a5_robUni_of_row
 #assert_standard_axioms Minimality.A5.lexAny_of_a5_row
+#assert_standard_axioms Minimality.T24.Atlas.q4Any_lexAny
+#assert_standard_axioms Minimality.T24.Atlas.edgeAny_lexAny
+#assert_standard_axioms Minimality.T24.Atlas.closedCell_lexAny
+#assert_standard_axioms Minimality.T24.Atlas.splitAny_splitLexAny
+#assert_standard_axioms Minimality.T24.Atlas.splitAny_four_lexAny
+#assert_standard_axioms Minimality.T24.Atlas.faceChordView_weakChordArc
+#assert_standard_axioms Minimality.T24.Atlas.weakChordArc_lexAny_or_splitAny
+#assert_standard_axioms Minimality.T24.Atlas.anyFaceChord_iff_quad
+#assert_standard_axioms Minimality.T24.Atlas.facetCellF_iff
+#assert_standard_axioms Minimality.T24.Atlas.quadCell_lexAny
+#assert_standard_axioms Minimality.T24.Atlas.a5_lexAny
+#assert_standard_axioms Minimality.T24.Atlas.splitRows_apex
+#assert_standard_axioms Minimality.T24.Atlas.robUni_noAlt
+#assert_standard_axioms Minimality.T24.Atlas.robUniO_noAlt
+#assert_standard_axioms Minimality.T24.Atlas.robUni_strictUnimodal
+#assert_standard_axioms Minimality.T24.Atlas.robUni_four_mixed
+#assert_standard_axioms Minimality.T24.Atlas.hole24_unfold
+#assert_standard_axioms Minimality.T24.Atlas.hole24_leaves'
+#assert_standard_axioms Minimality.T24.Atlas.hole24_confined'
+#assert_standard_axioms Minimality.T24.Atlas.hole24_noWeakChord'
+#assert_standard_axioms Minimality.T24.Atlas.hole_inputs
+#assert_standard_axioms Minimality.T24.Atlas.hole24_noFaceChordView
+#assert_standard_axioms Minimality.T24.Atlas.twoEnd_lexAny
+#assert_standard_axioms Minimality.T24.Atlas.hole24_pieceI
+#assert_standard_axioms Minimality.T24.Atlas.hole24_pieceIII
+#assert_standard_axioms Minimality.T24.Atlas.hole24_pieceI_wall
+#assert_standard_axioms Minimality.T24.Atlas.hole24_pieceIII_wall
+#assert_standard_axioms Minimality.T24.Atlas.hole24_pieceA
+#assert_standard_axioms Minimality.T24.Atlas.hole24_pieceB
+#assert_standard_axioms Minimality.T24.Atlas.hole24_J54
+#assert_standard_axioms Minimality.T24.Atlas.hole24_J54_rob5
+#assert_standard_axioms Minimality.T24.Atlas.hole24_c0125
+#assert_standard_axioms Minimality.T24.Atlas.hole24_m42
+#assert_standard_axioms Minimality.T24.Atlas.hole24_u32
+#assert_standard_axioms Minimality.T24.Atlas.hole24_R1
+#assert_standard_axioms Minimality.T24.Atlas.hole24_R2
+#assert_standard_axioms Minimality.T24.Atlas.hole24_R3
+#assert_standard_axioms Minimality.T24.Atlas.hole24_R4p
+#assert_standard_axioms Minimality.T24.Atlas.hole24_R4m
+#assert_standard_axioms Minimality.T24.Atlas.hole24_R5m
+#assert_standard_axioms Minimality.T24.Atlas.hole24_R5p
+#assert_standard_axioms Minimality.T24.Atlas.cone_backs
+#assert_standard_axioms Minimality.T24.Atlas.cone_of_backs
+#assert_standard_axioms Minimality.T24.Atlas.cone_hidden
