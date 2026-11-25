@@ -213,6 +213,7 @@ import Minimality.RimOrderInst
 import Minimality.Type24M42
 import Minimality.Type24NoWallDA
 import Minimality.Type24U32
+import Minimality.FiveRimApex
 import Minimality.Type24QuadCell
 import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
@@ -2048,3 +2049,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EQ.isRupert_u32_lex_pp
 #assert_standard_axioms Minimality.T24.EQ.isRupert_u32
 #assert_standard_axioms Minimality.T24.EQ.isRupert_u32_any
+#assert_standard_axioms Minimality.A5.diagFront_iff_frontDiag
+#assert_standard_axioms Minimality.A5.apexPat_existsUnique
+#assert_standard_axioms Minimality.A5.apexPat_nonEdge
+#assert_standard_axioms Minimality.A5.a5_robUni
+#assert_standard_axioms Minimality.A5.a5_two_peaked
+#assert_standard_axioms Minimality.A5.a5_robUni_of_row
+#assert_standard_axioms Minimality.A5.lexAny_of_a5_row
