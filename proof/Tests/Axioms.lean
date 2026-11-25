@@ -211,6 +211,7 @@ import Minimality.Type24C0125
 import Minimality.Type24LexRc
 import Minimality.RimOrderInst
 import Minimality.Type24M42
+import Minimality.Type24NoWallDA
 import Minimality.Type24QuadCell
 import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
@@ -2027,3 +2028,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EO.isRupert_m42_M3
 #assert_standard_axioms Minimality.T24.EO.isRupert_m42
 #assert_standard_axioms Minimality.T24.EO.facetCellF_iff_facetCell24
+#assert_standard_axioms Minimality.T24.EP.noWallDA_I
+#assert_standard_axioms Minimality.T24.EP.noWallDA_III
+#assert_standard_axioms Minimality.T24.EP.isRupert_pieceI_wall
+#assert_standard_axioms Minimality.T24.EP.isRupert_pieceIII_wall
