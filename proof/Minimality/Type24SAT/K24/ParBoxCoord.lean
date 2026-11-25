@@ -86,7 +86,7 @@ end Minimality.T24.Par
 set_option autoImplicit false
 namespace Minimality.T24.Par
 
-theorem facC_xi {L c y2 xi ze b p q r f4 f1v : ℝ} (hL : 0 < L) (hc : 0 < c) (hy2 : 0 < y2)
+theorem facC_xi {L c y2 xi ze b p q r f4 f1v : ℝ} (hc : 0 < c) (hy2 : 0 < y2)
     (a5 : r * c = 0) (a2 : q * y2 + r * c = 0) (a4 : p * L = f4) (a1 : p * (xi * L) + q * b + r * (ze * c) = f1v)
     (n4 : f4 < 0) (n1 : f1v < 0) : 0 < xi := by
   have hr : r = 0 := by
@@ -124,9 +124,9 @@ theorem facE_ze {L c y6 xi ze b p q r f5 f1v : ℝ} (hL : 0 < L) (hc : 0 < c) (h
   push Not at hx
   nlinarith [mul_nonneg_of_nonpos_of_nonpos hr.le hx, mul_pos hc hc]
 
-theorem facA_lo {L c y2 y6 xi ze b p q r f4 f5 f6 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy2 : 0 < y2) (hxi : 0 < xi)
-    (a2 : q * y2 + r * c = 0) (a1 : p * (xi * L) + q * b + r * (ze * c) = 0) (a4 : p * L = f4)
-    (a5 : r * c = f5) (a6 : p * L + q * y6 = f6) (n4 : f4 < 0) (n5 : f5 < 0) (n6 : f6 < 0) :
+theorem facA_lo {L c y2 y6 xi ze b p q r f5 f6 : ℝ} (hy2 : 0 < y2) (hxi : 0 < xi)
+    (a2 : q * y2 + r * c = 0) (a1 : p * (xi * L) + q * b + r * (ze * c) = 0)
+    (a5 : r * c = f5) (a6 : p * L + q * y6 = f6) (n5 : f5 < 0) (n6 : f6 < 0) :
     y6 * xi + y2 * ze < b := by
   have hq : 0 < q := by
     by_contra h; push Not at h; linarith [mul_nonneg (neg_nonneg.2 h) hy2.le]
@@ -141,7 +141,7 @@ theorem facA_lo {L c y2 y6 xi ze b p q r f4 f5 f6 : ℝ} (hL : 0 < L) (hc : 0 < 
   have : q * (y6 * xi + y2 * ze) < q * b := by linarith
   exact lt_of_mul_lt_mul_left this hq.le
 
-theorem facH_hi {L c y2 y6 xi ze b p q r f0 f1v : ℝ} (hy2 : 0 < y2) (hy6 : 0 < y6) (hL : 0 < L) (hc : 0 < c)
+theorem facH_hi {L c y2 y6 xi ze b p q r f0 f1v : ℝ} (hy2 : 0 < y2) (hy6 : 0 < y6)
     (a2 : 0 - f0 = q * y2 + r * c) (a3 : 0 - f0 = p * L + r * c) (a6 : 0 - f0 = p * L + q * y6)
     (a1 : f1v - f0 = p * (xi * L) + q * b + r * (ze * c)) (n0 : f0 < 0) (n1 : f1v < 0) :
     b < y2 * (1 - xi) + y6 * (1 - ze) := by

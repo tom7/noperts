@@ -130,7 +130,7 @@ theorem isRupert_box_of_facets (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - 
     rw [z 2 2 (by decide), z 2 0 (by decide), X2, ← hy2d, Z2] at a2
     rw [z 2 0 (by decide), X4, Y4, Z4] at a4
     rw [z 2 0 (by decide), hX1, ← hY1, hZ1] at a1
-    exact facC_xi (b := Y1) (ze := ze) (p := ⟪f1, F.N 2⟫) (q := ⟪f2, F.N 2⟫) (r := ⟪f3, F.N 2⟫) (f4 := F.f 2 (x 4)) (f1v := F.f 2 (x 1)) hL hc hy2 (by linarith) (by linarith) (by linarith) (by linarith)
+    exact facC_xi (L := L) (b := Y1) (ze := ze) (p := ⟪f1, F.N 2⟫) (q := ⟪f2, F.N 2⟫) (r := ⟪f3, F.N 2⟫) (f4 := F.f 2 (x 4)) (f1v := F.f 2 (x 1)) hc hy2 (by linarith) (by linarith) (by linarith) (by linarith)
       (ng 2 4 (by decide)) (ng 2 1 (by decide))
   have zeP : 0 < ze := by
     have a4 := fcoord 4 4; have a6 := fcoord 4 6; have a5 := fcoord 4 5; have a1 := fcoord 4 1
@@ -148,15 +148,15 @@ theorem isRupert_box_of_facets (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - 
     rw [z 0 0 (by decide), X4, Y4, Z4] at a4
     rw [z 0 0 (by decide), X5, Y5, Z5] at a5
     rw [z 0 0 (by decide), X6, ← hy6d, Z6] at a6
-    exact facA_lo (b := Y1) (p := ⟪f1, F.N 0⟫) (q := ⟪f2, F.N 0⟫) (r := ⟪f3, F.N 0⟫) (f4 := F.f 0 (x 4)) (f5 := F.f 0 (x 5)) (f6 := F.f 0 (x 6)) hL hc hy2 xiP (by linarith) (by linarith) (by linarith) (by linarith)
-      (by linarith) (ng 0 4 (by decide)) (ng 0 5 (by decide)) (ng 0 6 (by decide))
+    exact facA_lo (L := L) (c := c) (b := Y1) (p := ⟪f1, F.N 0⟫) (q := ⟪f2, F.N 0⟫) (r := ⟪f3, F.N 0⟫) (f5 := F.f 0 (x 5)) (f6 := F.f 0 (x 6)) hy2 xiP (by linarith) (by linarith) (by linarith)
+      (by linarith) (ng 0 5 (by decide)) (ng 0 6 (by decide))
   have hhi : Y1 < y2 * (1 - xi) + y6 * (1 - ze) := by
     have a2 := fcoord 7 2; have a3 := fcoord 7 3; have a6 := fcoord 7 6; have a1 := fcoord 7 1
     rw [z 7 2 (by decide), X2, ← hy2d, Z2] at a2
     rw [z 7 3 (by decide), X3, Y3, Z3] at a3
     rw [z 7 6 (by decide), X6, ← hy6d, Z6] at a6
     rw [hX1, ← hY1, hZ1] at a1
-    exact facH_hi (b := Y1) (p := ⟪f1, F.N 7⟫) (q := ⟪f2, F.N 7⟫) (r := ⟪f3, F.N 7⟫) (f0 := F.f 7 (x 0)) (f1v := F.f 7 (x 1)) hy2 hy6 hL hc (by linarith) (by linarith) (by linarith) (by linarith)
+    exact facH_hi (L := L) (c := c) (b := Y1) (p := ⟪f1, F.N 7⟫) (q := ⟪f2, F.N 7⟫) (r := ⟪f3, F.N 7⟫) (f0 := F.f 7 (x 0)) (f1v := F.f 7 (x 1)) hy2 hy6 (by linarith) (by linarith) (by linarith) (by linarith)
       (ng 7 0 (by decide)) (ng 7 1 (by decide))
   have hbox := box_rupert hL hc hy2 hy6 xiP zeP hlo hhi
   refine rupert_of_frame x f1 f2 f3 (x 0) o11 o22 o33 o12 o13 o23 ?_

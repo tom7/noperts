@@ -7,7 +7,7 @@ public import Minimality.FewVertices
 @[expose] public section
 
 /-!
-# Type 24 outside `C̄ ∪ Σ_B` (§15)
+# Type 24 outside `C̄` (§15)
 
 `FEWER-FACES-PROOFS.md` §15.  Type 24 has the faces `012, 016, 126` (the cap `1`, of degree
 3, with neighbours `0, 2, 6`), the side faces `236, 046, 025`, the quadrilateral `0345`, and
@@ -26,30 +26,28 @@ functional is `f(x 1) (1 − (X_x + X_c − ω X_y))`).  `Δ = ω3 ω4 ω5 − �
 (`omega_identity`), so all `ω > 0` with `Δ ≥ 0` force every product above 1
 (`omega_prod_gt_one`).
 
-* **Theorem 15.4, the window triangle** (`isRupert_type24_window`): if some `ω ≤ 0` or some
-  `ω_g ω_h < 1` (region W), `K` is Rupert, with no exclusion.  The view
-  `e_a + t e_b + ε e_c` (oblique, inside the tangent cone at `1`) sees the silhouette
-  `a b c` with `1, 3, 4, 5` strictly inside; Theorem 5 (the coplanar-silhouette theorem,
-  `isRupert_of_crossing`) applies to the plane of `0, 2, 6`.  The frame form is
-  `isRupert_window_frame`; `ε` is explicit (`1 / (1 + |ω_ab|)`, using the third side face),
-  so no limit is needed.
-* **Lemma 15.5 and Theorem 15.7, case B** (`isRupert_type24_S6`, `_S2`, `_S0`,
-  `isRupert_type24_B`): in region B (all `ω > 0`, all products `≥ 1`, `Δ < 0`), the side
-  crossing `S_6 = 046/236` at the view `d⁽⁶⁾ = (1 + ω4, 1 + ω3, ω3 ω4 − 1)` (`view6`) has
-  the triangle `(0, 2, 6)` as reduced polygon, `4` and `3` middles over its sides `6 0` and
-  `2 6`, and `1, 5` strictly inside (`L(5) = −c₅ Δ`); likewise `S_2 = 025/236` and
-  `S_0 = 025/046`.  A triangle with distinct depths is unimodal, so with no horizontal
-  double normal Proposition 8.8 with Theorem 7.3 gives a passage (`isRupert_vertexTri`).
-  The exclusions are explicit: `S6Free` (product `> 1`, distinct depths of `0, 2, 6` at the
-  view, `NoHDNAt` for the triangle) and its relatives.  The frame form is
-  `isRupert_sideCrossing_frame`.
-* **Corollary 15.8** (`isRupert_type24_outside_Cbar`): a type-24 point set outside
-  `C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0}` is Rupert, unless it is in region B and no side crossing
-  is free (the set `Σ_B`).
+* **Theorem 15.4, the window triangle** (`isRupert_window_frame`, `isRupert_type24_window6`,
+  `_window2`, `_window0`, `isRupert_type24_window`): if some `ω ≤ 0` or some `ω_g ω_h < 1`
+  (region W), `K` is Rupert, with no exclusion.  The view `e_a + t e_b + ε e_c` (oblique, inside
+  the tangent cone at `1`) sees the silhouette `a b c` with `1, 3, 4, 5` strictly inside;
+  Theorem 5 (`isRupert_of_crossing`) applies to the plane of `0, 2, 6`.  The frame form is
+  `isRupert_window_frame` (`exists_window_t` picks `t`).  Only `window6` and `window2` are used
+  below; `window0` and `window` are not reached from the main theorem.
+* **Lemma CV, the corner view** (`isRupert_obliqueView_frame`, `isRupert_cornerView_frame`,
+  `isRupert_type24_corner`): if `1 + ω_ac, 1 + ω_bc, 1 + ω_ab > 0` and `Δ < 0`, the oblique view
+  `((1 + ω_ac)(1 + ω_ab), (1 + ω_bc)(1 + ω_ab), (1 + ω_ac)(1 + ω_bc))` has the triangle `a b c`
+  as silhouette with every other vertex strictly inside (`isRupert_obliqueView_frame`: any view
+  coefficients with positive sum and the three inside conditions).  Metric-free: no depth
+  condition, no horizontal double normal.
+* **Corollary 15.8 without `Σ_B`** (`isRupert_type24_outside_Cbar'`): a type-24 point set outside
+  `C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0}` is Rupert.  If some `ω ≤ 0`, the window triangle (`window6` or
+  `window2`); otherwise all `ω > 0` and `Δ < 0`, and Lemma CV applies.  This replaced the
+  side-crossing route of §15.5 (Lemma 15.5, Theorem 15.7 case B: the views `S_6, S_2, S_0`, the
+  exclusion set `Σ_B`, `S6Free`), whose declarations were deleted (Task BL).  `sideView` and the
+  views `view0 / view2 / view6` are left over and unused.
 
-Not formalized: Lemma 15.2 at ties (an obtuse tie is free; here distinct depths are
-assumed), the codimension count of `Σ_B` (Lemma 15.6, 15.7′), §§15.4–15.5 (crossing
-certificates near the corner, region `C̄`).
+Not formalized here: Lemma 15.2 at ties, §§15.4–15.5 (crossing certificates near the corner,
+region `C̄`; the `C̄` region itself is the hole of `Minimality.T24.Hole24`).
 -/
 
 namespace Minimality

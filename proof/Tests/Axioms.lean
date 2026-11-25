@@ -205,7 +205,12 @@ import Minimality.SplitRim4
 import Minimality.AdjTie4
 import Minimality.SplitApex
 import Minimality.Type24HoleConfined
+import Minimality.Q4Lex
+import Minimality.Type24HoleCore
 import Minimality.Type24HiddenCone
+import Minimality.Type24QuadCell
+import Minimality.GenSigned
+import Minimality.Type24OutsideCbar
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2185,3 +2190,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.HC.depth24_metric_free
 #assert_standard_axioms Minimality.T24.HC.back24_of_cone
 #assert_standard_axioms Minimality.T24.HC.cone24_of_back
+#assert_standard_axioms Minimality.GenRev.lexAny_of_closedCell
+#assert_standard_axioms Minimality.GenRev.lexAny_of_edgeAny
+#assert_standard_axioms Minimality.GenRev.lexAny_of_q4Any
+#assert_standard_axioms Minimality.T24.hole24R9_of_R1
+#assert_standard_axioms Minimality.T24.hole24R9_iff
+#assert_standard_axioms Minimality.T24.hole24Q45R9_iff
+#assert_standard_axioms Minimality.T24.hole24_iff_core
+#assert_standard_axioms Minimality.T24.robUniLex_of_robUni_pad
+#assert_standard_axioms Minimality.T24.lexAny_of_quadCell
+#assert_standard_axioms Minimality.exists_signed_of_pd2
+#assert_standard_axioms Minimality.isRupert_outsideCbar_frame
+#assert_standard_axioms Minimality.isRupert_type24_outside_Cbar''

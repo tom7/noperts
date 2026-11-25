@@ -18,14 +18,14 @@ open Minimality.Split Minimality.Split.HEL
 open Minimality (cross)
 
 theorem recL_pt4 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
-    (hB4 : 0 < B4) (hBy : 0 < B4 - y) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) (hrB : r * B4 < c)
-    (hxi : 0 < xi) (hze : 0 < ze) (hxz : 0 < 1 - xi - ze) (hrc : r < c)
-    (hB6 : 0 < L * (B4 - y) - c * (q * y + 1)) :
+    (hB4 : 0 < B4) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) 
+    
+    :
     LexTiltCert (univ.image (boxCfg L c y y xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze b 4) := by
   apply cone_cert L r _ _ _ _ (boxCfg L c y y xi ze b 6) (boxCfg L c y y xi ze b 3)
     (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _))
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     left
     positivity
   · simp [boxCfg, Minimality.cross]
@@ -38,14 +38,14 @@ theorem recL_pt4 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 
     positivity
 
 theorem recL_pt6 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
-    (hB4 : 0 < B4) (hBy : 0 < B4 - y) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) (hrB : r * B4 < c)
-    (hxi : 0 < xi) (hze : 0 < ze) (hxz : 0 < 1 - xi - ze) (hrc : r < c)
+    (hBy : 0 < B4 - y) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) 
+    
     (hB6 : 0 < L * (B4 - y) - c * (q * y + 1)) :
     LexTiltCert (univ.image (boxCfg L c y y xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze b 6) := by
   apply cone_cert L r _ _ _ _ (boxCfg L c y y xi ze b 2) (boxCfg L c y y xi ze b 4)
     (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _))
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     left
     positivity
   · simp [boxCfg, Minimality.cross]
@@ -62,15 +62,15 @@ theorem recL_pt6 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 
         linear_combination (-(r*L))*hpL + (-L)*hqL
       rw [e]; exact this⟩
 
-theorem recL_pt3 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
-    (hB4 : 0 < B4) (hBy : 0 < B4 - y) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) (hrB : r * B4 < c)
-    (hxi : 0 < xi) (hze : 0 < ze) (hxz : 0 < 1 - xi - ze) (hrc : r < c)
-    (hB6 : 0 < L * (B4 - y) - c * (q * y + 1)) :
+theorem recL_pt3 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hr : 0 < r)
+    (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) (hrB : r * B4 < c)
+    
+    :
     LexTiltCert (univ.image (boxCfg L c y y xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze b 3) := by
   apply cone_cert L r _ _ _ _ (boxCfg L c y y xi ze b 4) (boxCfg L c y y xi ze b 5)
     (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _))
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     right
     refine ⟨rfl, by positivity⟩
   · simp [boxCfg, Minimality.cross]
@@ -85,15 +85,15 @@ theorem recL_pt3 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 
     rw [h1]
     positivity
 
-theorem recL_pt5 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
-    (hB4 : 0 < B4) (hBy : 0 < B4 - y) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) (hrB : r * B4 < c)
-    (hxi : 0 < xi) (hze : 0 < ze) (hxz : 0 < 1 - xi - ze) (hrc : r < c)
-    (hB6 : 0 < L * (B4 - y) - c * (q * y + 1)) :
+theorem recL_pt5 {L c y xi ze b p q r : ℝ} (hL : 0 < L) (hy : 0 < y) (hr : 0 < r)
+    
+    
+    :
     LexTiltCert (univ.image (boxCfg L c y y xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze b 5) := by
   apply cone_cert L r _ _ _ _ (boxCfg L c y y xi ze b 3) (boxCfg L c y y xi ze b 2)
     (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _))
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     right
     refine ⟨rfl, by positivity⟩
   · simp [boxCfg, Minimality.cross]
@@ -103,15 +103,15 @@ theorem recL_pt5 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 
     right
     refine ⟨rfl, by linarith [mul_pos hL hr]⟩
 
-theorem recL_pt2 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
-    (hB4 : 0 < B4) (hBy : 0 < B4 - y) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) (hrB : r * B4 < c)
-    (hxi : 0 < xi) (hze : 0 < ze) (hxz : 0 < 1 - xi - ze) (hrc : r < c)
-    (hB6 : 0 < L * (B4 - y) - c * (q * y + 1)) :
+theorem recL_pt2 {L c y xi ze b p q r : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
+    
+    
+    :
     LexTiltCert (univ.image (boxCfg L c y y xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze b 2) := by
   apply cone_cert L r _ _ _ _ (boxCfg L c y y xi ze b 5) (boxCfg L c y y xi ze b 6)
     (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _))
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     left
     positivity
   · simp [boxCfg, Minimality.cross]
@@ -121,8 +121,8 @@ theorem recL_pt2 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 
     left
     linarith [mul_pos hL hy, mul_pos (mul_pos hL hy) hy]
 
-theorem recL_pt1t {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
-    (hB4 : 0 < B4) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c)
+theorem recL_pt1t {L c y xi ze b p q r : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) 
+    
     (hxi : 0 < xi) (hze : 0 < ze) (hlo : y * xi + y * ze < b) (hb : b < y) :
     LexTiltCert (univ.image (boxCfg L c y y xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze b 1) := by
@@ -142,8 +142,8 @@ theorem recL_pt1t {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy :
     left
     positivity
 
-theorem recL_pt1b {L c y xi ze p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
-    (hB4 : 0 < B4) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c)
+theorem recL_pt1b {L c y xi ze p q r : ℝ} (hL : 0 < L) (hc : 0 < c) (hr : 0 < r)
+    (hqL : q * L = r / 2 + c)
     (hxi : 0 < xi) (hze : 0 < ze) (hxz : 0 < 1 - xi - ze) :
     LexTiltCert (univ.image (boxCfg L c y y xi ze y)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze y 1) := by
@@ -211,13 +211,13 @@ theorem rec_L {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
   fin_cases i
   · exact absurd rfl hi
   · rcases lt_or_eq_of_le hb with hlt | heq
-    · exact recL_pt1t hL hc hy6 hr hB4 hpL hqL hxi hze hlo hlt
+    · exact recL_pt1t hL hc hy6 hxi hze hlo hlt
     · subst heq
-      exact recL_pt1b hL hc hy6 hr hB4 hpL hqL hxi hze hxz
-  · exact recL_pt2 hL hc hy6 hr hB4 hBy hpL hqL hrB hxi hze hxz hrc hB6
-  · exact recL_pt3 hL hc hy6 hr hB4 hBy hpL hqL hrB hxi hze hxz hrc hB6
-  · exact recL_pt4 hL hc hy6 hr hB4 hBy hpL hqL hrB hxi hze hxz hrc hB6
-  · exact recL_pt5 hL hc hy6 hr hB4 hBy hpL hqL hrB hxi hze hxz hrc hB6
-  · exact recL_pt6 hL hc hy6 hr hB4 hBy hpL hqL hrB hxi hze hxz hrc hB6
+      exact recL_pt1b hL hc hr hqL hxi hze hxz
+  · exact recL_pt2 hL hc hy6 hr
+  · exact recL_pt3 hL hc hr hpL hqL hrB
+  · exact recL_pt4 hL hc hy6 hr hB4 hpL hqL
+  · exact recL_pt5 hL hy6 hr
+  · exact recL_pt6 hL hc hy6 hr hBy hpL hqL hB6
 
 end Minimality.T24.Par

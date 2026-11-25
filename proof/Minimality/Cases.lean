@@ -173,17 +173,14 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hZ1 hT2 hT6)
 
-/-- **Type 24 outside `C̄ ∪ Σ_B`** (Corollary 15.8 of `FEWER-FACES-PROOFS.md` §15): a nopert
-does not have seven points labelled so that `012`, `016`, `126` (the cap at `1`) and `236`,
-`046`, `025` (the side faces) are facets (given by functionals negative off them), unless
-it lies in `C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0}` or in `Σ_B`.  The coefficients
+/-- **Type 24 outside `C̄`** (Corollary 15.8 of `FEWER-FACES-PROOFS.md` §15, in the form of Lemma CV,
+`Minimality.isRupert_type24_outside_Cbar'`): a nopert does not have seven points labelled so that
+`012`, `016`, `126` (the cap at `1`) and `236`, `046`, `025` (the side faces) are facets (given by
+functionals negative off them), unless it lies in `C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0}`.  The coefficients
 `ω3 = Minimality.omega3 x`, `ω4`, `ω5` of the side faces and `Δ = Minimality.Delta24 x` are
 read off the oblique coordinates at `1` (frame `x 0 − x 1`, `x 2 − x 1`, `x 6 − x 1`).  Outside
-`C̄` either some `ω ≤ 0` or some product `ω_g ω_h < 1` (region W: Rupert with no exclusion,
-the window triangle), or `Minimality.RegionB24 x` holds; there the hypothesis is that one of
-the three side crossings is available and free (`Minimality.S6Free`, `S2Free`, `S0Free`:
-product `> 1`, distinct depths of `0, 2, 6` at its view, no horizontal double normal of
-their triangle there). -/
+`C̄` either some `ω ≤ 0` (the window triangle of Theorem 15.4) or all `ω > 0` and `Δ < 0` (the
+corner view of Lemma CV); both are metric-free, so no exclusion set (`Σ_B`, `S6Free`, ...) remains. -/
 theorem not_type24_outside_Cbar_of_isNopert (x : Fin 7 → ℝ³)
     (h : IsNopert (Finset.univ.image x))
     (fA fB fC fD fE fF : ℝ³ →ᵃ[ℝ] ℝ)
