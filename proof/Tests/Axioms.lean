@@ -228,6 +228,8 @@ import Minimality.Type24HoleMin
 import Minimality.Type24Apex
 import Minimality.Type24HoleStatement
 import Minimality.Type24HoleEP
+import Minimality.EdgePlaneRim3
+import Minimality.Type24EPFacet
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2231,3 +2233,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Stmt.openEP_of_noBox
 #assert_standard_axioms Minimality.T24.Stmt.openLeaf_of_openEP
 #assert_standard_axioms Minimality.T24.Stmt.open24_of_openEP
+#assert_standard_axioms Minimality.Split.Rim3.edgePlaneAny_rim3_generic
+#assert_standard_axioms Minimality.Split.Rim3.edgePlaneAny_of_strictRim3
+#assert_standard_axioms Minimality.T24.EPF.edgePlaneAny_of_triCell
+#assert_standard_axioms Minimality.T24.EPF.edgePlaneAny_of_facetCellF
+#assert_standard_axioms Minimality.T24.EPF.openEP_of_openEP'
+#assert_standard_axioms Minimality.T24.EPF.openEP'_of_openEP
+#assert_standard_axioms Minimality.T24.EPF.openEP_iff_openEP'
