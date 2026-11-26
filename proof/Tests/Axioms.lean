@@ -226,6 +226,7 @@ import Minimality.SplitEdgePlane
 import Minimality.Type24HoleMin
 import Minimality.Type24Apex
 import Minimality.Type24HoleStatement
+import Minimality.Type24HoleEP
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2223,3 +2224,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.EV.split_core_ep
 #assert_standard_axioms Minimality.Gen.splitAny_edgePlaneAny
 #assert_standard_axioms Minimality.T24.holeLeaf_iff_min
+#assert_standard_axioms Minimality.T24.Stmt.openEP_of_noBox
+#assert_standard_axioms Minimality.T24.Stmt.openLeaf_of_openEP
+#assert_standard_axioms Minimality.T24.Stmt.open24_of_openEP
