@@ -243,6 +243,7 @@ import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
+import Minimality.UnimodalSplit
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2320,3 +2321,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.LexTilt.skew5_strictRim
 #assert_standard_axioms Minimality.Split.LexTilt.skew5_hiddenInTriangles
 #assert_standard_axioms Minimality.Split.LexTilt.skew5_no_splitRows
+#assert_standard_axioms Minimality.Split.UnimodalSplit.exists_farCorner
+#assert_standard_axioms Minimality.Split.UnimodalSplit.isDepthSeparatedAt_of_unimodal
+#assert_standard_axioms Minimality.Split.UnimodalSplit.edgePlaneAny_of_unimodal
+#assert_standard_axioms Minimality.Split.UnimodalSplit.example_unimodal_edgePlane
