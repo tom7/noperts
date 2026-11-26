@@ -222,6 +222,7 @@ import Minimality.Type24HoleAtlas
 import Minimality.Type24RayQuad
 import Minimality.Type24SplitFamily
 import Minimality.Type24EPWall
+import Minimality.Type24EPHide
 import Minimality.SplitEdgePlane
 import Minimality.Type24HoleMin
 import Minimality.Type24Apex
@@ -2156,6 +2157,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EU.isRupert_of_epWall
 #assert_standard_axioms Minimality.T24.EU.edgePlaneAny_of_epWall
 #assert_standard_axioms Minimality.T24.EU.holeLeaf_not_epWall
+#assert_standard_axioms Minimality.T24.EH.rim_det_all
+#assert_standard_axioms Minimality.T24.EH.strictRimN_of_facets
+#assert_standard_axioms Minimality.T24.EH.hiddenInTriangles_of_cone
+#assert_standard_axioms Minimality.T24.EH.edgePlaneAny_of_cone_hidden
+#assert_standard_axioms Minimality.T24.EH.edgePlaneAny_of_epHideOn
+#assert_standard_axioms Minimality.T24.EH.edgePlaneAny_of_comp
+#assert_standard_axioms Minimality.T24.EH.edgePlaneAny_of_epHideChamber
 #assert_standard_axioms Minimality.T24.Atlas.hole24_u32
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_u32
 #assert_standard_axioms Minimality.T24.Atlas.hole24_R1
