@@ -237,6 +237,7 @@ import Minimality.Type24NoCoplanar
 import Minimality.EdgePlaneLWrap
 import Minimality.EdgePlaneRev
 import Minimality.Type24HoleAtlasEPRev
+import Minimality.EdgePlaneDual
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
@@ -2296,3 +2297,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.Rev.edgePlaneAny_of_lwrap_adj_twoBlue
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_lwrap_slope_twoBlue
 #assert_standard_axioms Minimality.T24.Atlas.hole24_lwrap_slope_twoBlue
+#assert_standard_axioms Minimality.Split.Dual.gordan_r3
+#assert_standard_axioms Minimality.Split.Dual.not_exists_pos_of_gordan
+#assert_standard_axioms Minimality.Split.Dual.inner_epRow
+#assert_standard_axioms Minimality.Split.Dual.edgePlaneAny_or_gordan
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_ep_gordan
+#assert_standard_axioms Minimality.T24.Atlas.hole24_ep_gordan
