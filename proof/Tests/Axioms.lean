@@ -236,6 +236,7 @@ import Minimality.Type24EPQuad
 import Minimality.Type24NoCoplanar
 import Minimality.EdgePlaneLWrap
 import Minimality.EdgePlaneLevel
+import Minimality.Type24HoleCore3
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2279,3 +2280,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Atlas.hole24_level_extremum_wrap
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_lwrap_slope
 #assert_standard_axioms Minimality.T24.Atlas.hole24_lwrap_slope
+#assert_standard_axioms Minimality.T24.Atlas.facetCellF_lexAny_or_edgePlane
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_iff_core3
+#assert_standard_axioms Minimality.T24.Atlas.holeLeafMin_iff_core3
+#assert_standard_axioms Minimality.T24.Atlas.hole24_core3
