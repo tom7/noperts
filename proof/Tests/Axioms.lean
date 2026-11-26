@@ -238,6 +238,7 @@ import Minimality.EdgePlaneLWrap
 import Minimality.EdgePlaneRev
 import Minimality.Type24HoleAtlasEPRev
 import Minimality.EdgePlaneDual
+import Minimality.Type24DeepC
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
@@ -2303,3 +2304,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.Dual.edgePlaneAny_or_gordan
 #assert_standard_axioms Minimality.T24.Atlas.holeLeaf_ep_gordan
 #assert_standard_axioms Minimality.T24.Atlas.hole24_ep_gordan
+#assert_standard_axioms Minimality.T24.DeepC.edgePlaneAny_iff_exists_at
+#assert_standard_axioms Minimality.T24.DeepC.freeAt_of_edgePlaneAt
+#assert_standard_axioms Minimality.T24.DeepC.freeAt_of_base_cone
+#assert_standard_axioms Minimality.T24.DeepC.isRupert_of_base_cone
+#assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_of_base_cone
+#assert_standard_axioms Minimality.T24.DeepC.cone_det3_ne
+#assert_standard_axioms Minimality.T24.DeepC.openDeep_of_deepCEP
