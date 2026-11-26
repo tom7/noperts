@@ -229,6 +229,7 @@ import Minimality.Type24Apex
 import Minimality.Type24HoleStatement
 import Minimality.Type24HoleEP
 import Minimality.EdgePlaneRim3
+import Minimality.EdgePlaneRim4Level
 import Minimality.Type24EPFacet
 import Minimality.Type24EPQuad
 
@@ -2247,3 +2248,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EPQ.quadFacetEP_of_noParallel
 #assert_standard_axioms Minimality.T24.EPQ.quadFacetEP
 #assert_standard_axioms Minimality.T24.EPQ.openEP_iff_openEP'_par
+#assert_standard_axioms Minimality.Split.Rim4.edgePlaneAny_core4
+#assert_standard_axioms Minimality.Split.Rim4.level0
+#assert_standard_axioms Minimality.Split.Rim4.hidden_of_diag
+#assert_standard_axioms Minimality.Split.Rim4.edgePlaneAny_of_strictRim4_level
