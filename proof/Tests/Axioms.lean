@@ -235,6 +235,7 @@ import Minimality.Type24EPFacet
 import Minimality.Type24EPQuad
 import Minimality.Type24NoCoplanar
 import Minimality.EdgePlaneLWrap
+import Minimality.EdgePlaneRev
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
@@ -2288,3 +2289,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Belt.cellA_or_cellAi
 #assert_standard_axioms Minimality.T24.Belt.cellA_eventually
 #assert_standard_axioms Minimality.T24.Belt.cellAi_eventually
+#assert_standard_axioms Minimality.Split.Rev.strictRimN_rev
+#assert_standard_axioms Minimality.Split.Rev.hiddenInTriangles_rev
+#assert_standard_axioms Minimality.Split.Rev.lwY_rev
+#assert_standard_axioms Minimality.Split.Rev.edgePlaneAny_of_lwrap_adj_twoBlue
