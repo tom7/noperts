@@ -232,6 +232,7 @@ import Minimality.EdgePlaneRim3
 import Minimality.EdgePlaneRim4Level
 import Minimality.Type24EPFacet
 import Minimality.Type24EPQuad
+import Minimality.Type24NoCoplanar
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2246,6 +2247,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EPQ.sr4_exists
 #assert_standard_axioms Minimality.T24.EPQ.edgePlaneAny_of_strictRim4
 #assert_standard_axioms Minimality.T24.EPQ.quadFacetEP_of_noParallel
+#assert_standard_axioms Minimality.T24.NC.not_coplanar5
+#assert_standard_axioms Minimality.T24.NC.not_coplanar5_normal
+#assert_standard_axioms Minimality.T24.NC.hdiag
+#assert_standard_axioms Minimality.T24.NC.edgePlaneAny_of_strictRim4_level
 #assert_standard_axioms Minimality.T24.EPQ.quadFacetEP
 #assert_standard_axioms Minimality.T24.EPQ.openEP_iff_openEP'_par
 #assert_standard_axioms Minimality.Split.Rim4.edgePlaneAny_core4
