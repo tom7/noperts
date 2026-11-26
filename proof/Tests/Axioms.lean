@@ -239,6 +239,7 @@ import Minimality.EdgePlaneRev
 import Minimality.Type24HoleAtlasEPRev
 import Minimality.EdgePlaneDual
 import Minimality.Type24DeepC
+import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
@@ -2311,3 +2312,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_of_base_cone
 #assert_standard_axioms Minimality.T24.DeepC.cone_det3_ne
 #assert_standard_axioms Minimality.T24.DeepC.openDeep_of_deepCEP
+#assert_standard_axioms Minimality.Split.LexTilt.eventually_strictRimN_add_smul
+#assert_standard_axioms Minimality.Split.LexTilt.eventually_hiddenInTriangles_add_smul
+#assert_standard_axioms Minimality.Split.LexTilt.isDepthSeparatedAt_add_smul_of_weak
+#assert_standard_axioms Minimality.Split.LexTilt.edgePlaneAny_of_weakDepthSep_tilt
+#assert_standard_axioms Minimality.Split.LexTilt.example_weak_tilt_edgePlane
+#assert_standard_axioms Minimality.Split.LexTilt.skew5_strictRim
+#assert_standard_axioms Minimality.Split.LexTilt.skew5_hiddenInTriangles
+#assert_standard_axioms Minimality.Split.LexTilt.skew5_no_splitRows
