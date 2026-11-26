@@ -219,6 +219,7 @@ import Minimality.Type24QuadCell
 import Minimality.GenSigned
 import Minimality.Type24OutsideCbar
 import Minimality.Type24HoleAtlas
+import Minimality.Type24HoleAtlasEP
 import Minimality.Type24RayQuad
 import Minimality.Type24SplitFamily
 import Minimality.Type24EPWall
@@ -2270,3 +2271,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.Level.harch_id
 #assert_standard_axioms Minimality.Split.Level.hidden_ev
 #assert_standard_axioms Minimality.Split.LWrap.edgePlaneAny_of_lwrap_adj_twoRed
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_rim4_alternates
+#assert_standard_axioms Minimality.T24.Atlas.hole24_rim4_alternates
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_no_level4
+#assert_standard_axioms Minimality.T24.Atlas.hole24_no_level4
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_level_extremum_wrap
+#assert_standard_axioms Minimality.T24.Atlas.hole24_level_extremum_wrap
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_lwrap_slope
+#assert_standard_axioms Minimality.T24.Atlas.hole24_lwrap_slope
