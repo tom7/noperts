@@ -233,6 +233,7 @@ import Minimality.EdgePlaneRim4Level
 import Minimality.Type24EPFacet
 import Minimality.Type24EPQuad
 import Minimality.Type24NoCoplanar
+import Minimality.EdgePlaneLevel
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2257,3 +2258,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.Rim4.level0
 #assert_standard_axioms Minimality.Split.Rim4.hidden_of_diag
 #assert_standard_axioms Minimality.Split.Rim4.edgePlaneAny_of_strictRim4_level
+#assert_standard_axioms Minimality.Split.Level.edgePlaneAny_of_level_extremum
+#assert_standard_axioms Minimality.Split.Level.mono_pos
+#assert_standard_axioms Minimality.Split.Level.harch_id
+#assert_standard_axioms Minimality.Split.Level.hidden_ev
