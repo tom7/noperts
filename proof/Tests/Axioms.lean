@@ -233,6 +233,7 @@ import Minimality.EdgePlaneRim4Level
 import Minimality.Type24EPFacet
 import Minimality.Type24EPQuad
 import Minimality.Type24NoCoplanar
+import Minimality.EdgePlaneLWrap
 import Minimality.EdgePlaneLevel
 
 /-!
@@ -2252,6 +2253,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.NC.not_coplanar5_normal
 #assert_standard_axioms Minimality.T24.NC.hdiag
 #assert_standard_axioms Minimality.T24.NC.edgePlaneAny_of_strictRim4_level
+#assert_standard_axioms Minimality.T24.NC.cover4
+#assert_standard_axioms Minimality.T24.NC.quad_bk_ne
+#assert_standard_axioms Minimality.T24.NC.cross_ne_of_det3_ne
+#assert_standard_axioms Minimality.T24.NC.not_parallel4
+#assert_standard_axioms Minimality.T24.NC.hnp_of_img
+#assert_standard_axioms Minimality.T24.NC.edgePlaneAny_of_strictRim4_level'
 #assert_standard_axioms Minimality.T24.EPQ.quadFacetEP
 #assert_standard_axioms Minimality.T24.EPQ.openEP_iff_openEP'_par
 #assert_standard_axioms Minimality.Split.Rim4.edgePlaneAny_core4
@@ -2262,3 +2269,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.Level.mono_pos
 #assert_standard_axioms Minimality.Split.Level.harch_id
 #assert_standard_axioms Minimality.Split.Level.hidden_ev
+#assert_standard_axioms Minimality.Split.LWrap.edgePlaneAny_of_lwrap_adj_twoRed
