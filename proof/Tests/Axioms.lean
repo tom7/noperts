@@ -2863,6 +2863,21 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_S
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_S
 
+-- Type24OffOB1D15: the diagonal views x1 - x5 / x1 - x4 and edge views x0 - x2 / x0 - x6 on the B2 / C2 residue (OSPEC13)
+#assert_standard_axioms Minimality.T24.OSpec.pairView_up
+#assert_standard_axioms Minimality.T24.OSpec.pairView_dn
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_d15View
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_d15View_sym
+#assert_standard_axioms Minimality.T24.OSpec.d02_dn_edge
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_d02View
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_d02View_sym
+#assert_standard_axioms Minimality.T24.OSpec.q45_resG_local
+#assert_standard_axioms Minimality.T24.OSpec.q45_resG
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialG_of_openSpecialS
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_G
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_G
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_G
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve
