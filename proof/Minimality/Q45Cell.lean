@@ -6,6 +6,7 @@ public import Minimality.EdgeTiltBD
 public import Minimality.EdgeViewLink
 public import Minimality.DiagCross
 public import Minimality.CornerU
+public import Minimality.ClosedCellLex
 
 
 @[expose] public section
@@ -115,14 +116,15 @@ def UB1 : Finset (Fin 9) := {0, 4, 5}
 def DB1 : Finset (Fin 9) := {2, 3, 7, 8}
 theorem cycB1 : S0xCycUD s0x_S24 (quad 6 4 0 2) UB1 DB1 := by decide
 
-theorem q45_B1_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+/-- The corner cell `B1` as a lex cell (`lexAny_of_closedCell_q4`); `q45_B1_cell` is its Rupert corollary. -/
+theorem q45_B1_cell_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0)
     (s t : ℝ) (hs0 : 0 < s) (ht : 0 < t) (hst : 1 < s + t)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hs1 : s < 1)
     (hlex : ∃ i ∈ ({4, 2} : Finset (Fin 7)), ∃ j ∈ ({6, 0} : Finset (Fin 7)),
       ⟪x i - x j, x 5 - x 0⟫ < 0 ∨ (⟪x i - x j, x 5 - x 0⟫ = 0 ∧ 0 < ⟪x i - x j, x 4 - x 0⟫)) :
-    IsRupert (univ.image x) := by
+    Gen.LexAny F := by
   have hx := inj_of_fac24 F
   have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∃ i ∈ ({4, 2} : Finset (Fin 7)), ∃ j ∈ ({6, 0} : Finset (Fin 7)),
       0 < ⟪x i - x j, u_B1 x ε⟫ := by
@@ -195,7 +197,17 @@ theorem q45_B1_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · rcases hnD t ht with h | ⟨h, -⟩
       · exact h.le
       · exact h.le
-  exact isRupert_of_closedCell_q4 F hx (inj_quad (by decide)) cycB1 he' hcl hcl hn hp'
+  exact lexAny_of_closedCell_q4 F hx (inj_quad (by decide)) cycB1 he' hcl hcl hn hp'
+
+theorem q45_B1_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0)
+    (s t : ℝ) (hs0 : 0 < s) (ht : 0 < t) (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hs1 : s < 1)
+    (hlex : ∃ i ∈ ({4, 2} : Finset (Fin 7)), ∃ j ∈ ({6, 0} : Finset (Fin 7)),
+      ⟪x i - x j, x 5 - x 0⟫ < 0 ∨ (⟪x i - x j, x 5 - x 0⟫ = 0 ∧ 0 < ⟪x i - x j, x 4 - x 0⟫)) :
+    IsRupert (univ.image x) :=
+  Gen.lexAny_isRupert F (inj_of_fac24 F) (q45_B1_cell_lex F ha5 s t hs0 ht hst hdecomp hs1 hlex)
 
 def UB2 : Finset (Fin 9) := {2, 3, 5, 8}
 def DB2 : Finset (Fin 9) := {6, 7}
@@ -207,14 +219,15 @@ def UC2 : Finset (Fin 9) := {3, 4, 5, 6}
 def DC2 : Finset (Fin 9) := {7, 8}
 theorem cycC2 : S0xCycUD s0x_S24 (quad 6 4 3 2) UC2 DC2 := by decide
 
-theorem q45_B2_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+/-- The corner cell `B2` as a lex cell (`lexAny_of_closedCell_q4`); `q45_B2_cell` is its Rupert corollary. -/
+theorem q45_B2_cell_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha34 : ⟪F.N 5, x 3 - x 4⟫ < 0)
     (s t : ℝ) (ht : 0 < t)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hs1 : 1 < s)
     (hlex : ∃ i ∈ ({3, 2} : Finset (Fin 7)), ∃ j ∈ ({6, 5} : Finset (Fin 7)),
       ⟪x i - x j, x 3 - x 4⟫ < 0 ∨ (⟪x i - x j, x 3 - x 4⟫ = 0 ∧ ⟪x i - x j, x 5 - x 0⟫ < 0)) :
-    IsRupert (univ.image x) := by
+    Gen.LexAny F := by
   have hx := inj_of_fac24 F
   have hu_bd : ∀ ε, u_B2 x s t ε = -(x 3 - x 4) + ε • (-(x 5 - x 0)) := by
     intro ε
@@ -289,16 +302,27 @@ theorem q45_B2_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · rcases hnD t ht with h | ⟨h, -⟩
       · exact h.le
       · exact h.le
-  exact isRupert_of_closedCell_q4 F hx (inj_quad (by decide)) cycB2 he' hcl hcl hn hp'
+  exact lexAny_of_closedCell_q4 F hx (inj_quad (by decide)) cycB2 he' hcl hcl hn hp'
 
-theorem q45_C1_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+theorem q45_B2_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha34 : ⟪F.N 5, x 3 - x 4⟫ < 0)
+    (s t : ℝ) (ht : 0 < t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hs1 : 1 < s)
+    (hlex : ∃ i ∈ ({3, 2} : Finset (Fin 7)), ∃ j ∈ ({6, 5} : Finset (Fin 7)),
+      ⟪x i - x j, x 3 - x 4⟫ < 0 ∨ (⟪x i - x j, x 3 - x 4⟫ = 0 ∧ ⟪x i - x j, x 5 - x 0⟫ < 0)) :
+    IsRupert (univ.image x) :=
+  Gen.lexAny_isRupert F (inj_of_fac24 F) (q45_B2_cell_lex F ha34 s t ht hdecomp hs1 hlex)
+
+/-- The corner cell `C1` as a lex cell (`lexAny_of_closedCell_q4`); `q45_C1_cell` is its Rupert corollary. -/
+theorem q45_C1_cell_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha4 : ⟪F.N 5, x 4 - x 0⟫ < 0)
     (s t : ℝ) (hs0 : 0 < s) (ht : 0 < t) (hst : 1 < s + t)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (ht1 : t < 1)
     (hlex : ∃ i ∈ ({6, 5} : Finset (Fin 7)), ∃ j ∈ ({0, 2} : Finset (Fin 7)),
       ⟪x i - x j, x 4 - x 0⟫ < 0 ∨ (⟪x i - x j, x 4 - x 0⟫ = 0 ∧ 0 < ⟪x i - x j, x 5 - x 0⟫)) :
-    IsRupert (univ.image x) := by
+    Gen.LexAny F := by
   have hx := inj_of_fac24 F
   have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∃ i ∈ ({6, 5} : Finset (Fin 7)), ∃ j ∈ ({0, 2} : Finset (Fin 7)),
       0 < ⟪x i - x j, u_C1 x ε⟫ := by
@@ -368,16 +392,27 @@ theorem q45_C1_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · rcases hnD t ht with h | ⟨h, -⟩
       · exact h.le
       · exact h.le
-  exact isRupert_of_closedCell_q4 F hx (inj_quad (by decide)) cycC1 he' hcl hcl hn hp'
+  exact lexAny_of_closedCell_q4 F hx (inj_quad (by decide)) cycC1 he' hcl hcl hn hp'
 
-theorem q45_C2_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+theorem q45_C1_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha4 : ⟪F.N 5, x 4 - x 0⟫ < 0)
+    (s t : ℝ) (hs0 : 0 < s) (ht : 0 < t) (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (ht1 : t < 1)
+    (hlex : ∃ i ∈ ({6, 5} : Finset (Fin 7)), ∃ j ∈ ({0, 2} : Finset (Fin 7)),
+      ⟪x i - x j, x 4 - x 0⟫ < 0 ∨ (⟪x i - x j, x 4 - x 0⟫ = 0 ∧ 0 < ⟪x i - x j, x 5 - x 0⟫)) :
+    IsRupert (univ.image x) :=
+  Gen.lexAny_isRupert F (inj_of_fac24 F) (q45_C1_cell_lex F ha4 s t hs0 ht hst hdecomp ht1 hlex)
+
+/-- The corner cell `C2` as a lex cell (`lexAny_of_closedCell_q4`); `q45_C2_cell` is its Rupert corollary. -/
+theorem q45_C2_cell_lex {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha35 : ⟪F.N 5, x 3 - x 5⟫ < 0)
     (s t : ℝ) (hs0 : 0 < s)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (ht1 : 1 < t)
     (hlex : ∃ i ∈ ({6, 3} : Finset (Fin 7)), ∃ j ∈ ({4, 2} : Finset (Fin 7)),
       ⟪x i - x j, x 3 - x 5⟫ < 0 ∨ (⟪x i - x j, x 3 - x 5⟫ = 0 ∧ ⟪x i - x j, x 4 - x 0⟫ < 0)) :
-    IsRupert (univ.image x) := by
+    Gen.LexAny F := by
   have hx := inj_of_fac24 F
   have hu_bd : ∀ ε, u_C2 x s t ε = -(x 3 - x 5) + ε • (-(x 4 - x 0)) := by
     intro ε
@@ -451,6 +486,16 @@ theorem q45_C2_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · rcases hnD t ht with h | ⟨h, -⟩
       · exact h.le
       · exact h.le
-  exact isRupert_of_closedCell_q4 F hx (inj_quad (by decide)) cycC2 he' hcl hcl hn hp'
+  exact lexAny_of_closedCell_q4 F hx (inj_quad (by decide)) cycC2 he' hcl hcl hn hp'
+
+theorem q45_C2_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha35 : ⟪F.N 5, x 3 - x 5⟫ < 0)
+    (s t : ℝ) (hs0 : 0 < s)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (ht1 : 1 < t)
+    (hlex : ∃ i ∈ ({6, 3} : Finset (Fin 7)), ∃ j ∈ ({4, 2} : Finset (Fin 7)),
+      ⟪x i - x j, x 3 - x 5⟫ < 0 ∨ (⟪x i - x j, x 3 - x 5⟫ = 0 ∧ ⟪x i - x j, x 4 - x 0⟫ < 0)) :
+    IsRupert (univ.image x) :=
+  Gen.lexAny_isRupert F (inj_of_fac24 F) (q45_C2_cell_lex F ha35 s t hs0 hdecomp ht1 hlex)
 
 end Minimality.T24.Q45
