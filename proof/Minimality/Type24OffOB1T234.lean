@@ -387,6 +387,25 @@ theorem n234_eq (x : Fin 7 → ℝ³) : n234 x = cross (x 4 - x 3) (x 2 - x 3) :
   ext i; fin_cases i <;>
     simp [n234] <;> ring
 
+/-- `⟪x 2 - x 5, x 5 - x 3⟫ ≥ 0` on the B2 branch (`x 5` is farther than `x 0` from the edge line `3 4`, `s > 1`). -/
+theorem t234_da {s t : ℝ} (hs : 1 < s) (ht : 0 < t) (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (htie : ⟪x 2, x 3 - x 4⟫ = ⟪x 5, x 3 - x 4⟫) (h25 : 0 ≤ ⟪x 2 - x 5, x 5 - x 0⟫) :
+    0 ≤ ⟪x 2 - x 5, x 5 - x 3⟫ := by
+  have hde : ⟪x 2 - x 5, x 4 - x 3⟫ = 0 := by
+    have : ⟪x 2 - x 5, x 3 - x 4⟫ = 0 := by rw [inner_sub_left]; linarith
+    have h' : x 4 - x 3 = -(x 3 - x 4) := by abel
+    rw [h', inner_neg_right, this, neg_zero]
+  have hv : (s + t - 1) • (x 5 - x 0) = (s - 1) • (x 5 - x 3) - s • (x 4 - x 3) := by
+    have h3 : x 3 = x 0 + (s • (x 4 - x 0) + t • (x 5 - x 0)) := by rw [← hd]; abel
+    rw [h3]; module
+  have h := congrArg (fun w => ⟪x 2 - x 5, w⟫) hv
+  simp only [inner_sub_right, real_inner_smul_right] at h hde h25 ⊢
+  by_contra hn
+  have h1 : 0 ≤ (s + t - 1) * (⟪x 2 - x 5, x 5⟫ - ⟪x 2 - x 5, x 0⟫) := mul_nonneg (by linarith) h25
+  have h2 := mul_neg_of_pos_of_neg (sub_pos.mpr hs) (not_le.mp hn)
+  rw [hde, mul_zero, sub_zero] at h
+  linarith
+
 /-- **0345 up at the side of `x 5`** (B2 branch): on the tie `⟪x 2, e34⟫ = ⟪x 5, e34⟫`, with `s > 1` and `⟪x 2 - x 5, x 5
 - x 0⟫ ≥ 0` (not `HlexB2` on the tie), `⟪N3, n234⟫ ⟪x 5 - x 2, n234⟫ > 0`.  Mechanism: `= -f3(x 2) q1`, `q1 = |e|² ⟪a,
 c⟫ - ⟪e, a⟫ ⟪e, c⟫` (`e = x4 - x3`, `a = x5 - x3`, `c = x2 - x3`) is `|e|² ⟪x5 - Q, x2 - Q⟫` (`Q` on the line `3 4` at
@@ -412,17 +431,7 @@ theorem t234_up3_prod (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs : 1 < s) (ht : 0 
     have : ⟪x 2 - x 5, x 3 - x 4⟫ = 0 := by rw [inner_sub_left]; linarith
     have h' : e = -(x 3 - x 4) := by rw [he]; abel
     rw [h', inner_neg_right, this, neg_zero]
-  have hda : 0 ≤ ⟪d, a⟫ := by
-    have hv : (s + t - 1) • (x 5 - x 0) = (s - 1) • a - s • e := by
-      have h3 : x 3 = x 0 + (s • (x 4 - x 0) + t • (x 5 - x 0)) := by rw [← hd]; abel
-      rw [ha, he, h3]; module
-    have h := congrArg (fun w => ⟪d, w⟫) hv
-    simp only [inner_sub_right, real_inner_smul_right, hde] at h
-    have h25' : 0 ≤ ⟪d, x 5⟫ - ⟪d, x 0⟫ := by rw [← inner_sub_right]; exact h25
-    have : 0 ≤ (s + t - 1) * (⟪d, x 5⟫ - ⟪d, x 0⟫) := mul_nonneg (by linarith) h25'
-    by_contra hn
-    have := mul_neg_of_pos_of_neg (sub_pos.mpr hs) (not_le.mp hn)
-    linarith
+  have hda : 0 ≤ ⟪d, a⟫ := t234_da hs ht hd htie h25
   -- strict Gram of `e`, `a` (via `N8 ⊥ e`, `f8(x 5) < 0`)
   have hee : 0 < ⟪e, e⟫ := by
     have := t234_lt34 F
@@ -612,5 +621,278 @@ theorem open24Rupert_of_split_I (h1 : OpenOB1) (h2 : OpenSpecialI) : Open24Ruper
   open24Rupert_of_split_H h1 (openSpecialI_iff_H.mp h2)
 
 end T234D
+
+section T234E
+open Minimality.LexCell
+
+variable {x : Fin 7 → ℝ³}
+
+/-! ### OSPEC16: `235` up derived on the B2 branch (full tie, `¬ HlexB2` at `3, 5`) -/
+
+/-- Three vectors `⊥ E ≠ 0` with `N ⊥ g, a`, `⟪N, w⟫ ≠ 0`, `M ⊥ a`, `⟪M, g⟫ ≠ 0`, `a ≠ 0` cannot exist (they would be
+coplanar, so `g × a = 0`, so `g ∥ a`). -/
+theorem t234_coplanar_false (N M E g a w : ℝ³) (hNg : ⟪N, g⟫ = 0) (hNa : ⟪N, a⟫ = 0) (hNw : ⟪N, w⟫ ≠ 0)
+    (hMa : ⟪M, a⟫ = 0) (hMg : ⟪M, g⟫ ≠ 0) (ha : a ≠ 0) (hE : E ≠ 0) (hEg : ⟪E, g⟫ = 0) (hEa : ⟪E, a⟫ = 0)
+    (hEw : ⟪E, w⟫ = 0) : False := by
+  rw [t234_inner3] at hNg hNa hNw hMa hMg hEg hEa hEw
+  set D := g 0 * (a 1 * w 2 - a 2 * w 1) - g 1 * (a 0 * w 2 - a 2 * w 0) + g 2 * (a 0 * w 1 - a 1 * w 0) with hD
+  have hEE : 0 < E 0 * E 0 + E 1 * E 1 + E 2 * E 2 := by
+    have := real_inner_self_pos.mpr hE; rwa [t234_inner3] at this
+  have hD0 : D * (E 0 * E 0 + E 1 * E 1 + E 2 * E 2) = 0 := by
+    linear_combination
+      (E 0 * (a 1 * w 2 - a 2 * w 1) + E 1 * (a 2 * w 0 - a 0 * w 2) + E 2 * (a 0 * w 1 - a 1 * w 0)) * hEg +
+      (E 0 * (w 1 * g 2 - w 2 * g 1) + E 1 * (w 2 * g 0 - w 0 * g 2) + E 2 * (w 0 * g 1 - w 1 * g 0)) * hEa +
+      (E 0 * (g 1 * a 2 - g 2 * a 1) + E 1 * (g 2 * a 0 - g 0 * a 2) + E 2 * (g 0 * a 1 - g 1 * a 0)) * hEw
+  have hD' : D = 0 := (mul_eq_zero.mp hD0).resolve_right hEE.ne'
+  set nw := N 0 * w 0 + N 1 * w 1 + N 2 * w 2
+  have c0 : nw * (g 1 * a 2 - g 2 * a 1) = 0 := by
+    linear_combination (-(a 1 * w 2 - a 2 * w 1)) * hNg + (-(w 1 * g 2 - w 2 * g 1)) * hNa + N 0 * hD'
+  have c1 : nw * (g 2 * a 0 - g 0 * a 2) = 0 := by
+    linear_combination (-(a 2 * w 0 - a 0 * w 2)) * hNg + (-(w 2 * g 0 - w 0 * g 2)) * hNa + N 1 * hD'
+  have c2 : nw * (g 0 * a 1 - g 1 * a 0) = 0 := by
+    linear_combination (-(a 0 * w 1 - a 1 * w 0)) * hNg + (-(w 0 * g 1 - w 1 * g 0)) * hNa + N 2 * hD'
+  have k0 := (mul_eq_zero.mp c0).resolve_left hNw
+  have k1 := (mul_eq_zero.mp c1).resolve_left hNw
+  have k2 := (mul_eq_zero.mp c2).resolve_left hNw
+  have haa : 0 < a 0 * a 0 + a 1 * a 1 + a 2 * a 2 := by
+    have := real_inner_self_pos.mpr ha; rwa [t234_inner3] at this
+  have hk : (a 0 * a 0 + a 1 * a 1 + a 2 * a 2) * (M 0 * g 0 + M 1 * g 1 + M 2 * g 2) = 0 := by
+    linear_combination (g 0 * a 0 + g 1 * a 1 + g 2 * a 2) * hMa +
+      (M 1 * a 2 - M 2 * a 1) * k0 + (M 2 * a 0 - M 0 * a 2) * k1 + (M 0 * a 1 - M 1 * a 0) * k2
+  exact hMg ((mul_eq_zero.mp hk).resolve_left haa.ne')
+
+
+/-- **`x 3` strictly above the tie plane** (B2 branch): `τ = ⟪x 5 - x 3, x 4 - x 3⟫ > 0`.  `≥` is `¬ HlexB2` at the
+pair `3, 5`; equality would put `x 2, x 3, x 5, x 6` in one plane `⊥ e34` (with the tie `h2 = h5 = h6`), impossible
+since `x 6` is off the facet `235` (`t234_coplanar_false`). -/
+theorem t234_tau_pos (F : S0xFac 9 s0x_S24 x) (htie : ⟪x 2, x 3 - x 4⟫ = ⟪x 5, x 3 - x 4⟫)
+    (htie6 : ⟪x 5, x 3 - x 4⟫ = ⟪x 6, x 3 - x 4⟫) (h35 : ⟪x 5, x 3 - x 4⟫ ≤ ⟪x 3, x 3 - x 4⟫) :
+    0 < ⟪x 5 - x 3, x 4 - x 3⟫ := by
+  have e : ⟪x 5 - x 3, x 4 - x 3⟫ = ⟪x 3, x 3 - x 4⟫ - ⟪x 5, x 3 - x 4⟫ := by
+    have h' : x 4 - x 3 = -(x 3 - x 4) := by abel
+    rw [h', inner_neg_right, inner_sub_left]; ring
+  rw [e]
+  rcases h35.lt_or_eq with h | h
+  · linarith
+  exfalso
+  have hperp : ∀ i : Fin 7, ⟪x i, x 3 - x 4⟫ = ⟪x 3, x 3 - x 4⟫ → ⟪x 4 - x 3, x i - x 3⟫ = 0 := by
+    intro i hi
+    have h' : x 4 - x 3 = -(x 3 - x 4) := by abel
+    rw [h', inner_neg_left, real_inner_comm, inner_sub_left, hi, sub_self, neg_zero]
+  have hE : x 4 - x 3 ≠ 0 := by
+    intro h0
+    have := t234_lt34 F
+    rw [← sub_pos, ← inner_sub_left, h0, inner_zero_left] at this
+    exact lt_irrefl _ this
+  have ha : x 5 - x 3 ≠ 0 := by
+    intro h0
+    have h8 := F.inner_sub 8 5 3
+    rw [h0, inner_zero_right, F.zero 8 3 (by decide)] at h8
+    have := F.neg 8 5 (by decide); linarith
+  refine t234_coplanar_false (F.N 6) (F.N 3) (x 4 - x 3) (x 2 - x 3) (x 5 - x 3) (x 6 - x 3) ?_ ?_ ?_ ?_ ?_ ha hE
+    (hperp 2 (by linarith)) (hperp 5 h) (hperp 6 (by linarith))
+  · rw [F.inner_sub 6 2 3, F.zero 6 2 (by decide), F.zero 6 3 (by decide)]; ring
+  · rw [F.inner_sub 6 5 3, F.zero 6 5 (by decide), F.zero 6 3 (by decide)]; ring
+  · rw [F.inner_sub 6 6 3, F.zero 6 3 (by decide), sub_zero]; exact (F.neg 6 6 (by decide)).ne
+  · rw [F.inner_sub 3 5 3, F.zero 3 5 (by decide), F.zero 3 3 (by decide)]; ring
+  · rw [F.inner_sub 3 2 3, F.zero 3 3 (by decide), sub_zero]; exact (F.neg 3 2 (by decide)).ne
+
+/-- `n234 = (x 2 - x 3) × (x 4 - x 3)` up to sign. -/
+theorem n234_eq_neg (x : Fin 7 → ℝ³) : cross (x 2 - x 3) (x 4 - x 3) = -n234 x := by
+  ext i; fin_cases i <;>
+    simp [n234] <;> ring
+
+/-- **235 up at the side of `x 5`** (B2 branch with the full tie and `¬ HlexB2`): `⟪N6, n234⟫ ⟪x 5 - x 2, n234⟫ > 0`.
+Mechanism: `= -f6(x 4) q6`, `q6 = |g|² ⟪a, E⟫ - ⟪g, a⟫ ⟪g, E⟫` (`g = x2 - x3`, `a = x5 - x3`, `E = x4 - x3`) `= τ ⟪g,
+x2 - x5⟫` on the tie, `τ > 0` (`t234_tau_pos`) and `⟪g, x2 - x5⟫ = ⟪a, d⟫ + |d|² > 0` (`t234_da`, `x 2 ≠ x 5`). -/
+theorem t234_up6_prod (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs : 1 < s) (ht : 0 < t)
+    (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (htie : ⟪x 2, x 3 - x 4⟫ = ⟪x 5, x 3 - x 4⟫)
+    (htie6 : ⟪x 5, x 3 - x 4⟫ = ⟪x 6, x 3 - x 4⟫) (h35 : ⟪x 5, x 3 - x 4⟫ ≤ ⟪x 3, x 3 - x 4⟫)
+    (h25 : 0 ≤ ⟪x 2 - x 5, x 5 - x 0⟫) : 0 < ⟪F.N 6, n234 x⟫ * ⟪x 5 - x 2, n234 x⟫ := by
+  set g := x 2 - x 3 with hg
+  set a := x 5 - x 3 with ha
+  set E := x 4 - x 3 with hE
+  have hNg : ⟪F.N 6, g⟫ = 0 := by rw [hg, F.inner_sub 6 2 3, F.zero 6 2 (by decide), F.zero 6 3 (by decide)]; ring
+  have hNa : ⟪F.N 6, a⟫ = 0 := by rw [ha, F.inner_sub 6 5 3, F.zero 6 5 (by decide), F.zero 6 3 (by decide)]; ring
+  have hNE : ⟪F.N 6, E⟫ = F.f 6 (x 4) := by rw [hE, F.inner_sub 6 4 3, F.zero 6 3 (by decide)]; ring
+  have hT := t234_triple_perp (F.N 6) g a E hNg hNa
+  have hae : a - E = x 5 - x 4 := by rw [ha, hE]; abel
+  have h54 : ⟪x 5 - x 4, n234 x⟫ = ⟪x 5 - x 2, n234 x⟫ := by
+    rw [inner_sub_left, inner_sub_left, t234_tie4 (x := x) (Or.inl rfl)]
+  rw [hg, hE, n234_eq_neg, ← hg, ← hE, hae, inner_neg_right, inner_neg_right, neg_mul_neg, h54, hNE] at hT
+  rw [hT]
+  have f64 : F.f 6 (x 4) < 0 := F.neg 6 4 (by decide)
+  set d := x 2 - x 5 with hdd
+  have hgd : g = a + d := by rw [hg, ha, hdd]; abel
+  have hdE : ⟪d, E⟫ = 0 := by
+    have : ⟪x 2 - x 5, x 3 - x 4⟫ = 0 := by rw [inner_sub_left]; linarith
+    have h' : E = -(x 3 - x 4) := by rw [hE]; abel
+    rw [h', inner_neg_right, this, neg_zero]
+  have hda : 0 ≤ ⟪d, a⟫ := t234_da hs ht hd htie h25
+  have hd0 : d ≠ 0 := by
+    intro h0
+    have h3 := F.inner_sub 3 2 5
+    rw [← hdd, h0, inner_zero_right, F.zero 3 5 (by decide)] at h3
+    have := F.neg 3 2 (by decide); linarith
+  have hdd' : 0 < ⟪d, d⟫ := real_inner_self_pos.mpr hd0
+  have htau : 0 < ⟪a, E⟫ := t234_tau_pos F htie htie6 h35
+  have hq : 0 < ⟪g, g⟫ * ⟪a, E⟫ - ⟪g, a⟫ * ⟪g, E⟫ := by
+    have e1 : ⟪g, E⟫ = ⟪a, E⟫ := by rw [hgd, inner_add_left, hdE, add_zero]
+    have e2 : ⟪g, g⟫ - ⟪g, a⟫ = ⟪a, d⟫ + ⟪d, d⟫ := by
+      rw [hgd]; simp only [inner_add_left, inner_add_right]; rw [real_inner_comm d a]; ring
+    have : ⟪g, g⟫ * ⟪a, E⟫ - ⟪g, a⟫ * ⟪g, E⟫ = ⟪a, E⟫ * (⟪a, d⟫ + ⟪d, d⟫) := by rw [e1, ← e2]; ring
+    rw [this]; exact mul_pos htau (by have := real_inner_comm a d; linarith)
+  nlinarith [mul_pos (neg_pos.mpr f64) hq]
+
+/-- **236 at `n234` as a metric sign** (identity; only the tie `h2 = h6`): `⟪N7, n⟫ ⟪x 6 - x 2, n⟫ = -f7(x 4) τ6 ⟪x 2 -
+x 3, x 2 - x 6⟫`, `τ6 = ⟪x 6 - x 3, x 4 - x 3⟫`.  So with `z6 < z2` and `τ > 0`, `236` down at `t234b` iff the angle
+at `x 2` between `x 3` and `x 6` is acute (OSPEC16 census: `126` and `236` flip together exactly there). -/
+theorem t234_prod7 (F : S0xFac 9 s0x_S24 x) (htie : ⟪x 2, x 3 - x 4⟫ = ⟪x 6, x 3 - x 4⟫) :
+    ⟪F.N 7, n234 x⟫ * ⟪x 6 - x 2, n234 x⟫ =
+      -(F.f 7 (x 4) * (⟪x 6 - x 3, x 4 - x 3⟫ * ⟪x 2 - x 3, x 2 - x 6⟫)) := by
+  set g := x 2 - x 3 with hg
+  set a := x 6 - x 3 with ha
+  set E := x 4 - x 3 with hE
+  have hNg : ⟪F.N 7, g⟫ = 0 := by rw [hg, F.inner_sub 7 2 3, F.zero 7 2 (by decide), F.zero 7 3 (by decide)]; ring
+  have hNa : ⟪F.N 7, a⟫ = 0 := by rw [ha, F.inner_sub 7 6 3, F.zero 7 6 (by decide), F.zero 7 3 (by decide)]; ring
+  have hNE : ⟪F.N 7, E⟫ = F.f 7 (x 4) := by rw [hE, F.inner_sub 7 4 3, F.zero 7 3 (by decide)]; ring
+  have hT := t234_triple_perp (F.N 7) g a E hNg hNa
+  have hae : a - E = x 6 - x 4 := by rw [ha, hE]; abel
+  have h64 : ⟪x 6 - x 4, n234 x⟫ = ⟪x 6 - x 2, n234 x⟫ := by
+    rw [inner_sub_left, inner_sub_left, t234_tie4 (x := x) (Or.inl rfl)]
+  rw [hg, hE, n234_eq_neg, ← hg, ← hE, hae, inner_neg_right, inner_neg_right, neg_mul_neg, h64, hNE] at hT
+  rw [hT]
+  have hdE : ⟪g - a, E⟫ = 0 := by
+    have e1 : g - a = x 2 - x 6 := by rw [hg, ha]; abel
+    have : ⟪x 2 - x 6, x 3 - x 4⟫ = 0 := by rw [inner_sub_left]; linarith
+    have h' : E = -(x 3 - x 4) := by rw [hE]; abel
+    rw [e1, h', inner_neg_right, this, neg_zero]
+  have e2 : x 2 - x 6 = g - a := by rw [hg, ha]; abel
+  rw [inner_sub_left] at hdE
+  have e3 : ⟪g, g - a⟫ = ⟪g, g⟫ - ⟪g, a⟫ := inner_sub_right g g a
+  have : ⟪g, E⟫ = ⟪a, E⟫ := by linarith
+  rw [e2, e3, this]; ring
+
+/-- **346 at `n234` as a metric sign** (identity): `⟪N8, n⟫ ⟪x 6 - x 2, n⟫ = -f8(x 2) X6`, `X6 = |E|² ⟪x 6 - x 3, x 2 -
+x 3⟫ - ⟪E, x 6 - x 3⟫ ⟪E, x 2 - x 3⟫` (`E = x 4 - x 3`; the coordinate of `x 6` along the foot direction of `x 2` in the
+tie plane).  With `z6 < z2`, `346` down at `t234b` iff `X6 > 0` (OSPEC16 census). -/
+theorem t234_prod8 (F : S0xFac 9 s0x_S24 x) :
+    ⟪F.N 8, n234 x⟫ * ⟪x 6 - x 2, n234 x⟫ =
+      -(F.f 8 (x 2) * (⟪x 4 - x 3, x 4 - x 3⟫ * ⟪x 6 - x 3, x 2 - x 3⟫ -
+        ⟪x 4 - x 3, x 6 - x 3⟫ * ⟪x 4 - x 3, x 2 - x 3⟫)) := by
+  have hNe : ⟪F.N 8, x 4 - x 3⟫ = 0 := by rw [F.inner_sub 8 4 3, F.zero 8 4 (by decide), F.zero 8 3 (by decide)]; ring
+  have hNa : ⟪F.N 8, x 6 - x 3⟫ = 0 := by rw [F.inner_sub 8 6 3, F.zero 8 6 (by decide), F.zero 8 3 (by decide)]; ring
+  have hNc : ⟪F.N 8, x 2 - x 3⟫ = F.f 8 (x 2) := by rw [F.inner_sub 8 2 3, F.zero 8 3 (by decide)]; ring
+  have hT := t234_triple_perp (F.N 8) (x 4 - x 3) (x 6 - x 3) (x 2 - x 3) hNe hNa
+  have hac : x 6 - x 3 - (x 2 - x 3) = x 6 - x 2 := by abel
+  rw [← n234_eq, hac, hNc] at hT
+  exact hT
+
+/-- The B2 branch with the full tie `h2 = h5 = h6` (`Q45TieLocusB2`) and `h5 ≤ h3` (`¬ HlexB2` at the pair `3, 5`),
+heights along `e34 = x 3 - x 4`. -/
+def T234BrJ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  T234Br F ∧ ⟪x 5, x 3 - x 4⟫ = ⟪x 6, x 3 - x 4⟫ ∧ ⟪x 5, x 3 - x 4⟫ ≤ ⟪x 3, x 3 - x 4⟫
+
+/-- **235 up at `t234b`** on `T234BrJ`. -/
+theorem t234_up6 (F : S0xFac 9 s0x_S24 x) (hB : T234BrJ F) : T234Up F (t234b x) 6 := by
+  obtain ⟨⟨s, t, hs, ht, hd, -, htie, h25⟩, h56, h35⟩ := hB
+  have hp := t234_up6_prod F hs ht hd htie h56 h35 h25
+  left
+  unfold t234b
+  split_ifs with h
+  · exact pos_of_mul_pos_left hp h.le
+  · have h' : ⟪x 5 - x 2, n234 x⟫ < 0 := by
+      rcases (not_lt.mp h).lt_or_eq with h' | h'
+      · exact h'
+      · rw [h', mul_zero] at hp; exact (lt_irrefl _ hp).elim
+    have hN : ⟪F.N 6, n234 x⟫ < 0 := by
+      by_contra hc; nlinarith [mul_nonpos_of_nonneg_of_nonpos (not_lt.mp hc) h'.le]
+    rw [inner_neg_right]; linarith
+
+/-- **The remaining T234 letters after OSPEC16**: `016 046 126 236 346` down and `012` up or (`012` down, `025` up) at
+`t234b`; `0345` up, `235` up, `z2 < z0`, `z2 < z1` are derived on `T234BrJ`. -/
+def T234RedJ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  T234Dn F (t234b x) 1 ∧ T234Dn F (t234b x) 4 ∧ T234Dn F (t234b x) 5 ∧ T234Dn F (t234b x) 7 ∧
+    T234Dn F (t234b x) 8 ∧ (T234Up F (t234b x) 0 ∨ (T234Dn F (t234b x) 0 ∧ T234Up F (t234b x) 2))
+
+theorem t234Red_iff_J (F : S0xFac 9 s0x_S24 x) (hB : T234BrJ F) : T234Red F ↔ T234RedJ F := by
+  have u6 := t234_up6 F hB
+  unfold T234Red T234RedJ
+  exact ⟨fun h => h.2, fun h => ⟨u6, h⟩⟩
+
+/-- **Exactness**: on `T234BrJ`, `T234ViewOK ↔ T234RedJ`. -/
+theorem t234ViewOK_iff_redJ (F : S0xFac 9 s0x_S24 x) (hB : T234BrJ F) : T234ViewOK F ↔ T234RedJ F :=
+  (t234ViewOK_iff_red F hB.1).trans (t234Red_iff_J F hB)
+
+/-- The B2 corner tie supplies `T234BrJ`. -/
+theorem t234BrJ_of_resB2T (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (h : ResB2T x s) (ht : 0 < t)
+    (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hb1 : oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0) : T234BrJ F := by
+  refine ⟨t234Br_of_resB2T F h ht hd hb1, h.2.2.2.2.2, ?_⟩
+  obtain ⟨-, -, -, hl, -⟩ := h
+  by_contra hn
+  apply hl
+  refine ⟨3, by decide, 5, by decide, Or.inl ?_⟩
+  rw [inner_sub_left]; linarith
+
+/-! ### The residue with `235` removed (OSPEC16) -/
+
+/-- The T234 view condition with the OSPEC16 letters removed: on `T234BrJ` only `T234RedJ`, elsewhere `T234ViewOK`. -/
+def T234ViewJ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  (T234BrJ F ∧ T234RedJ F) ∨ (¬ T234BrJ F ∧ T234ViewOK F)
+
+/-- `T234ViewJ` is `T234ViewOK`. -/
+theorem t234ViewJ_iff (F : S0xFac 9 s0x_S24 x) : T234ViewJ F ↔ T234ViewOK F := by
+  by_cases hB : T234BrJ F
+  · unfold T234ViewJ; rw [t234ViewOK_iff_redJ F hB]; tauto
+  · unfold T234ViewJ
+    constructor
+    · rintro (⟨h, -⟩ | ⟨-, h⟩)
+      · exact (hB h).elim
+      · exact h
+    · intro h; exact Or.inr ⟨hB, h⟩
+
+theorem lexAny_of_t234ViewJ (F : S0xFac 9 s0x_S24 x) (h : T234ViewJ F) : Gen.LexAny F :=
+  lexAny_of_t234View F ((t234ViewJ_iff F).mp h)
+
+/-- `Q45ResSTG` where neither `T234ViewJ` (nor its mirror) applies: on the B2 branch the failure of `T234RedJ` (six
+letters; sampled failures only `126` with `236`, `346`, and `012` with `025`). -/
+def Q45ResSTJ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  Q45ResSTG F s t ∧ ¬ T234ViewJ F ∧ ¬ T234ViewJ (Sym.sym24 F)
+
+/-- The branch-tagged residue after OSPEC16. -/
+def Q45ResWJ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTJ F s t
+
+/-- `Q45ResWJ = Q45ResWI`. -/
+theorem q45ResWJ_iff_I (F : S0xFac 9 s0x_S24 x) : Q45ResWJ F ↔ Q45ResWI F := by
+  unfold Q45ResWJ Q45ResWI Q45ResSTJ Q45ResSTI
+  simp only [t234ViewJ_iff, t234ViewI_iff]
+
+/-- [OPEN] **The special piece after OSPEC16, Rupert form**: `OpenSpecialI` with `Q45ResWJ` in place of `Q45ResWI`
+(equivalent: `openSpecialJ_iff_I`). -/
+def OpenSpecialJ : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWJ F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialJ ↔ OpenSpecialI`. -/
+theorem openSpecialJ_iff_I : OpenSpecialJ ↔ OpenSpecialI := by
+  unfold OpenSpecialJ OpenSpecialI
+  simp only [q45ResWJ_iff_I]
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialJ`. -/
+theorem hole24_offOB1_J {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialJ) : IsRupert (univ.image x) :=
+  hole24_offOB1_I h hO (openSpecialJ_iff_I.mp hS)
+
+/-- [PROVED] Generic + special (OSPEC16 form) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_J (h1 : OpenOB1) (h2 : OpenSpecialJ) : Open24Rupert :=
+  open24Rupert_of_split_I h1 (openSpecialJ_iff_I.mp h2)
+
+end T234E
 
 end Minimality.T24.OSpec

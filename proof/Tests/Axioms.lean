@@ -2908,6 +2908,24 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_I
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_I
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_I
+-- OSPEC16: 235 up derived on the B2 branch (tau > 0 from the full tie and non-coplanarity), residue Q45ResWJ / OpenSpecialJ
+#assert_standard_axioms Minimality.T24.OSpec.t234_coplanar_false
+#assert_standard_axioms Minimality.T24.OSpec.t234_da
+#assert_standard_axioms Minimality.T24.OSpec.t234_tau_pos
+#assert_standard_axioms Minimality.T24.OSpec.t234_up6_prod
+#assert_standard_axioms Minimality.T24.OSpec.t234_prod7
+#assert_standard_axioms Minimality.T24.OSpec.t234_prod8
+#assert_standard_axioms Minimality.T24.OSpec.t234_up6
+#assert_standard_axioms Minimality.T24.OSpec.t234Red_iff_J
+#assert_standard_axioms Minimality.T24.OSpec.t234ViewOK_iff_redJ
+#assert_standard_axioms Minimality.T24.OSpec.t234BrJ_of_resB2T
+#assert_standard_axioms Minimality.T24.OSpec.t234ViewJ_iff
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_t234ViewJ
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWJ_iff_I
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialJ_iff_I
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_J
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_J
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_J
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3

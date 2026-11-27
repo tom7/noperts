@@ -58,4 +58,10 @@ theorem open24Rupert_of_cellCoverEmpty28_I (hN : CellCoverEmpty cells28) (hS : O
     Open24Rupert :=
   open24Rupert_of_cellCoverEmpty_I hN hS
 
+/-- [PROVED] Headline chain with `cells28` after OSPEC16 (`235` derived): `CellCoverEmpty cells28` and
+`OSpec.OpenSpecialJ` give `Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty28_J (hN : CellCoverEmpty cells28) (hS : OSpec.OpenSpecialJ) :
+    Open24Rupert :=
+  open24Rupert_of_cellCoverEmpty_J hN hS
+
 end Minimality.T24.Cell
