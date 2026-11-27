@@ -256,6 +256,7 @@ import Minimality.Type24OffOB1
 import Minimality.Type24OffOB1Res
 import Minimality.Type24HoleAtlasNC
 import Minimality.Type24WallFoot
+import Minimality.Type24WallFoot126
 import Minimality.Type24Cell
 import Minimality.Type24CellWall
 import Minimality.Type24NamedCoverRes
@@ -2508,6 +2509,43 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.WallFoot.holeLeaf_not_seesaw_S1
 #assert_standard_axioms Minimality.T24.WallFoot.holeLeaf_not_seesaw_S2
 #assert_standard_axioms Minimality.T24.WallFoot.holeLeaf_not_seesaw_S3
+
+-- Type24WallFoot126: wall 126 (CW2 = F4 there), window feet WF2 (126) / WF0 (016, 012) (WALL126, 11-27)
+#assert_standard_axioms Minimality.T24.WallFoot126.wall126_cellAt_eventually
+#assert_standard_axioms Minimality.T24.WallFoot126.wall126_lt_eventually
+#assert_standard_axioms Minimality.T24.WallFoot126.wall126_q4_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.wall126_z2_sub_z6
+#assert_standard_axioms Minimality.T24.WallFoot126.cellAt0264_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.cellW2_0526_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.cellW2_0264_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.wallFoot126_above
+#assert_standard_axioms Minimality.T24.WallFoot126.wallFoot126_below
+#assert_standard_axioms Minimality.T24.WallFoot126.robUni_window5
+#assert_standard_axioms Minimality.T24.WallFoot126.robUni_of_rotate
+#assert_standard_axioms Minimality.T24.WallFoot126.cellAtP_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.wallP_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.windowFoot126_lexAny_of_tie
+#assert_standard_axioms Minimality.T24.WallFoot126.windowFoot126_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.cellAtC_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.wallC_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.windowFoot016_lexAny_of_tie
+#assert_standard_axioms Minimality.T24.WallFoot126.windowFoot016_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.lexAny_of_cw2Above
+#assert_standard_axioms Minimality.T24.WallFoot126.lexAny_of_cw2Below
+#assert_standard_axioms Minimality.T24.WallFoot126.lexAny_of_wf2At
+#assert_standard_axioms Minimality.T24.WallFoot126.lexAny_of_wf0At
+#assert_standard_axioms Minimality.T24.WallFoot126.lexAny_of_cw2Above_twin
+#assert_standard_axioms Minimality.T24.WallFoot126.lexAny_of_cw2Below_twin
+#assert_standard_axioms Minimality.T24.WallFoot126.lexAny_of_wf2At_twin
+#assert_standard_axioms Minimality.T24.WallFoot126.windowFoot012_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_cw2Above
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_cw2Above_twin
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_cw2Below
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_cw2Below_twin
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_wf2At
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_wf2At_twin
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_wf0At
+#assert_standard_axioms Minimality.T24.WallFoot126.holeLeaf_not_wf0At_twin
 
 -- Type24Cell: generic cell certificates, CellCoverResidue / CellCoverEmpty (CELL24, 11-27)
 #assert_standard_axioms Minimality.T24.Cell.lexAny_of_cellRob
