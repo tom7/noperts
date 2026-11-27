@@ -27,7 +27,11 @@ second and third levels reversed, so the facets edge-on at level 1 (`0345`, `046
 It closes the small residue pieces of `Q45ResWF` with known views: the three `Bs1` points (`s = 1`; two on the
 tie `TBs1`) and, with its mirror `(x 0 - x 5, x 4 - x 0, -N3)` (`π24`), the five double-wall points.  The cut
 `Q45ResWB` / `OpenSpecialB` removes every point where either view's conditions hold (`q45_resB_local`), on every piece,
-and applies the face-on J0 views `JFaceOK` (OSPEC9) to every piece too: they close both `B2T` points (pattern B).
+and applies the face-on J0 views `JFaceOK` and the K0 views `K0ViewOK` (OSPEC9) to every piece too: they close both
+`B2T` points (pattern B), the three acute J0 double normals and the J0b point `S3_730`.  On the `64` tie the face
+angle `0 4 3` splits the J0 points: obtuse -> face-on view (`faceOnCell_of_tie64`), acute -> K0 view, every
+condition derived for `t ≤ 1` (`k0ViewOK_of_tie64`); no face-on pattern exists at an acute angle
+(`not_j64ViewOK_of_acute`).
 -/
 
 namespace Minimality.T24.OSpec
@@ -292,10 +296,11 @@ theorem bsViewOK_sym_of (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht0 
 
 /-! ### The residue after the Bs views -/
 
-/-- `Q45ResSTF` where neither Bs view's conditions hold and no face-on J0 view applies (`JFaceOK`, so far used on the
-J0 pieces only; it also closes both `B2T` points, pattern B). -/
+/-- `Q45ResSTF` where neither Bs view's conditions hold and neither the face-on J0 views (`JFaceOK`, so far used on
+the J0 pieces only; they also close both `B2T` points, pattern B) nor the K0 views (`K0ViewOK`, so far used on
+`kJ = 0` only; they close the acute `64` / `52` ties, `k0ViewOK_of_tie64`, and the J0b point `S3_730`) apply. -/
 def Q45ResSTB {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
-  Q45ResSTF F s t ∧ ¬ BsCond F t ∧ ¬ BsCondSym F s ∧ ¬ JFaceOK F
+  Q45ResSTF F s t ∧ ¬ BsCond F t ∧ ¬ BsCondSym F s ∧ ¬ JFaceOK F ∧ ¬ K0ViewOK F ∧ ¬ K0ViewOK (Sym.sym24 F)
 
 /-- The branch-tagged residue after the Bs views. -/
 def Q45ResWB {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
@@ -312,7 +317,11 @@ theorem q45_resB_local (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht0 :
   · exact Or.inl (lexAny_of_bsView_sym F (bsViewOK_sym_of F hs0 ht0 hdec hB))
   by_cases hJ : JFaceOK F
   · exact Or.inl (lexAny_of_jFace F hJ)
-  exact Or.inr ⟨h, hA, hB, hJ⟩
+  by_cases hK : K0ViewOK F
+  · exact Or.inl (lexAny_of_k0View F hK)
+  by_cases hK' : K0ViewOK (Sym.sym24 F)
+  · exact Or.inl (lexAny_of_k0View_sym F hK')
+  exact Or.inr ⟨h, hA, hB, hJ, hK, hK'⟩
 
 /-- `Q45ResWB ⊆ Q45ResWF`. -/
 theorem q45ResWF_of_B {F : S0xFac 9 s0x_S24 x} (h : Q45ResWB F) : Q45ResWF F := by
@@ -365,5 +374,274 @@ theorem open24Rupert_of_split_B (h1 : OpenOB1) (h2 : OpenSpecialB) : Open24Ruper
   · exact hole24_offOB1_B hH hO h2
 
 end Bs
+
+/-! ### The face-on J0 view on the `64` tie
+
+On the adjacent S2 tie `64` (`x 6 - x 4 ⊥ e4, e5`, i.e. `x 6 - x 4 ∥ N3`) the facets `046` and `346` through the
+edge `4 6` are edge-on at level 1 of the face-on view `(N3, bB2, x 0 - x 4)` (`j64_perp`), so level 2 (`bB2`, in
+the face plane perpendicular to edge `3 4`) decides them: `346` is always down (`n8_bB2_neg`), `046` is down iff the
+face angle of `0345` at `4` is obtuse (`b2_dn4_of_obtuse`; up when acute, `n4_bB2_pos_of_acute`).  Hence on the tie
+`0345 046 346` are derived for the four patterns of `J64ViewOK` when the angle `0 4 3` is obtuse
+(`faceOnCell_of_tie64`), and NO pattern can hold when it is acute (`not_j64ViewOK_of_acute`): the two open `64` J0
+points (and, in the mirror, the open `52` point) are exactly the acute ones of the J0 residue [SAMPLED]. -/
+
+section J64Tie
+open Minimality.LexCell
+
+/-- **On the `64` tie the facets through the edge `4 6` are perpendicular to `0345`**: `⟪N4, N3⟫ = ⟪N8, N3⟫ = 0`.
+Gram identities along `u = x 4 - x 0`, `v = x 5 - x 0`: `G ⟪N, N3⟫ = det(u,v,N3) det(u,v,N)` and
+`G ⟪N, d⟫ = det(u,v,d) det(u,v,N)` for `d = x 6 - x 4 ⊥ u, v`, with `det(u,v,d) ≠ 0` (`G |d|² = det(u,v,d)²`). -/
+theorem j64_perp (F : S0xFac 9 s0x_S24 x) (h4 : ⟪x 6 - x 4, x 4 - x 0⟫ = 0) (h5 : ⟪x 6 - x 4, x 5 - x 0⟫ = 0) :
+    ⟪F.N 4, F.N 3⟫ = 0 ∧ ⟪F.N 8, F.N 3⟫ = 0 := by
+  set u := x 4 - x 0
+  set v := x 5 - x 0
+  set d := x 6 - x 4
+  have h3u : ⟪F.N 3, u⟫ = 0 := by rw [F.inner_sub 3 4 0, F.zero 3 4 (by decide), F.zero 3 0 (by decide)]; ring
+  have h3v : ⟪F.N 3, v⟫ = 0 := by rw [F.inner_sub 3 5 0, F.zero 3 5 (by decide), F.zero 3 0 (by decide)]; ring
+  have hdu : ⟪d, u⟫ = 0 := h4
+  have hdv : ⟪d, v⟫ = 0 := h5
+  have hu : u ≠ 0 := by
+    intro h0
+    have e := F.inner_sub 8 4 0
+    rw [show x 4 - x 0 = u from rfl, h0, inner_zero_right, F.zero 8 4 (by decide)] at e
+    linarith [F.neg 8 0 (by decide)]
+  have h4u : ⟪F.N 4, u⟫ = 0 := by rw [F.inner_sub 4 4 0, F.zero 4 4 (by decide), F.zero 4 0 (by decide)]; ring
+  have h4v : ⟪F.N 4, v⟫ ≠ 0 := by
+    rw [F.inner_sub 4 5 0, F.zero 4 0 (by decide)]; linarith [F.neg 4 5 (by decide)]
+  have hG := Q45.gram_pos u v (F.N 4) hu h4u h4v
+  have h3d : ⟪F.N 3, d⟫ < 0 := by
+    rw [F.inner_sub 3 6 4, F.zero 3 4 (by decide)]; linarith [F.neg 3 6 (by decide)]
+  have hdd := Q45.gram_decomp u v d d
+  rw [hdu, hdv] at hdd
+  simp only [mul_zero, sub_zero, zero_add] at hdd
+  have hD : det3 u v d ≠ 0 := by
+    intro h0
+    rw [h0, zero_mul] at hdd
+    have hd0 : d = 0 := by
+      have := (mul_eq_zero.mp hdd).resolve_left hG.ne'
+      exact inner_self_eq_zero.mp this
+    rw [hd0, inner_zero_right] at h3d; exact lt_irrefl _ h3d
+  have key : ∀ t : Fin 9, ⟪F.N t, d⟫ = 0 → ⟪F.N t, F.N 3⟫ = 0 := by
+    intro t ht
+    have g1 := Q45.gram_decomp u v d (F.N t)
+    have g2 := Q45.gram_decomp u v (F.N 3) (F.N t)
+    rw [hdu, hdv, ht] at g1
+    rw [h3u, h3v] at g2
+    simp only [mul_zero, zero_mul, sub_zero, zero_add] at g1 g2
+    have hA := (mul_eq_zero.mp g1.symm).resolve_left hD
+    rw [hA, mul_zero] at g2
+    exact (mul_eq_zero.mp g2).resolve_left hG.ne'
+  refine ⟨key 4 ?_, key 8 ?_⟩
+  · rw [F.inner_sub 4 6 4, F.zero 4 6 (by decide), F.zero 4 4 (by decide)]; ring
+  · rw [F.inner_sub 8 6 4, F.zero 8 6 (by decide), F.zero 8 4 (by decide)]; ring
+
+/-- `346` is down at `bB2`: `|N3|² ⟪N8, bB2⟫ = -|bB2|²`. -/
+theorem n8_bB2_neg (F : S0xFac 9 s0x_S24 x) : ⟪F.N 8, bB2 F⟫ < 0 := by
+  have hNN : 0 < ⟪F.N 3, F.N 3⟫ := real_inner_self_pos.mpr (n3_ne_zero F)
+  have hbb : 0 < ⟪bB2 F, bB2 F⟫ := real_inner_self_pos.mpr (bB2_ne_zero F)
+  have e := inner_sub_left (𝕜 := ℝ) (⟪F.N 8, F.N 3⟫ • F.N 3) (⟪F.N 3, F.N 3⟫ • F.N 8) (bB2 F)
+  rw [real_inner_smul_left, real_inner_smul_left, inner_N3_bB2 F] at e
+  change ⟪bB2 F, bB2 F⟫ = _ at e
+  nlinarith
+
+/-- **Facet `046` is up at `bB2` if the face angle of `0345` at `4` is acute** (the converse of
+`b2_dn4_of_obtuse`). -/
+theorem n4_bB2_pos_of_acute (F : S0xFac 9 s0x_S24 x) (h : 0 < ⟪x 0 - x 4, x 3 - x 4⟫) : 0 < ⟪F.N 4, bB2 F⟫ := by
+  have hNu : ⟪F.N 4, x 0 - x 4⟫ = 0 := by
+    rw [F.inner_sub 4 0 4, F.zero 4 0 (by decide), F.zero 4 4 (by decide)]; ring
+  have hNv : ⟪F.N 4, x 3 - x 4⟫ = F.f 4 (x 3) := by rw [F.inner_sub 4 3 4, F.zero 4 4 (by decide)]; ring
+  have hf : F.f 4 (x 3) < 0 := F.neg 4 3 (by decide)
+  have hwv : ⟪bB2 F, x 3 - x 4⟫ = 0 := by
+    rw [inner_bB2_face F 3 4 (by decide) (by decide), F.zero 8 3 (by decide), F.zero 8 4 (by decide)]; ring
+  have hwu : 0 < ⟪bB2 F, x 0 - x 4⟫ := by
+    rw [inner_bB2_face F 0 4 (by decide) (by decide), F.zero 8 4 (by decide)]
+    have := F.neg 8 0 (by decide); have hNN : 0 < ⟪F.N 3, F.N 3⟫ := real_inner_self_pos.mpr (n3_ne_zero F)
+    nlinarith
+  have hd := det_bB2 F (n3_perp_face F 0 4 (by decide) (by decide)) (n3_perp_face F 3 4 (by decide) (by decide))
+  have key := Q45.sign_side _ _ _ _ hNu hwv hd
+  have hG := Q45.gram_nonneg (x 0 - x 4) (x 3 - x 4)
+  rw [hNv] at key
+  by_contra hc
+  have : (⟪x 0 - x 4, x 0 - x 4⟫ * ⟪x 3 - x 4, x 3 - x 4⟫ - ⟪x 0 - x 4, x 3 - x 4⟫ ^ 2) * ⟪F.N 4, bB2 F⟫ ≤ 0 :=
+    mul_nonpos_of_nonneg_of_nonpos hG (not_lt.mp hc)
+  have h2 : ⟪x 0 - x 4, x 3 - x 4⟫ * ⟪bB2 F, x 0 - x 4⟫ * F.f 4 (x 3) < 0 :=
+    mul_neg_of_pos_of_neg (mul_pos h hwu) hf
+  linarith
+
+/-- **On the `64` tie with the angle `0 4 3` obtuse the facets `0345 046 346` are derived**: a face-on cell whose
+pattern has `0345` up and `046 346` down needs only its other facet signs and its rim. -/
+theorem faceOnCell_of_tie64 (F : S0xFac 9 s0x_S24 x) (h4 : ⟪x 6 - x 4, x 4 - x 0⟫ = 0)
+    (h5 : ⟪x 6 - x 4, x 5 - x 0⟫ = 0) (hob : ⟪x 0 - x 4, x 3 - x 4⟫ < 0) {k : ℕ} {c : ZMod k → Fin 7}
+    {U Dn : Finset (Fin 9)}
+    (hU : ∀ t ∈ U, t ≠ 3 → LexPos3 ⟪F.N t, F.N 3⟫ ⟪F.N t, bB2 F⟫ ⟪F.N t, x 0 - x 4⟫)
+    (hD : ∀ t ∈ Dn, t ≠ 4 → t ≠ 8 → LexPos3 (-⟪F.N t, F.N 3⟫) (-⟪F.N t, bB2 F⟫) (-⟪F.N t, x 0 - x 4⟫))
+    (hR : RobUniLex (fun i => (⟪x (c i), F.N 3⟫, ⟪x (c i), bB2 F⟫, ⟪x (c i), x 0 - x 4⟫))) :
+    FaceOnCell F c U Dn := by
+  obtain ⟨p4, p8⟩ := j64_perp F h4 h5
+  refine ⟨fun t ht => ?_, fun t ht => ?_, hR⟩
+  · by_cases e : t = 3
+    · subst e; exact Or.inl (real_inner_self_pos.mpr (n3_ne_zero F))
+    · exact hU t ht e
+  · by_cases e4 : t = 4
+    · subst e4
+      exact Or.inr ⟨by rw [p4, neg_zero], Or.inl (by linarith [b2_dn4_of_obtuse F hob])⟩
+    by_cases e8 : t = 8
+    · subst e8
+      exact Or.inr ⟨by rw [p8, neg_zero], Or.inl (by linarith [n8_bB2_neg F])⟩
+    exact hD t ht e4 e8
+
+/-- **No face-on J0 pattern at an acute angle `0 4 3` on the `64` tie**: `046` is edge-on at level 1 and up at
+level 2, while all four patterns of `J64ViewOK` need it down. -/
+theorem not_j64ViewOK_of_acute (F : S0xFac 9 s0x_S24 x) (h4 : ⟪x 6 - x 4, x 4 - x 0⟫ = 0)
+    (h5 : ⟪x 6 - x 4, x 5 - x 0⟫ = 0) (hac : 0 < ⟪x 0 - x 4, x 3 - x 4⟫) : ¬ J64ViewOK F := by
+  have p4 := (j64_perp F h4 h5).1
+  have q := n4_bB2_pos_of_acute F hac
+  have bad : ¬ LexPos3 (-⟪F.N 4, F.N 3⟫) (-⟪F.N 4, bB2 F⟫) (-⟪F.N 4, x 0 - x 4⟫) := by
+    rintro (h | ⟨-, h | ⟨h, -⟩⟩)
+    · rw [p4] at h; linarith
+    · linarith
+    · linarith
+  rintro (h | h | h | h)
+  · exact bad (h.2.1 4 (by decide))
+  · exact bad (h.2.1 4 (by decide))
+  · exact bad (h.2.1 4 (by decide))
+  · exact bad (h.2.1 4 (by decide))
+
+end J64Tie
+
+/-! ### The K0 view on the acute `64` tie
+
+At an ACUTE angle `0 4 3` on the `64` tie (where no face-on pattern exists, `not_j64ViewOK_of_acute`) the K0 view
+`(x 0 - x 4, x 0 - x 5, N3)` (`K0ViewOK`, used so far on `kJ = 0` only) holds with every condition derived for `t ≤ 1`:
+its rim `2 5 3 4 6` is lex-monotone `6 < 4 < 3 < 5` (`6 < 4` at level 3 by the tie, `4 < 3` at level 1 by the acute
+angle, `3 < 5` at level 1 from the acute angle and `s + t > 1`, `k0_z35`), which is `RobUniLex` whatever the depth of
+`2` (`robUniLex_five_k0`); for `t > 1` the rim `2 3 4 6` needs only `6 < 4 < 3` and `236` stays a hypothesis.  So on
+the `64` tie: obtuse angle `0 4 3` -> the face-on J0 view (`faceOnCell_of_tie64`, six dihedral signs and the rim
+assumed), acute -> the K0 view (`k0ViewOK_of_tie64`); the `52` ties by the mirror. -/
+
+section K0Tie
+open Minimality.LexCell
+
+/-- A 5-cycle with `z4 < z3` at level 3 only and `z3 < z2 < z1` at level 1 is `RobUniLex`, whatever `z0`. -/
+theorem robUniLex_five_k0 (z : ZMod 5 → ℝ × ℝ × ℝ) (e1 : (z 4).1 = (z 3).1) (e2 : (z 4).2.1 = (z 3).2.1)
+    (h43 : (z 4).2.2 < (z 3).2.2) (h32 : (z 3).1 < (z 2).1) (h21 : (z 2).1 < (z 1).1) : RobUniLex z := by
+  intro B b c d hb hbc hcd hd
+  have hB : B = 0 ∨ B = 1 ∨ B = 2 ∨ B = 3 ∨ B = 4 := by revert B; decide
+  have hbcd : (b = 1 ∧ c = 2 ∧ d = 3) ∨ (b = 1 ∧ c = 2 ∧ d = 4) ∨
+      (b = 1 ∧ c = 3 ∧ d = 4) ∨ (b = 2 ∧ c = 3 ∧ d = 4) := by omega
+  rcases hB with rfl | rfl | rfl | rfl | rfl <;>
+    rcases hbcd with ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ <;>
+    simp only [Nat.cast_one, Nat.cast_ofNat,
+      show (0 : ZMod 5) + 1 = 1 from rfl, show (0 : ZMod 5) + 2 = 2 from rfl,
+      show (0 : ZMod 5) + 3 = 3 from rfl, show (0 : ZMod 5) + 4 = 4 from rfl,
+      show (1 : ZMod 5) + 1 = 2 from rfl, show (1 : ZMod 5) + 2 = 3 from rfl,
+      show (1 : ZMod 5) + 3 = 4 from rfl, show (1 : ZMod 5) + 4 = 0 from rfl,
+      show (2 : ZMod 5) + 1 = 3 from rfl, show (2 : ZMod 5) + 2 = 4 from rfl,
+      show (2 : ZMod 5) + 3 = 0 from rfl, show (2 : ZMod 5) + 4 = 1 from rfl,
+      show (3 : ZMod 5) + 1 = 4 from rfl, show (3 : ZMod 5) + 2 = 0 from rfl,
+      show (3 : ZMod 5) + 3 = 1 from rfl, show (3 : ZMod 5) + 4 = 2 from rfl,
+      show (4 : ZMod 5) + 1 = 0 from rfl, show (4 : ZMod 5) + 2 = 1 from rfl,
+      show (4 : ZMod 5) + 3 = 2 from rfl, show (4 : ZMod 5) + 4 = 3 from rfl]
+  all_goals first
+    | exact Or.inl (Or.inl (by linarith))
+    | exact Or.inr (Or.inl (Or.inl (by linarith)))
+    | exact Or.inr (Or.inr (Or.inl (Or.inl (by linarith))))
+    | exact Or.inr (Or.inl (Or.inr ⟨by linarith, Or.inr ⟨by linarith, by linarith⟩⟩))
+    | exact Or.inr (Or.inr (Or.inl (Or.inr ⟨by linarith, Or.inr ⟨by linarith, by linarith⟩⟩)))
+
+/-- `3` below `5` in the K0 view (level 1) for `t ≤ 1`, from the acute angle `0 4 3` and `s + t > 1`:
+`(1 - s) (s E - (1 - t) c) = s ((1 - s) E - t c) + c (s + t - 1)`, `E = |e4|²`, `c = ⟪e5, e4⟫`. -/
+theorem k0_z35 (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht0 : 0 < t) (ht1 : t ≤ 1) (hst : 1 < s + t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hac : 0 < ⟪x 0 - x 4, x 3 - x 4⟫) :
+    0 < ⟪x 5 - x 3, x 0 - x 4⟫ := by
+  have hu : x 4 - x 0 ≠ 0 := by
+    intro h0
+    have e := F.inner_sub 8 4 0
+    rw [h0, inner_zero_right, F.zero 8 4 (by decide)] at e
+    linarith [F.neg 8 0 (by decide)]
+  have hE : 0 < ⟪x 4 - x 0, x 4 - x 0⟫ := real_inner_self_pos.mpr hu
+  set E := ⟪x 4 - x 0, x 4 - x 0⟫
+  set c := ⟪x 5 - x 0, x 4 - x 0⟫
+  have A : ⟪x 3 - x 0, x 4 - x 0⟫ = s * E + t * c := by
+    rw [hdec, inner_add_left, real_inner_smul_left, real_inner_smul_left]
+  have g : ⟪x 5 - x 3, x 0 - x 4⟫ = s * E - (1 - t) * c := by
+    rw [show x 5 - x 3 = (x 5 - x 0) - (x 3 - x 0) by abel, show x 0 - x 4 = -(x 4 - x 0) by abel,
+      inner_neg_right, inner_sub_left, A]; ring
+  have ha : ⟪x 0 - x 4, x 3 - x 4⟫ = (1 - s) * E - t * c := by
+    rw [show x 0 - x 4 = -(x 4 - x 0) by abel, show x 3 - x 4 = (x 3 - x 0) - (x 4 - x 0) by abel,
+      inner_neg_left, real_inner_comm, inner_sub_left, A]; ring
+  rw [g]; rw [ha] at hac
+  rcases le_or_gt c 0 with hc | hc
+  · nlinarith
+  · have hs1 : s < 1 := by
+      by_contra h; push Not at h
+      nlinarith [mul_nonneg (sub_nonneg.mpr h) hE.le, mul_pos ht0 hc]
+    have key : (1 - s) * (s * E - (1 - t) * c) = s * ((1 - s) * E - t * c) + c * (s + t - 1) := by ring
+    have : 0 < (1 - s) * (s * E - (1 - t) * c) := by
+      rw [key]; have := mul_pos hs0 hac; have := mul_pos hc (by linarith : (0 : ℝ) < s + t - 1); linarith
+    by_contra hn; push Not at hn
+    nlinarith [mul_nonpos_of_nonneg_of_nonpos (by linarith : (0 : ℝ) ≤ 1 - s) hn]
+
+/-- **The K0 view on the acute `64` tie**: `x 6 - x 4 ⊥ e4, e5`, angle `0 4 3` acute, `a4 > 1`, and `236` down when
+`t > 1`.  Every other condition of `K0ViewOK` is derived. -/
+theorem k0ViewOK_of_tie64 (F : S0xFac 9 s0x_S24 x) (h4 : ⟪x 6 - x 4, x 4 - x 0⟫ = 0)
+    (h5 : ⟪x 6 - x 4, x 5 - x 0⟫ = 0) (hac : 0 < ⟪x 0 - x 4, x 3 - x 4⟫) (ha4 : 1 < oblX0 x 4) {s t : ℝ}
+    (hs0 : 0 < s) (ht0 : 0 < t) (hst : 1 < s + t) (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (h7 : t ≤ 1 ∨ K0Dn F 7) : K0ViewOK F := by
+  -- the depths of the rim vertices 6, 4, 3
+  have e1 : ⟪x 6, x 0 - x 4⟫ = ⟪x 4, x 0 - x 4⟫ := by
+    have : ⟪x 6 - x 4, x 0 - x 4⟫ = 0 := by
+      rw [show x 0 - x 4 = -(x 4 - x 0) by abel, inner_neg_right, h4, neg_zero]
+    rw [inner_sub_left] at this; linarith
+  have e2 : ⟪x 6, x 0 - x 5⟫ = ⟪x 4, x 0 - x 5⟫ := by
+    have : ⟪x 6 - x 4, x 0 - x 5⟫ = 0 := by
+      rw [show x 0 - x 5 = -(x 5 - x 0) by abel, inner_neg_right, h5, neg_zero]
+    rw [inner_sub_left] at this; linarith
+  have h64 : ⟪x 6, F.N 3⟫ < ⟪x 4, F.N 3⟫ := by
+    have e := F.inner_sub 3 6 4
+    rw [F.zero 3 4 (by decide), real_inner_comm, inner_sub_left] at e
+    linarith [F.neg 3 6 (by decide)]
+  have h43 : ⟪x 4, x 0 - x 4⟫ < ⟪x 3, x 0 - x 4⟫ := by
+    have := hac
+    rw [real_inner_comm, inner_sub_left] at this; linarith
+  refine ⟨k0_up5 F ha4, ?_, ?_⟩
+  · rcases h7 with h7 | h7
+    · have e := bs_f7 F hdec
+      have q0 := F.neg 7 0 (by decide)
+      have q5 := F.neg 7 5 (by decide)
+      left
+      have : 0 < s * (-⟪F.N 7, x 0 - x 4⟫) := by rw [e]; nlinarith
+      by_contra hc; push Not at hc; nlinarith
+    · exact h7
+  · rcases le_or_gt t 1 with ht | ht
+    · refine Or.inl ⟨k0_dn6 F hs0 ht hdec, ?_⟩
+      have h35 := k0_z35 F hs0 ht0 ht hst hdec hac
+      have h35' : ⟪x 3, x 0 - x 4⟫ < ⟪x 5, x 0 - x 4⟫ := by
+        rw [← sub_pos, ← inner_sub_left]; exact h35
+      exact robUniLex_five_k0 _ e1 e2 h64 h43 h35'
+    · refine Or.inr ⟨k0_up6 F hs0 ht hdec, ?_⟩
+      refine robUniLex_four_of_mixed ⟨(2, 1), by decide, Or.inl ?_⟩ ⟨(2, 3), by decide, ?_⟩
+      · show 0 < ⟪x 3, x 0 - x 4⟫ - ⟪x 4, x 0 - x 4⟫
+        linarith
+      · show LexPos3 (⟪x 4, x 0 - x 4⟫ - ⟪x 6, x 0 - x 4⟫) (⟪x 4, x 0 - x 5⟫ - ⟪x 6, x 0 - x 5⟫)
+          (⟪x 4, F.N 3⟫ - ⟪x 6, F.N 3⟫)
+        exact Or.inr ⟨by linarith, Or.inr ⟨by linarith, by linarith⟩⟩
+
+/-- **The mirror form on the acute `52` tie**: `x 2 - x 5 ⊥ e4, e5`, angle `0 5 3` acute, `a5 > 1`, and `236` down
+(mirror) when `s > 1`: the K0 view of `π24 x` (the view `(x 0 - x 5, x 0 - x 4, N3)` of `x`). -/
+theorem k0ViewOK_sym_of_tie52 (F : S0xFac 9 s0x_S24 x) (h4 : ⟪x 2 - x 5, x 5 - x 0⟫ = 0)
+    (h5 : ⟪x 2 - x 5, x 4 - x 0⟫ = 0) (hac : 0 < ⟪x 0 - x 5, x 3 - x 5⟫) (ha5 : 1 < oblX0 x 5) {s t : ℝ}
+    (hs0 : 0 < s) (ht0 : 0 < t) (hst : 1 < s + t) (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (h7 : s ≤ 1 ∨ K0Dn (Sym.sym24 F) 7) : K0ViewOK (Sym.sym24 F) := by
+  have o4 : oblX0 (x ∘ Sym.pi24) 4 = oblX0 x 5 := by rw [Sym.oblX0_comp_pi24]; simp
+  refine k0ViewOK_of_tie64 (Sym.sym24 F) (s := t) (t := s) ?_ ?_ ?_ (by rw [o4]; exact ha5) ht0 hs0
+    (by linarith) ?_ h7
+  · simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_4, Sym.pi24_6]; exact h4
+  · simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_5, Sym.pi24_4, Sym.pi24_6]; exact h5
+  · simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_3, Sym.pi24_4]; exact hac
+  · simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_3, Sym.pi24_4, Sym.pi24_5]
+    rw [hdec]; abel
+
+end K0Tie
 
 end Minimality.T24.OSpec

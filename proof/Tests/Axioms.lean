@@ -2810,7 +2810,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_F
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_F
 
--- OSPEC10 (11-27): the Bs view (x0 - x4, x5 - x0, -N3) and its mirror (BsCond, the double-wall 126 || 0345), global JFaceOK; OpenSpecialB
+-- OSPEC10 (11-27): the Bs view (x0 - x4, x5 - x0, -N3) and its mirror (BsCond, the double-wall 126 || 0345), global JFaceOK
+-- and K0ViewOK; on the 64 tie: obtuse 043 -> face-on view, acute -> K0 view (derived for t <= 1); OpenSpecialB
 #assert_standard_axioms Minimality.T24.OSpec.lexAny_of_bsView
 #assert_standard_axioms Minimality.T24.OSpec.lexAny_of_bsView_sym
 #assert_standard_axioms Minimality.T24.OSpec.bs_n53_neg
@@ -2822,6 +2823,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.openSpecialB_of_openSpecialF
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_B
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_B
+#assert_standard_axioms Minimality.T24.OSpec.j64_perp
+#assert_standard_axioms Minimality.T24.OSpec.faceOnCell_of_tie64
+#assert_standard_axioms Minimality.T24.OSpec.not_j64ViewOK_of_acute
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_five_k0
+#assert_standard_axioms Minimality.T24.OSpec.k0_z35
+#assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_of_tie64
+#assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_sym_of_tie52
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
