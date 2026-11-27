@@ -40,4 +40,10 @@ theorem open24Rupert_of_cellCoverEmpty28_S (hN : CellCoverEmpty cells28) (hS : O
     Open24Rupert :=
   open24Rupert_of_cellCoverEmpty_S hN hS
 
+/-- [PROVED] Headline chain with `cells28` after the diagonal views `x 1 - x 5` / `x 1 - x 4` (OSPEC13): `CellCoverEmpty
+cells28` and `OSpec.OpenSpecialG` give `Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty28_G (hN : CellCoverEmpty cells28) (hS : OSpec.OpenSpecialG) :
+    Open24Rupert :=
+  open24Rupert_of_cellCoverEmpty_G hN hS
+
 end Minimality.T24.Cell
