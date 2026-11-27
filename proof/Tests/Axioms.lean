@@ -275,6 +275,7 @@ import Minimality.Q45J0Edge
 import Minimality.Type24FootLex
 import Minimality.Type24T2Corner
 import Minimality.Type24T2Peak0
+import Minimality.Type24GapLemmas
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2829,3 +2830,20 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_p0Edge025_twin
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_p0Edge025
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_p0Edge025_twin
+
+-- Type24GapLemmas (GAP14, 11-27)
+#assert_standard_axioms Minimality.T24.Cell.lexAny_of_wall_monoCorners
+#assert_standard_axioms Minimality.T24.Cell.t0Edge012_exists_apex
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_t0Edge012
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_t0Edge012_twin
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t0Edge012
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t0Edge012_twin
+#assert_standard_axioms Minimality.T24.Cell.rayCT02_t0Edge012
+#assert_standard_axioms Minimality.T24.Cell.lexAny_of_t0Edge126B0
+#assert_standard_axioms Minimality.T24.Cell.lexAny_of_t0Edge126B0_twin
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t0Edge126B0
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t0Edge126B0_twin
+#assert_standard_axioms Minimality.T24.Cell.lexAny_of_t2Edge012B2
+#assert_standard_axioms Minimality.T24.Cell.lexAny_of_t2Edge012B2_twin
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t2Edge012B2
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t2Edge012B2_twin
