@@ -244,6 +244,7 @@ import Minimality.Type24DeepC
 import Minimality.EdgePlaneNeg
 import Minimality.EdgePlaneHidden
 import Minimality.EdgePlaneSlope
+import Minimality.Type24TwoCone
 import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
@@ -2356,3 +2357,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.Slope.epRows_of_slopeWindow
 #assert_standard_axioms Minimality.T24.WC.wcCell_eventually
 #assert_standard_axioms Minimality.T24.WC.wc_det3_rim
+#assert_standard_axioms Minimality.T24.TwoCone.uF_T0_facets_eventually
+#assert_standard_axioms Minimality.T24.TwoCone.edgePlaneAny_of_T0_family
+#assert_standard_axioms Minimality.T24.TwoCone.wc_edgePlaneAny
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_wc
+#assert_standard_axioms Minimality.T24.TwoCone.hole24_not_wc
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_T0_family
+#assert_standard_axioms Minimality.T24.TwoCone.hole24_not_T0_family
