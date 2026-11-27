@@ -539,4 +539,216 @@ theorem hole24_twoConeResidue' {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h
     TwoConeResidue' x F :=
   ⟨hole24_twoConeResidue hF, fun _ h => hole24_not_famA hF h, fun _ h => hole24_not_famB hF h⟩
 
+/-! ## FQ1: `π_24` twins of `famA` / `famB` and `TwoConeResidue''` -/
+
+/-- **FQ1 (`cA` `π_24` twin leaf):** `famA_edgePlaneAny` on `(x ∘ Sym.pi24, Sym.sym24 F)`. -/
+theorem famA_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+    {x0 : ℝ} (hI : InI5 (x ∘ Sym.pi24) x0)
+    (h6 : 0 < ⟪(Sym.sym24 F).N 6, uB (x ∘ Sym.pi24) x0⟫)
+    (h8 : ⟪(Sym.sym24 F).N 8, uB (x ∘ Sym.pi24) x0⟫ < 0)
+    (hhid4 : ∃ p ∈ ({1, 2, 5, 3, 6} : Finset (Fin 7)).image (x ∘ Sym.pi24),
+      ∃ q ∈ ({1, 2, 5, 3, 6} : Finset (Fin 7)).image (x ∘ Sym.pi24),
+      ∃ r ∈ ({1, 2, 5, 3, 6} : Finset (Fin 7)).image (x ∘ Sym.pi24),
+      0 < Split.det3 (q - p) (r - p) (uB (x ∘ Sym.pi24) x0) ∧
+      0 < Split.det3 (q - p) ((x ∘ Sym.pi24) 4 - p) (uB (x ∘ Sym.pi24) x0) ∧
+      0 < Split.det3 (r - q) ((x ∘ Sym.pi24) 4 - q) (uB (x ∘ Sym.pi24) x0) ∧
+      0 < Split.det3 (p - r) ((x ∘ Sym.pi24) 4 - r) (uB (x ∘ Sym.pi24) x0))
+    (a : ZMod 5)
+    (hD0 : ⟪(x ∘ Sym.pi24) (cA (a + 1)) - (x ∘ Sym.pi24) (cA a), uB (x ∘ Sym.pi24) x0⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod 5, i ≠ a →
+      Split.det3 ((x ∘ Sym.pi24) (cA (i + 1)) - (x ∘ Sym.pi24) (cA i))
+        ((x ∘ Sym.pi24) (cA (a + 1)) - (x ∘ Sym.pi24) (cA a)) (uB (x ∘ Sym.pi24) x0) ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod 5, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < Split.det3 ((x ∘ Sym.pi24) (cA (i + 1)) - (x ∘ Sym.pi24) (cA i))
+          ((x ∘ Sym.pi24) (cA (a + 1)) - (x ∘ Sym.pi24) (cA a)) (uB (x ∘ Sym.pi24) x0) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (cA t)) a i j,
+            uB (x ∘ Sym.pi24) x0⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (cA (i + 1)) - (x ∘ Sym.pi24) (cA i))
+            ((x ∘ Sym.pi24) (cA (a + 1)) - (x ∘ Sym.pi24) (cA a)) (uB (x ∘ Sym.pi24) x0)) -
+        μ' * ⟪(x ∘ Sym.pi24) (cA j) - (x ∘ Sym.pi24) (cA a), uB (x ∘ Sym.pi24) x0⟫ < α')
+    (hOrange0 : ∀ p q : ZMod 5, p ≠ a → (q = p ∨ q = p + 1) →
+      Split.det3 ((x ∘ Sym.pi24) (cA (p + 1)) - (x ∘ Sym.pi24) (cA p))
+          ((x ∘ Sym.pi24) (cA (a + 1)) - (x ∘ Sym.pi24) (cA a)) (uB (x ∘ Sym.pi24) x0) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (cA t)) a p q,
+            uB (x ∘ Sym.pi24) x0⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (cA (p + 1)) - (x ∘ Sym.pi24) (cA p))
+            ((x ∘ Sym.pi24) (cA (a + 1)) - (x ∘ Sym.pi24) (cA a)) (uB (x ∘ Sym.pi24) x0)) -
+        μ' * ⟪(x ∘ Sym.pi24) (cA q) - (x ∘ Sym.pi24) (cA a), uB (x ∘ Sym.pi24) x0⟫) :
+    Gen.EdgePlaneAny x :=
+  edgePlaneAny_of_comp_pi24 x
+    (famA_edgePlaneAny (Sym.sym24 F) ((Sym.cbarIn_comp_pi24 x).2 hC) hI h6 h8 hhid4
+      a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0)
+
+/-- **FQ1 (`cB` `π_24` twin leaf):** `famB_edgePlaneAny` on `(x ∘ Sym.pi24, Sym.sym24 F)`. -/
+theorem famB_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+    {x0 : ℝ} (hI : InI5 (x ∘ Sym.pi24) x0)
+    (h6 : 0 < ⟪(Sym.sym24 F).N 6, uB (x ∘ Sym.pi24) x0⟫)
+    (h8 : 0 < ⟪(Sym.sym24 F).N 8, uB (x ∘ Sym.pi24) x0⟫)
+    (a : ZMod 6)
+    (hD0 : ⟪(x ∘ Sym.pi24) (cB (a + 1)) - (x ∘ Sym.pi24) (cB a), uB (x ∘ Sym.pi24) x0⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod 6, i ≠ a →
+      Split.det3 ((x ∘ Sym.pi24) (cB (i + 1)) - (x ∘ Sym.pi24) (cB i))
+        ((x ∘ Sym.pi24) (cB (a + 1)) - (x ∘ Sym.pi24) (cB a)) (uB (x ∘ Sym.pi24) x0) ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod 6, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < Split.det3 ((x ∘ Sym.pi24) (cB (i + 1)) - (x ∘ Sym.pi24) (cB i))
+          ((x ∘ Sym.pi24) (cB (a + 1)) - (x ∘ Sym.pi24) (cB a)) (uB (x ∘ Sym.pi24) x0) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (cB t)) a i j,
+            uB (x ∘ Sym.pi24) x0⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (cB (i + 1)) - (x ∘ Sym.pi24) (cB i))
+            ((x ∘ Sym.pi24) (cB (a + 1)) - (x ∘ Sym.pi24) (cB a)) (uB (x ∘ Sym.pi24) x0)) -
+        μ' * ⟪(x ∘ Sym.pi24) (cB j) - (x ∘ Sym.pi24) (cB a), uB (x ∘ Sym.pi24) x0⟫ < α')
+    (hOrange0 : ∀ p q : ZMod 6, p ≠ a → (q = p ∨ q = p + 1) →
+      Split.det3 ((x ∘ Sym.pi24) (cB (p + 1)) - (x ∘ Sym.pi24) (cB p))
+          ((x ∘ Sym.pi24) (cB (a + 1)) - (x ∘ Sym.pi24) (cB a)) (uB (x ∘ Sym.pi24) x0) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (cB t)) a p q,
+            uB (x ∘ Sym.pi24) x0⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (cB (p + 1)) - (x ∘ Sym.pi24) (cB p))
+            ((x ∘ Sym.pi24) (cB (a + 1)) - (x ∘ Sym.pi24) (cB a)) (uB (x ∘ Sym.pi24) x0)) -
+        μ' * ⟪(x ∘ Sym.pi24) (cB q) - (x ∘ Sym.pi24) (cB a), uB (x ∘ Sym.pi24) x0⟫) :
+    Gen.EdgePlaneAny x :=
+  edgePlaneAny_of_comp_pi24 x
+    (famB_edgePlaneAny (Sym.sym24 F) ((Sym.cbarIn_comp_pi24 x).2 hC) hI h6 h8
+      a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0)
+
+theorem holeLeaf_not_famA_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {x0 : ℝ} (hc : FamACertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0) : False := by
+  rcases hc with ⟨hI, h6, h8, hhid4, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+  exact Atlas.holeLeaf_not_edgePlaneAny hF
+    (famA_edgePlaneAny_twin F hF.1 hI h6 h8 hhid4 a hD0 hc_ne0 sh hsh α' μ' hB hO)
+
+theorem hole24_not_famA_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
+    {x0 : ℝ} (hc : FamACertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0) : False :=
+  holeLeaf_not_famA_twin hF.1 hc
+
+theorem holeLeaf_not_famB_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {x0 : ℝ} (hc : FamBCertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0) : False := by
+  rcases hc with ⟨hI, h6, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+  exact Atlas.holeLeaf_not_edgePlaneAny hF
+    (famB_edgePlaneAny_twin F hF.1 hI h6 h8 a hD0 hc_ne0 sh hsh α' μ' hB hO)
+
+theorem hole24_not_famB_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
+    {x0 : ℝ} (hc : FamBCertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0) : False :=
+  holeLeaf_not_famB_twin hF.1 hc
+
+/-- Extended two-cone residue adding the `π_24` twins `¬ FamACertAt` and `¬ FamBCertAt`. -/
+def TwoConeResidue'' (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  TwoConeResidue' x F ∧
+  (∀ x0 : ℝ, ¬ FamACertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0) ∧
+  (∀ x0 : ℝ, ¬ FamBCertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0)
+
+theorem hole24_twoConeResidue'' {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F) :
+    TwoConeResidue'' x F :=
+  ⟨hole24_twoConeResidue' hF,
+    fun _ h => hole24_not_famA_twin hF h,
+    fun _ h => hole24_not_famB_twin hF h⟩
+
+/-! ## FQ2: `T_0` rim determinants (`cA = ![1, 2, 5, 3, 6]`, edge `3 → 6`, Lemma T1) -/
+
+/-- `γ_0(x0) := (1 - x0) / ω_5(x)` used in `uB x x0`. -/
+noncomputable def gamma0 (x : Fin 7 → ℝ³) (x0 : ℝ) : ℝ := (1 - x0) / omega5 x
+
+/-- `τ_0(x0) := Hh x x0 (γ_0 x0) 3 - x0` (`1 → 2` determinant factor). -/
+noncomputable def tau0 (x : Fin 7 → ℝ³) (x0 : ℝ) : ℝ :=
+  Hh x x0 (gamma0 x x0) 3 - x0
+
+/-- `τ_1(x0)` (`2 → 5` determinant factor). -/
+noncomputable def tau1 (x : Fin 7 → ℝ³) (x0 : ℝ) : ℝ :=
+  -oblX0 x 5 * (1 - oblX6 x 3 + oblX2 x 3 * gamma0 x x0) +
+    (oblX2 x 5 - 1) * (Hh x x0 (gamma0 x x0) 3 - x0) -
+    oblX6 x 5 * (oblX0 x 3 + oblX2 x 3 * x0)
+
+/-- `τ_4(x0) := a_3 + b_3 * x0` (`6 → 1` determinant factor). -/
+noncomputable def tau4 (x : Fin 7 → ℝ³) (x0 : ℝ) : ℝ :=
+  oblX0 x 3 + oblX2 x 3 * x0
+
+/-- `τ_2(x0) := -(τ_0(x0) + τ_1(x0) + τ_4(x0))` (`5 → 3` determinant factor; note Carbon's
+A83-add2 formula for `τ_2` mistakenly wrote `a_3 * ω_3 * x0` in place of `(b_3 + c_3 - 1) * x0`). -/
+noncomputable def tau2 (x : Fin 7 → ℝ³) (x0 : ℝ) : ℝ :=
+  -(tau0 x x0 + tau1 x x0 + tau4 x x0)
+
+/-- **FQ2 (Lemma T1):** Exact `det24 x * τ_i(x0)` factorization of `Split.det3 (E_i) (x 6 - x 3) (uB x x0)`
+for `cA = ![1, 2, 5, 3, 6]`, edge `a = 3` (`3 → 6`), and `i ∈ {0, 1, 2, 4}`. -/
+theorem t0_det3_rim {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (x0 : ℝ) :
+    Split.det3 (x (cA (0 + 1)) - x (cA 0)) (x 6 - x 3) (uB x x0) = det24 x * tau0 x x0 ∧
+    Split.det3 (x (cA (1 + 1)) - x (cA 1)) (x 6 - x 3) (uB x x0) = det24 x * tau1 x x0 ∧
+    Split.det3 (x (cA (2 + 1)) - x (cA 2)) (x 6 - x 3) (uB x x0) = det24 x * tau2 x x0 ∧
+    Split.det3 (x (cA (4 + 1)) - x (cA 4)) (x 6 - x 3) (uB x x0) = det24 x * tau4 x x0 := by
+  have T := Minimality.T24.M4.type24OfFac F
+  have hrep : ∀ v : Fin 7, x v - x 1 =
+      oblX0 x v • (x 0 - x 1) + oblX2 x v • (x 2 - x 1) + oblX6 x v • (x 6 - x 1) := by
+    intro v; rw [T.rep v]; abel
+  have hd : x 6 - x 3 =
+      (-oblX0 x 3) • (x 0 - x 1) + (-oblX2 x 3) • (x 2 - x 1) + (1 - oblX6 x 3) • (x 6 - x 1) := by
+    have := hrep 3
+    have h63 : x 6 - x 3 = (x 6 - x 1) - (x 3 - x 1) := by abel
+    rw [h63, this]; module
+  have huB : uB x x0 =
+      (-x0) • (x 0 - x 1) + (1 : ℝ) • (x 2 - x 1) + (gamma0 x x0) • (x 6 - x 1) := by
+    unfold uB gamma0 capView; module
+  have he0 : x (cA (0 + 1)) - x (cA 0) =
+      (0 : ℝ) • (x 0 - x 1) + (1 : ℝ) • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) := by
+    show x 2 - x 1 = _; module
+  have he1 : x (cA (1 + 1)) - x (cA 1) =
+      (oblX0 x 5) • (x 0 - x 1) + (oblX2 x 5 - 1) • (x 2 - x 1) + (oblX6 x 5) • (x 6 - x 1) := by
+    have h52 : x (cA (1 + 1)) - x (cA 1) = (x 5 - x 1) - (x 2 - x 1) := by
+      show x 5 - x 2 = _; abel
+    rw [h52, hrep 5]; module
+  have he2 : x (cA (2 + 1)) - x (cA 2) =
+      (oblX0 x 3 - oblX0 x 5) • (x 0 - x 1) + (oblX2 x 3 - oblX2 x 5) • (x 2 - x 1) +
+        (oblX6 x 3 - oblX6 x 5) • (x 6 - x 1) := by
+    have h35 : x (cA (2 + 1)) - x (cA 2) = (x 3 - x 1) - (x 5 - x 1) := by
+      show x 3 - x 5 = _; abel
+    rw [h35, hrep 3, hrep 5]; module
+  have he4 : x (cA (4 + 1)) - x (cA 4) =
+      (0 : ℝ) • (x 0 - x 1) + (0 : ℝ) • (x 2 - x 1) + (-1 : ℝ) • (x 6 - x 1) := by
+    show x 1 - x 6 = _; module
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [Split.det3_eq_minimality, he0, hd, huB, M4.det3_frame]
+    simp only [tau0, Hh]; ring
+  · rw [Split.det3_eq_minimality, he1, hd, huB, M4.det3_frame]
+    simp only [tau1, Hh]; ring
+  · rw [Split.det3_eq_minimality, he2, hd, huB, M4.det3_frame]
+    simp only [tau2, tau0, tau1, tau4, Hh]; ring
+  · rw [Split.det3_eq_minimality, he4, hd, huB, M4.det3_frame]
+    simp only [tau4]; ring
+
+/-- **FQ2:** `τ_4(x0) > 0` for all `x0 > 0`. -/
+theorem tau4_pos {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {x0 : ℝ} (hx0 : 0 < x0) :
+    0 < tau4 x x0 := by
+  have T := Minimality.T24.M4.type24OfFac F
+  have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+  have hb3 : 0 < oblX2 x 3 := T.X2_pos (v := 3) (by decide)
+  unfold tau4
+  nlinarith
+
+/-- **FQ2:** `τ_2(x0) < 0` on the open `cA` cell (`x0 > 0`). -/
+theorem tau2_neg {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {x0 : ℝ} (hx0 : 0 < x0)
+    (hfac : ∀ t : Fin 9,
+      (patA t = true → 0 < ⟪F.N t, uB x x0⟫) ∧ (patA t = false → ⟪F.N t, uB x x0⟫ < 0)) :
+    tau2 x x0 < 0 := by
+  obtain ⟨ρ, hρ, hrim⟩ := rim_det_sign F (by norm_num) cA cA_inj patA cA_cyc (uB x x0) hfac
+  have h04 := hrim 0 4 (by decide) (by decide)
+  have hd04 : det3 (x (cA (0 + 1)) - x (cA 0)) (x (cA 4) - x (cA 0)) (uB x x0) =
+      -x0 * det24 x := by
+    show det3 (x 2 - x 1) (x 6 - x 1) (uB x x0) = -x0 * det24 x
+    exact det3_height6 x0 (gamma0 x x0)
+  rw [hd04] at h04
+  have hκ : ρ * det24 x < 0 := by nlinarith
+  have h24 := hrim 2 4 (by decide) (by decide)
+  have hd24 : det3 (x (cA (2 + 1)) - x (cA 2)) (x (cA 4) - x (cA 2)) (uB x x0) =
+      det24 x * tau2 x x0 := by
+    have hsplit : x (cA 4) - x (cA 2) = (x 6 - x 3) + (x (cA (2 + 1)) - x (cA 2)) := by
+      show x 6 - x 5 = (x 6 - x 3) + (x 3 - x 5); abel
+    have hlin : det3 (x (cA (2 + 1)) - x (cA 2))
+        ((x 6 - x 3) + (x (cA (2 + 1)) - x (cA 2))) (uB x x0) =
+        det3 (x (cA (2 + 1)) - x (cA 2)) (x 6 - x 3) (uB x x0) := by
+      rw [det3_add_mid]; simp only [det3, cross_self, inner_zero_left, add_zero]
+    rw [hsplit, hlin, ← Split.det3_eq_minimality]
+    exact (t0_det3_rim F x0).2.2.1
+  rw [hd24] at h24
+  have hmul : 0 < (ρ * det24 x) * tau2 x x0 := by nlinarith
+  nlinarith
+
 end Minimality.T24.TwoCone
