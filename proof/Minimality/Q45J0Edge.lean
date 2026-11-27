@@ -56,6 +56,44 @@ def J0Extra {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop :=
   J0Signs F u ∧ StrictUnimodal (fun i => ⟪quad (x 6) (x 4) (x 5) (x 2) i, u⟫) ∧
     ⟪x 0, u⟫ < max ⟪x 4, u⟫ ⟪x 5, u⟫ ∧ min ⟪x 4, u⟫ ⟪x 5, u⟫ < ⟪x 3, u⟫
 
+/-- `J0Extra` with the strict unimodality only under adjacent-distinct rim depths (job OSPEC5: the cores
+`q45_*_j0ww` have no S2 hypothesis, so an adjacent rim pair may tie at the view). -/
+def J0ExtraW {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop :=
+  J0Signs F u ∧ ((∀ i : ZMod 4, ⟪quad (x 6) (x 4) (x 5) (x 2) i, u⟫ ≠ ⟪quad (x 6) (x 4) (x 5) (x 2) (i + 1), u⟫) →
+      StrictUnimodal (fun i => ⟪quad (x 6) (x 4) (x 5) (x 2) i, u⟫)) ∧
+    ⟪x 0, u⟫ < max ⟪x 4, u⟫ ⟪x 5, u⟫ ∧ min ⟪x 4, u⟫ ⟪x 5, u⟫ < ⟪x 3, u⟫
+
+/-- A view that reads the lex order at `(B, D)` separates every pair that is not orthogonal to both `B` and `D`. -/
+theorem ne_of_lexOr {x : Fin 7 → ℝ³} {B D u : ℝ³}
+    (hlex : ∀ a c : Fin 7, (0 < ⟪x a - x c, B⟫ ∨ (⟪x a - x c, B⟫ = 0 ∧ 0 < ⟪x a - x c, D⟫)) →
+      ⟪x c, u⟫ < ⟪x a, u⟫) {a c : Fin 7} (h : ⟪x a - x c, B⟫ ≠ 0 ∨ ⟪x a - x c, D⟫ ≠ 0) :
+    ⟪x a, u⟫ ≠ ⟪x c, u⟫ := by
+  have nB : ⟪x c - x a, B⟫ = -⟪x a - x c, B⟫ := by rw [← inner_neg_left, neg_sub]
+  have nD : ⟪x c - x a, D⟫ = -⟪x a - x c, D⟫ := by rw [← inner_neg_left, neg_sub]
+  intro heq
+  rcases lt_trichotomy ⟪x a - x c, B⟫ 0 with hb | hb | hb
+  · have := hlex c a (Or.inl (by rw [nB]; linarith)); linarith
+  · have hd : ⟪x a - x c, D⟫ ≠ 0 := h.resolve_left (not_not.mpr hb)
+    rcases lt_or_gt_of_ne hd with hd | hd
+    · have := hlex c a (Or.inr ⟨by rw [nB, hb, neg_zero], by rw [nD]; linarith⟩); linarith
+    · have := hlex a c (Or.inr ⟨hb, hd⟩); linarith
+  · have := hlex a c (Or.inl hb); linarith
+
+/-- With the adjacent rim pairs off the S2 locus, a lex-reading view has adjacent-distinct rim depths. -/
+theorem adj_of_lex {x : Fin 7 → ℝ³} {B D u : ℝ³}
+    (hlex : ∀ a c : Fin 7, (0 < ⟪x a - x c, B⟫ ∨ (⟪x a - x c, B⟫ = 0 ∧ 0 < ⟪x a - x c, D⟫)) →
+      ⟪x c, u⟫ < ⟪x a, u⟫)
+    (h : ∀ i : ZMod 4, ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), B⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), D⟫ ≠ 0) :
+    ∀ i : ZMod 4, ⟪quad (x 6) (x 4) (x 5) (x 2) i, u⟫ ≠ ⟪quad (x 6) (x 4) (x 5) (x 2) (i + 1), u⟫ := by
+  have hq : ∀ j : ZMod 4, quad (x 6) (x 4) (x 5) (x 2) j = x (quad 6 4 5 2 j) := by
+    intro j; fin_cases j <;> rfl
+  intro i
+  have hi := h i
+  rw [hq, hq] at hi
+  rw [hq, hq]
+  exact ne_of_lexOr hlex hi
+
 theorem depth_lt_max_of_mid {A B q u : ℝ³} {s δ : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (hδ : δ < 0) (hu : u ≠ 0)
     (h : q = A + s • (B - A) + δ • u) : ⟪q, u⟫ < max ⟪A, u⟫ ⟪B, u⟫ := by
   have hq : ⟪q, u⟫ = (1 - s) * ⟪A, u⟫ + s * ⟪B, u⟫ + δ * ⟪u, u⟫ := by
@@ -170,7 +208,7 @@ When `ρ0 * kJ > 0` and weak 6-high fails strictly at base `e5 = x 5 - x 0`.
 - Rim: 6 4 5 2, chord 4 -> 5, middles 0, 3, farther w ∈ {2, 6}.
 - Lemma K rules out 2-high everywhere on `J0`.
 - Open condition `h6lo` rules out 6-high near `e5`. -/
-theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+theorem q45_Kplus_s_le_one_j0ww {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0 ∨ (⟪F.N 5, x 5 - x 0⟫ = 0 ∧ ⟪F.N 5, x 4 - x 0⟫ < 0))
     (s t : ℝ)
     (hs0 : 0 < s)
@@ -179,11 +217,8 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hk : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) < 0)
     (hs : s ≤ 1)
-    (h6lo : min ⟪x 6, x 5 - x 0⟫ ⟪x 5, x 5 - x 0⟫ < max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫)
-    (hS2a : ∀ i : ZMod 4,
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0 ∨
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 5 - x 0) + ε • (x 4 - x 0)) ∧
+    (h6lo : min ⟪x 6, x 5 - x 0⟫ ⟪x 5, x 5 - x 0⟫ < max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0ExtraW F u ∧ (∃ ε : ℝ, u = (x 5 - x 0) + ε • (x 4 - x 0)) ∧
       (∀ a c : Fin 7, (0 < ⟪x a - x c, x 5 - x 0⟫ ∨ (⟪x a - x c, x 5 - x 0⟫ = 0 ∧ 0 < ⟪x a - x c, x 4 - x 0⟫)) →
         ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
@@ -220,7 +255,6 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     by_cases hS2 : ∀ i j : ZMod 4, i ≠ j → ⟪p_quad i - p_quad j, b⟫ ≠ 0 ∨ ⟪p_quad i - p_quad j, d⟫ ≠ 0
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
-  have ev_adj := eventually_adj_quad p_quad b d hS2a
   have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
       (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
     refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
@@ -230,8 +264,8 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
       linarith
     · exact Eventually.of_forall fun ε h' => absurd h' hlx
-  have ev_all := ev_eps.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and (ev_adj.and ev_lex)))))
-  obtain ⟨ε, hε, h6, hN5_u, h6lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
+  have ev_all := ev_eps.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and ev_lex))))
+  obtain ⟨ε, hε, h6, hN5_u, h6lo_u, hinj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x 1 ε := hu_Pi ε
   have h8 : 0 < 1 * (1 - s) + ε * t := by nlinarith [hs, ht, hε]
@@ -286,7 +320,7 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         _ = 0 := sub_self _
       revert this; decide
     exact hcyc i (i + 2) hneq1 hneq2
-  have h_uni := unimodal_quad_Kplus_adj p_quad u ρ hadj_u h_triD hk_pos h6lo_u
+  have h_uni := fun hadj => unimodal_quad_Kplus_adj p_quad u ρ hadj h_triD hk_pos h6lo_u
   have h_mb := middle_bounds_J0 s t 1 ε hst one_pos hε h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
@@ -322,7 +356,31 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   · simp_rw [hr']
     exact hinj_u hS2
   · simp_rw [hr']
-    exact Or.inl h_uni
+    exact Or.inl (h_uni fun i h => zmod4_ne_succ i (hinj_u hS2 h))
+
+/-- The weak core with the adjacent rim pairs off the S2 locus (`hS2a`): strictly unimodal rim depths. -/
+theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0 ∨ (⟪F.N 5, x 5 - x 0⟫ = 0 ∧ ⟪F.N 5, x 4 - x 0⟫ < 0))
+    (s t : ℝ)
+    (hs0 : 0 < s)
+    (ht : 0 < t)
+    (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hk : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) < 0)
+    (hs : s ≤ 1)
+    (h6lo : min ⟪x 6, x 5 - x 0⟫ ⟪x 5, x 5 - x 0⟫ < max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫)
+    (hS2a : ∀ i : ZMod 4,
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 5 - x 0) + ε • (x 4 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 5 - x 0⟫ ∨ (⟪x a - x c, x 5 - x 0⟫ = 0 ∧ 0 < ⟪x a - x c, x 4 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
+      ((∀ i j : ZMod 4, i ≠ j →
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0 ∨
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
+  obtain ⟨u, ρ, h3, ⟨hs, hU, h0, h3'⟩, hu, hlex, hc⟩ := q45_Kplus_s_le_one_j0ww F
+    ha5 s t hs0 ht hst hdecomp hk hs h6lo
+  exact ⟨u, ρ, h3, ⟨hs, hU (adj_of_lex hlex hS2a), h0, h3'⟩, hu, hlex, hc⟩
 
 /-- The old form (full `hS2`): `J0Chord` and `J0Extra`. -/
 theorem q45_Kplus_s_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
@@ -350,7 +408,7 @@ When `ρ0 * kJ > 0` and weak 6-high fails strictly at base `e34 = x 3 - x 4`.
 - Rim: 6 4 5 2, chord 4 -> 5, middles 0, 3, farther w ∈ {2, 6}.
 - Lemma K rules out 2-high everywhere on `J0`.
 - Open condition `h6lo` rules out 6-high near `e34`. -/
-theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+theorem q45_Kplus_s_gt_one_j0ww {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha34 : ⟪F.N 5, x 3 - x 4⟫ < 0)
     (s t : ℝ)
     (hs0 : 0 < s)
@@ -359,11 +417,8 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hk : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) < 0)
     (hs : 1 < s)
-    (h6lo : min ⟪x 6, x 3 - x 4⟫ ⟪x 5, x 3 - x 4⟫ < max ⟪x 4, x 3 - x 4⟫ ⟪x 2, x 3 - x 4⟫)
-    (hS2a : ∀ i : ZMod 4,
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 3 - x 4⟫ ≠ 0 ∨
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 3 - x 4) + ε • (x 4 - x 0)) ∧
+    (h6lo : min ⟪x 6, x 3 - x 4⟫ ⟪x 5, x 3 - x 4⟫ < max ⟪x 4, x 3 - x 4⟫ ⟪x 2, x 3 - x 4⟫) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0ExtraW F u ∧ (∃ ε : ℝ, u = (x 3 - x 4) + ε • (x 4 - x 0)) ∧
       (∀ a c : Fin 7, (0 < ⟪x a - x c, x 3 - x 4⟫ ∨ (⟪x a - x c, x 3 - x 4⟫ = 0 ∧ 0 < ⟪x a - x c, x 4 - x 0⟫)) →
         ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
@@ -404,7 +459,6 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     by_cases hS2 : ∀ i j : ZMod 4, i ≠ j → ⟪p_quad i - p_quad j, b⟫ ≠ 0 ∨ ⟪p_quad i - p_quad j, d⟫ ≠ 0
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
-  have ev_adj := eventually_adj_quad p_quad b d hS2a
   have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
       (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
     refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
@@ -414,8 +468,8 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
       linarith
     · exact Eventually.of_forall fun ε h' => absurd h' hlx
-  have ev_all := ev_eps.and (ev_beta.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and (ev_adj.and ev_lex))))))
-  obtain ⟨ε, hε, hβ, h6, hN5_u, h6lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
+  have ev_all := ev_eps.and (ev_beta.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and ev_lex)))))
+  obtain ⟨ε, hε, hβ, h6, hN5_u, h6lo_u, hinj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x t (s - 1 + ε) := hu_Pi ε
   have h8 : 0 < t * (1 - s) + (s - 1 + ε) * t := by
@@ -472,7 +526,7 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         _ = 0 := sub_self _
       revert this; decide
     exact hcyc i (i + 2) hneq1 hneq2
-  have h_uni := unimodal_quad_Kplus_adj p_quad u ρ hadj_u h_triD hk_pos h6lo_u
+  have h_uni := fun hadj => unimodal_quad_Kplus_adj p_quad u ρ hadj h_triD hk_pos h6lo_u
   have h_mb := middle_bounds_J0 s t t (s - 1 + ε) hst ht hβ h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
@@ -508,7 +562,31 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   · simp_rw [hr']
     exact hinj_u hS2
   · simp_rw [hr']
-    exact Or.inl h_uni
+    exact Or.inl (h_uni fun i h => zmod4_ne_succ i (hinj_u hS2 h))
+
+/-- The weak core with the adjacent rim pairs off the S2 locus (`hS2a`): strictly unimodal rim depths. -/
+theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha34 : ⟪F.N 5, x 3 - x 4⟫ < 0)
+    (s t : ℝ)
+    (hs0 : 0 < s)
+    (ht : 0 < t)
+    (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hk : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1) < 0)
+    (hs : 1 < s)
+    (h6lo : min ⟪x 6, x 3 - x 4⟫ ⟪x 5, x 3 - x 4⟫ < max ⟪x 4, x 3 - x 4⟫ ⟪x 2, x 3 - x 4⟫)
+    (hS2a : ∀ i : ZMod 4,
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 3 - x 4⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 3 - x 4) + ε • (x 4 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 3 - x 4⟫ ∨ (⟪x a - x c, x 3 - x 4⟫ = 0 ∧ 0 < ⟪x a - x c, x 4 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
+      ((∀ i j : ZMod 4, i ≠ j →
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 4⟫ ≠ 0 ∨
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
+  obtain ⟨u, ρ, h3, ⟨hs, hU, h0, h3'⟩, hu, hlex, hc⟩ := q45_Kplus_s_gt_one_j0ww F
+    ha34 s t hs0 ht hst hdecomp hk hs h6lo
+  exact ⟨u, ρ, h3, ⟨hs, hU (adj_of_lex hlex hS2a), h0, h3'⟩, hu, hlex, hc⟩
 
 /-- The old form (full `hS2`): `J0Chord` and `J0Extra`. -/
 theorem q45_Kplus_s_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
@@ -537,7 +615,7 @@ When `0 < ρ0 * kJ` (i.e. `0 < det3(256-plane) * Ω`) and weak 2-high fails stri
 - Rim: 6 4 5 2, chord 4 -> 5, middles 0, 3, farther w ∈ {2, 6}.
 - Lemma K rules out 6-high everywhere on `J0`.
 - Open condition `h2lo` rules out 2-high near `e4`. -/
-theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+theorem q45_Kminus_t_le_one_j0ww {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha4 : ⟪F.N 5, x 4 - x 0⟫ < 0 ∨ (⟪F.N 5, x 4 - x 0⟫ = 0 ∧ ⟪F.N 5, x 5 - x 0⟫ < 0))
     (s t : ℝ)
     (hs0 : 0 < s)
@@ -546,11 +624,8 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hk : 0 < det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1))
     (ht1 : t ≤ 1)
-    (h2lo : min ⟪x 4, x 4 - x 0⟫ ⟪x 2, x 4 - x 0⟫ < max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫)
-    (hS2a : ∀ i : ZMod 4,
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0 ∨
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 4 - x 0) + ε • (x 5 - x 0)) ∧
+    (h2lo : min ⟪x 4, x 4 - x 0⟫ ⟪x 2, x 4 - x 0⟫ < max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0ExtraW F u ∧ (∃ ε : ℝ, u = (x 4 - x 0) + ε • (x 5 - x 0)) ∧
       (∀ a c : Fin 7, (0 < ⟪x a - x c, x 4 - x 0⟫ ∨ (⟪x a - x c, x 4 - x 0⟫ = 0 ∧ 0 < ⟪x a - x c, x 5 - x 0⟫)) →
         ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
@@ -587,7 +662,6 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     by_cases hS2 : ∀ i j : ZMod 4, i ≠ j → ⟪p_quad i - p_quad j, b⟫ ≠ 0 ∨ ⟪p_quad i - p_quad j, d⟫ ≠ 0
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
-  have ev_adj := eventually_adj_quad p_quad b d hS2a
   have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
       (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
     refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
@@ -597,8 +671,8 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
       linarith
     · exact Eventually.of_forall fun ε h' => absurd h' hlx
-  have ev_all := ev_eps.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and (ev_adj.and ev_lex)))))
-  obtain ⟨ε, hε, h8, hN5_u, h2lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
+  have ev_all := ev_eps.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and ev_lex))))
+  obtain ⟨ε, hε, h8, hN5_u, h2lo_u, hinj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x ε 1 := hu_Pi ε
   have h6 : 0 < ε * s + 1 * (1 - t) := by nlinarith [ht1, hs0, hε]
@@ -653,7 +727,7 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         _ = 0 := sub_self _
       revert this; decide
     exact hcyc i (i + 2) hneq1 hneq2
-  have h_uni := unimodal_quad_Kminus_adj p_quad u ρ hadj_u h_triD hk_neg h2lo_u
+  have h_uni := fun hadj => unimodal_quad_Kminus_adj p_quad u ρ hadj h_triD hk_neg h2lo_u
   have h_mb := middle_bounds_J0 s t ε 1 hst hε one_pos h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
@@ -689,7 +763,31 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   · simp_rw [hr']
     exact hinj_u hS2
   · simp_rw [hr']
-    exact Or.inl h_uni
+    exact Or.inl (h_uni fun i h => zmod4_ne_succ i (hinj_u hS2 h))
+
+/-- The weak core with the adjacent rim pairs off the S2 locus (`hS2a`): strictly unimodal rim depths. -/
+theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha4 : ⟪F.N 5, x 4 - x 0⟫ < 0 ∨ (⟪F.N 5, x 4 - x 0⟫ = 0 ∧ ⟪F.N 5, x 5 - x 0⟫ < 0))
+    (s t : ℝ)
+    (hs0 : 0 < s)
+    (ht : 0 < t)
+    (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hk : 0 < det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1))
+    (ht1 : t ≤ 1)
+    (h2lo : min ⟪x 4, x 4 - x 0⟫ ⟪x 2, x 4 - x 0⟫ < max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫)
+    (hS2a : ∀ i : ZMod 4,
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 4 - x 0) + ε • (x 5 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 4 - x 0⟫ ∨ (⟪x a - x c, x 4 - x 0⟫ = 0 ∧ 0 < ⟪x a - x c, x 5 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
+      ((∀ i j : ZMod 4, i ≠ j →
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
+  obtain ⟨u, ρ, h3, ⟨hs, hU, h0, h3'⟩, hu, hlex, hc⟩ := q45_Kminus_t_le_one_j0ww F
+    ha4 s t hs0 ht hst hdecomp hk ht1 h2lo
+  exact ⟨u, ρ, h3, ⟨hs, hU (adj_of_lex hlex hS2a), h0, h3'⟩, hu, hlex, hc⟩
 
 /-- The old form (full `hS2`): `J0Chord` and `J0Extra`. -/
 theorem q45_Kminus_t_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
@@ -717,7 +815,7 @@ When `0 < ρ0 * kJ` and weak 2-high fails strictly at base `e35 = x 3 - x 5`.
 - Rim: 6 4 5 2, chord 4 -> 5, middles 0, 3, farther w ∈ {2, 6}.
 - Lemma K rules out 6-high everywhere on `J0`.
 - Open condition `h2lo` rules out 2-high near `e35`. -/
-theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+theorem q45_Kminus_t_gt_one_j0ww {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (ha35 : ⟪F.N 5, x 3 - x 5⟫ < 0)
     (s t : ℝ)
     (hs0 : 0 < s)
@@ -726,11 +824,8 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
     (hk : 0 < det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1))
     (ht1 : 1 < t)
-    (h2lo : min ⟪x 4, x 3 - x 5⟫ ⟪x 2, x 3 - x 5⟫ < max ⟪x 6, x 3 - x 5⟫ ⟪x 5, x 3 - x 5⟫)
-    (hS2a : ∀ i : ZMod 4,
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 3 - x 5⟫ ≠ 0 ∨
-      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 3 - x 5) + ε • (x 5 - x 0)) ∧
+    (h2lo : min ⟪x 4, x 3 - x 5⟫ ⟪x 2, x 3 - x 5⟫ < max ⟪x 6, x 3 - x 5⟫ ⟪x 5, x 3 - x 5⟫) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0ExtraW F u ∧ (∃ ε : ℝ, u = (x 3 - x 5) + ε • (x 5 - x 0)) ∧
       (∀ a c : Fin 7, (0 < ⟪x a - x c, x 3 - x 5⟫ ∨ (⟪x a - x c, x 3 - x 5⟫ = 0 ∧ 0 < ⟪x a - x c, x 5 - x 0⟫)) →
         ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
@@ -771,7 +866,6 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     by_cases hS2 : ∀ i j : ZMod 4, i ≠ j → ⟪p_quad i - p_quad j, b⟫ ≠ 0 ∨ ⟪p_quad i - p_quad j, d⟫ ≠ 0
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
-  have ev_adj := eventually_adj_quad p_quad b d hS2a
   have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
       (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
     refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
@@ -781,8 +875,8 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
       linarith
     · exact Eventually.of_forall fun ε h' => absurd h' hlx
-  have ev_all := ev_eps.and (ev_alpha.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and (ev_adj.and ev_lex))))))
-  obtain ⟨ε, hε, hα, h8, hN5_u, h2lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
+  have ev_all := ev_eps.and (ev_alpha.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and ev_lex)))))
+  obtain ⟨ε, hε, hα, h8, hN5_u, h2lo_u, hinj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x (t - 1 + ε) s := hu_Pi ε
   have h6 : 0 < (t - 1 + ε) * s + s * (1 - t) := by
@@ -839,7 +933,7 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
         _ = 0 := sub_self _
       revert this; decide
     exact hcyc i (i + 2) hneq1 hneq2
-  have h_uni := unimodal_quad_Kminus_adj p_quad u ρ hadj_u h_triD hk_neg h2lo_u
+  have h_uni := fun hadj => unimodal_quad_Kminus_adj p_quad u ρ hadj h_triD hk_neg h2lo_u
   have h_mb := middle_bounds_J0 s t (t - 1 + ε) s hst hα hs0 h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
@@ -875,7 +969,31 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   · simp_rw [hr']
     exact hinj_u hS2
   · simp_rw [hr']
-    exact Or.inl h_uni
+    exact Or.inl (h_uni fun i h => zmod4_ne_succ i (hinj_u hS2 h))
+
+/-- The weak core with the adjacent rim pairs off the S2 locus (`hS2a`): strictly unimodal rim depths. -/
+theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
+    (ha35 : ⟪F.N 5, x 3 - x 5⟫ < 0)
+    (s t : ℝ)
+    (hs0 : 0 < s)
+    (ht : 0 < t)
+    (hst : 1 < s + t)
+    (hdecomp : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hk : 0 < det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) * det3 (x 0 - x 1) (x 2 - x 1) (x 6 - x 1))
+    (ht1 : 1 < t)
+    (h2lo : min ⟪x 4, x 3 - x 5⟫ ⟪x 2, x 3 - x 5⟫ < max ⟪x 6, x 3 - x 5⟫ ⟪x 5, x 3 - x 5⟫)
+    (hS2a : ∀ i : ZMod 4,
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 3 - x 5⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0) :
+    ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 3 - x 5) + ε • (x 5 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 3 - x 5⟫ ∨ (⟪x a - x c, x 3 - x 5⟫ = 0 ∧ 0 < ⟪x a - x c, x 5 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
+      ((∀ i j : ZMod 4, i ≠ j →
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 5⟫ ≠ 0 ∨
+        ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
+  obtain ⟨u, ρ, h3, ⟨hs, hU, h0, h3'⟩, hu, hlex, hc⟩ := q45_Kminus_t_gt_one_j0ww F
+    ha35 s t hs0 ht hst hdecomp hk ht1 h2lo
+  exact ⟨u, ρ, h3, ⟨hs, hU (adj_of_lex hlex hS2a), h0, h3'⟩, hu, hlex, hc⟩
 
 /-- The old form (full `hS2`): `J0Chord` and `J0Extra`. -/
 theorem q45_Kminus_t_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)

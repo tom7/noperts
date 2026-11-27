@@ -403,4 +403,98 @@ theorem lexAny_of_j0Chord_s4 (F : S0xFac 9 s0x_S24 x) {u : ℝ³} {ρ : ℝ} (hc
     (hS4 : Q45S4LocusJ0 F) : Gen.LexAny F :=
   lexAny_of_j0S4 F hc.1 hx hS4
 
+/-! ### The tilt in the 3-level lex order (job OSPEC5): no S2 hypothesis
+
+At a weak core's view `u = B + ε D` (reading the lex order at `(B, D)`; adjacent rim pairs may TIE at `u` when they
+are orthogonal to `B` and `D`) tilt by `η σ N3`.  For small `η` the rim depths at `u + η σ N3` are ordered by the
+3-level lex order `(B, D, σ N3)`; a tied pair is separated by `σ (h_i - h_j)`, `h = ⟪x, N3⟫`.  The tilted view is a lex
+cell (base `u`, `d1 = σ N3`, `d2 = 0`) whenever the popped rim (`rimP0` for `σ = 1`, `rimP3` for `σ = -1`) is
+`RobUniLex` in that order (`J0TiltOK`).  This subsumes `lexAny_of_j0_noMid` and its corollaries: at `u` the depth
+order IS the `(B, D)` lex order (`hlex`; lex-zero pairs are tied at `u`). -/
+
+open Minimality.LexCell in
+/-- The 3-level lex tilt: the popped rim `rimP0` (face `0345` up, `σ = 1`) or `rimP3` (down, `σ = -1`) is robustly
+unimodal in the lex order `(B, D, σ N3)`. -/
+def J0TiltOK {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (B D : ℝ³) : Prop :=
+  RobUniLex (fun i => (⟪x (rimP0 i), B⟫, ⟪x (rimP0 i), D⟫, ⟪x (rimP0 i), F.N 3⟫)) ∨
+    RobUniLex (fun i => (⟪x (rimP3 i), B⟫, ⟪x (rimP3 i), D⟫, ⟪x (rimP3 i), -F.N 3⟫))
+
+open Minimality.LexCell in
+/-- A `(B, D, N)` lex comparison becomes a `(u, N, 0)` lex comparison at a view `u = B + ε D` reading the `(B, D)`
+lex order. -/
+theorem lexLt3_tilt {B D u N : ℝ³} (hu : ∃ ε : ℝ, u = B + ε • D)
+    (hlex : ∀ a c : Fin 7, (0 < ⟪x a - x c, B⟫ ∨ (⟪x a - x c, B⟫ = 0 ∧ 0 < ⟪x a - x c, D⟫)) →
+      ⟪x c, u⟫ < ⟪x a, u⟫) (a c : Fin 7)
+    (h : LexLt3 (⟪x a, B⟫, ⟪x a, D⟫, ⟪x a, N⟫) (⟪x c, B⟫, ⟪x c, D⟫, ⟪x c, N⟫)) :
+    LexLt3 (⟪x a, u⟫, ⟪x a, N⟫, ⟪x a, (0 : ℝ³)⟫) (⟪x c, u⟫, ⟪x c, N⟫, ⟪x c, (0 : ℝ³)⟫) := by
+  obtain ⟨ε, rfl⟩ := hu
+  simp only [LexLt3, LexPos3] at h ⊢
+  have eB : ⟪x c - x a, B⟫ = ⟪x c, B⟫ - ⟪x a, B⟫ := inner_sub_left _ _ _
+  have eD : ⟪x c - x a, D⟫ = ⟪x c, D⟫ - ⟪x a, D⟫ := inner_sub_left _ _ _
+  have eu : ⟪x c, B + ε • D⟫ - ⟪x a, B + ε • D⟫ = (⟪x c, B⟫ - ⟪x a, B⟫) + ε * (⟪x c, D⟫ - ⟪x a, D⟫) := by
+    simp only [inner_add_right, real_inner_smul_right]; ring
+  rcases h with h | ⟨h0, h | ⟨h1, h⟩⟩
+  · exact Or.inl (sub_pos.2 (hlex c a (Or.inl (by rw [eB]; exact h))))
+  · exact Or.inl (sub_pos.2 (hlex c a (Or.inr ⟨by rw [eB]; exact h0, by rw [eD]; exact h⟩)))
+  · right; refine ⟨by rw [eu, h0, h1]; ring, Or.inl h⟩
+
+open Minimality.LexCell in
+/-- **The lex tilt is a lex cell** (generic rim): facings at `u` strict except those decided by `N`, the rim
+`RobUniLex` in the lex order `(B, D, N)`, `u = B + ε D` reading the `(B, D)` lex order. -/
+theorem lexAny_of_tiltLex {k : ℕ} [NeZero k] (hk : 4 ≤ k) (F : S0xFac 9 s0x_S24 x) {u B D N : ℝ³}
+    (c : ZMod k → Fin 7) (hc : Function.Injective c) {U Dn : Finset (Fin 9)} (hcyc : S0xCycUD s0x_S24 c U Dn)
+    (hU : ∀ t ∈ U, 0 < ⟪F.N t, u⟫ ∨ (⟪F.N t, u⟫ = 0 ∧ 0 < ⟪F.N t, N⟫))
+    (hD : ∀ t ∈ Dn, ⟪F.N t, u⟫ < 0 ∨ (⟪F.N t, u⟫ = 0 ∧ ⟪F.N t, N⟫ < 0))
+    (hu : ∃ ε : ℝ, u = B + ε • D)
+    (hlex : ∀ a c : Fin 7, (0 < ⟪x a - x c, B⟫ ∨ (⟪x a - x c, B⟫ = 0 ∧ 0 < ⟪x a - x c, D⟫)) →
+      ⟪x c, u⟫ < ⟪x a, u⟫)
+    (hR : RobUniLex (fun i => (⟪x (c i), B⟫, ⟪x (c i), D⟫, ⟪x (c i), N⟫))) : Gen.LexAny F := by
+  refine ⟨k, inferInstance, c, U, Dn, u, N, 0, hk, hc, hcyc, ?_, ?_, ?_⟩
+  · intro t ht
+    rcases hU t ht with h | ⟨h0, h1⟩
+    · exact Or.inl h
+    · exact Or.inr ⟨h0, Or.inl h1⟩
+  · intro t ht
+    rcases hD t ht with h | ⟨h0, h1⟩
+    · exact Or.inl (by linarith)
+    · exact Or.inr ⟨by rw [h0, neg_zero], Or.inl (by linarith)⟩
+  · intro B' b c' d hb hbc hcd hd
+    rcases hR B' b c' d hb hbc hcd hd with h | h | h | h
+    · exact Or.inl (lexLt3_tilt hu hlex _ _ h)
+    · exact Or.inr (Or.inl (lexLt3_tilt hu hlex _ _ h))
+    · exact Or.inr (Or.inr (Or.inl (lexLt3_tilt hu hlex _ _ h)))
+    · exact Or.inr (Or.inr (Or.inr (lexLt3_tilt hu hlex _ _ h)))
+
+/-- **The J0 lex tilt** (no S2, S3, S4 or unimodality hypothesis): a weak core's view `u = B + ε D` with the J0 facet
+signs, on the `0345` circle, reading the `(B, D)` lex order, and `J0TiltOK F B D` give a lex cell. -/
+theorem lexAny_of_j0TiltLex (F : S0xFac 9 s0x_S24 x) {u B D : ℝ³} (h3 : ⟪F.N 3, u⟫ = 0) (hs : J0Signs F u)
+    (hu : ∃ ε : ℝ, u = B + ε • D)
+    (hlex : ∀ a c : Fin 7, (0 < ⟪x a - x c, B⟫ ∨ (⟪x a - x c, B⟫ = 0 ∧ 0 < ⟪x a - x c, D⟫)) →
+      ⟪x c, u⟫ < ⟪x a, u⟫)
+    (hT : J0TiltOK F B D) : Gen.LexAny F := by
+  obtain ⟨h2, h4, h5, h6, h7, h8⟩ := hs
+  have hNN : 0 < ⟪F.N 3, F.N 3⟫ := real_inner_self_pos.mpr (n3_ne_zero F)
+  rcases hT with hR | hR
+  · refine lexAny_of_tiltLex (by norm_num) F rimP0 rimP0_inj rimP0_cyc ?_ ?_ hu hlex hR
+    · intro t ht
+      simp only [UP0, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl | rfl
+      · exact Or.inr ⟨h3, hNN⟩
+      exacts [Or.inl h6, Or.inl h7, Or.inl h8]
+    · intro t ht
+      simp only [DnP0, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl
+      exacts [Or.inl h2, Or.inl h4, Or.inl h5]
+  · refine lexAny_of_tiltLex (by norm_num) F rimP3 rimP3_inj rimP3_cyc ?_ ?_ hu hlex hR
+    · intro t ht
+      simp only [UP3, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl
+      exacts [Or.inl h6, Or.inl h7, Or.inl h8]
+    · intro t ht
+      simp only [DnP3, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl | rfl
+      · exact Or.inl h2
+      · exact Or.inr ⟨h3, by rw [inner_neg_right]; linarith⟩
+      exacts [Or.inl h4, Or.inl h5]
+
 end Minimality.T24.Q45

@@ -2670,6 +2670,25 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_T
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_T
 
+-- OSPEC5 (11-27): weak-weak J0 cores (no S2 hypothesis), the 3-level lex tilt J0TiltOK, OpenSpecialU
+#assert_standard_axioms Minimality.T24.Q45.ne_of_lexOr
+#assert_standard_axioms Minimality.T24.Q45.adj_of_lex
+#assert_standard_axioms Minimality.T24.Q45.q45_Kplus_s_le_one_j0ww
+#assert_standard_axioms Minimality.T24.Q45.q45_Kplus_s_gt_one_j0ww
+#assert_standard_axioms Minimality.T24.Q45.q45_Kminus_t_le_one_j0ww
+#assert_standard_axioms Minimality.T24.Q45.q45_Kminus_t_gt_one_j0ww
+#assert_standard_axioms Minimality.T24.Q45.lexLt3_tilt
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_tiltLex
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0TiltLex
+#assert_standard_axioms Minimality.T24.OSpec.q45_resU_local
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWU_sub
+#assert_standard_axioms Minimality.T24.OSpec.q45_resU
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialU_of_openSpecialT
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_U
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_U
+#assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_U
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_U
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve
