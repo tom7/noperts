@@ -241,6 +241,265 @@ theorem epRows_of_slopeWindow {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w : �
     (fun i j hi hj hpos => hα_b (i, j) ⟨hi, hj, hpos⟩)
     (fun p q hp hq hneg => hα_o (p, q) ⟨hp, hq, hneg⟩)
 
+/-- **FV1 helper:** unified signed-depth order certificate (`σ = 1` for Blue `≤` Orange,
+yielding `μ' < 0`; `σ = -1` for Orange `≤` Blue, yielding `0 < μ'`), with shared-apex ties
+`zt j = zt q → y b < y o`. -/
+theorem lineSep_of_depthOrder_dir {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w : ℝ³) (a : ZMod k)
+    (sh : ℝ) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1)
+    (hOrd : ∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      p ≠ a → (q = p ∨ q = p + 1) →
+      0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+      Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+      σ * ⟪X j - X a, w⟫ ≤ σ * ⟪X q - X a, w⟫)
+    (hEq : ∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      p ≠ a → (q = p ∨ q = p + 1) →
+      0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+      Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+      ⟪X j - X a, w⟫ = ⟪X q - X a, w⟫ →
+      (-sh * ⟪linSpinVec X a i j, w⟫ / Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w) <
+        (-sh * ⟪linSpinVec X a p q, w⟫ / Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w)) :
+    ∃ α' μ' : ℝ, σ * μ' < 0 ∧
+      (∀ i j : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        (-sh * ⟪linSpinVec X a i j, w⟫ /
+            Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w) -
+          μ' * ⟪X j - X a, w⟫ < α') ∧
+      (∀ p q : ZMod k, p ≠ a → (q = p ∨ q = p + 1) →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        α' < (-sh * ⟪linSpinVec X a p q, w⟫ /
+            Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w) -
+          μ' * ⟪X q - X a, w⟫) := by
+  classical
+  let y : ZMod k × ZMod k → ℝ := fun ⟨i, j⟩ =>
+    -sh * ⟪linSpinVec X a i j, w⟫ / Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w
+  let zt : ZMod k → ℝ := fun j => ⟪X j - X a, w⟫
+  let isBlue : ZMod k × ZMod k → Prop := fun ⟨i, j⟩ =>
+    i ≠ a ∧ (j = i ∨ j = i + 1) ∧ 0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w
+  let isOrange : ZMod k × ZMod k → Prop := fun ⟨p, q⟩ =>
+    p ≠ a ∧ (q = p ∨ q = p + 1) ∧ Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0
+  let P_diff : (ZMod k × ZMod k) × (ZMod k × ZMod k) → Prop := fun ⟨b, o⟩ =>
+    isBlue b ∧ isOrange o ∧ σ * zt b.2 < σ * zt o.2
+  let ratio : (ZMod k × ZMod k) × (ZMod k × ZMod k) → ℝ := fun ⟨b, o⟩ =>
+    (y o - y b) / (σ * (zt o.2 - zt b.2))
+  have hσ2 : σ * σ = 1 := by rcases hσ with rfl | rfl <;> norm_num
+  have hσ_ne : σ ≠ 0 := by rcases hσ with rfl | rfl <;> norm_num
+  have hm : ∃ m : ℝ, m < 0 ∧ ∀ r, P_diff r → m < ratio r := by
+    by_cases hne : ∃ r, P_diff r
+    · obtain ⟨r0, hr0, hmin⟩ := Finset.exists_min_image (Finset.univ.filter P_diff) ratio
+        (by obtain ⟨r, hr⟩ := hne; exact ⟨r, by simpa using hr⟩)
+      refine ⟨min (-1) (ratio r0 - 1), lt_of_le_of_lt (min_le_left _ _) (by norm_num),
+        fun r hr => ?_⟩
+      have h1 := hmin r (by simpa using hr)
+      have h2 : min (-1) (ratio r0 - 1) ≤ ratio r0 - 1 := min_le_right _ _
+      linarith
+    · exact ⟨-1, by norm_num, fun r hr => absurd ⟨r, hr⟩ hne⟩
+  obtain ⟨m, hm_neg, hm_lt⟩ := hm
+  let μ' : ℝ := σ * m
+  have hσμ : σ * μ' < 0 := by dsimp [μ']; rw [← mul_assoc, hσ2, one_mul]; exact hm_neg
+  let g : ZMod k × ZMod k → ℝ := fun r => y r - μ' * zt r.2
+  have hsep : ∀ b o : ZMod k × ZMod k, isBlue b → isOrange o → g b < g o := by
+    rintro ⟨i, j⟩ ⟨p, q⟩ hb ho
+    dsimp only [g]
+    have hle := hOrd i j p q hb.1 hb.2.1 ho.1 ho.2.1 hb.2.2 ho.2.2
+    rcases lt_or_eq_of_le hle with hlt | heq
+    · have hrat := hm_lt ((i, j), (p, q)) ⟨hb, ho, hlt⟩
+      dsimp only [ratio] at hrat
+      have hpos : 0 < σ * (zt q - zt j) := by dsimp [zt] at *; linarith
+      have hmul := (lt_div_iff₀ hpos).mp hrat
+      have hid : m * (σ * (zt q - zt j)) = μ' * (zt q - zt j) := by dsimp [μ']; ring
+      rw [hid] at hmul
+      linarith
+    · have heqz : zt j = zt q := by
+        have := congrArg (σ * ·) heq
+        dsimp [zt] at *
+        have h1 : σ * (σ * ⟪X j - X a, w⟫) = ⟪X j - X a, w⟫ := by
+          calc σ * (σ * ⟪X j - X a, w⟫) = (σ * σ) * ⟪X j - X a, w⟫ := by ring
+            _ = ⟪X j - X a, w⟫ := by rw [hσ2, one_mul]
+        have h2 : σ * (σ * ⟪X q - X a, w⟫) = ⟪X q - X a, w⟫ := by
+          calc σ * (σ * ⟪X q - X a, w⟫) = (σ * σ) * ⟪X q - X a, w⟫ := by ring
+            _ = ⟪X q - X a, w⟫ := by rw [hσ2, one_mul]
+        linarith
+      have hy := hEq i j p q hb.1 hb.2.1 ho.1 ho.2.1 hb.2.2 ho.2.2 heqz
+      dsimp only [y, zt] at *
+      rw [heqz]
+      linarith
+  have hα' : ∃ α' : ℝ, (∀ b, isBlue b → g b < α') ∧ (∀ o, isOrange o → α' < g o) := by
+    by_cases hne_b : ∃ b, isBlue b
+    · obtain ⟨b0, hb0, hmax⟩ := Finset.exists_max_image (Finset.univ.filter isBlue) g
+        (by obtain ⟨b, hb⟩ := hne_b; exact ⟨b, by simpa using hb⟩)
+      have hb0' : isBlue b0 := by simpa using hb0
+      obtain ⟨m_o, _, hm_o_le⟩ := Split.LWrap.exists_lower isOrange g (g b0)
+        (fun o ho => hsep b0 o hb0' ho)
+      refine ⟨(g b0 + m_o) / 2, fun b hb => ?_, fun o ho => ?_⟩
+      · have := hmax b (by simpa using hb); linarith
+      · have := hm_o_le o ho; linarith
+    · by_cases hne_o : ∃ o, isOrange o
+      · obtain ⟨o0, ho0, hmin⟩ := Finset.exists_min_image (Finset.univ.filter isOrange) g
+          (by obtain ⟨o, ho⟩ := hne_o; exact ⟨o, by simpa using ho⟩)
+        refine ⟨g o0 - 1, fun b hb => absurd ⟨b, hb⟩ hne_b, fun o ho => ?_⟩
+        have := hmin o (by simpa using ho); linarith
+      · exact ⟨0, fun b hb => absurd ⟨b, hb⟩ hne_b, fun o ho => absurd ⟨o, ho⟩ hne_o⟩
+  obtain ⟨α', hα_b, hα_o⟩ := hα'
+  exact ⟨α', μ', hσμ, fun i j hi hj hpos => hα_b (i, j) ⟨hi, hj, hpos⟩,
+    fun p q hp hq hneg => hα_o (p, q) ⟨hp, hq, hneg⟩⟩
+
+/-- **FV1 (`lineSep_of_depthOrder_ties`):** if every Blue depth `≤` every Orange depth (so
+`μ' < 0` separates) OR every Orange depth `≤` every Blue depth (so `0 < μ'` separates), with
+shared-apex ties `zt j = zt q → y b < y o`, then strict line separation `(α', μ')` exists. -/
+theorem lineSep_of_depthOrder_ties {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w : ℝ³) (a : ZMod k)
+    (sh : ℝ)
+    (hOrd : (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        ⟪X j - X a, w⟫ ≤ ⟪X q - X a, w⟫) ∨
+      (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        ⟪X q - X a, w⟫ ≤ ⟪X j - X a, w⟫))
+    (hEq : ∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      p ≠ a → (q = p ∨ q = p + 1) →
+      0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+      Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+      ⟪X j - X a, w⟫ = ⟪X q - X a, w⟫ →
+      (-sh * ⟪linSpinVec X a i j, w⟫ / Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w) <
+        (-sh * ⟪linSpinVec X a p q, w⟫ / Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w)) :
+    ∃ α' μ' : ℝ,
+      (∀ i j : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        (-sh * ⟪linSpinVec X a i j, w⟫ /
+            Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w) -
+          μ' * ⟪X j - X a, w⟫ < α') ∧
+      (∀ p q : ZMod k, p ≠ a → (q = p ∨ q = p + 1) →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        α' < (-sh * ⟪linSpinVec X a p q, w⟫ /
+            Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w) -
+          μ' * ⟪X q - X a, w⟫) := by
+  rcases hOrd with hBO | hOB
+  · obtain ⟨α', μ', _, hB, hO⟩ := lineSep_of_depthOrder_dir X w a sh 1 (Or.inl rfl)
+      (fun i j p q hi hj hp hq hb ho => by simpa using hBO i j p q hi hj hp hq hb ho) hEq
+    exact ⟨α', μ', hB, hO⟩
+  · obtain ⟨α', μ', _, hB, hO⟩ := lineSep_of_depthOrder_dir X w a sh (-1) (Or.inr rfl)
+      (fun i j p q hi hj hp hq hb ho => by simpa using hOB i j p q hi hj hp hq hb ho) hEq
+    exact ⟨α', μ', hB, hO⟩
+
+/-- **FV1 (`lineSep_of_depthOrder`):** strict depth separation (`z_b < z_o` for all Blue/Orange,
+yielding `μ' < 0`, or `z_o < z_b` for all Blue/Orange, yielding `0 < μ'`) with arbitrary `y`
+values yields strict line separation `(α', μ')`. -/
+theorem lineSep_of_depthOrder {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w : ℝ³) (a : ZMod k)
+    (sh : ℝ)
+    (hOrd : (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        ⟪X j - X a, w⟫ < ⟪X q - X a, w⟫) ∨
+      (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        ⟪X q - X a, w⟫ < ⟪X j - X a, w⟫)) :
+    ∃ α' μ' : ℝ,
+      (∀ i j : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        (-sh * ⟪linSpinVec X a i j, w⟫ /
+            Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w) -
+          μ' * ⟪X j - X a, w⟫ < α') ∧
+      (∀ p q : ZMod k, p ≠ a → (q = p ∨ q = p + 1) →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        α' < (-sh * ⟪linSpinVec X a p q, w⟫ /
+            Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w) -
+          μ' * ⟪X q - X a, w⟫) := by
+  refine lineSep_of_depthOrder_ties X w a sh ?_ ?_
+  · rcases hOrd with hBO | hOB
+    · exact Or.inl (fun i j p q hi hj hp hq hb ho => le_of_lt (hBO i j p q hi hj hp hq hb ho))
+    · exact Or.inr (fun i j p q hi hj hp hq hb ho => le_of_lt (hOB i j p q hi hj hp hq hb ho))
+  · intro i j p q hi hj hp hq hb ho heq
+    rcases hOrd with hBO | hOB
+    · exact absurd heq (ne_of_lt (hBO i j p q hi hj hp hq hb ho))
+    · exact absurd heq.symm (ne_of_lt (hOB i j p q hi hj hp hq hb ho))
+
+/-- **FV1:** `epRows_of_depthOrder_ties` (`EPRows` from an order certificate with shared-apex ties). -/
+theorem epRows_of_depthOrder_ties {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w : ℝ³) (a : ZMod k)
+    (hD : ⟪X (a + 1) - X a, w⟫ ≠ 0)
+    (hc_ne : ∀ i : ZMod k, i ≠ a → Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1)
+    (hOrd : (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        ⟪X j - X a, w⟫ ≤ ⟪X q - X a, w⟫) ∨
+      (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        ⟪X q - X a, w⟫ ≤ ⟪X j - X a, w⟫))
+    (hEq : ∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      p ≠ a → (q = p ∨ q = p + 1) →
+      0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+      Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+      ⟪X j - X a, w⟫ = ⟪X q - X a, w⟫ →
+      (-sh * ⟪linSpinVec X a i j, w⟫ / Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w) <
+        (-sh * ⟪linSpinVec X a p q, w⟫ / Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w)) :
+    ∃ s α μ : ℝ, Split.EV.EPRows X w a s α μ := by
+  obtain ⟨α', μ', hB, hO⟩ := lineSep_of_depthOrder_ties X w a sh hOrd hEq
+  exact epRows_of_lineSep X w a hD hc_ne sh hsh α' μ' hB hO
+
+/-- **FV1:** `edgePlaneAt_of_depthOrder_ties` (`EdgePlaneAt` from an order certificate with ties). -/
+theorem edgePlaneAt_of_depthOrder_ties {n k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : Fin n → ℝ³)
+    (w : ℝ³) (lab : ZMod k → Fin n) (hinj : Function.Injective lab)
+    (hrim : Split.StrictRimN x w lab) (hhid : Split.HiddenInTriangles x w lab) (a : ZMod k)
+    (hD : ⟪x (lab (a + 1)) - x (lab a), w⟫ ≠ 0)
+    (hc_ne : ∀ i : ZMod k, i ≠ a →
+      Split.det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1)
+    (hOrd : (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w →
+        Split.det3 (x (lab (p + 1)) - x (lab p)) (x (lab (a + 1)) - x (lab a)) w < 0 →
+        ⟪x (lab j) - x (lab a), w⟫ ≤ ⟪x (lab q) - x (lab a), w⟫) ∨
+      (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w →
+        Split.det3 (x (lab (p + 1)) - x (lab p)) (x (lab (a + 1)) - x (lab a)) w < 0 →
+        ⟪x (lab q) - x (lab a), w⟫ ≤ ⟪x (lab j) - x (lab a), w⟫))
+    (hEq : ∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      p ≠ a → (q = p ∨ q = p + 1) →
+      0 < Split.det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w →
+      Split.det3 (x (lab (p + 1)) - x (lab p)) (x (lab (a + 1)) - x (lab a)) w < 0 →
+      ⟪x (lab j) - x (lab a), w⟫ = ⟪x (lab q) - x (lab a), w⟫ →
+      (-sh * ⟪linSpinVec (fun t => x (lab t)) a i j, w⟫ /
+          Split.det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w) <
+        (-sh * ⟪linSpinVec (fun t => x (lab t)) a p q, w⟫ /
+          Split.det3 (x (lab (p + 1)) - x (lab p)) (x (lab (a + 1)) - x (lab a)) w)) :
+    Minimality.T24.DeepC.EdgePlaneAt x w := by
+  obtain ⟨α', μ', hB, hO⟩ := lineSep_of_depthOrder_ties (fun t => x (lab t)) w a sh hOrd hEq
+  exact edgePlaneAt_of_lineSep hk x w lab hinj hrim hhid a hD hc_ne sh hsh α' μ' hB hO
+
+/-- Shared **Order Certificate (`OC`)** at view `w` on rim `X : ZMod k → ℝ³` (with ties). -/
+def OrderCertAt {k : ℕ} (X : ZMod k → ℝ³) (w : ℝ³) : Prop :=
+  ∃ a : ZMod k,
+    ⟪X (a + 1) - X a, w⟫ ≠ 0 ∧
+    (∀ i : ZMod k, i ≠ a → Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w ≠ 0) ∧
+    ∃ sh : ℝ, (sh = 1 ∨ sh = -1) ∧
+      ((∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+          p ≠ a → (q = p ∨ q = p + 1) →
+          0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+          Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+          ⟪X j - X a, w⟫ ≤ ⟪X q - X a, w⟫) ∨
+        (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+          p ≠ a → (q = p ∨ q = p + 1) →
+          0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+          Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+          ⟪X q - X a, w⟫ ≤ ⟪X j - X a, w⟫)) ∧
+      (∀ i j p q : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+        p ≠ a → (q = p ∨ q = p + 1) →
+        0 < Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w →
+        Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w < 0 →
+        ⟪X j - X a, w⟫ = ⟪X q - X a, w⟫ →
+        (-sh * ⟪linSpinVec X a i j, w⟫ / Split.det3 (X (i + 1) - X i) (X (a + 1) - X a) w) <
+          (-sh * ⟪linSpinVec X a p q, w⟫ / Split.det3 (X (p + 1) - X p) (X (a + 1) - X a) w))
+
 end Minimality.Split.Slope
 
 namespace Minimality.T24.WC

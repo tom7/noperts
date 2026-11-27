@@ -532,6 +532,19 @@ theorem cell_lineSep_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       have h0 := hOrange0 (-p - 1) (-q) (hi_iff p hp) (hj_iff p q hq) hneg
       linarith
 
+/-- **FV2 (`cell_oc_edgePlaneAny`):** `CellAt` plus `OrderCertAt` (with shared-apex ties)
+yields `Gen.EdgePlaneAny x`. -/
+theorem cell_oc_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
+    {k : ℕ} [NeZero k] (hk : 3 ≤ k) (r : ZMod k → Fin 7) (hr : Function.Injective r)
+    {U D : Finset (Fin 9)} (hcyc : S0xCycUD s0x_S24 r U D) (hcell : CellAt F U D w)
+    (hhid : Split.HiddenInTriangles x w r)
+    (hoc : Split.Slope.OrderCertAt (fun t => x (r t)) w) :
+    Gen.EdgePlaneAny x := by
+  rcases hoc with ⟨a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
+  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
+    (fun t => x (r t)) w a sh hOrd hEq
+  exact cell_lineSep_edgePlaneAny F hk r hr hcyc hcell hhid a hD0 hc_ne0 sh hsh α' μ' hB hO
+
 /-- **FR2 (`w_D` leaf):** strict line separation at an interior view `wD x β γ` of `(U_D, D_D)`
 on any edge `a` yields `Gen.EdgePlaneAny x` (no limit argument needed). -/
 theorem wd_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
@@ -589,6 +602,23 @@ theorem holeLeaf_not_wd {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hol
 theorem hole24_not_wd {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
     {beta gamma : ℝ} (hc : WDCertAt x F beta gamma) : False :=
   holeLeaf_not_wd hF.1 hc
+
+/-- **FV2 (`WDOCCertAt`):** `WD` cell conditions plus `OrderCertAt` at `wD x β γ`. -/
+def WDOCCertAt (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) (beta gamma : ℝ) : Prop :=
+  0 < beta ∧ 0 < gamma ∧ omega4 x * beta + gamma < 1 ∧
+  ⟪F.N 6, wD x beta gamma⟫ < 0 ∧ ⟪F.N 8, wD x beta gamma⟫ < 0 ∧
+  Split.Slope.OrderCertAt (fun t => x (rD t)) (wD x beta gamma)
+
+theorem wdCertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {beta gamma : ℝ}
+    (hoc : WDOCCertAt x F beta gamma) : WDCertAt x F beta gamma := by
+  rcases hoc with ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
+  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
+    (fun t => x (rD t)) (wD x beta gamma) a sh hOrd hEq
+  exact ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+
+theorem holeLeaf_not_wd_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {beta gamma : ℝ} (hc : WDOCCertAt x F beta gamma) : False :=
+  holeLeaf_not_wd hF (wdCertAt_of_oc hc)
 
 /-- **FR2 (`π_24` twin of `wd_edgePlaneAny`).** -/
 theorem wd_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
@@ -828,6 +858,23 @@ theorem holeLeaf_not_wd6 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Ho
 theorem hole24_not_wd6 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
     {beta gamma : ℝ} (hc : WD6CertAt x F beta gamma) : False :=
   holeLeaf_not_wd6 hF.1 hc
+
+/-- **FV2 (`WD6OCCertAt`):** `WD6` cell conditions plus `OrderCertAt` at `wD x β γ`. -/
+def WD6OCCertAt (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) (beta gamma : ℝ) : Prop :=
+  0 < beta ∧ 0 < gamma ∧ omega4 x * beta + gamma < 1 ∧
+  ⟪F.N 6, wD x beta gamma⟫ < 0 ∧ 0 < ⟪F.N 8, wD x beta gamma⟫ ∧
+  Split.Slope.OrderCertAt (fun t => x (rD6 t)) (wD x beta gamma)
+
+theorem wd6CertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {beta gamma : ℝ}
+    (hoc : WD6OCCertAt x F beta gamma) : WD6CertAt x F beta gamma := by
+  rcases hoc with ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
+  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
+    (fun t => x (rD6 t)) (wD x beta gamma) a sh hOrd hEq
+  exact ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+
+theorem holeLeaf_not_wd6_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {beta gamma : ℝ} (hc : WD6OCCertAt x F beta gamma) : False :=
+  holeLeaf_not_wd6 hF (wd6CertAt_of_oc hc)
 
 /-- **FS1 (`π_24` twin of `wd6_edgePlaneAny`).** -/
 theorem wd6_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)

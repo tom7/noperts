@@ -659,6 +659,46 @@ theorem hole24_not_cA2 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole
     {beta gamma : ℝ} (hc : CA2CertAt x F beta gamma) : False :=
   holeLeaf_not_cA2 hF.1 hc
 
+/-- **FV2 (`CA2OCCertAt`):** `CA2` cell conditions plus `OrderCertAt` at `uT2 x β γ`. -/
+def CA2OCCertAt (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) (beta gamma : ℝ) : Prop :=
+  0 < beta ∧ 0 < gamma ∧
+  ⟪F.N 2, uT2 x beta gamma⟫ < 0 ∧ 0 < ⟪F.N 3, uT2 x beta gamma⟫ ∧
+  ⟪F.N 6, uT2 x beta gamma⟫ < 0 ∧ ⟪F.N 7, uT2 x beta gamma⟫ < 0 ∧
+  0 < ⟪F.N 8, uT2 x beta gamma⟫ ∧
+  Split.Slope.OrderCertAt (fun t => x (cA2 t)) (uT2 x beta gamma)
+
+/-- **FV2 (`CB2OCCertAt`):** `CB2` cell conditions plus `OrderCertAt` at `uT2 x β γ`. -/
+def CB2OCCertAt (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) (beta gamma : ℝ) : Prop :=
+  0 < beta ∧ 0 < gamma ∧
+  ⟪F.N 2, uT2 x beta gamma⟫ < 0 ∧ 0 < ⟪F.N 3, uT2 x beta gamma⟫ ∧
+  ⟪F.N 6, uT2 x beta gamma⟫ < 0 ∧ ⟪F.N 7, uT2 x beta gamma⟫ < 0 ∧
+  ⟪F.N 8, uT2 x beta gamma⟫ < 0 ∧
+  Split.Slope.OrderCertAt (fun t => x (cB2 t)) (uT2 x beta gamma)
+
+theorem cA2CertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {beta gamma : ℝ}
+    (hoc : CA2OCCertAt x F beta gamma) : CA2CertAt x F beta gamma := by
+  rcases hoc with ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
+  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
+    (fun t => x (cA2 t)) (uT2 x beta gamma) a sh hOrd hEq
+  exact ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+
+theorem cB2CertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {beta gamma : ℝ}
+    (hoc : CB2OCCertAt x F beta gamma) : CB2CertAt x F beta gamma := by
+  rcases hoc with ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
+  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
+    (fun t => x (cB2 t)) (uT2 x beta gamma) a sh hOrd hEq
+  exact ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+
+theorem holeLeaf_not_cA2_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {beta gamma : ℝ} (hc : CA2OCCertAt x F beta gamma) : False :=
+  holeLeaf_not_cA2 hF (cA2CertAt_of_oc hc)
+
+theorem holeLeaf_not_cB2_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {beta gamma : ℝ} (hc : CB2OCCertAt x F beta gamma) : False := by
+  rcases cB2CertAt_of_oc hc with ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+  exact Atlas.holeLeaf_not_edgePlaneAny hF
+    (cB2_edgePlaneAny F hF.1 hb hg h2 h3 h6 h7 h8 a hD0 hc_ne0 sh hsh α' μ' hB hO)
+
 theorem holeLeaf_not_cB2 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
     {beta gamma : ℝ} (hc : CB2CertAt x F beta gamma) : False := by
   rcases hc with ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩

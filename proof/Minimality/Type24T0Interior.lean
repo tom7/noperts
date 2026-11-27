@@ -659,6 +659,42 @@ theorem hole24_not_cB0 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole
     {b gamma : ℝ} (hc : CB0CertAt x F b gamma) : False :=
   holeLeaf_not_cB0 hF.1 hc
 
+/-- **FV2 (`CA0OCCertAt`):** `CA0` cell conditions plus `OrderCertAt` at `uT0 x b γ`. -/
+def CA0OCCertAt (x : Fin 7 → ℝ³) (_F : S0xFac 9 s0x_S24 x) (b gamma : ℝ) : Prop :=
+  0 < b ∧ 0 < gamma ∧
+  gamma_A0_lo x b < gamma ∧ gamma < gamma_A0_hi x b ∧
+  (t0_nC x = 0 → 0 < t0_Delta_bc x - t0_nB x * b) ∧ (t0_s6 x = 0 → 0 < t0_r6 x b) ∧
+  Split.Slope.OrderCertAt (fun t => x (cA t)) (uT0 x b gamma)
+
+/-- **FV2 (`CB0OCCertAt`):** `CB0` cell conditions plus `OrderCertAt` at `uT0 x b γ`. -/
+def CB0OCCertAt (x : Fin 7 → ℝ³) (_F : S0xFac 9 s0x_S24 x) (b gamma : ℝ) : Prop :=
+  0 < b ∧ 0 < gamma ∧
+  gamma_B0_lo x b < gamma ∧ gamma < gamma_B0_hi x b ∧
+  (t0_nC x = 0 → 0 < t0_Delta_bc x - t0_nB x * b) ∧ (t0_s6 x = 0 → 0 < t0_r6 x b) ∧
+  Split.Slope.OrderCertAt (fun t => x (cB t)) (uT0 x b gamma)
+
+theorem cA0CertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {b gamma : ℝ}
+    (hoc : CA0OCCertAt x F b gamma) : CA0CertAt x F b gamma := by
+  rcases hoc with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
+  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
+    (fun t => x (cA t)) (uT0 x b gamma) a sh hOrd hEq
+  exact ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+
+theorem cB0CertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {b gamma : ℝ}
+    (hoc : CB0OCCertAt x F b gamma) : CB0CertAt x F b gamma := by
+  rcases hoc with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
+  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
+    (fun t => x (cB t)) (uT0 x b gamma) a sh hOrd hEq
+  exact ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+
+theorem holeLeaf_not_cA0_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {b gamma : ℝ} (hc : CA0OCCertAt x F b gamma) : False :=
+  holeLeaf_not_cA0 hF (cA0CertAt_of_oc hc)
+
+theorem holeLeaf_not_cB0_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {b gamma : ℝ} (hc : CB0OCCertAt x F b gamma) : False :=
+  holeLeaf_not_cB0 hF (cB0CertAt_of_oc hc)
+
 theorem cA0_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     {b gamma : ℝ} (hc : CA0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) :
     Gen.EdgePlaneAny x := by
