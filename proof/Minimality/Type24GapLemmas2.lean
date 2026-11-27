@@ -255,4 +255,60 @@ theorem holeLeaf_not_t2Edge012B2C_twin {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x
     ¬ T2Edge012B2C (x ∘ Sym.pi24) (Sym.sym24 F) :=
   fun h => (leaf_of_t2Edge012B2C_twin h).elim hF.2.2.2.1 hF.2.2.2.2.1
 
+/-! ## Four cells outside `cells24` (the GAPT2OC pocket residue)
+
+At `t1_1e-2_nb548_k0_e1e-02` (nopert229 `data/hard/holekit/gapt2oc_resid.lines`, a crit=0 neighbour of `w6_15_0`
+at scale `1e-2`) no cell of `cells24` (nor a `π_24` twin or an antipode) carries a strict `RobUni` or `ApexCert`
+view, and no Lean region lemma holds; genleaves finds Lex and Split views only in the four cells below (side `x`),
+on their walls (nopert229 FACENORM24.md "== GAPT2OC ==").  The leaves are the generic `lexAny_of_cellRob` /
+`splitAny_of_cellApex` (or `leaf_of_wall_cert` at a wall view). -/
+
+/-- Rim of `cell0164`. -/
+def r0164 : ZMod 4 → Fin 7 := ![0, 1, 6, 4]
+
+/-- Cell `0.1.6.4` (up facets `016, 046`; vertices `2, 3, 5` hidden). -/
+def cell0164 : Cell24 where
+  k := 4
+  hk := le_rfl
+  r := r0164
+  U := {1, 4}
+  inj := by cell24_rim_inj
+  cyc := by decide
+
+/-- Rim of `cell01634`. -/
+def r01634 : ZMod 5 → Fin 7 := ![0, 1, 6, 3, 4]
+
+/-- Cell `0.1.6.3.4` (up facets `016, 046, 346`; vertices `2, 5` hidden). -/
+def cell01634 : Cell24 where
+  k := 5
+  hk := by norm_num
+  r := r01634
+  U := {1, 4, 8}
+  inj := by cell24_rim_inj
+  cyc := by decide
+
+/-- Rim of `cell05326`. -/
+def r05326 : ZMod 5 → Fin 7 := ![0, 5, 3, 2, 6]
+
+/-- Cell `0.5.3.2.6` (up facets `0345, 046, 236, 346`; vertices `1, 4` hidden). -/
+def cell05326 : Cell24 where
+  k := 5
+  hk := by norm_num
+  r := r05326
+  U := {3, 4, 7, 8}
+  inj := by cell24_rim_inj
+  cyc := by decide
+
+/-- Rim of `cell046125`. -/
+def r046125 : ZMod 6 → Fin 7 := ![0, 4, 6, 1, 2, 5]
+
+/-- Cell `0.4.6.1.2.5` (up facets `0345, 126, 235, 236, 346`; vertex `3` hidden). -/
+def cell046125 : Cell24 where
+  k := 6
+  hk := by norm_num
+  r := r046125
+  U := {3, 5, 6, 7, 8}
+  inj := by cell24_rim_inj
+  cyc := by decide
+
 end Minimality.T24.Cell
