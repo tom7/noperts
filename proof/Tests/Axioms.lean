@@ -3067,3 +3067,28 @@ elab "#assert_standard_axioms " id:ident : command => do
 -- Type24A236S2 (S2 of the A2.236 wall, 11-27)
 #assert_standard_axioms Minimality.T24.Cell.rim5_pluecker
 #assert_standard_axioms Minimality.T24.Cell.a236_S2
+-- OSPEC18: the T234 view with every facet pattern (13 rims); 016 / 046 derived on the tie-section cone; OpenSpecialN
+#assert_standard_axioms Minimality.T24.OSpec.rimTDN_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTJ_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTK_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTL_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTM_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTN_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTO_cyc
+#assert_standard_axioms Minimality.T24.OSpec.t234_cone_id
+#assert_standard_axioms Minimality.T24.OSpec.t234_cone_prod
+#assert_standard_axioms Minimality.T24.OSpec.t234_cone_pos
+#assert_standard_axioms Minimality.T24.OSpec.t234_dn_of_cone
+#assert_standard_axioms Minimality.T24.OSpec.t234_dn1_of_cone
+#assert_standard_axioms Minimality.T24.OSpec.t234_dn4_of_cone
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_t234RedN
+#assert_standard_axioms Minimality.T24.OSpec.t234RedN_of_M
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_t234ViewN
+#assert_standard_axioms Minimality.T24.OSpec.q45_resN_local
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWM_of_N
+#assert_standard_axioms Minimality.T24.OSpec.q45_resN
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialN_of_openSpecialM
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_N
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_N
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_N
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_N

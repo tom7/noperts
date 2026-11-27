@@ -1,7 +1,7 @@
 module
 
 public import Minimality.Type24CellWall
-public import Minimality.Type24OffOB1T234
+public import Minimality.Type24OffOB1T234N
 
 @[expose] public section
 
@@ -254,5 +254,19 @@ theorem rupert_of_cellCoverEmpty_M {L : List Cell24} (hN : CellCoverEmpty L) (hS
 theorem open24Rupert_of_cellCoverEmpty_M {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialM) :
     Open24Rupert :=
   OSpec.open24Rupert_of_split_M (openOB1_of_cellCoverEmpty hN) hS
+
+/-- Every `Hole24` point is Rupert, given `CellCoverEmpty L` and `OSpec.OpenSpecialN` (OSPEC18, the T234 view with
+every facet pattern; `016 046` derived on the tie-section cone). -/
+theorem rupert_of_cellCoverEmpty_N {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialN) :
+    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), Hole24 x F → IsRupert (univ.image x) := by
+  intro x F hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (hN x F hH.1.1 hO (hole24_cellCoverResidue L hH)).elim
+  · exact OSpec.hole24_offOB1_N hH hO hS
+
+/-- [PROVED] `CellCoverEmpty L` and `OSpec.OpenSpecialN` give `Stmt.Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty_N {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialN) :
+    Open24Rupert :=
+  OSpec.open24Rupert_of_split_N (openOB1_of_cellCoverEmpty hN) hS
 
 end Minimality.T24.Cell

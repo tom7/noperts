@@ -76,4 +76,10 @@ theorem open24Rupert_of_cellCoverEmpty28_M (hN : CellCoverEmpty cells28) (hS : O
     Open24Rupert :=
   open24Rupert_of_cellCoverEmpty_M hN hS
 
+/-- [PROVED] Headline chain with `cells28` after OSPEC18 (the T234 view with every facet pattern): `CellCoverEmpty
+cells28` and `OSpec.OpenSpecialN` give `Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty28_N (hN : CellCoverEmpty cells28) (hS : OSpec.OpenSpecialN) :
+    Open24Rupert :=
+  open24Rupert_of_cellCoverEmpty_N hN hS
+
 end Minimality.T24.Cell
