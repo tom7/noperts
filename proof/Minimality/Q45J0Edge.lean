@@ -19,8 +19,10 @@ view on the face circle of 0345, rim 6 4 5 2, chord 4 → 5, middles 0, 3) use t
 (`f3(x2) ≠ f3(x6)`) and `hS4` (foot of the farther vertex off the chord) only for Lemma H.  Here:
 
 * `J0Chord F u ρ`: the rest of the face-chord data at `u` (everything except the far vertex);
-* `q45_*_j0`: the four leaves without `hS3`, `hS4`, concluding `J0Chord` (the proofs are those of Q45J0.lean up to
-  the far-vertex goals; DEDUP TODO: at the next rebuild of Q45J0 make `q45_*` corollaries of these);
+* `q45_*_j0`: the four leaves without `hS3`, `hS4`, concluding `J0Chord` and `J0Extra` (OSPEC4: the facet signs
+  `J0Signs`, strictly unimodal rim depths, middle `0` below `max z4 z5` and `3` above `min z4 z5`, used by the tilt
+  of Q45J0Tilt.lean) (the proofs are those of Q45J0.lean up to the far-vertex goals; DEDUP TODO: at the next rebuild
+  of Q45J0 make `q45_*` corollaries of these);
 * `isRupert_of_j0Chord`: `J0Chord` and `J0PairOff` (the far pair 2, 6 off the chord 4 5 in the segment sense of
   `noPersistHDN_of_farPair_offChord`) give Rupert, with no tie hypothesis: on S3 (edge 26 parallel to 0345) the far
   feature is the edge 26, elsewhere the farther vertex.
@@ -40,6 +42,36 @@ def J0Chord {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) (ρ : ℝ
     x q = x (quad 6 4 5 2 1) + s • (x (quad 6 4 5 2 (1 + 1)) - x (quad 6 4 5 2 1)) + δ • u) ∧
   Function.Injective (fun i : ZMod 4 => ⟪x (quad 6 4 5 2 i), u⟫) ∧
   UniOrSep (fun i : ZMod 4 => x (quad 6 4 5 2 i)) u
+
+/-- The J0 facet signs at the view `u` (the `lemma_signs_J0` pattern, facets `025 046 126` down, `235 236 346` up). -/
+def J0Signs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop :=
+  ⟪F.N 2, u⟫ < 0 ∧ ⟪F.N 4, u⟫ < 0 ∧ ⟪F.N 5, u⟫ < 0 ∧ 0 < ⟪F.N 6, u⟫ ∧ 0 < ⟪F.N 7, u⟫ ∧ 0 < ⟪F.N 8, u⟫
+
+/-- What the J0 cores know at their view besides `J0Chord` (job OSPEC4): the facet signs, strictly unimodal rim
+depths, and the depth sides of the middles (`0` has offset `δ < 0`, `3` has `δ > 0`). -/
+def J0Extra {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (u : ℝ³) : Prop :=
+  J0Signs F u ∧ StrictUnimodal (fun i => ⟪quad (x 6) (x 4) (x 5) (x 2) i, u⟫) ∧
+    ⟪x 0, u⟫ < max ⟪x 4, u⟫ ⟪x 5, u⟫ ∧ min ⟪x 4, u⟫ ⟪x 5, u⟫ < ⟪x 3, u⟫
+
+theorem depth_lt_max_of_mid {A B q u : ℝ³} {s δ : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (hδ : δ < 0) (hu : u ≠ 0)
+    (h : q = A + s • (B - A) + δ • u) : ⟪q, u⟫ < max ⟪A, u⟫ ⟪B, u⟫ := by
+  have hq : ⟪q, u⟫ = (1 - s) * ⟪A, u⟫ + s * ⟪B, u⟫ + δ * ⟪u, u⟫ := by
+    rw [h, inner_add_left, inner_add_left, real_inner_smul_left, real_inner_smul_left, inner_sub_left]; ring
+  have huu : 0 < ⟪u, u⟫ := real_inner_self_pos.mpr hu
+  rw [hq]
+  rcases le_total ⟪A, u⟫ ⟪B, u⟫ with hAB | hAB
+  · rw [max_eq_right hAB]; nlinarith
+  · rw [max_eq_left hAB]; nlinarith
+
+theorem min_lt_depth_of_mid {A B q u : ℝ³} {s δ : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (hδ : 0 < δ) (hu : u ≠ 0)
+    (h : q = A + s • (B - A) + δ • u) : min ⟪A, u⟫ ⟪B, u⟫ < ⟪q, u⟫ := by
+  have hq : ⟪q, u⟫ = (1 - s) * ⟪A, u⟫ + s * ⟪B, u⟫ + δ * ⟪u, u⟫ := by
+    rw [h, inner_add_left, inner_add_left, real_inner_smul_left, real_inner_smul_left, inner_sub_left]; ring
+  have huu : 0 < ⟪u, u⟫ := real_inner_self_pos.mpr hu
+  rw [hq]
+  rcases le_total ⟪A, u⟫ ⟪B, u⟫ with hAB | hAB
+  · rw [min_eq_left hAB]; nlinarith
+  · rw [min_eq_right hAB]; nlinarith
 
 /-- Core of `q45_Kplus_s_le_one` (no far-vertex hypotheses `hS3`, `hS4`): the J0 chord data.  The branch sign may
 also vanish on the wall `a5 = 1` if `⟪N5, x 4 - x 0⟫ < 0` (the views `e5 + ε e4` still have `⟪N5, ·⟫ < 0`).
@@ -62,7 +94,7 @@ theorem q45_Kplus_s_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS2 : ∀ i j : ZMod 4, i ≠ j →
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ := by
+    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
   set p_quad := quad (x 6) (x 4) (x 5) (x 2)
   set r : ZMod 4 → Fin 7 := quad 6 4 5 2
   have hr : ∀ i : ZMod 4, x (r i) = p_quad i := by
@@ -151,7 +183,8 @@ theorem q45_Kplus_s_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have h_mb := middle_bounds_J0 s t 1 ε hst one_pos hε h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
-  refine ⟨u, ρ, hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩
+  have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
+  refine ⟨u, ρ, ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩, ⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩
   · intro i j hj1 hj2
     simp_rw [hr']
     exact hcyc i j hj1 hj2
@@ -176,6 +209,12 @@ theorem q45_Kplus_s_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     exact hinj_u
   · simp_rw [hr']
     exact Or.inl h_uni
+  · have e0 := middle_quad_x0 x 1 ε (by linarith)
+    rw [← hu_Pi_eq] at e0
+    exact depth_lt_max_of_mid h_mb.1.1 h_mb.1.2.1 (neg_neg_of_pos (one_div_pos.mpr (by linarith))) hu0 e0
+  · have e3 := middle_quad_x3 x s t 1 ε hdecomp (by linarith)
+    rw [← hu_Pi_eq] at e3
+    exact min_lt_depth_of_mid h_mb.2.1 h_mb.2.2.1 (div_pos (by linarith) (by linarith)) hu0 e3
 
 /-- Core of `q45_Kplus_s_gt_one` (no far-vertex hypotheses `hS3`, `hS4`): the J0 chord data.
  **Leaf K+ (Subcase 1 < s, E5 = e34)**:
@@ -197,7 +236,7 @@ theorem q45_Kplus_s_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS2 : ∀ i j : ZMod 4, i ≠ j →
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 4⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ := by
+    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
   set p_quad := quad (x 6) (x 4) (x 5) (x 2)
   set r : ZMod 4 → Fin 7 := quad 6 4 5 2
   have hr : ∀ i : ZMod 4, x (r i) = p_quad i := by
@@ -292,7 +331,8 @@ theorem q45_Kplus_s_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have h_mb := middle_bounds_J0 s t t (s - 1 + ε) hst ht hβ h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
-  refine ⟨u, ρ, hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩
+  have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
+  refine ⟨u, ρ, ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩, ⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩
   · intro i j hj1 hj2
     simp_rw [hr']
     exact hcyc i j hj1 hj2
@@ -317,6 +357,12 @@ theorem q45_Kplus_s_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     exact hinj_u
   · simp_rw [hr']
     exact Or.inl h_uni
+  · have e0 := middle_quad_x0 x t (s - 1 + ε) (by linarith)
+    rw [← hu_Pi_eq] at e0
+    exact depth_lt_max_of_mid h_mb.1.1 h_mb.1.2.1 (neg_neg_of_pos (one_div_pos.mpr (by linarith))) hu0 e0
+  · have e3 := middle_quad_x3 x s t t (s - 1 + ε) hdecomp (by linarith)
+    rw [← hu_Pi_eq] at e3
+    exact min_lt_depth_of_mid h_mb.2.1 h_mb.2.2.1 (div_pos (by linarith) (by linarith)) hu0 e3
 
 /-- Core of `q45_Kminus_t_le_one` (no far-vertex hypotheses `hS3`, `hS4`): the J0 chord data.  The branch sign may
 also vanish on the wall `a4 = 1` if `⟪N5, x 5 - x 0⟫ < 0`.
@@ -339,7 +385,7 @@ theorem q45_Kminus_t_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS2 : ∀ i j : ZMod 4, i ≠ j →
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ := by
+    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
   set p_quad := quad (x 6) (x 4) (x 5) (x 2)
   set r : ZMod 4 → Fin 7 := quad 6 4 5 2
   have hr : ∀ i : ZMod 4, x (r i) = p_quad i := by
@@ -428,7 +474,8 @@ theorem q45_Kminus_t_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have h_mb := middle_bounds_J0 s t ε 1 hst hε one_pos h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
-  refine ⟨u, ρ, hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩
+  have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
+  refine ⟨u, ρ, ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩, ⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩
   · intro i j hj1 hj2
     simp_rw [hr']
     exact hcyc i j hj1 hj2
@@ -453,6 +500,12 @@ theorem q45_Kminus_t_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     exact hinj_u
   · simp_rw [hr']
     exact Or.inl h_uni
+  · have e0 := middle_quad_x0 x ε 1 (by linarith)
+    rw [← hu_Pi_eq] at e0
+    exact depth_lt_max_of_mid h_mb.1.1 h_mb.1.2.1 (neg_neg_of_pos (one_div_pos.mpr (by linarith))) hu0 e0
+  · have e3 := middle_quad_x3 x s t ε 1 hdecomp (by linarith)
+    rw [← hu_Pi_eq] at e3
+    exact min_lt_depth_of_mid h_mb.2.1 h_mb.2.2.1 (div_pos (by linarith) (by linarith)) hu0 e3
 
 /-- Core of `q45_Kminus_t_gt_one` (no far-vertex hypotheses `hS3`, `hS4`): the J0 chord data.
  **Leaf K- (Subcase 1 < t, E4 = e35)**:
@@ -474,7 +527,7 @@ theorem q45_Kminus_t_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     (hS2 : ∀ i j : ZMod 4, i ≠ j →
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 5⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) :
-    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ := by
+    ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
   set p_quad := quad (x 6) (x 4) (x 5) (x 2)
   set r : ZMod 4 → Fin 7 := quad 6 4 5 2
   have hr : ∀ i : ZMod 4, x (r i) = p_quad i := by
@@ -569,7 +622,8 @@ theorem q45_Kminus_t_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   have h_mb := middle_bounds_J0 s t (t - 1 + ε) s hst hα hs0 h8 h6
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
-  refine ⟨u, ρ, hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩
+  have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
+  refine ⟨u, ρ, ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩, ⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩
   · intro i j hj1 hj2
     simp_rw [hr']
     exact hcyc i j hj1 hj2
@@ -594,6 +648,12 @@ theorem q45_Kminus_t_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     exact hinj_u
   · simp_rw [hr']
     exact Or.inl h_uni
+  · have e0 := middle_quad_x0 x (t - 1 + ε) s (by linarith)
+    rw [← hu_Pi_eq] at e0
+    exact depth_lt_max_of_mid h_mb.1.1 h_mb.1.2.1 (neg_neg_of_pos (one_div_pos.mpr (by linarith))) hu0 e0
+  · have e3 := middle_quad_x3 x s t (t - 1 + ε) s hdecomp (by linarith)
+    rw [← hu_Pi_eq] at e3
+    exact min_lt_depth_of_mid h_mb.2.1 h_mb.2.2.1 (div_pos (by linarith) (by linarith)) hu0 e3
 
 /-- The far pair `6`, `2` of the J0 rim is off the chord `4 5` in the segment sense: both strictly on one side of
 the line `4 5` (in the plane of 0345, along `N3`), or `4`, `5` strictly on one side of the line `6 2`.  Its failure
