@@ -278,6 +278,7 @@ import Minimality.Type24T2Corner
 import Minimality.Type24T2Peak0
 import Minimality.Type24GapLemmas
 import Minimality.Type24GapLemmas2
+import Minimality.Type24A236S2
 import Minimality.Type24Cells28
 
 /-!
@@ -2958,3 +2959,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.leaf_of_t2Edge012B2C_twin
 #assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t2Edge012B2C
 #assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t2Edge012B2C_twin
+
+-- Type24A236S2 (S2 of the A2.236 wall, 11-27)
+#assert_standard_axioms Minimality.T24.Cell.rim5_pluecker
+#assert_standard_axioms Minimality.T24.Cell.a236_S2
