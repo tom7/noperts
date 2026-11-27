@@ -2486,3 +2486,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.TwoCone.cB0CertAt_of_oc
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_cA0_oc
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_cB0_oc
+#assert_standard_axioms Minimality.T24.SF.oc_splitAny_of_cell
+#assert_standard_axioms Minimality.T24.SF.holeLeaf_not_oc_cell
+#assert_standard_axioms Minimality.T24.Atlas.rim5_classification
+#assert_standard_axioms Minimality.T24.Atlas.holeLeaf_rim5_classification

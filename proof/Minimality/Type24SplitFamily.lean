@@ -143,6 +143,112 @@ theorem splitAny_of_rim (F : S0xFac 9 s0x_S24 x) {k : ℕ} [NeZero k] (hk : 3 �
     fun t => ⟨fun h => Or.inl ((hfac t).1 h), fun h => Or.inl (by simpa using (hfac t).2 h)⟩,
     hcc0, hcc1', hrows⟩
 
+/-- **FW1 (`oc_splitAny_of_cell`, Carbon A87 §0/1):** at any open cell `CellAt F U Dn w`
+(`U ∪ Dn = univ`) with rim `c : ZMod k → Fin 7` (`k ≥ 3`), a strict height apex `cc ∉ {a, a+1}`
+over base edge `c a → c (a+1)` with one open arc strictly above `z(c cc)` and the other
+strictly below (either orientation) yields `Gen.SplitAny F` directly via
+`Split.splitRows_of_unimodal_separated` and `rim_det_sign`, with **no** `hD` (`⟪d, w⟫ ≠ 0`)
+and **no** `HiddenInTriangles` hypothesis. -/
+theorem oc_splitAny_of_cell (F : S0xFac 9 s0x_S24 x) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+    (c : ZMod k → Fin 7) (hc : Function.Injective c)
+    {U Dn : Finset (Fin 9)} (hcov : ∀ t : Fin 9, t ∈ U ∨ t ∈ Dn)
+    (hcyc : S0xCycUD s0x_S24 c U Dn) {w : ℝ³} (hcell : CellAt F U Dn w)
+    {a cc : ZMod k} (hca : cc ≠ a) (hca1 : cc ≠ a + 1)
+    (hext : ∀ j : ZMod k, j ≠ a → j ≠ a + 1 → j ≠ cc →
+      |Split.det3 (x (c j) - x (c a)) (x (c (a + 1)) - x (c a)) w| <
+        |Split.det3 (x (c cc) - x (c a)) (x (c (a + 1)) - x (c a)) w|)
+    (hsep : ∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧
+      (∀ j : ZMod k, (j - a - 1).val < (cc - a - 1).val → σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) < 0) ∧
+      (∀ j : ZMod k, (cc - a - 1).val < (j - a - 1).val → 0 < σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫))) :
+    Gen.SplitAny F := by
+  let pat : Fin 9 → Bool := fun t => decide (t ∈ U)
+  have hfac : ∀ t, (pat t = true → 0 < ⟪F.N t, w⟫) ∧ (pat t = false → ⟪F.N t, w⟫ < 0) := by
+    intro t
+    refine ⟨fun ht => hcell.1 t (by simpa [pat] using ht), fun ht => ?_⟩
+    have hnot : t ∉ U := by simpa [pat] using ht
+    rcases hcov t with hU | hD
+    · exact absurd hU hnot
+    · exact hcell.2 t hD
+  have hcycOK : S0xCycOK s0x_S24 c pat := by
+    intro i
+    obtain ⟨ea, hea, eb, heb, h1, h2, h3, h4, hs⟩ := hcyc i
+    have hpa : pat ea = true := by simpa [pat] using hea
+    have hpb : pat eb = false := by
+      by_contra h
+      have hU : eb ∈ U := by simpa [pat] using h
+      exact absurd (hcell.1 eb hU) (not_lt.mpr (hcell.2 eb heb).le)
+    exact ⟨ea, eb, hpa, hpb, h1, h2, h3, h4, hs⟩
+  obtain ⟨ρ, hρ, hrim⟩ := rim_det_sign F hk c hc pat hcycOK w hfac
+  have hρ2 : ρ * ρ = 1 := by rcases hρ with rfl | rfl <;> norm_num
+  have hneg : ∀ j : ZMod k, j ≠ a → j ≠ a + 1 →
+      ρ * Split.det3 (x (c j) - x (c a)) (x (c (a + 1)) - x (c a)) w < 0 := by
+    intro j hja hja1
+    have hpos := hrim a j hja hja1
+    rw [← Split.det3_eq_minimality] at hpos
+    have hswap : Split.det3 (x (c (a + 1)) - x (c a)) (x (c j) - x (c a)) w =
+        -Split.det3 (x (c j) - x (c a)) (x (c (a + 1)) - x (c a)) w := by
+      simp only [Split.det3, PiLp.sub_apply]; ring
+    rw [hswap] at hpos
+    linarith
+  have hext' : ∀ j : ZMod k, j ≠ a → j ≠ a + 1 → j ≠ cc →
+      ρ * Split.det3 (x (c cc) - x (c a)) (x (c (a + 1)) - x (c a)) w <
+        ρ * Split.det3 (x (c j) - x (c a)) (x (c (a + 1)) - x (c a)) w := by
+    intro j hja hja1 hjc
+    have hj_neg := hneg j hja hja1
+    have hcc_neg := hneg cc hca hca1
+    have habs := hext j hja hja1 hjc
+    have h1 : |Split.det3 (x (c j) - x (c a)) (x (c (a + 1)) - x (c a)) w| =
+        -(ρ * Split.det3 (x (c j) - x (c a)) (x (c (a + 1)) - x (c a)) w) := by
+      rcases hρ with rfl | rfl
+      · simp only [one_mul] at hj_neg ⊢; exact abs_of_neg hj_neg
+      · simp only [neg_mul, one_mul, neg_neg] at hj_neg ⊢
+        rw [abs_of_pos (by linarith)]
+    have h2 : |Split.det3 (x (c cc) - x (c a)) (x (c (a + 1)) - x (c a)) w| =
+        -(ρ * Split.det3 (x (c cc) - x (c a)) (x (c (a + 1)) - x (c a)) w) := by
+      rcases hρ with rfl | rfl
+      · simp only [one_mul] at hcc_neg ⊢; exact abs_of_neg hcc_neg
+      · simp only [neg_mul, one_mul, neg_neg] at hcc_neg ⊢
+        rw [abs_of_pos (by linarith)]
+    linarith
+  obtain ⟨σ, hσ, hfirst, hsecond⟩ := hsep
+  have hrows : SplitRows (fun i => x (c i)) w a cc (σ * ρ) := by
+    refine splitRows_of_unimodal_separated (ρ := ρ) (σ := σ * ρ) hk
+      (fun i j hji hj1 => by rw [Split.det3_eq_minimality]; exact hrim i j hji hj1)
+      hca hca1 hext' ?_ ?_
+    · intro j hj
+      have : σ * ρ * ρ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) =
+          σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) := by
+        calc σ * ρ * ρ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫)
+            = σ * (ρ * ρ) * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) := by ring
+          _ = σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) := by rw [hρ2, mul_one]
+      rw [this]; exact hfirst j hj
+    · intro j hj
+      have : σ * ρ * ρ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) =
+          σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) := by
+        calc σ * ρ * ρ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫)
+            = σ * (ρ * ρ) * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) := by ring
+          _ = σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) := by rw [hρ2, mul_one]
+      rw [this]; exact hsecond j hj
+  exact ⟨k, inferInstance, c, pat, w, w, a, cc, σ * ρ, hk, hc, hcycOK,
+    fun t => ⟨fun h => Or.inl ((hfac t).1 h), fun h => Or.inl (by simpa using (hfac t).2 h)⟩,
+    hca, hca1, hrows⟩
+
+/-- **FW1 (`holeLeaf_not_oc_cell`):** at a hole point `HoleLeaf x F`, no open-cell view of any
+rim `c` (`k ≥ 3`) has a strict height apex with depth-separated open arcs. -/
+theorem holeLeaf_not_oc_cell (F : S0xFac 9 s0x_S24 x) (h : T24.HoleLeaf x F) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+    (c : ZMod k → Fin 7) (hc : Function.Injective c)
+    {U Dn : Finset (Fin 9)} (hcov : ∀ t : Fin 9, t ∈ U ∨ t ∈ Dn)
+    (hcyc : S0xCycUD s0x_S24 c U Dn) {w : ℝ³} (hcell : CellAt F U Dn w)
+    {a cc : ZMod k} (hca : cc ≠ a) (hca1 : cc ≠ a + 1)
+    (hext : ∀ j : ZMod k, j ≠ a → j ≠ a + 1 → j ≠ cc →
+      |Split.det3 (x (c j) - x (c a)) (x (c (a + 1)) - x (c a)) w| <
+        |Split.det3 (x (c cc) - x (c a)) (x (c (a + 1)) - x (c a)) w|)
+    (hsep : ∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧
+      (∀ j : ZMod k, (j - a - 1).val < (cc - a - 1).val → σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫) < 0) ∧
+      (∀ j : ZMod k, (cc - a - 1).val < (j - a - 1).val → 0 < σ * (⟪x (c j), w⟫ - ⟪x (c cc), w⟫))) :
+    False :=
+  h.2.2.2.2.1 (oc_splitAny_of_cell F hk c hc hcov hcyc hcell hca hca1 hext hsep)
+
 
 /-! ## The unconditional facet signs -/
 
