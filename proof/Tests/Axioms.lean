@@ -2926,6 +2926,31 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_J
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_J
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_J
+-- OSPEC17: z6 < z2 (x5, x6 on opposite sides of plane 234), 236 / 346 / 126 as tie-section signs, residue Q45ResWL / OpenSpecialL
+#assert_standard_axioms Minimality.T24.OSpec.t234_cramer
+#assert_standard_axioms Minimality.T24.OSpec.t234_triple_swap
+#assert_standard_axioms Minimality.T24.OSpec.t234_gram
+#assert_standard_axioms Minimality.T24.OSpec.t234_z6_of
+#assert_standard_axioms Minimality.T24.OSpec.t234_z6
+#assert_standard_axioms Minimality.T24.OSpec.t234_lexDn_iff
+#assert_standard_axioms Minimality.T24.OSpec.t234b_prod
+#assert_standard_axioms Minimality.T24.OSpec.t234_dn8_iff
+#assert_standard_axioms Minimality.T24.OSpec.t234_tau_eqs
+#assert_standard_axioms Minimality.T24.OSpec.t234_dn7_iff
+#assert_standard_axioms Minimality.T24.OSpec.t234_prod5
+#assert_standard_axioms Minimality.T24.OSpec.t234_dn5_of
+#assert_standard_axioms Minimality.T24.OSpec.t234_up5_of
+#assert_standard_axioms Minimality.T24.OSpec.t234RedJ_iff_L
+#assert_standard_axioms Minimality.T24.OSpec.t234ViewOK_iff_redL
+#assert_standard_axioms Minimality.T24.OSpec.t234BrL_of_resB2T
+#assert_standard_axioms Minimality.T24.OSpec.t234ViewL_iff
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_t234ViewL
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWL_iff_J
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialL_iff_J
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_L
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_L
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_L
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_L
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
