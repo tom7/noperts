@@ -2348,3 +2348,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_neg
 #assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_neg_iff
 #assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_of_hidden
+#assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_of_T0
