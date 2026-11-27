@@ -2848,6 +2848,21 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_B
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_D
 
+-- Type24OffOB1E26: the e26 view on s = 1 (OSPEC12)
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_five_e26
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_e26View
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_e26View_sym
+#assert_standard_axioms Minimality.T24.OSpec.e26_dn3
+#assert_standard_axioms Minimality.T24.OSpec.e26ViewOK_of
+#assert_standard_axioms Minimality.T24.OSpec.e26ViewOK_sym_of
+#assert_standard_axioms Minimality.T24.OSpec.q45_resS_local
+#assert_standard_axioms Minimality.T24.OSpec.not_e26Cond_of_resS
+#assert_standard_axioms Minimality.T24.OSpec.q45_resS
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialS_of_openSpecialD
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_S
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_S
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_S
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve
