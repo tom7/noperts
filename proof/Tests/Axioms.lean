@@ -254,6 +254,7 @@ import Minimality.Type24T0Interior
 import Minimality.Type24NamedCover
 import Minimality.Type24OffOB1
 import Minimality.Type24HoleAtlasNC
+import Minimality.Type24WallFoot
 import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
@@ -2520,3 +2521,23 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1
 #assert_standard_axioms Minimality.T24.OSpec.not_hole24_of_namedCoverEmpty_W
 #assert_standard_axioms Minimality.T24.OSpec.open24_of_split_W
+
+-- Type24WallFoot: Lemma F4 / Seesaw (S1)-(S3), Lex leaves on the wall line of facet 016 (F4LEAN, 11-27)
+#assert_standard_axioms Minimality.T24.WallFoot.wall_cellAt_eventually
+#assert_standard_axioms Minimality.T24.WallFoot.wall_q4_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot.cellAt0526_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot.cellAt0236_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot.cellAt0536_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot.cell0526_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot.cell0236_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot.cell0536_lexAny
+#assert_standard_axioms Minimality.T24.WallFoot.wall_z0_sub_z6
+#assert_standard_axioms Minimality.T24.WallFoot.wallFoot_a
+#assert_standard_axioms Minimality.T24.WallFoot.wallFoot_b
+#assert_standard_axioms Minimality.T24.WallFoot.wallFoot_c
+#assert_standard_axioms Minimality.T24.WallFoot.seesaw_S1
+#assert_standard_axioms Minimality.T24.WallFoot.seesaw_S2
+#assert_standard_axioms Minimality.T24.WallFoot.seesaw_S3
+#assert_standard_axioms Minimality.T24.WallFoot.holeLeaf_not_seesaw_S1
+#assert_standard_axioms Minimality.T24.WallFoot.holeLeaf_not_seesaw_S2
+#assert_standard_axioms Minimality.T24.WallFoot.holeLeaf_not_seesaw_S3
