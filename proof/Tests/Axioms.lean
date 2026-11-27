@@ -234,6 +234,7 @@ import Minimality.EdgePlaneRim4Level
 import Minimality.Type24EPFacet
 import Minimality.Type24EPQuad
 import Minimality.Type24EPQuadPar
+import Minimality.Type24LexEP
 import Minimality.Type24NoCoplanar
 import Minimality.EdgePlaneLWrap
 import Minimality.EdgePlaneRev
@@ -2332,3 +2333,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.EPQP.quadFacetEP_all
 #assert_standard_axioms Minimality.T24.EPQP.openEP_iff_openEP'_all
 #assert_standard_axioms Minimality.T24.EPQP.example_quad_par_edgePlane
+#assert_standard_axioms Minimality.T24.LexEP.strictRimN_of_openCell
+#assert_standard_axioms Minimality.T24.LexEP.robUni_rev
+#assert_standard_axioms Minimality.T24.LexEP.robUni_ev_tilt
+#assert_standard_axioms Minimality.T24.LexEP.strictlyUnimodal_of_robUni
+#assert_standard_axioms Minimality.T24.LexEP.lexAny_edgePlaneAny_of_noPar
+#assert_standard_axioms Minimality.T24.LexEP.holeLeaf_core_noPar
