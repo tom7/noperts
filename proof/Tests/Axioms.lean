@@ -2970,6 +2970,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_M
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_M
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_M
+-- OSPEC17 (c): E26Cond from five inner-product signs (Binet-Cauchy dihedral signs on TBs1)
+#assert_standard_axioms Minimality.T24.OSpec.e26_frame_triple
+#assert_standard_axioms Minimality.T24.OSpec.e26_triple_cyc
+#assert_standard_axioms Minimality.T24.OSpec.e26_triple_anti
+#assert_standard_axioms Minimality.T24.OSpec.e26_dihedral
+#assert_standard_axioms Minimality.T24.OSpec.e26_det24_eq
+#assert_standard_axioms Minimality.T24.OSpec.e26_orient
+#assert_standard_axioms Minimality.T24.OSpec.e26Cond_of_I
+#assert_standard_axioms Minimality.T24.OSpec.e26ViewOK_of_I
+#assert_standard_axioms Minimality.T24.OSpec.not_e26CondI_of_resS
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3

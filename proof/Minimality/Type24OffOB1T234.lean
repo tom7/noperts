@@ -51,7 +51,9 @@ Binet-Cauchy `t234_gram`; `t234_dn5_of`, `t234_up5_of`).  So the residue letters
 (`t234C < 0`: `126 236` up), `0 1 2 3 6 4` or `0 2 3 6 4` (`X6 < 0`: `346` up), all depth letters derived
 (`t234_depths`); so on `T234BrL` the view needs only `T234RedM` (`016 046` down, `012` up or (`012` down, `025` up,
 `t234C ≥ 0`), `126` down at `t234C = 0`; `lexAny_of_t234RedM`).  Residue `Q45ResWM`, `OpenSpecialM` (implied by
-`OpenSpecialL`, a strictly smaller piece).
+`OpenSpecialL`, a strictly smaller piece).  Section `E26C`: OSPEC12's `E26Cond` from five inner-product signs
+(`E26CondI`, `e26Cond_of_I`): the dihedral signs `⟪N3, N5⟫`, `⟪N3, N7⟫` on `TBs1` by Binet-Cauchy (`e26_dihedral`) and
+two orientation products in the frame at `1` (`e26_orient`).
 -/
 
 namespace Minimality.T24.OSpec
@@ -1506,5 +1508,231 @@ theorem open24Rupert_of_split_M (h1 : OpenOB1) (h2 : OpenSpecialM) : Open24Ruper
   · exact hole24_offOB1_M hH hO h2
 
 end T234G
+
+section E26C
+open Minimality.LexCell
+
+variable {x : Fin 7 → ℝ³}
+
+/-! ### OSPEC17 (c): `E26Cond` from inner-product signs (the dihedral signs `⟪N5, N3⟫`, `⟪N7, N3⟫` on `TBs1`) -/
+
+/-- A triple product in a frame `p q r`. -/
+theorem e26_frame_triple (p q r : ℝ³) (u0 u1 u2 v0 v1 v2 w0 w1 w2 : ℝ) :
+    ⟪u0 • p + u1 • q + u2 • r, cross (v0 • p + v1 • q + v2 • r) (w0 • p + w1 • q + w2 • r)⟫ =
+      (u0 * (v1 * w2 - v2 * w1) - u1 * (v0 * w2 - v2 * w0) + u2 * (v0 * w1 - v1 * w0)) * ⟪p, cross q r⟫ := by
+  simp only [t234_inner3, cross_apply_zero, cross_apply_one, cross_apply_two, PiLp.add_apply, PiLp.smul_apply,
+    smul_eq_mul]; ring
+
+/-- Cyclic symmetry of the triple product. -/
+theorem e26_triple_cyc (a b c : ℝ³) : ⟪a, cross b c⟫ = ⟪c, cross a b⟫ := by
+  simp only [t234_inner3, cross_apply_zero, cross_apply_one, cross_apply_two]; ring
+
+/-- Antisymmetry of the triple product in its last two slots. -/
+theorem e26_triple_anti (a b c : ℝ³) : ⟪a, cross b c⟫ = -⟪a, cross c b⟫ := by
+  simp only [t234_inner3, cross_apply_zero, cross_apply_one, cross_apply_two]; ring
+
+/-- **The dihedral sign at an edge `2 6` facet against `0345` on `TBs1`** (Binet-Cauchy, three `t234_gram` and two
+`t234_cramer` steps).  For a facet `N ⊥ d = x2 - x6` through `x w` with `f(x 0) < 0`, and `⟪d, e5⟫ = 0`:
+`⟪N3, N⟫ · (C3 C) = -⟪d, e4⟫ ⟪e5, x w - x 6⟫ · (positive)`, where `C3 C` has the sign of `-O1 O2`,
+`O1 = ⟪e4, e5 × (x1 - x0)⟫`, `O2 = ⟪d, (x w - x 6) × (x0 - x6)⟫` (orientation determinants). -/
+theorem e26_dihedral (F : S0xFac 9 s0x_S24 x) (N : ℝ³) (w : Fin 7) (hNd : ⟪N, x 2 - x 6⟫ = 0)
+    (hNw : ⟪N, x w - x 6⟫ = 0) (hN0 : ⟪N, x 0 - x 6⟫ < 0) (hde5 : ⟪x 2 - x 6, x 5 - x 0⟫ = 0)
+    (hs : ⟪x 2 - x 6, x 4 - x 0⟫ * ⟪x 5 - x 0, x w - x 6⟫ *
+      (⟪x 4 - x 0, cross (x 5 - x 0) (x 1 - x 0)⟫ * ⟪x 2 - x 6, cross (x w - x 6) (x 0 - x 6)⟫) < 0) :
+    ⟪F.N 3, N⟫ < 0 := by
+  have hd0 : x 2 - x 6 ≠ 0 := by
+    intro h0; have e := F.inner_sub 0 2 6
+    rw [h0, inner_zero_right, F.zero 0 2 (by decide)] at e; have := F.neg 0 6 (by decide); linarith
+  have he0 : x 5 - x 0 ≠ 0 := by
+    intro h0; have e := F.inner_sub 1 5 0
+    rw [h0, inner_zero_right, F.zero 1 0 (by decide)] at e; have := F.neg 1 5 (by decide); linarith
+  have hddp : 0 < ⟪x 2 - x 6, x 2 - x 6⟫ := real_inner_self_pos.mpr hd0
+  have he5p : 0 < ⟪x 5 - x 0, x 5 - x 0⟫ := real_inner_self_pos.mpr he0
+  set d := x 2 - x 6 with hd
+  set e4 := x 4 - x 0 with he4
+  set e5 := x 5 - x 0 with he5
+  set ww := x w - x 6 with hww
+  set N3 := F.N 3 with hN3
+  have n3e4 : ⟪N3, e4⟫ = 0 := by rw [hN3, he4, F.inner_sub 3 4 0, F.zero 3 4 (by decide), F.zero 3 0 (by decide)]; ring
+  have n3e5 : ⟪N3, e5⟫ = 0 := by rw [hN3, he5, F.inner_sub 3 5 0, F.zero 3 5 (by decide), F.zero 3 0 (by decide)]; ring
+  have n31 : ⟪N3, x 1 - x 0⟫ < 0 := by
+    rw [hN3, F.inner_sub 3 1 0, F.zero 3 0 (by decide)]; have := F.neg 3 1 (by decide); linarith
+  -- (1) `A B = ⟪N3, N⟫ |d|² |e5|²`, `A = ⟪N3, d × e5⟫`, `B = ⟪N, d × e5⟫`
+  have g1 := t234_gram N3 N d e5
+  have hNd' : ⟪d, N⟫ = 0 := by rw [real_inner_comm]; exact hNd
+  have hNw' : ⟪ww, N⟫ = 0 := by rw [real_inner_comm]; exact hNw
+  have hde5' : ⟪e5, d⟫ = 0 := by rw [real_inner_comm]; exact hde5
+  have n3e4' : ⟪e4, N3⟫ = 0 := by rw [real_inner_comm]; exact n3e4
+  have n3e5' : ⟪e5, N3⟫ = 0 := by rw [real_inner_comm]; exact n3e5
+  simp only [hNd', hde5, hde5', n3e5, mul_zero, zero_mul, sub_zero, zero_sub, add_zero] at g1
+  -- (2) `A C3 = ⟪d, e4⟫ |e5|² |N3|²`, `C3 = ⟪e4, e5 × N3⟫`
+  have g2 := t234_gram d e4 e5 N3
+  simp only [hde5, n3e5, n3e5', n3e4, mul_zero, zero_mul, sub_zero, add_zero] at g2
+  rw [e26_triple_cyc d e5 N3] at g2
+  -- (2') `O1 |N3|² = C3 f3(x1)`
+  have c2 := t234_cramer N3 e4 e5 N3 (x 1 - x 0)
+  simp only [n3e4, n3e5, mul_zero, add_zero] at c2
+  -- (3) `-B C = ⟪e5, ww⟫ |d|² |N|²`, `C = ⟪ww, d × N⟫`
+  have g3 := t234_gram e5 ww d N
+  simp only [hde5', hNd, hNd', hNw, mul_zero, zero_mul, sub_zero, add_zero] at g3
+  rw [e26_triple_cyc e5 d N, e26_triple_anti N e5 d] at g3
+  -- (3') `O2 |N|² = -C f(x0)`
+  have c3 := t234_cramer N d ww N (x 0 - x 6)
+  simp only [hNd, hNw, mul_zero, add_zero] at c3
+  rw [e26_triple_cyc d ww N, e26_triple_anti N d ww, ← e26_triple_cyc ww d N] at c3
+  -- assemble
+  set A := ⟪N3, cross d e5⟫
+  set B := ⟪N, cross d e5⟫
+  set C3 := ⟪e4, cross e5 N3⟫
+  set C := ⟪ww, cross d N⟫
+  set O1 := ⟪e4, cross e5 (x 1 - x 0)⟫
+  set O2 := ⟪d, cross ww (x 0 - x 6)⟫
+  have hN3n : 0 < ⟪N3, N3⟫ := real_inner_self_pos.mpr (by
+    intro h0; rw [h0, inner_zero_left] at n31; exact lt_irrefl _ n31)
+  have hNn : 0 < ⟪N, N⟫ := real_inner_self_pos.mpr (by
+    intro h0; rw [h0, inner_zero_left] at hN0; exact lt_irrefl _ hN0)
+  have hdd : 0 ≤ ⟪d, d⟫ := real_inner_self_nonneg
+  have he5n : 0 ≤ ⟪e5, e5⟫ := real_inner_self_nonneg
+  -- `O1 O2 |N3|² |N|² = -(C3 C) f3(x1) f(x0)` so `C3 C` has the sign of `-O1 O2`
+  have hCC : O1 * O2 * (⟪N3, N3⟫ * ⟪N, N⟫) = -(C3 * C) * (⟪N3, x 1 - x 0⟫ * ⟪N, x 0 - x 6⟫) := by
+    have e1 : O1 * ⟪N3, N3⟫ = C3 * ⟪N3, x 1 - x 0⟫ := by linarith
+    have e2 : O2 * ⟪N, N⟫ = -C * ⟪N, x 0 - x 6⟫ := by linarith
+    calc O1 * O2 * (⟪N3, N3⟫ * ⟪N, N⟫) = (O1 * ⟪N3, N3⟫) * (O2 * ⟪N, N⟫) := by ring
+      _ = _ := by rw [e1, e2]; ring
+  have hfp : 0 < ⟪N3, x 1 - x 0⟫ * ⟪N, x 0 - x 6⟫ := mul_pos_of_neg_of_neg n31 hN0
+  -- main identity: `⟪N3, N⟫ |d|² |e5|² (C3 C) = -(⟪d, e4⟫ |e5|² |N3|²) (⟪e5, ww⟫ |d|² |N|²)`
+  have hmain : ⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) * (C3 * C) =
+      -((⟪d, e4⟫ * ⟪e5, ww⟫) * (⟪e5, e5⟫ * ⟪N3, N3⟫ * ⟪d, d⟫ * ⟪N, N⟫)) := by
+    have e1 : A * B = ⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) := by rw [g1]
+    have e2 : A * C3 = ⟪d, e4⟫ * (⟪e5, e5⟫ * ⟪N3, N3⟫) := by rw [g2]
+    have e3 : -B * C = ⟪e5, ww⟫ * (⟪d, d⟫ * ⟪N, N⟫) := by rw [← g3]
+    calc ⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) * (C3 * C) = -((A * C3) * (-B * C)) := by rw [← e1]; ring
+      _ = _ := by rw [e2, e3]; ring
+  -- signs
+  set P := ⟪d, e4⟫ * ⟪e5, ww⟫
+  set Q := O1 * O2
+  set K := C3 * C
+  have hm : 0 < ⟪d, d⟫ * ⟪e5, e5⟫ := mul_pos hddp he5p
+  have hp3 : 0 < ⟪e5, e5⟫ * ⟪N3, N3⟫ * ⟪d, d⟫ * ⟪N, N⟫ := by positivity
+  have hp1 : 0 < ⟪N3, N3⟫ * ⟪N, N⟫ := mul_pos hN3n hNn
+  have hKQ : K * Q < 0 := by
+    have hQ : Q ≠ 0 := by intro h0; rw [h0, mul_zero] at hs; exact lt_irrefl _ hs
+    have : Q * Q * (⟪N3, N3⟫ * ⟪N, N⟫) = -(K * Q) * (⟪N3, x 1 - x 0⟫ * ⟪N, x 0 - x 6⟫) := by
+      rw [show Q * Q * (⟪N3, N3⟫ * ⟪N, N⟫) = Q * (O1 * O2 * (⟪N3, N3⟫ * ⟪N, N⟫)) by ring, hCC]; ring
+    have hQQ : 0 < Q * Q * (⟪N3, N3⟫ * ⟪N, N⟫) := mul_pos (mul_self_pos.mpr hQ) hp1
+    rw [this] at hQQ
+    by_contra hc; nlinarith [mul_nonneg (not_lt.mp hc) hfp.le]
+  have key : ⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) * (K * Q) = -(P * Q) * (⟪e5, e5⟫ * ⟪N3, N3⟫ * ⟪d, d⟫ * ⟪N, N⟫) := by
+    rw [show ⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) * (K * Q) = (⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) * K) * Q by ring, hmain]
+    ring
+  have hr : 0 < ⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) * (K * Q) := by
+    rw [key]; exact mul_pos (by linarith) hp3
+  by_contra hc
+  have : ⟪N3, N⟫ * (⟪d, d⟫ * ⟪e5, e5⟫) * (K * Q) ≤ 0 :=
+    mul_nonpos_of_nonneg_of_nonpos (mul_nonneg (not_lt.mp hc) hm.le) hKQ.le
+  linarith
+
+/-- The frame determinant as a triple product. -/
+theorem e26_det24_eq (x : Fin 7 → ℝ³) : det24 x = ⟪x 0 - x 1, cross (x 2 - x 1) (x 6 - x 1)⟫ := by
+  simp only [det24, vol3, t234_inner3, cross_apply_zero, cross_apply_one, cross_apply_two]; ring
+
+/-- **The two orientation products** (frame at `1`): `O1 O2(1) = -(c4 b5 - c5 b4) D² < 0` and `O1 O2(3) = (c4 b5 - c5
+b4) (a3 + b3 + c3 - 1) D² > 0` (`c4 b5 - c5 b4 > 0` from `cross35_pos`, `s > 0`; `a3 + b3 + c3 > 1` from the facet
+`236`). -/
+theorem e26_orient (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs : 0 < s)
+    (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) :
+    ⟪x 4 - x 0, cross (x 5 - x 0) (x 1 - x 0)⟫ * ⟪x 2 - x 6, cross (x 1 - x 6) (x 0 - x 6)⟫ < 0 ∧
+      0 < ⟪x 4 - x 0, cross (x 5 - x 0) (x 1 - x 0)⟫ * ⟪x 2 - x 6, cross (x 3 - x 6) (x 0 - x 6)⟫ := by
+  have T := M4.type24OfFac F
+  set p := x 0 - x 1 with hp
+  set q := x 2 - x 1 with hq
+  set r := x 6 - x 1 with hr
+  have hD : ⟪p, cross q r⟫ ≠ 0 := by rw [← e26_det24_eq]; exact T.det_ne
+  have rv : ∀ v : Fin 7, x v - x 0 = (oblX0 x v - 1) • p + oblX2 x v • q + oblX6 x v • r := by
+    intro v; rw [hp, hq, hr]
+    have h := T.rep v
+    rw [show x v - x 0 = (x v - x 1) - (x 0 - x 1) by abel, h]; module
+  have r1 : x 1 - x 0 = (-1 : ℝ) • p + (0 : ℝ) • q + (0 : ℝ) • r := by rw [hp]; module
+  have rd : x 2 - x 6 = (0 : ℝ) • p + (1 : ℝ) • q + (-1 : ℝ) • r := by rw [hq, hr]; module
+  have r16 : x 1 - x 6 = (0 : ℝ) • p + (0 : ℝ) • q + (-1 : ℝ) • r := by rw [hr]; module
+  have r06 : x 0 - x 6 = (1 : ℝ) • p + (0 : ℝ) • q + (-1 : ℝ) • r := by rw [hp, hr]; module
+  have r36 : x 3 - x 6 = oblX0 x 3 • p + oblX2 x 3 • q + (oblX6 x 3 - 1) • r := by
+    rw [hp, hq, hr]
+    have h := T.rep 3
+    rw [show x 3 - x 6 = (x 3 - x 1) - (x 6 - x 1) by abel, h]; module
+  have hO1 : ⟪x 4 - x 0, cross (x 5 - x 0) (x 1 - x 0)⟫ =
+      (oblX6 x 4 * oblX2 x 5 - oblX2 x 4 * oblX6 x 5) * ⟪p, cross q r⟫ := by
+    rw [rv 4, rv 5, r1, e26_frame_triple]; ring
+  have hO2 : ⟪x 2 - x 6, cross (x 1 - x 6) (x 0 - x 6)⟫ = -⟪p, cross q r⟫ := by
+    rw [rd, r16, r06, e26_frame_triple]; ring
+  have hO3 : ⟪x 2 - x 6, cross (x 3 - x 6) (x 0 - x 6)⟫ =
+      (oblX0 x 3 + oblX2 x 3 + oblX6 x 3 - 1) * ⟪p, cross q r⟫ := by
+    rw [rd, r36, r06, e26_frame_triple]; ring
+  -- `c4 b5 - c5 b4 > 0`
+  obtain ⟨hb3, hc3⟩ := t234_obl3_bc F hd
+  have hk : 0 < oblX6 x 4 * oblX2 x 5 - oblX2 x 4 * oblX6 x 5 := by
+    have e : oblX6 x 3 * oblX2 x 5 - oblX6 x 5 * oblX2 x 3 =
+        s * (oblX6 x 4 * oblX2 x 5 - oblX2 x 4 * oblX6 x 5) := by rw [hb3, hc3]; ring
+    have := M4.cross35_pos F
+    rw [e] at this; exact pos_of_mul_pos_right this hs.le
+  -- `a3 + b3 + c3 > 1` (the facet `236` at `x 3`)
+  have hK : 0 < oblX0 x 3 + oblX2 x 3 + oblX6 x 3 - 1 := by
+    have ev := M4.fac_eval F 7 3
+    rw [F.zero 7 3 (by decide), F.zero 7 2 (by decide), F.zero 7 6 (by decide)] at ev
+    have f71 : F.f 7 (x 1) < 0 := F.neg 7 1 (by decide)
+    have f70 : F.f 7 (x 0) < 0 := F.neg 7 0 (by decide)
+    have ha3 : 0 < oblX0 x 3 := T.X0_pos (v := 3) (by decide)
+    have : F.f 7 (x 1) * (oblX0 x 3 + oblX2 x 3 + oblX6 x 3 - 1) = oblX0 x 3 * F.f 7 (x 0) := by
+      linear_combination ev
+    by_contra hc
+    nlinarith [mul_nonneg_of_nonpos_of_nonpos f71.le (not_lt.mp hc), mul_neg_of_pos_of_neg ha3 f70]
+  have hDD : 0 < ⟪p, cross q r⟫ * ⟪p, cross q r⟫ := mul_self_pos.mpr hD
+  rw [hO1, hO2, hO3]
+  constructor
+  · nlinarith [mul_pos hk hDD]
+  · nlinarith [mul_pos (mul_pos hk hK) hDD]
+
+/-- **`E26Cond` from five inner-product signs** (OSPEC12's sampled mechanism, now derived): on `TBs1` with `s > 0`,
+`126` up iff (here: if) `⟪d, e4⟫ ⟪x1 - x6, e5⟫ > 0`, `236` up if `⟪d, e4⟫ ⟪x3 - x6, e5⟫ < 0` (`e26_dihedral`,
+`e26_orient`); with `⟪d, e4⟫ < 0` these are `6` above `1` and below `3` along `e5`. -/
+def E26CondI {x : Fin 7 → ℝ³} (_F : S0xFac 9 s0x_S24 x) : Prop :=
+  ⟪x 1 - x 6, x 5 - x 0⟫ < 0 ∧ 0 < ⟪x 3 - x 6, x 5 - x 0⟫ ∧ ⟪x 6 - x 1, x 2 - x 6⟫ < 0 ∧
+    ⟪x 2 - x 6, x 4 - x 0⟫ < 0 ∧ 0 < ⟪x 4 - x 0, x 5 - x 0⟫
+
+theorem e26Cond_of_I (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs : 0 < s)
+    (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hT : Q45TieLocusBs1 x) (h : E26CondI F) : E26Cond F := by
+  obtain ⟨h1, h3, h61, hd4, hac⟩ := h
+  have hde5 : ⟪x 2 - x 6, x 5 - x 0⟫ = 0 := by
+    unfold Q45TieLocusBs1 at hT; rw [inner_sub_left]; linarith
+  obtain ⟨o1, o3⟩ := e26_orient F hs hd
+  have n5d : ⟪F.N 5, x 2 - x 6⟫ = 0 := by
+    rw [F.inner_sub 5 2 6, F.zero 5 2 (by decide), F.zero 5 6 (by decide)]; ring
+  have n7d : ⟪F.N 7, x 2 - x 6⟫ = 0 := by
+    rw [F.inner_sub 7 2 6, F.zero 7 2 (by decide), F.zero 7 6 (by decide)]; ring
+  have d5 := e26_dihedral F (F.N 5) 1 n5d
+    (by rw [F.inner_sub 5 1 6, F.zero 5 1 (by decide), F.zero 5 6 (by decide)]; ring)
+    (by rw [F.inner_sub 5 0 6, F.zero 5 6 (by decide)]; have := F.neg 5 0 (by decide); linarith) hde5
+    (by rw [real_inner_comm (x 1 - x 6) (x 5 - x 0)]; exact mul_neg_of_pos_of_neg (mul_pos_of_neg_of_neg hd4 h1) o1)
+  have d7 := e26_dihedral F (F.N 7) 3 n7d
+    (by rw [F.inner_sub 7 3 6, F.zero 7 3 (by decide), F.zero 7 6 (by decide)]; ring)
+    (by rw [F.inner_sub 7 0 6, F.zero 7 6 (by decide)]; have := F.neg 7 0 (by decide); linarith) hde5
+    (by rw [real_inner_comm (x 3 - x 6) (x 5 - x 0)]; exact mul_neg_of_neg_of_pos (mul_neg_of_neg_of_pos hd4 h3) o3)
+  refine ⟨Or.inr ⟨n5d, Or.inl ?_⟩, Or.inr ⟨n7d, Or.inl ?_⟩, h61, hd4, hac⟩
+  · rw [inner_neg_right, real_inner_comm]; linarith
+  · rw [inner_neg_right, real_inner_comm]; linarith
+
+/-- **The e26 view from five inner-product signs** on `s = 1` and the tie `TBs1`. -/
+theorem e26ViewOK_of_I (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs : s = 1) (ht0 : 0 < t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hT : Q45TieLocusBs1 x) (h : E26CondI F) :
+    E26ViewOK F :=
+  e26ViewOK_of F hs ht0 hdec hT (e26Cond_of_I F (by rw [hs]; exact one_pos) hdec hT h)
+
+/-- **What is left on `s = 1`, `TBs1`** in explicit form: a residue point there fails one of the five signs. -/
+theorem not_e26CondI_of_resS (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (ht0 : 0 < t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h : Q45ResSTS F s t) :
+    s = 1 → Q45TieLocusBs1 x → ¬ E26CondI F :=
+  fun hs hT hC => h.2.1 (e26ViewOK_of_I F hs ht0 hdec hT hC)
+
+end E26C
 
 end Minimality.T24.OSpec
