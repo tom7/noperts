@@ -2337,5 +2337,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.LexEP.robUni_rev
 #assert_standard_axioms Minimality.T24.LexEP.robUni_ev_tilt
 #assert_standard_axioms Minimality.T24.LexEP.strictlyUnimodal_of_robUni
-#assert_standard_axioms Minimality.T24.LexEP.lexAny_edgePlaneAny_of_noPar
-#assert_standard_axioms Minimality.T24.LexEP.holeLeaf_core_noPar
+#assert_standard_axioms Minimality.T24.LexEP.epRows_of_spinCancel_gen
+#assert_standard_axioms Minimality.T24.LexEP.edgePlaneAny_of_unimodal_par
+#assert_standard_axioms Minimality.T24.LexEP.lexAny_edgePlaneAny
+#assert_standard_axioms Minimality.T24.LexEP.holeLeaf_iff_core2
+#assert_standard_axioms Minimality.T24.LexEP.hole24_core2
