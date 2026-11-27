@@ -25,9 +25,14 @@ families = walls).  Here a cell is data, and there is one generic theorem per le
 * The list `cells24`: the 7 named cells (C = w_C, D = w_D, D6 = w_D6, A2, B2 = T_2, A0, B0 = interior T_0), the
   4-rim wall cells `0.5.2.6` (C', vertices 1, 3, 4 hidden; closes sBa_298), `0.2.3.6`, `0.5.3.6`, and the pentagon
   `0.4.6.2.5` (vertices 1, 3 hidden).  The `π_24` twins are the `Sym.sym24 F` side of the residue.
-* `Hid` proved for C, D, D6, A0, B0, `0.2.3.6` (degree-3 hidden vertices via `hidden_of_three_facets`, and the
-  existing degree-5 lemma for vertex 0).  Not proved (no degree-4 / generic degree-5 lemma yet): A2, B2, `0.5.3.6`
-  (vertex 2), C', pentagon (vertex 3); there the Edge-Plane branch carries `HiddenInTriangles` explicitly.
+* Hidden vertices (CELL24B): `link_winding` (any vertex, any number of incident facets: if the facets around `v`
+  have one strict sign at `w`, the projected link edges `x (p i) - x v` turn strictly one way; one chain link may
+  fail, e.g. inside a quad facet), `hidden_of_link5` / `hidden_of_link3` (triangle extraction), `hidden_two`
+  (vertex 2, degree 5), `hidden_three` (vertex 3, degree 4: its link `5.2.6.4` extended by the opposite vertex `0`
+  of the quad `0345` is a 5-cycle, so no genericity condition is needed).
+* `Hid` proved for all 11 cells of `cells24` (C, D, D6, A0, B0, `0.2.3.6` earlier; A2, B2, `0.5.3.6`, C', P here).
+* Wall persistence, the named cover as a sub-cover (`cellCoverEmpty_of_namedCoverEmpty`) and the `OpenSpecialR`
+  chain: Type24CellWall.lean.
 -/
 
 @[expose] public section
@@ -268,6 +273,238 @@ theorem hidden_five (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
   hidden_of_three_facets_sign F 5 0 3 2 3 6 2 (by decide) (by decide) (by decide) (by decide)
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) hs
 
+/-! ## Hidden vertices of any degree: link winding -/
+
+/-- For `N ⊥ u1, u2`: `det3 u1 u2 w * ⟪N, q⟫ = det3 u1 u2 q * ⟪N, w⟫` (no nondegeneracy needed). -/
+theorem det3_mul_inner_of_perp (N u1 u2 q w : ℝ³) (h1 : ⟪N, u1⟫ = 0) (h2 : ⟪N, u2⟫ = 0) :
+    Split.det3 u1 u2 w * ⟪N, q⟫ = Split.det3 u1 u2 q * ⟪N, w⟫ := by
+  have e : Split.det3 u1 u2 w * ⟪N, q⟫ - Split.det3 u1 u2 q * ⟪N, w⟫ =
+      ⟪N, u1⟫ * Split.det3 u2 w q - ⟪N, u2⟫ * Split.det3 u1 w q := by
+    simp only [Split.det3, Split.inner3]; ring
+  rw [h1, h2] at e; linarith
+
+/-- Lagrange identity: `det3 a b (cross M N) = ⟪M, a⟫ ⟪N, b⟫ - ⟪M, b⟫ ⟪N, a⟫`. -/
+theorem det3_cross_lagrange (a b M N : ℝ³) :
+    Split.det3 a b (cross M N) = ⟪M, a⟫ * ⟪N, b⟫ - ⟪M, b⟫ * ⟪N, a⟫ := by
+  simp only [Split.det3, Split.inner3, Split.cross_0, Split.cross_1, Split.cross_2]; ring
+
+section Link
+variable {n m : ℕ} {S : Fin m → Finset (Fin n)} {y : Fin n → ℝ³}
+
+/-- **Link winding (any vertex, any number of incident facets).**  Let `v` be a vertex with a cyclic list of link
+vertices `p i` and facets `t i ∋ v, p i, p (i+1)`, and assume the chain conditions `p (i+2) ∉ t i`,
+`p i ∉ t (i+1)` for `i = 0, …, d-2` (one link of the cycle may fail, e.g. inside a quad facet).  If all `t i` have
+one strict sign at `w`, the projected edge vectors `y (p i) - y v` turn strictly one way around `y v`:
+all `det3 (y (p i) - y v) (y (p (i+1)) - y v) w` are nonzero of one sign. -/
+theorem link_winding (F : S0xFac m S y) {w : ℝ³} {d : ℕ} [NeZero d] (hd : 3 ≤ d)
+    (v : Fin n) (p : ZMod d → Fin n) (t : ZMod d → Fin m)
+    (hv : ∀ i, v ∈ S (t i)) (hp : ∀ i, p i ∈ S (t i)) (hp1 : ∀ i, p (i + 1) ∈ S (t i))
+    (hc2 : ∀ i : ZMod d, i.val + 1 < d → p (i + 2) ∉ S (t i))
+    (hc0 : ∀ i : ZMod d, i.val + 1 < d → p i ∉ S (t (i + 1)))
+    (hs : (∀ i, ⟪F.N (t i), w⟫ < 0) ∨ (∀ i, 0 < ⟪F.N (t i), w⟫)) :
+    (∀ i, 0 < Split.det3 (y (p i) - y v) (y (p (i + 1)) - y v) w) ∨
+      (∀ i, Split.det3 (y (p i) - y v) (y (p (i + 1)) - y v) w < 0) := by
+  set e : Fin n → ℝ³ := fun q => y q - y v with he
+  set A : ZMod d → ℝ := fun i => Split.det3 (e (p i)) (e (p (i + 1))) w with hA
+  have hperp : ∀ i q, q ∈ S (t i) → ⟪F.N (t i), e q⟫ = 0 := fun i q hq => by
+    simp only [he]; rw [F.inner_sub, F.zero _ _ hq, F.zero _ _ (hv i), sub_self]
+  have hneg : ∀ i q, q ∉ S (t i) → ⟪F.N (t i), e q⟫ < 0 := fun i q hq => by
+    simp only [he]; rw [F.inner_sub, F.zero _ _ (hv i), sub_zero]; exact F.neg _ _ hq
+  have hYY : ∀ i j, 0 < ⟪F.N (t i), w⟫ * ⟪F.N (t j), w⟫ := fun i j => by
+    rcases hs with h | h
+    · exact mul_pos_of_neg_of_neg (h i) (h j)
+    · exact mul_pos (h i) (h j)
+  have hY : ∀ i, ⟪F.N (t i), w⟫ ≠ 0 := fun i h0 => by have := hYY i i; rw [h0, zero_mul] at this; exact lt_irrefl 0 this
+  -- the link step
+  have hlink : ∀ i : ZMod d, i.val + 1 < d → A i ≠ 0 ∨ A (i + 1) ≠ 0 → 0 < A i * A (i + 1) := by
+    intro i hi hAi
+    have I1 := det3_mul_inner_of_perp (F.N (t i)) (e (p i)) (e (p (i + 1))) (e (p (i + 2))) w
+      (hperp i _ (hp i)) (hperp i _ (hp1 i))
+    have I2 := det3_mul_inner_of_perp (F.N (t (i + 1))) (e (p (i + 1))) (e (p (i + 1 + 1))) (e (p i)) w
+      (hperp (i + 1) _ (hp (i + 1))) (hperp (i + 1) _ (hp1 (i + 1)))
+    rw [show i + 1 + 1 = i + 2 by ring] at I2
+    have hcyc : Split.det3 (e (p (i + 1))) (e (p (i + 2))) (e (p i)) =
+        Split.det3 (e (p i)) (e (p (i + 1))) (e (p (i + 2))) := by simp only [Split.det3]; ring
+    rw [hcyc] at I2
+    set D := Split.det3 (e (p i)) (e (p (i + 1))) (e (p (i + 2)))
+    have X1 := hneg i _ (hc2 i hi)
+    have X2 := hneg (i + 1) _ (hc0 i hi)
+    have hD : D ≠ 0 := by
+      intro h0; rw [h0, zero_mul] at I1 I2
+      rcases hAi with hAi | hAi
+      · exact (mul_ne_zero hAi X1.ne) I1
+      · have : A (i + 1) = Split.det3 (e (p (i + 1))) (e (p (i + 2))) w := by
+          simp only [hA]; rw [show i + 1 + 1 = i + 2 by ring]
+        rw [← this] at I2; exact (mul_ne_zero hAi X2.ne) I2
+    have hprod : (A i * A (i + 1)) * (⟪F.N (t i), e (p (i + 2))⟫ * ⟪F.N (t (i + 1)), e (p i)⟫) =
+        D ^ 2 * (⟪F.N (t i), w⟫ * ⟪F.N (t (i + 1)), w⟫) := by
+      simp only [hA]; rw [show (i + 1 + 1) = i + 2 by ring]; linear_combination
+        (Split.det3 (e (p (i + 1))) (e (p (i + 2))) w * ⟪F.N (t (i + 1)), e (p i)⟫) * I1 +
+          (D * ⟪F.N (t i), w⟫) * I2
+    have hpos : 0 < D ^ 2 * (⟪F.N (t i), w⟫ * ⟪F.N (t (i + 1)), w⟫) :=
+      mul_pos (lt_of_le_of_ne (sq_nonneg D) (Ne.symm (pow_ne_zero 2 hD))) (hYY _ _)
+    rw [← hprod] at hpos
+    exact pos_of_mul_pos_left hpos (mul_pos_of_neg_of_neg X1 X2).le
+  -- nondegeneracy at edge `1`: `y (p 1) - y v`, `y (p 2) - y v` independent (facets `t 0`, `t 2`), and
+  -- `y (p 0) - y v` off their plane (facet `t 1`)
+  have hv1 : (1 : ZMod d).val + 1 < d := by rw [ZMod.val_one_eq_one_mod, Nat.one_mod_eq_one.mpr (by omega)]; omega
+  have hv0 : (0 : ZMod d).val + 1 < d := by rw [ZMod.val_zero]; omega
+  have h12 : (1 : ZMod d) + 1 = 2 := by ring
+  have h02 : (0 : ZMod d) + 2 = 2 := by ring
+  have h01 : (0 : ZMod d) + 1 = 1 := by ring
+  have hA1 : A 1 ≠ 0 := by
+    have ha1 : ⟪F.N (t 0), e (p 1)⟫ = 0 := hperp 0 _ (by simpa [h01] using hp1 0)
+    have ha2 : ⟪F.N (t 0), e (p 2)⟫ < 0 := hneg 0 _ (by simpa [h02] using hc2 0 hv0)
+    have hb2 : ⟪F.N (t 2), e (p 2)⟫ = 0 := hperp 2 _ (hp 2)
+    have hb1 : ⟪F.N (t 2), e (p 1)⟫ < 0 := hneg 2 _ (by simpa [h12] using hc0 1 hv1)
+    have hL := det3_cross_lagrange (e (p 1)) (e (p 2)) (F.N (t 0)) (F.N (t 2))
+    rw [ha1, hb2] at hL
+    have hLne : Split.det3 (e (p 1)) (e (p 2)) (cross (F.N (t 0)) (F.N (t 2))) ≠ 0 := by
+      rw [hL]; nlinarith [mul_pos_of_neg_of_neg ha2 hb1]
+    have hq : ⟪F.N (t 1), e (p 0)⟫ < 0 := hneg 1 _ (by simpa using hc0 0 hv0)
+    have hn1 : ⟪F.N (t 1), e (p 1)⟫ = 0 := hperp 1 _ (hp 1)
+    have hn2 : ⟪F.N (t 1), e (p 2)⟫ = 0 := hperp 1 _ (by simpa [h12] using hp1 1)
+    have I3 := det3_mul_inner_of_perp (F.N (t 1)) (e (p 1)) (e (p 2)) (e (p 0))
+      (cross (F.N (t 0)) (F.N (t 2))) hn1 hn2
+    have hD0 : Split.det3 (e (p 1)) (e (p 2)) (e (p 0)) ≠ 0 := by
+      intro h0; rw [h0, zero_mul] at I3; exact mul_ne_zero hLne hq.ne I3
+    have I4 := det3_mul_inner_of_perp (F.N (t 1)) (e (p 1)) (e (p 2)) (e (p 0)) w hn1 hn2
+    intro h0
+    have : Split.det3 (e (p 1)) (e (p 2)) w = 0 := by simpa [hA, h12] using h0
+    rw [this, zero_mul] at I4
+    exact mul_ne_zero hD0 (hY 1) I4.symm
+  have hA0 : A 0 ≠ 0 := by
+    have h := hlink 0 hv0 (Or.inr (by rw [h01]; exact hA1))
+    intro h0; rw [h0, zero_mul] at h; exact lt_irrefl 0 h
+  have hind : ∀ k : ℕ, k < d → 0 < A 0 * A k := by
+    intro k
+    induction k with
+    | zero => intro _; simpa using mul_self_pos.mpr hA0
+    | succ k ih =>
+      intro hk
+      have h0k := ih (by omega)
+      have hkv : ((k : ℕ) : ZMod d).val = k := ZMod.val_cast_of_lt (by omega)
+      have hl := hlink (k : ZMod d) (by rw [hkv]; omega)
+        (Or.inl fun h0 => by rw [h0, mul_zero] at h0k; exact lt_irrefl 0 h0k)
+      push_cast
+      have : 0 < (A 0 * A k) * (A k * A (k + 1)) := mul_pos h0k hl
+      have h2 : (A 0 * A k) * (A k * A (k + 1)) = (A 0 * A (k + 1)) * (A k * A k) := by ring
+      rw [h2] at this
+      exact pos_of_mul_pos_left this (mul_self_nonneg _)
+  have hall : ∀ i, 0 < A 0 * A i := fun i => by
+    have := hind i.val (ZMod.val_lt i)
+    rwa [ZMod.natCast_zmod_val] at this
+  rcases lt_or_gt_of_ne hA0 with hneg0 | hpos0
+  · right; intro i; have := hall i; exact (neg_of_mul_pos_right this hneg0.le)
+  · left; intro i; have := hall i; exact (pos_of_mul_pos_right this hpos0.le)
+
+/-- A triangle around `0` of edge vectors `y q - y v` is a projected triangle of points around `y v`. -/
+theorem tri_of_edge_vectors (v : Fin n) {w a b c : ℝ³} (ha : a + y v ∈ univ.image y) (hb : b + y v ∈ univ.image y)
+    (hc : c + y v ∈ univ.image y)
+    (h1 : 0 < Split.det3 (b - a) (c - a) w) (h2 : 0 < Split.det3 (b - a) (-a) w)
+    (h3 : 0 < Split.det3 (c - b) (-b) w) (h4 : 0 < Split.det3 (a - c) (-c) w) :
+    ∃ P ∈ univ.image y, ∃ Q ∈ univ.image y, ∃ R ∈ univ.image y,
+      0 < Split.det3 (Q - P) (R - P) w ∧ 0 < Split.det3 (Q - P) (y v - P) w ∧
+      0 < Split.det3 (R - Q) (y v - Q) w ∧ 0 < Split.det3 (P - R) (y v - R) w := by
+  refine ⟨a + y v, ha, b + y v, hb, c + y v, hc, ?_, ?_, ?_, ?_⟩ <;>
+    simpa only [add_sub_add_right_eq_sub, sub_add_cancel_right] using by assumption
+
+/-- **Hidden vertex, link of length 5** (`link_winding` + `DeepC.triangle_of_five_ccw`): a vertex whose five link
+facets have one strict sign at `w` lies strictly inside a projected triangle of link points. -/
+theorem hidden_of_link5 (F : S0xFac m S y) {w : ℝ³} (v : Fin n) (p : ZMod 5 → Fin n) (t : ZMod 5 → Fin m)
+    (hv : ∀ i, v ∈ S (t i)) (hp : ∀ i, p i ∈ S (t i)) (hp1 : ∀ i, p (i + 1) ∈ S (t i))
+    (hc2 : ∀ i : ZMod 5, i.val + 1 < 5 → p (i + 2) ∉ S (t i))
+    (hc0 : ∀ i : ZMod 5, i.val + 1 < 5 → p i ∉ S (t (i + 1)))
+    (hs : (∀ i, ⟪F.N (t i), w⟫ < 0) ∨ (∀ i, 0 < ⟪F.N (t i), w⟫)) :
+    ∃ P ∈ univ.image y, ∃ Q ∈ univ.image y, ∃ R ∈ univ.image y,
+      0 < Split.det3 (Q - P) (R - P) w ∧ 0 < Split.det3 (Q - P) (y v - P) w ∧
+      0 < Split.det3 (R - Q) (y v - Q) w ∧ 0 < Split.det3 (P - R) (y v - R) w := by
+  have hmem : ∀ a ∈ ({y (p 0) - y v, y (p 1) - y v, y (p 2) - y v, y (p 3) - y v, y (p 4) - y v} : Finset ℝ³),
+      a + y v ∈ univ.image y := fun a ha => by
+    simp only [mem_insert, mem_singleton] at ha
+    rcases ha with rfl | rfl | rfl | rfl | rfl <;> simp
+  have hW := link_winding F (by norm_num) v p t hv hp hp1 hc2 hc0 hs
+  have e1 : (0 : ZMod 5) + 1 = 1 := by decide
+  have e2 : (1 : ZMod 5) + 1 = 2 := by decide
+  have e3 : (2 : ZMod 5) + 1 = 3 := by decide
+  have e4 : (3 : ZMod 5) + 1 = 4 := by decide
+  have e5 : (4 : ZMod 5) + 1 = 0 := by decide
+  have asym : ∀ a b : ℝ³, Split.det3 b a w = -Split.det3 a b w := fun a b => by simp only [Split.det3]; ring
+  rcases hW with h | h
+  · have h0 := h 0; have h1 := h 1; have h2 := h 2; have h3 := h 3; have h4 := h 4
+    rw [e1] at h0; rw [e2] at h1; rw [e3] at h2; rw [e4] at h3; rw [e5] at h4
+    obtain ⟨a, b, c, ⟨ha, hb, hc⟩, d1, d2, d3, d4⟩ :=
+      DeepC.triangle_of_five_ccw _ _ _ _ _ w h0 h1 h2 h3 h4
+    exact tri_of_edge_vectors v (hmem a ha) (hmem b hb) (hmem c hc) d1 d2 d3 d4
+  · have h0 := h 0; have h1 := h 1; have h2 := h 2; have h3 := h 3; have h4 := h 4
+    rw [e1] at h0; rw [e2] at h1; rw [e3] at h2; rw [e4] at h3; rw [e5] at h4
+    have hmem' : ∀ a ∈ ({y (p 0) - y v, y (p 4) - y v, y (p 3) - y v, y (p 2) - y v, y (p 1) - y v} :
+        Finset ℝ³), a + y v ∈ univ.image y := fun a ha => by
+      simp only [mem_insert, mem_singleton] at ha
+      rcases ha with rfl | rfl | rfl | rfl | rfl <;> simp
+    obtain ⟨a, b, c, ⟨ha, hb, hc⟩, d1, d2, d3, d4⟩ :=
+      DeepC.triangle_of_five_ccw (y (p 0) - y v) (y (p 4) - y v) (y (p 3) - y v) (y (p 2) - y v)
+        (y (p 1) - y v) w (by rw [asym]; linarith) (by rw [asym]; linarith) (by rw [asym]; linarith)
+        (by rw [asym]; linarith) (by rw [asym]; linarith)
+    exact tri_of_edge_vectors v (hmem' a ha) (hmem' b hb) (hmem' c hc) d1 d2 d3 d4
+
+/-- **Hidden vertex, link of length 3** (`link_winding`; the general form of `hidden_of_three_facets_sign`). -/
+theorem hidden_of_link3 (F : S0xFac m S y) {w : ℝ³} (v : Fin n) (p : ZMod 3 → Fin n) (t : ZMod 3 → Fin m)
+    (hv : ∀ i, v ∈ S (t i)) (hp : ∀ i, p i ∈ S (t i)) (hp1 : ∀ i, p (i + 1) ∈ S (t i))
+    (hc2 : ∀ i : ZMod 3, i.val + 1 < 3 → p (i + 2) ∉ S (t i))
+    (hc0 : ∀ i : ZMod 3, i.val + 1 < 3 → p i ∉ S (t (i + 1)))
+    (hs : (∀ i, ⟪F.N (t i), w⟫ < 0) ∨ (∀ i, 0 < ⟪F.N (t i), w⟫)) :
+    ∃ P ∈ univ.image y, ∃ Q ∈ univ.image y, ∃ R ∈ univ.image y,
+      0 < Split.det3 (Q - P) (R - P) w ∧ 0 < Split.det3 (Q - P) (y v - P) w ∧
+      0 < Split.det3 (R - Q) (y v - Q) w ∧ 0 < Split.det3 (P - R) (y v - R) w := by
+  have hW := link_winding F (by norm_num) v p t hv hp hp1 hc2 hc0 hs
+  have e1 : (0 : ZMod 3) + 1 = 1 := by decide
+  have e2 : (1 : ZMod 3) + 1 = 2 := by decide
+  have e3 : (2 : ZMod 3) + 1 = 0 := by decide
+  have m : ∀ i, (y (p i) - y v) + y v ∈ univ.image y := fun i => by simp
+  rcases hW with h | h
+  · have h0 := h 0; have h1 := h 1; have h2 := h 2
+    rw [e1] at h0; rw [e2] at h1; rw [e3] at h2
+    refine tri_of_edge_vectors v (m 0) (m 1) (m 2) ?_ ?_ ?_ ?_ <;>
+      simp only [Split.det3, PiLp.sub_apply, PiLp.neg_apply] at * <;> nlinarith
+  · have h0 := h 0; have h1 := h 1; have h2 := h 2
+    rw [e1] at h0; rw [e2] at h1; rw [e3] at h2
+    refine tri_of_edge_vectors v (m 0) (m 2) (m 1) ?_ ?_ ?_ ?_ <;>
+      simp only [Split.det3, PiLp.sub_apply, PiLp.neg_apply] at * <;> nlinarith
+
+end Link
+
+/-- Decide a finite link condition over `ZMod k` case by case. -/
+macro "link_dec" : tactic => `(tactic| (intro i; fin_cases i <;> decide))
+
+/-- Vertex `2` (degree 5: link `0.1.6.3.5`, facets `012, 126, 236, 235, 025` = `0, 5, 7, 6, 2`). -/
+theorem hidden_two (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
+    (hs : (⟪F.N 0, w⟫ < 0 ∧ ⟪F.N 5, w⟫ < 0 ∧ ⟪F.N 7, w⟫ < 0 ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 2, w⟫ < 0) ∨
+      (0 < ⟪F.N 0, w⟫ ∧ 0 < ⟪F.N 5, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 2, w⟫)) :
+    ∃ p ∈ univ.image x, ∃ q ∈ univ.image x, ∃ r ∈ univ.image x,
+      0 < Split.det3 (q - p) (r - p) w ∧ 0 < Split.det3 (q - p) (x 2 - p) w ∧
+      0 < Split.det3 (r - q) (x 2 - q) w ∧ 0 < Split.det3 (p - r) (x 2 - r) w :=
+  hidden_of_link5 F 2 ![0, 1, 6, 3, 5] ![0, 5, 7, 6, 2] (by link_dec) (by link_dec) (by link_dec) (by link_dec)
+    (by link_dec) (by
+      rcases hs with ⟨h0, h5, h7, h6, h2⟩ | ⟨h0, h5, h7, h6, h2⟩
+      · exact Or.inl fun i => by fin_cases i <;> assumption
+      · exact Or.inr fun i => by fin_cases i <;> assumption)
+
+/-- Vertex `3` (degree 4, facets `0345, 235, 236, 346` = `3, 6, 7, 8`): the link `5.2.6.4` extended by the
+opposite vertex `0` of the quad `0345` is a 5-cycle `0.5.2.6.4` (facets `3, 6, 7, 8, 3`; the chain link
+`4.0 → 0.5` inside the quad is the one not needed), so no genericity condition is needed. -/
+theorem hidden_three (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
+    (hs : (⟪F.N 3, w⟫ < 0 ∧ ⟪F.N 6, w⟫ < 0 ∧ ⟪F.N 7, w⟫ < 0 ∧ ⟪F.N 8, w⟫ < 0) ∨
+      (0 < ⟪F.N 3, w⟫ ∧ 0 < ⟪F.N 6, w⟫ ∧ 0 < ⟪F.N 7, w⟫ ∧ 0 < ⟪F.N 8, w⟫)) :
+    ∃ p ∈ univ.image x, ∃ q ∈ univ.image x, ∃ r ∈ univ.image x,
+      0 < Split.det3 (q - p) (r - p) w ∧ 0 < Split.det3 (q - p) (x 3 - p) w ∧
+      0 < Split.det3 (r - q) (x 3 - q) w ∧ 0 < Split.det3 (p - r) (x 3 - r) w :=
+  hidden_of_link5 F 3 ![0, 5, 2, 6, 4] ![3, 6, 7, 8, 3] (by link_dec) (by link_dec) (by link_dec) (by link_dec)
+    (by link_dec) (by
+      rcases hs with ⟨h3, h6, h7, h8⟩ | ⟨h3, h6, h7, h8⟩
+      · exact Or.inl fun i => by fin_cases i <;> assumption
+      · exact Or.inr fun i => by fin_cases i <;> assumption)
+
 /-! ## The cells of the cover -/
 
 /-- Rim injectivity of a concrete rim, by cases. -/
@@ -428,8 +665,7 @@ theorem cellB0_hid : cellB0.Hid := by
   exact TwoCone.hidden_in_cB_of_cell F
     ⟨hcell.1, fun t ht => hcell.2 t (by show t ∈ univ \ TwoCone.U_B0; rw [e]; exact ht)⟩
 
-/-- `C'` hides `1` and `4` automatically (degree 3); vertex `3` (degree 4, link `5.2.6.4`) is the only vertex whose
-hiding the Edge-Plane branch of `C'` must check. -/
+/-- `C'` hides `1` and `4` (degree 3); vertex `3` (degree 4) is `hidden_three`, combined in `cellC'_hid`. -/
 theorem cellC'_hid_off3 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
     (hcell : CellAt F cellC'.U (univ \ cellC'.U) w) (m : Fin 7) (hm : ∀ i, m ≠ cellC'.r i) (h3 : m ≠ 3) :
     ∃ p ∈ univ.image x, ∃ q ∈ univ.image x, ∃ r ∈ univ.image x,
@@ -443,6 +679,64 @@ theorem cellC'_hid_off3 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ�
   · exact hidden_four F (Or.inr ⟨hcell.1 3 (by decide), hcell.1 8 (by decide), hcell.1 4 (by decide)⟩)
   · exact absurd rfl (hm 1)
   · exact absurd rfl (hm 3)
+
+/-! ## `Hid` for the cells with hidden vertices `2` (degree 5) and `3` (degree 4) -/
+
+theorem cellA2_hid : cellA2.Hid := by
+  intro x F w hcell m hm
+  fin_cases m
+  · exact absurd rfl (hm 0)
+  · exact absurd rfl (hm 4)
+  · exact hidden_two F (Or.inl ⟨hcell.2 0 (by decide), hcell.2 5 (by decide), hcell.2 7 (by decide),
+      hcell.2 6 (by decide), hcell.2 2 (by decide)⟩)
+  · exact absurd rfl (hm 2)
+  · exact hidden_four F (Or.inr ⟨hcell.1 3 (by decide), hcell.1 8 (by decide), hcell.1 4 (by decide)⟩)
+  · exact absurd rfl (hm 1)
+  · exact absurd rfl (hm 3)
+
+theorem cellB2_hid : cellB2.Hid := by
+  intro x F w hcell m hm
+  fin_cases m
+  · exact absurd rfl (hm 0)
+  · exact absurd rfl (hm 5)
+  · exact hidden_two F (Or.inl ⟨hcell.2 0 (by decide), hcell.2 5 (by decide), hcell.2 7 (by decide),
+      hcell.2 6 (by decide), hcell.2 2 (by decide)⟩)
+  · exact absurd rfl (hm 2)
+  · exact absurd rfl (hm 3)
+  · exact absurd rfl (hm 1)
+  · exact absurd rfl (hm 4)
+
+theorem cell0536_hid : cell0536.Hid := by
+  intro x F w hcell m hm
+  fin_cases m
+  · exact absurd rfl (hm 0)
+  · exact hidden_one F (Or.inl ⟨hcell.2 0 (by decide), hcell.2 5 (by decide), hcell.2 1 (by decide)⟩)
+  · exact hidden_two F (Or.inl ⟨hcell.2 0 (by decide), hcell.2 5 (by decide), hcell.2 7 (by decide),
+      hcell.2 6 (by decide), hcell.2 2 (by decide)⟩)
+  · exact absurd rfl (hm 2)
+  · exact hidden_four F (Or.inr ⟨hcell.1 3 (by decide), hcell.1 8 (by decide), hcell.1 4 (by decide)⟩)
+  · exact absurd rfl (hm 3)
+  · exact absurd rfl (hm 1)
+
+theorem cellC'_hid : cellC'.Hid := by
+  intro x F w hcell m hm
+  by_cases h3 : m = 3
+  · subst h3
+    exact hidden_three F (Or.inr ⟨hcell.1 3 (by decide), hcell.1 6 (by decide), hcell.1 7 (by decide),
+      hcell.1 8 (by decide)⟩)
+  · exact cellC'_hid_off3 F hcell m hm h3
+
+theorem cellP_hid : cellP.Hid := by
+  intro x F w hcell m hm
+  fin_cases m
+  · exact absurd rfl (hm 0)
+  · exact hidden_one F (Or.inl ⟨hcell.2 0 (by decide), hcell.2 5 (by decide), hcell.2 1 (by decide)⟩)
+  · exact absurd rfl (hm 3)
+  · exact hidden_three F (Or.inr ⟨hcell.1 3 (by decide), hcell.1 6 (by decide), hcell.1 7 (by decide),
+      hcell.1 8 (by decide)⟩)
+  · exact absurd rfl (hm 1)
+  · exact absurd rfl (hm 4)
+  · exact absurd rfl (hm 2)
 
 /-! ## The residue, the open Prop, and the chain -/
 
@@ -498,9 +792,8 @@ theorem open24_of_cellCoverEmpty {L : List Cell24} (hN : CellCoverEmpty L) (hS :
 
 /-! ## Old certificates are cell certificates (charts of the named 2-parameter cells, and `C'`)
 
-The wall families (`w_C`, `FamA`, `FamB`, Split family) and the `T_2` cells (vertex `2` hidden, degree 5, no
-standalone `HiddenInTriangles` lemma) are not translated here; see the report in nopert229
-notes/TYPE24-HOLE-STATEMENT.md. -/
+The wall families (`w_C`, `FamA`, `FamB`) and the `T_2` charts are translated in Type24CellWall.lean
+(`wcCert_cellCert`, `famACert_cellCert`, `famBCert_cellCert`, `cA2Cert_cellCert`, `cB2Cert_cellCert`). -/
 
 /-- `w_D` chart: `WDCertAt x F β γ` is a cell certificate of `D` at `wD x β γ`. -/
 theorem wdCert_cellCert {F : S0xFac 9 s0x_S24 x} (hC : CbarIn x) {beta gamma : ℝ}

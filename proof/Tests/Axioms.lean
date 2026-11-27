@@ -257,6 +257,7 @@ import Minimality.Type24OffOB1Res
 import Minimality.Type24HoleAtlasNC
 import Minimality.Type24WallFoot
 import Minimality.Type24Cell
+import Minimality.Type24CellWall
 import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
@@ -2580,6 +2581,36 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.cA0Cert_cellCert
 #assert_standard_axioms Minimality.T24.Cell.cB0Cert_cellCert
 #assert_standard_axioms Minimality.T24.Cell.cellC'_cert_of_mixed
+-- Type24Cell (CELL24B, 11-27): link winding, hidden vertices 2 and 3, Hid for all of cells24
+#assert_standard_axioms Minimality.T24.Cell.det3_mul_inner_of_perp
+#assert_standard_axioms Minimality.T24.Cell.det3_cross_lagrange
+#assert_standard_axioms Minimality.T24.Cell.link_winding
+#assert_standard_axioms Minimality.T24.Cell.tri_of_edge_vectors
+#assert_standard_axioms Minimality.T24.Cell.hidden_of_link5
+#assert_standard_axioms Minimality.T24.Cell.hidden_of_link3
+#assert_standard_axioms Minimality.T24.Cell.hidden_two
+#assert_standard_axioms Minimality.T24.Cell.hidden_three
+#assert_standard_axioms Minimality.T24.Cell.cellA2_hid
+#assert_standard_axioms Minimality.T24.Cell.cellB2_hid
+#assert_standard_axioms Minimality.T24.Cell.cell0536_hid
+#assert_standard_axioms Minimality.T24.Cell.cellC'_hid
+#assert_standard_axioms Minimality.T24.Cell.cellP_hid
+-- Type24CellWall (CELL24B, 11-27): wall persistence, NamedCoverEmpty -> CellCoverEmpty cells24, OpenSpecialR chain
+#assert_standard_axioms Minimality.T24.Cell.cellAt_eventually_of_wall
+#assert_standard_axioms Minimality.T24.Cell.epCert_eventually
+#assert_standard_axioms Minimality.T24.Cell.cellCert_of_line
+#assert_standard_axioms Minimality.T24.Cell.cellCert_of_wall
+#assert_standard_axioms Minimality.T24.Cell.wcCert_cellCert
+#assert_standard_axioms Minimality.T24.Cell.uF_line
+#assert_standard_axioms Minimality.T24.Cell.facet2_wall
+#assert_standard_axioms Minimality.T24.Cell.famACert_cellCert
+#assert_standard_axioms Minimality.T24.Cell.famBCert_cellCert
+#assert_standard_axioms Minimality.T24.Cell.cA2Cert_cellCert
+#assert_standard_axioms Minimality.T24.Cell.cB2Cert_cellCert
+#assert_standard_axioms Minimality.T24.Cell.namedCoverResidue_of_cellCoverResidue
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmpty_of_namedCoverEmpty
+#assert_standard_axioms Minimality.T24.Cell.not_hole24_of_cellCoverEmpty_R
+#assert_standard_axioms Minimality.T24.Cell.open24_of_cellCoverEmpty_R
 #assert_standard_axioms Minimality.T24.TwoCone.uT2_depth_signs
 #assert_standard_axioms Minimality.T24.TwoCone.cA2_not_back_03_56
 #assert_standard_axioms Minimality.T24.TwoCone.cA2_robUni_of_z0_lt
