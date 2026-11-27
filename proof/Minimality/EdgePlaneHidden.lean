@@ -278,24 +278,18 @@ theorem triangle_of_five_ccw (p1 p2 p5 p4 p6 w : ℝ³)
       · exact mkTri p1 p5 p6 mem1 mem5 mem6 h15 h56 h61
     · exact mkTri p1 p4 p6 mem1 mem4 mem6 h14 h46 h61
 
-/-- **FJ2 (`edgePlaneAt_of_T0`):** if all five facets `{0, 1, 2, 3, 4}` incident to vertex `0`
-have strictly negative (or all strictly positive) inner product with `w`, then `EdgePlaneAt`
-on the base `x ∘ (0 : Fin 7).succAbove` transfers to `EdgePlaneAt x w`. -/
-theorem edgePlaneAt_of_T0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
-    (hw : (∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), ⟪F.N t, w⟫ < 0) ∨
-          (∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), 0 < ⟪F.N t, w⟫))
-    (hEP : EdgePlaneAt (x ∘ (0 : Fin 7).succAbove) w) :
-    EdgePlaneAt x w := by
-  -- Reduce the `0 < ⟪F.N t, w⟫` branch to `⟪F.N t, -w⟫ < 0` via `edgePlaneAt_neg_iff`.
-  suffices hneg : ∀ w' : ℝ³,
-      (∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), ⟪F.N t, w'⟫ < 0) →
-      EdgePlaneAt (x ∘ (0 : Fin 7).succAbove) w' → EdgePlaneAt x w' by
-    rcases hw with hw_neg | hw_pos
-    · exact hneg w hw_neg hEP
-    · have hw_neg : ∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), ⟪F.N t, -w⟫ < 0 := fun t ht => by
-        rw [inner_neg_right, neg_lt_zero]; exact hw_pos t ht
-      exact (edgePlaneAt_neg_iff x w).mp (hneg (-w) hw_neg ((edgePlaneAt_neg_iff _ w).mpr hEP))
-  intro w' hw' hEP'
+/-- Vertex `0` lies strictly inside a triangle of `x ∘ (0 : Fin 7).succAbove` in `w'^⊥`
+whenever all five facets `{0, 1, 2, 3, 4}` satisfy `⟪F.N t, w'⟫ < 0`. -/
+theorem hidden_zero_of_T0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w' : ℝ³}
+    (hw' : ∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), ⟪F.N t, w'⟫ < 0) :
+    ∃ p q r : ℝ³,
+      p ∈ univ.image (x ∘ (0 : Fin 7).succAbove) ∧
+      q ∈ univ.image (x ∘ (0 : Fin 7).succAbove) ∧
+      r ∈ univ.image (x ∘ (0 : Fin 7).succAbove) ∧
+      0 < Split.det3 (q - p) (r - p) w' ∧
+      0 < Split.det3 (q - p) (x 0 - p) w' ∧
+      0 < Split.det3 (r - q) (x 0 - q) w' ∧
+      0 < Split.det3 (p - r) (x 0 - r) w' := by
   let e1 := x 1 - x 0
   let e2 := x 2 - x 0
   let e4 := x 4 - x 0
@@ -495,14 +489,23 @@ theorem edgePlaneAt_of_T0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : �
     · exact mem_image.mpr ⟨4, mem_univ _, by simp [e5]⟩
     · exact mem_image.mpr ⟨3, mem_univ _, by simp [e4]⟩
     · exact mem_image.mpr ⟨5, mem_univ _, by simp [e6]⟩
-  refine edgePlaneAt_of_hidden x 0 w' hEP'
-    ⟨a + x 0, b + x 0, c + x 0, hmem_base a ha, hmem_base b hb, hmem_base c hc, ?_, ?_, ?_, ?_⟩
-  · simpa [sub_eq_add_neg, add_assoc] using t1
-  · have : x 0 - (a + x 0) = -a := by abel
-    simpa [this, sub_eq_add_neg, add_assoc] using t2
-  · have : x 0 - (b + x 0) = -b := by abel
-    simpa [this, sub_eq_add_neg, add_assoc] using t3
-  · have : x 0 - (c + x 0) = -c := by abel
-    simpa [this, sub_eq_add_neg, add_assoc] using t4
+  exact ⟨a + x 0, b + x 0, c + x 0, hmem_base a ha, hmem_base b hb, hmem_base c hc,
+    (by simpa [add_sub_add_right_eq_sub] using t1),
+    (by simpa [sub_add_cancel_right, add_sub_add_right_eq_sub] using t2),
+    (by simpa [sub_add_cancel_right, add_sub_add_right_eq_sub] using t3),
+    (by simpa [sub_add_cancel_right, add_sub_add_right_eq_sub] using t4)⟩
+
+theorem edgePlaneAt_of_T0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
+    (hw : (∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), ⟪F.N t, w⟫ < 0) ∨
+          (∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), 0 < ⟪F.N t, w⟫))
+    (hEP : EdgePlaneAt (x ∘ (0 : Fin 7).succAbove) w) :
+    EdgePlaneAt x w := by
+  rcases hw with hw_neg | hw_pos
+  · exact edgePlaneAt_of_hidden x 0 w hEP (hidden_zero_of_T0 F hw_neg)
+  · have hw_neg : ∀ t ∈ ({0, 1, 2, 3, 4} : Finset (Fin 9)), ⟪F.N t, -w⟫ < 0 := fun t ht => by
+      rw [inner_neg_right, neg_lt_zero]; exact hw_pos t ht
+    exact (edgePlaneAt_neg_iff x w).mp
+      (edgePlaneAt_of_hidden x 0 (-w) ((edgePlaneAt_neg_iff _ w).mpr hEP)
+        (hidden_zero_of_T0 F hw_neg))
 
 end Minimality.T24.DeepC
