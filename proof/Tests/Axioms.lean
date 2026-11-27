@@ -269,8 +269,10 @@ import Minimality.UnimodalSplit
 import Minimality.Type24RayCT
 import Minimality.Type24W2OC
 import Minimality.Q45J0Tilt
+import Minimality.Q45B2View
 import Minimality.Q45J0Edge
 import Minimality.Type24FootLex
+import Minimality.Type24T2Corner
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2689,6 +2691,44 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_U
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_U
 
+-- OSPEC6 (11-27): the B2 / C2 corner-tie view in the face plane (Q45B2View: bB2, B2ViewOK, image-plane facet signs), OpenSpecialV
+#assert_standard_axioms Minimality.T24.Q45.inner_N3_bB2
+#assert_standard_axioms Minimality.T24.Q45.inner_x03_bB2
+#assert_standard_axioms Minimality.T24.Q45.bB2_ne_zero
+#assert_standard_axioms Minimality.T24.Q45.b2_up3
+#assert_standard_axioms Minimality.T24.Q45.b2_dn8
+#assert_standard_axioms Minimality.T24.Q45.gram_decomp
+#assert_standard_axioms Minimality.T24.Q45.sign_side
+#assert_standard_axioms Minimality.T24.Q45.gram_nonneg
+#assert_standard_axioms Minimality.T24.Q45.det_bB2
+#assert_standard_axioms Minimality.T24.Q45.inner_bB2_face
+#assert_standard_axioms Minimality.T24.Q45.n3_perp_face
+#assert_standard_axioms Minimality.T24.Q45.b2_dn4_of_obtuse
+#assert_standard_axioms Minimality.T24.Q45.b2_up6_of_acute
+#assert_standard_axioms Minimality.T24.Q45.gram_pos
+#assert_standard_axioms Minimality.T24.Q45.det_gram_cross
+#assert_standard_axioms Minimality.T24.Q45.inner_bB2_e34
+#assert_standard_axioms Minimality.T24.Q45.facet_pair_sign
+#assert_standard_axioms Minimality.T24.Q45.image_det_pair
+#assert_standard_axioms Minimality.T24.Q45.b2_image
+#assert_standard_axioms Minimality.T24.Q45.b2_flip57
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_b2View
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_b2View_sym
+#assert_standard_axioms Minimality.T24.Q45.b2_P_sign
+#assert_standard_axioms Minimality.T24.Q45.b2_dn1
+#assert_standard_axioms Minimality.T24.Q45.b2_up0
+#assert_standard_axioms Minimality.T24.Q45.b2_sign7
+#assert_standard_axioms Minimality.T24.Q45.b2ViewOK_of_image
+#assert_standard_axioms Minimality.T24.Q45.b2_face_low
+#assert_standard_axioms Minimality.T24.OSpec.q45_resV_local
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWV_sub
+#assert_standard_axioms Minimality.T24.OSpec.q45_resV
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialV_of_openSpecialU
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_V
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_V
+#assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_V
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_V
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve
@@ -2712,3 +2752,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_rayRLex
 #assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_rayRLex_twin
 #assert_standard_axioms Minimality.T24.FootLex.rayRLex_of_closedFace
+
+-- Type24T2Corner (T2CLEAN, 11-27)
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_robUni_of_t2c
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_eventually_robUni_of_t2c
+#assert_standard_axioms Minimality.T24.TwoCone.t2c_coeffs
+#assert_standard_axioms Minimality.T24.TwoCone.rayRLex_of_t2c
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_t2c
+#assert_standard_axioms Minimality.T24.TwoCone.rayRLex_of_t2cCorner
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_t2cCorner
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_t2cCorner_twin
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_t2cCorner
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_t2cCorner_twin

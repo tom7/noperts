@@ -4,6 +4,7 @@ public import Minimality.Type24OffOB1
 public import Minimality.Q45
 public import Minimality.Q45J0Edge
 public import Minimality.Q45J0Tilt
+public import Minimality.Q45B2View
 
 @[expose] public section
 
@@ -1184,5 +1185,113 @@ theorem open24Rupert_of_split_U (h1 : OpenOB1) (h2 : OpenSpecialU) : Open24Ruper
   by_cases hO : H24K.SAT.OB1 x
   · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
   · exact hole24_offOB1_U hH hO h2
+
+/-! ### The B2 / C2 corner ties at the face-plane view (job OSPEC6)
+
+On the corner ties `T-B2` / `T-C2` the corner cell fails (`z2 = z5 = z6` at `e34`, resp. `z2 = z4 = z6` at `e35`).
+The view `bB2 F` in the face plane of `0345`, perpendicular to the edge `3 4` (Q45B2View.lean), with the lex tilt
+`(+N3, -e4)` is a lex cell whenever `B2ViewOK F` (facet signs `0 1 4` and `5 7` (two cases), `RobUniLex` of the rim
+`0 1 6 3 4` or `0 1 2 3 4`); the C2 tie is its mirror image under `π = (2 6)(4 5)` (`B2ViewOK (Sym.sym24 F)`,
+`lexAny_of_b2View_sym`).  So `ResB2T` / `ResC2T` keep only the points where that view fails. -/
+
+/-- `T-B2` where the face-plane view fails. -/
+def ResB2V {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s : ℝ) : Prop := ResB2T x s ∧ ¬ B2ViewOK F
+/-- `T-C2` where the mirrored face-plane view fails. -/
+def ResC2V {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : ℝ) : Prop := ResC2T x t ∧ ¬ B2ViewOK (Sym.sym24 F)
+
+/-- `Q45ResSTU` after the face-plane view on the corner ties. -/
+def Q45ResSTV {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ResWallU F s t ∨ ResB1T x s ∨ ResBs1 F s ∨ ResJ0aU F s ∨ ResB2V F s ∨ ResJ0bU F s ∨ ResK0 F ∨
+    ResC1T x t ∨ ResCt1 F t ∨ ResJ0cU F t ∨ ResC2V F t ∨ ResJ0dU F t
+
+/-- The branch-tagged residue after the face-plane view. -/
+def Q45ResWV {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTV F s t
+
+/-- **The face-plane view on the corner ties**: a point of `Q45ResSTU` is `LexAny` or in `Q45ResSTV`. -/
+theorem q45_resV_local (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (h : Q45ResSTU F s t) :
+    Gen.LexAny F ∨ Q45ResSTV F s t := by
+  rcases h with h | h | h | h | h | h | h | h | h | h | h | h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr ((Or.inl h)))
+  · exact Or.inr (Or.inr (Or.inr ((Or.inl h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h)))))
+  · by_cases hV : B2ViewOK F
+    · exact Or.inl (lexAny_of_b2View F hV)
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl ⟨h, hV⟩))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h)))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h)))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h))))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h)))))))))))
+  · by_cases hV : B2ViewOK (Sym.sym24 F)
+    · exact Or.inl (lexAny_of_b2View_sym F hV)
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
+        (Or.inl ⟨h, hV⟩)))))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (h))))))))))))
+
+/-- `Q45ResWV ⊆ Q45ResWU`. -/
+theorem q45ResWV_sub {F : S0xFac 9 s0x_S24 x} (h : Q45ResWV F) : Q45ResWU F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
+  refine ⟨s, t, hs, ht, hst, hd, ?_⟩
+  rcases h with h | h | h | h | h | h | h | h | h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr ((Or.inl h))
+  · exact Or.inr (Or.inr ((Or.inl h)))
+  · exact Or.inr (Or.inr (Or.inr ((Or.inl h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h.1)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h)))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h)))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h))))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((Or.inl h.1)))))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (h)))))))))))
+
+/-- **Global form**: on the corner every point has `LexAny`, `AnyFaceChord`, is Rupert, or lies in `Q45ResWV`. -/
+theorem q45_resV (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) :
+    Gen.LexAny F ∨ Gen.AnyFaceChord F ∨ IsRupert (univ.image x) ∨ Q45ResWV F := by
+  rcases q45_resU F h4 h5 with h | h | h | ⟨s, t, hs0, ht, hst, hd, h⟩
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · rcases q45_resV_local F h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr ⟨s, t, hs0, ht, hst, hd, h⟩))
+
+/-- [OPEN] **The special piece after the face-plane view, Rupert form**: as `OpenSpecialU` with `Q45ResWV` (the corner
+ties `T-B2`, `T-C2` cut down to the points where the face-plane view `(bB2, N3, -e4)`, resp. its mirror, fails) in
+place of `Q45ResWU`. -/
+def OpenSpecialV : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWV F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialU → OpenSpecialV` (`q45ResWV_sub`). -/
+theorem openSpecialV_of_openSpecialU (h : OpenSpecialU) : OpenSpecialV :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4 (q45ResWV_sub hr) hF
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialV`. -/
+theorem hole24_offOB1_V {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialV) : IsRupert (univ.image x) := by
+  obtain ⟨b1, b2, b3⟩ := resid24_frame_signs h.2.2.1 hO
+  have b4 := resid24_b1245 h.2.2.1 hO
+  obtain ⟨-, h4, h5⟩ := offWall_of_hole24 h hO
+  have hF := holeFull_of_hole24 h
+  rcases q45_resV F h4 h5 with hL | hA | hR | hr
+  · exact (hF.1.2.2.2.1 hL).elim
+  · exact (hF.1.2.2.1 hA).elim
+  · exact hR
+  · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
+
+/-- [PROVED] Generic + special (face-plane view form) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_V (h1 : OpenOB1) (h2 : OpenSpecialV) : Open24Rupert := by
+  intro x fs hh hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
+  · exact hole24_offOB1_V hH hO h2
 
 end Minimality.T24.OSpec
