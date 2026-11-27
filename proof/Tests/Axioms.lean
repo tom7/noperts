@@ -2832,6 +2832,19 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_of_tie64
 #assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_sym_of_tie52
 
+-- OSPEC11 (11-27): the K0 view on the double wall (126 down, rim 1 2 5 3 4 6, junction clauses DwK0C); OpenSpecialD
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_six_dw
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_k0DView
+#assert_standard_axioms Minimality.T24.OSpec.k0_lam_wall
+#assert_standard_axioms Minimality.T24.OSpec.k0_vee
+#assert_standard_axioms Minimality.T24.OSpec.k0DViewOK_of
+#assert_standard_axioms Minimality.T24.OSpec.k0DViewOK_sym_of
+#assert_standard_axioms Minimality.T24.OSpec.q45_resD_local
+#assert_standard_axioms Minimality.T24.OSpec.q45_resD
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialD_of_openSpecialB
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_D
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_D
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve

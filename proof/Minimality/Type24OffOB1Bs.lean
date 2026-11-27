@@ -644,4 +644,304 @@ theorem k0ViewOK_sym_of_tie52 (F : S0xFac 9 s0x_S24 x) (h4 : ⟪x 2 - x 5, x 5 -
 
 end K0Tie
 
+/-! ### The K0 view on the double wall (job OSPEC11)
+
+On the double wall `a4 = a5 = 1` every vertex lies on one of the parallel planes `126` (`a = 0`) and `0345`
+(`a = 1`), so the K0 view `(x 0 - x 4, x 0 - x 5, N3)` has `126` DOWN (level 3, `bs_n53_neg`; `K0ViewOK` needs it up)
+and the rim `1 2 5 3 4 6`: the chain `5 3 4` of `0345` facing `x 4 - x 0` and the chain `6 1 2` of `126` facing
+`x 0 - x 4`.  Level 1 is convex on the first chain (`3` is never a peak, `k0_vee`, for `t ≤ 1`) and concave on the
+second (`1` is never a valley, `k0_lam_wall`: `x 4 - x 0 = b4 (x 2 - x 1) + c4 (x 6 - x 1)`), so the 6-cycle is
+`RobUniLex` as soon as the two junctions `4 6` and `2 5` are tame (`DwK0C`, `robUniLex_six_dw`).  The junction clauses
+are exactly the rim condition on 20000 double-wall points [SAMPLED, ospec11]; they are explicit, not derived.
+-/
+
+section DwK0
+open Minimality.GenRev Minimality.LexCell
+
+
+/-- The no-alternation hypothesis of `robUniO_of_noAlt` for `k = 6` from a finite (decidable) check. -/
+theorem halt6_of (Mn Mx : Finset (ZMod 6))
+    (h : ∀ B : ZMod 6, ∀ b c d : Fin 6, 0 < b.val → b.val < c.val → c.val < d.val →
+      ¬ (B ∈ Mx ∧ B + (b.val : ZMod 6) ∈ Mn ∧ B + (c.val : ZMod 6) ∈ Mx ∧ B + (d.val : ZMod 6) ∈ Mn)) :
+    ∀ (B : ZMod 6) (b c d : ℕ), 0 < b → b < c → c < d → d < 6 →
+      ¬ (B ∈ Mx ∧ B + b ∈ Mn ∧ B + c ∈ Mx ∧ B + d ∈ Mn) :=
+  fun B b c d hb hbc hcd hd => h B ⟨b, by omega⟩ ⟨c, by omega⟩ ⟨d, hd⟩ hb hbc hcd
+
+/-- Typing aid for the valley condition of `robUniO_of_noAlt` (`k = 6`). -/
+theorem hMn_aux {α : Type*} [LinearOrder α] (z : ZMod 6 → α) (Mn : Finset (ZMod 6))
+    (h : ∀ v ∉ Mn, z (v - 1) < z v ∨ z (v + 1) < z v) : ∀ v ∉ Mn, z (v - 1) < z v ∨ z (v + 1) < z v := h
+/-- Typing aid for the peak condition of `robUniO_of_noAlt` (`k = 6`). -/
+theorem hMx_aux {α : Type*} [LinearOrder α] (z : ZMod 6 → α) (Mx : Finset (ZMod 6))
+    (h : ∀ v ∉ Mx, z v < z (v - 1) ∨ z v < z (v + 1)) : ∀ v ∉ Mx, z v < z (v - 1) ∨ z v < z (v + 1) := h
+
+set_option linter.unusedSimpArgs false in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+/-- The combinatorial core of `robUniLex_six_dw` over any linear order: with `3 ∉ Mx` (`hV`), `0 ∉ Mn` (`hL`) and
+one clause of each junction, `robUniO_of_noAlt` applies with the sets of the 9 cases (two candidate peaks and two
+candidate valleys never alternate). -/
+theorem robUniO_six_dw {α : Type*} [LinearOrder α] (z : ZMod 6 → α)
+    (hV : z 3 < z 2 ∨ z 3 < z 4) (hL : z 5 < z 0 ∨ z 1 < z 0)
+    (c1 : z 4 < z 5 ∨ z 4 < z 3 ∨ z 0 < z 5) (c2 : z 2 < z 1 ∨ z 2 < z 3 ∨ z 0 < z 1) : RobUniO z := by
+  rcases c1 with p | p | p <;> rcases c2 with q | q | q
+  · exact robUniO_of_noAlt (z := z) {2, 3, 4} {0, 1, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {1, 2, 4} {0, 1, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {2, 3, 4} {1, 2, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {2, 4, 5} {0, 1, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {1, 2, 4, 5} {0, 1, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {2, 4, 5} {1, 2, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {2, 3, 4} {1, 4, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {1, 2, 4} {1, 4, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+  · exact robUniO_of_noAlt (z := z) {2, 3, 4} {1, 2, 4, 5} (hMn_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (hMx_aux z _ (by intro v hv; rcases zmod6_cases v with rfl | rfl | rfl | rfl | rfl | rfl <;>   first | (exfalso; revert hv; decide) | (simp only [show (0 : ZMod 6) + 1 = 1 from rfl, show (1 : ZMod 6) + 1 = 2 from rfl, show (2 : ZMod 6) + 1 = 3 from rfl, show (3 : ZMod 6) + 1 = 4 from rfl, show (4 : ZMod 6) + 1 = 5 from rfl, show (5 : ZMod 6) + 1 = 0 from rfl, show (0 : ZMod 6) - 1 = 5 from rfl, show (1 : ZMod 6) - 1 = 0 from rfl, show (2 : ZMod 6) - 1 = 1 from rfl, show (3 : ZMod 6) - 1 = 2 from rfl, show (4 : ZMod 6) - 1 = 3 from rfl, show (5 : ZMod 6) - 1 = 4 from rfl]; first | assumption | (left; assumption) | (right; assumption)))) (halt6_of _ _ (by decide))
+
+
+
+/-- `LexLt3` as the order of `toLex` triples. -/
+theorem lexLt3_toLex_dw {p q : ℝ × ℝ × ℝ} (h : LexLt3 p q) :
+    toLex (p.1, toLex (p.2.1, p.2.2)) < toLex (q.1, toLex (q.2.1, q.2.2)) := by
+  simp only [LexLt3, LexPos3] at h
+  simp only [Prod.Lex.lt_iff, ofLex_toLex]
+  rcases h with h | ⟨h1, h2 | ⟨h2', h3⟩⟩
+  · exact Or.inl (by linarith)
+  · exact Or.inr ⟨by linarith, Or.inl (by linarith)⟩
+  · exact Or.inr ⟨by linarith, Or.inr ⟨by linarith, by linarith⟩⟩
+
+/-- **A 6-cycle `0 1 2 3 4 5` is `RobUniLex`** when `3` is below a neighbour (`hV`), `0` above a neighbour (`hL`),
+and the two junction clauses `c1`, `c2` hold (`robUniO_six_dw` via `robUniO_of_noAlt`, 9 cases). -/
+theorem robUniLex_six_dw (z : ZMod 6 → ℝ × ℝ × ℝ)
+    (hV : LexLt3 (z 3) (z 2) ∨ LexLt3 (z 3) (z 4)) (hL : LexLt3 (z 5) (z 0) ∨ LexLt3 (z 1) (z 0))
+    (c1 : LexLt3 (z 4) (z 5) ∨ LexLt3 (z 4) (z 3) ∨ LexLt3 (z 0) (z 5))
+    (c2 : LexLt3 (z 2) (z 1) ∨ LexLt3 (z 2) (z 3) ∨ LexLt3 (z 0) (z 1)) : RobUniLex z := by
+  rw [robUniLex_iff_O]
+  apply robUniO_six_dw
+  · exact hV.imp lexLt3_toLex_dw lexLt3_toLex_dw
+  · exact hL.imp lexLt3_toLex_dw lexLt3_toLex_dw
+  · exact c1.imp lexLt3_toLex_dw (Or.imp lexLt3_toLex_dw lexLt3_toLex_dw)
+  · exact c2.imp lexLt3_toLex_dw (Or.imp lexLt3_toLex_dw lexLt3_toLex_dw)
+
+/-- Rim `1 2 5 3 4 6` of the K0 view on the double wall (facets `012 016 025 0345 046` up, `126 235 236 346`
+down). -/
+def rimKD : ZMod 6 → Fin 7 := ![1, 2, 5, 3, 4, 6]
+def UKD : Finset (Fin 9) := {0, 1, 2, 3, 4}
+def DnKD : Finset (Fin 9) := {5, 6, 7, 8}
+
+theorem rimKD_cyc : S0xCycUD s0x_S24 rimKD UKD DnKD := by decide
+theorem rimKD_inj : Function.Injective rimKD := by decide
+
+/-- The K0 view depth triple of a vertex. -/
+noncomputable def k0P {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (v : Fin 7) : ℝ × ℝ × ℝ :=
+  (⟪x v, x 0 - x 4⟫, ⟪x v, x 0 - x 5⟫, ⟪x v, F.N 3⟫)
+
+/-- **The K0 view on the double wall**: `126`, `235`, `236` down and the rim `1 2 5 3 4 6` `RobUniLex`. -/
+def K0DViewOK {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  K0Dn F 5 ∧ K0Dn F 6 ∧ K0Dn F 7 ∧ RobUniLex (k0Z F rimKD)
+
+theorem lexAny_of_k0DView (F : S0xFac 9 s0x_S24 x) (h : K0DViewOK F) : Gen.LexAny F := by
+  obtain ⟨h5, h6, h7, hR⟩ := h
+  refine ⟨6, inferInstance, rimKD, UKD, DnKD, x 0 - x 4, x 0 - x 5, F.N 3, by norm_num, rimKD_inj,
+    rimKD_cyc, ?_, ?_, hR⟩
+  · intro t ht
+    simp only [UKD, Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl | rfl | rfl
+    exacts [k0_up_of_mem F 0 (by decide) (by decide), k0_up_of_mem F 1 (by decide) (by decide),
+      k0_up_of_mem F 2 (by decide) (by decide), k0_up3 F, k0_up4 F]
+  · intro t ht
+    simp only [DnKD, Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl | rfl
+    exacts [h5, h6, h7, k0_dn8 F]
+
+theorem lexAny_of_k0DView_sym (F : S0xFac 9 s0x_S24 x) (h : K0DViewOK (Sym.sym24 F)) : Gen.LexAny F :=
+  Sym.lexAny_sym F (lexAny_of_k0DView (Sym.sym24 F) h)
+
+/-- `126` is down on the double wall (level 3, `bs_n53_neg`). -/
+theorem k0_dn5_dw (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (hw5 : oblX0 x 5 = 1) : K0Dn F 5 := by
+  right
+  refine ⟨?_, Or.inr ⟨?_, ?_⟩⟩
+  · rw [F.inner_sub 5 0 4, bs_f5_obl F 4, hw4]; ring
+  · rw [F.inner_sub 5 0 5, bs_f5_obl F 5, hw5]; ring
+  · linarith [bs_n53_neg F hw4 hw5]
+
+/-- `236` is down on the wall `a4 = 1` (level 1). -/
+theorem k0_dn7_wall (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) : K0Dn F 7 := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (by decide)
+  have e74 := M4.fac_eval F 7 4
+  rw [F.zero 7 2 (by decide), F.zero 7 6 (by decide), hw4] at e74
+  have h1 := F.neg 7 1 (by decide)
+  left
+  rw [F.inner_sub 7 0 4]; nlinarith
+
+/-- On the wall `a4 = 1`, `1` is above `6` or `2` (level 1): `x 4 - x 0 = b4 (x 2 - x 1) + c4 (x 6 - x 1)`, so
+`|e4|² = b4 ⟪x 2 - x 1, e4⟫ + c4 ⟪x 6 - x 1, e4⟫ > 0`. -/
+theorem k0_lam_wall (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) :
+    LexLt3 (k0P F 6) (k0P F 1) ∨ LexLt3 (k0P F 2) (k0P F 1) := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (by decide)
+  have r4 := T.rep 4
+  rw [hw4] at r4
+  have e4 : x 4 - x 0 = oblX2 x 4 • (x 2 - x 1) + oblX6 x 4 • (x 6 - x 1) := by rw [r4]; module
+  have hu : x 4 - x 0 ≠ 0 := by
+    intro h0
+    have e := F.inner_sub 8 4 0
+    rw [h0, inner_zero_right, F.zero 8 4 (by decide)] at e
+    linarith [F.neg 8 0 (by decide)]
+  have hE : 0 < ⟪x 4 - x 0, x 4 - x 0⟫ := real_inner_self_pos.mpr hu
+  have hsum : ⟪x 4 - x 0, x 4 - x 0⟫ =
+      oblX2 x 4 * ⟪x 2 - x 1, x 4 - x 0⟫ + oblX6 x 4 * ⟪x 6 - x 1, x 4 - x 0⟫ := by
+    conv_lhs => rw [e4]
+    rw [inner_add_left, real_inner_smul_left, real_inner_smul_left]
+    conv_lhs => rw [← e4]
+  have k6 : ⟪x 1, x 0 - x 4⟫ - ⟪x 6, x 0 - x 4⟫ = ⟪x 6 - x 1, x 4 - x 0⟫ := by
+    rw [show x 0 - x 4 = -(x 4 - x 0) by abel, inner_neg_right, inner_neg_right, inner_sub_left]; ring
+  have k2 : ⟪x 1, x 0 - x 4⟫ - ⟪x 2, x 0 - x 4⟫ = ⟪x 2 - x 1, x 4 - x 0⟫ := by
+    rw [show x 0 - x 4 = -(x 4 - x 0) by abel, inner_neg_right, inner_neg_right, inner_sub_left]; ring
+  by_contra hc
+  push Not at hc
+  obtain ⟨n6, n2⟩ := hc
+  have a6 : ¬ 0 < ⟪x 6 - x 1, x 4 - x 0⟫ := fun h => n6 (Or.inl (by simp only [k0P]; rw [k6]; exact h))
+  have a2 : ¬ 0 < ⟪x 2 - x 1, x 4 - x 0⟫ := fun h => n2 (Or.inl (by simp only [k0P]; rw [k2]; exact h))
+  push Not at a6 a2
+  nlinarith
+
+/-- For `t ≤ 1` (and `s + t > 1`) `3` is below `5` or `4` (level 1): the chain `5 3 4` is not peaked at `3`. -/
+theorem k0_vee (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht0 : 0 < t) (ht1 : t ≤ 1) (hst : 1 < s + t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) :
+    LexLt3 (k0P F 3) (k0P F 5) ∨ LexLt3 (k0P F 3) (k0P F 4) := by
+  have hu : x 4 - x 0 ≠ 0 := by
+    intro h0
+    have e := F.inner_sub 8 4 0
+    rw [h0, inner_zero_right, F.zero 8 4 (by decide)] at e
+    linarith [F.neg 8 0 (by decide)]
+  have hE : 0 < ⟪x 4 - x 0, x 4 - x 0⟫ := real_inner_self_pos.mpr hu
+  set E := ⟪x 4 - x 0, x 4 - x 0⟫
+  set c := ⟪x 5 - x 0, x 4 - x 0⟫
+  have A : ⟪x 3 - x 0, x 4 - x 0⟫ = s * E + t * c := by
+    rw [hdec, inner_add_left, real_inner_smul_left, real_inner_smul_left]
+  have g5 : ⟪x 5, x 0 - x 4⟫ - ⟪x 3, x 0 - x 4⟫ = s * E - (1 - t) * c := by
+    rw [← inner_sub_left, show x 5 - x 3 = (x 5 - x 0) - (x 3 - x 0) by abel,
+      show x 0 - x 4 = -(x 4 - x 0) by abel, inner_neg_right, inner_sub_left, A]; ring
+  have g4 : ⟪x 4, x 0 - x 4⟫ - ⟪x 3, x 0 - x 4⟫ = t * c - (1 - s) * E := by
+    rw [← inner_sub_left, show x 4 - x 3 = (x 4 - x 0) - (x 3 - x 0) by abel,
+      show x 0 - x 4 = -(x 4 - x 0) by abel, inner_neg_right, inner_sub_left, A]; ring
+  by_contra hc
+  push Not at hc
+  obtain ⟨n5, n4⟩ := hc
+  have a5 : ¬ 0 < s * E - (1 - t) * c := fun h => n5 (Or.inl (by simp only [k0P]; rw [g5]; exact h))
+  have a4 : ¬ 0 < t * c - (1 - s) * E := fun h => n4 (Or.inl (by simp only [k0P]; rw [g4]; exact h))
+  push Not at a5 a4
+  rcases le_or_gt c 0 with hc0 | hc0
+  · nlinarith
+  · nlinarith [mul_pos hs0 hE, mul_pos ht0 hc0]
+
+/-- The junction clauses of the K0 view on the double wall: `4` below `6` or `3`, or `1` below `6`; and `5` below
+`2` or `3`, or `1` below `2` (lex depths in `(x 0 - x 4, x 0 - x 5, N3)`). -/
+def DwK0C {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  (LexLt3 (k0P F 4) (k0P F 6) ∨ LexLt3 (k0P F 4) (k0P F 3) ∨ LexLt3 (k0P F 1) (k0P F 6)) ∧
+    (LexLt3 (k0P F 5) (k0P F 2) ∨ LexLt3 (k0P F 5) (k0P F 3) ∨ LexLt3 (k0P F 1) (k0P F 2))
+
+/-- **The K0 view on the double wall from the junction clauses**: `a4 = a5 = 1`, `t ≤ 1`, `DwK0C`. -/
+theorem k0DViewOK_of (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (hw5 : oblX0 x 5 = 1) {s t : ℝ}
+    (hs0 : 0 < s) (ht0 : 0 < t) (ht1 : t ≤ 1) (hst : 1 < s + t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hC : DwK0C F) : K0DViewOK F := by
+  refine ⟨k0_dn5_dw F hw4 hw5, k0_dn6 F hs0 ht1 hdec, k0_dn7_wall F hw4, ?_⟩
+  obtain ⟨c1, c2⟩ := hC
+  exact robUniLex_six_dw (k0Z F rimKD) (k0_vee F hs0 ht0 ht1 hst hdec) (k0_lam_wall F hw4) c1 c2
+
+/-- The mirror form (the K0 view of `π24 x` on the double wall, at `(t, s)`). -/
+theorem k0DViewOK_sym_of (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (hw5 : oblX0 x 5 = 1) {s t : ℝ}
+    (hs0 : 0 < s) (ht0 : 0 < t) (hs1 : s ≤ 1) (hst : 1 < s + t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hC : DwK0C (Sym.sym24 F)) :
+    K0DViewOK (Sym.sym24 F) := by
+  have o4 : oblX0 (x ∘ Sym.pi24) 4 = oblX0 x 5 := by rw [Sym.oblX0_comp_pi24]; simp
+  have o5 : oblX0 (x ∘ Sym.pi24) 5 = oblX0 x 4 := by rw [Sym.oblX0_comp_pi24]; simp
+  refine k0DViewOK_of (Sym.sym24 F) (by rw [o4]; exact hw5) (by rw [o5]; exact hw4) (s := t) (t := s) ht0 hs0 hs1
+    (by linarith) ?_ hC
+  simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_3, Sym.pi24_4, Sym.pi24_5]
+  rw [hdec]; abel
+
+
+/-! ### The residue after the double-wall K0 views -/
+
+/-- The double-wall K0 view's conditions at `(s, t)` (`k0DViewOK_of`). -/
+def DwK0Cut {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : ℝ) : Prop :=
+  oblX0 x 4 = 1 ∧ oblX0 x 5 = 1 ∧ t ≤ 1 ∧ DwK0C F
+
+/-- `Q45ResSTB` where neither double-wall K0 view applies: off the double wall this is `Q45ResSTB`; on it, the
+explicit failure of the junction clauses `DwK0C` (or `t > 1`), for both views. -/
+def Q45ResSTD {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  Q45ResSTB F s t ∧ ¬ DwK0Cut F t ∧ ¬ DwK0Cut (Sym.sym24 F) s
+
+/-- The branch-tagged residue after the double-wall K0 views. -/
+def Q45ResWD {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTD F s t
+
+/-- **The double-wall K0 views cut the residue**: a point of `Q45ResSTB` is `LexAny` or in `Q45ResSTD`. -/
+theorem q45_resD_local (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht0 : 0 < t) (hst : 1 < s + t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h : Q45ResSTB F s t) :
+    Gen.LexAny F ∨ Q45ResSTD F s t := by
+  by_cases hA : DwK0Cut F t
+  · obtain ⟨h4, h5, ht, hC⟩ := hA
+    exact Or.inl (lexAny_of_k0DView F (k0DViewOK_of F h4 h5 hs0 ht0 ht hst hdec hC))
+  by_cases hB : DwK0Cut (Sym.sym24 F) s
+  · obtain ⟨h4, h5, hs, hC⟩ := hB
+    have o4 : oblX0 (x ∘ Sym.pi24) 4 = oblX0 x 5 := by rw [Sym.oblX0_comp_pi24]; simp
+    have o5 : oblX0 (x ∘ Sym.pi24) 5 = oblX0 x 4 := by rw [Sym.oblX0_comp_pi24]; simp
+    rw [o4] at h4; rw [o5] at h5
+    exact Or.inl (lexAny_of_k0DView_sym F (k0DViewOK_sym_of F h5 h4 hs0 ht0 hs hst hdec hC))
+  exact Or.inr ⟨h, hA, hB⟩
+
+/-- `Q45ResWD ⊆ Q45ResWB`. -/
+theorem q45ResWB_of_D {F : S0xFac 9 s0x_S24 x} (h : Q45ResWD F) : Q45ResWB F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
+  exact ⟨s, t, hs, ht, hst, hd, h.1⟩
+
+/-- **Global form**: on the corner every point has `LexAny`, `AnyFaceChord`, is Rupert, or lies in `Q45ResWD`. -/
+theorem q45_resD (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) :
+    Gen.LexAny F ∨ Gen.AnyFaceChord F ∨ IsRupert (univ.image x) ∨ Q45ResWD F := by
+  rcases q45_resB F h4 h5 with h | h | h | ⟨s, t, hs0, ht, hst, hd, h⟩
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · rcases q45_resD_local F hs0 ht hst hd h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr ⟨s, t, hs0, ht, hst, hd, h⟩))
+
+/-- [OPEN] **The special piece after the double-wall K0 views, Rupert form**: `OpenSpecialB` with `Q45ResWD` in
+place of `Q45ResWB`. -/
+def OpenSpecialD : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWD F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialB → OpenSpecialD` (`q45ResWB_of_D`). -/
+theorem openSpecialD_of_openSpecialB (h : OpenSpecialB) : OpenSpecialD :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4 (q45ResWB_of_D hr) hF
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialD`. -/
+theorem hole24_offOB1_D {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialD) : IsRupert (univ.image x) := by
+  obtain ⟨b1, b2, b3⟩ := resid24_frame_signs h.2.2.1 hO
+  have b4 := resid24_b1245 h.2.2.1 hO
+  obtain ⟨-, h4, h5⟩ := offWall_of_hole24 h hO
+  have hF := holeFull_of_hole24 h
+  rcases q45_resD F h4 h5 with hL | hA | hR | hr
+  · exact (hF.1.2.2.2.1 hL).elim
+  · exact (hF.1.2.2.1 hA).elim
+  · exact hR
+  · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
+
+/-- [PROVED] Generic + special (after the double-wall K0 views) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_D (h1 : OpenOB1) (h2 : OpenSpecialD) : Open24Rupert := by
+  intro x fs hh hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
+  · exact hole24_offOB1_D hH hO h2
+
+end DwK0
+
 end Minimality.T24.OSpec
