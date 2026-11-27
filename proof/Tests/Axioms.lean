@@ -250,6 +250,7 @@ import Minimality.Type24WCLemmas
 import Minimality.Type24FamSlope
 import Minimality.Type24WDCell
 import Minimality.Type24T2Cone
+import Minimality.Type24T2AH
 import Minimality.Type24T0Interior
 import Minimality.Type24NamedCover
 import Minimality.Type24OffOB1
@@ -2624,6 +2625,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_z1Region_twin
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_z1Region
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_z1Region_twin
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_robUni_of_ah
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_lexAny_of_ah
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_exists_of_ah3Region
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_ah3Region
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_ah3Region_twin
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_ah3Region
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_ah3Region_twin
 #assert_standard_axioms Minimality.H21.exists_mixed_cellAt
 #assert_standard_axioms Minimality.H21.lexAny_of_cellAt_robUni
 #assert_standard_axioms Minimality.H21.lexAny_of_closedCell_q4
