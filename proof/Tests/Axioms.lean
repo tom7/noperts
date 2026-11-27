@@ -252,6 +252,7 @@ import Minimality.Type24WDCell
 import Minimality.Type24T2Cone
 import Minimality.Type24T0Interior
 import Minimality.Type24NamedCover
+import Minimality.Type24OffOB1
 import Minimality.Type24HoleAtlasNC
 import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
@@ -2512,3 +2513,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Atlas.not_holeLeaf_of_namedCoverEmpty
 #assert_standard_axioms Minimality.T24.Atlas.openOB1_of_namedCoverEmpty
 #assert_standard_axioms Minimality.T24.Atlas.open24_of_namedCoverEmpty
+#assert_standard_axioms Minimality.T24.OSpec.rOff_lexAny
+#assert_standard_axioms Minimality.T24.OSpec.offWall_of_brackets
+#assert_standard_axioms Minimality.T24.OSpec.offWall_of_hole24
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialW_of_openSpecial
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1
+#assert_standard_axioms Minimality.T24.OSpec.not_hole24_of_namedCoverEmpty_W
+#assert_standard_axioms Minimality.T24.OSpec.open24_of_split_W
