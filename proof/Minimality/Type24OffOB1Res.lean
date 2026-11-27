@@ -32,7 +32,7 @@ the disjunction of `ResWall` (the walls only in the branches whose sign fails: `
 a4 = 1`; `kJ = 0` on a wall; `a4 = a5 = 1`), four codim-2 corner ties (`ResB1T` ..), the codim-2 pieces `ResBs1`,
 `ResCt1`, `ResK0`, and the four face-chord branches `ResJ0a` .. `ResJ0d` with the loci S3 / S4J0 / S2J0.
 `OpenSpecialR` is `OpenSpecialW` with `Q45ResW` in place of walls ∨ `Q45Special'`; it is implied by `OpenSpecialW`
-(`openSpecialR_of_openSpecialW`) and still closes the hole (`not_hole24_of_namedCoverEmpty_R`, `open24_of_split_R`).
+(`openSpecialR_of_openSpecialW`) and still closes the hole (`open24_of_split_R`; cell form `Cell.not_hole24_of_cellCoverEmpty_R`).
 -/
 
 namespace Minimality.T24.OSpec
@@ -398,15 +398,6 @@ theorem hole24_offOB1_R {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.
   · exact hF.1.2.2.1 hA
   · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
 
-/-- [PROVED] `NamedCoverEmpty` and the branch-tagged special piece rule out every `Hole24` point. -/
-theorem not_hole24_of_namedCoverEmpty_R (hN : TwoCone.NamedCoverEmpty) (hS : OpenSpecialR) :
-    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ Hole24 x F := by
-  intro x F hH
-  by_cases hO : H24K.SAT.OB1 x
-  · have hres := TwoCone.hole24_namedCoverResidue hH
-    exact hN x F hres.1 hO hres
-  · exact hole24_offOB1_R hH hO hS
-
 /-- [PROVED] Generic + branch-tagged special assemble to `Open24`. -/
 theorem open24_of_split_R (h1 : OpenOB1) (h2 : OpenSpecialR) : Open24 := by
   intro x fs hh hH
@@ -633,15 +624,6 @@ theorem hole24_offOB1_E {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.
   · exact (hF.1.2.2.1 hA).elim
   · exact hR
   · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
-
-/-- [PROVED] `NamedCoverEmpty` and `OpenSpecialE`: every `Hole24` point is Rupert. -/
-theorem rupert_of_namedCoverEmpty_E (hN : TwoCone.NamedCoverEmpty) (hS : OpenSpecialE) :
-    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), Hole24 x F → IsRupert (univ.image x) := by
-  intro x F hH
-  by_cases hO : H24K.SAT.OB1 x
-  · have hres := TwoCone.hole24_namedCoverResidue hH
-    exact (hN x F hres.1 hO hres).elim
-  · exact hole24_offOB1_E hH hO hS
 
 /-- [PROVED] Generic + special (far-pair form) assemble to `Open24Rupert` (what the main theorem uses). -/
 theorem open24Rupert_of_split_E (h1 : OpenOB1) (h2 : OpenSpecialE) : Open24Rupert := by

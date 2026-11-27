@@ -1,0 +1,37 @@
+module
+
+public import Minimality.Type24CellWall
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open scoped RealInnerProductSpace
+open Finset
+open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.Stmt
+
+/-!
+# The cell-form headline with the far-pair special Prop (job OSPEC3)
+
+`Cell.not_hole24_of_cellCoverEmpty_R` (Type24CellWall.lean) with `OSpec.OpenSpecialE` (Type24OffOB1Res.lean, weaker
+than `OpenSpecialR`, Rupert form) in place of `OpenSpecialR`: every `Hole24` point is Rupert, so `Open24Rupert`, the
+form the main theorem uses (`main_sorry_of_open24Rupert`).
+-/
+
+namespace Minimality.T24.Cell
+
+/-- [PROVED] `CellCoverEmpty L` and `OSpec.OpenSpecialE`: every `Hole24` point is Rupert. -/
+theorem rupert_of_cellCoverEmpty_E {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialE) :
+    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), Hole24 x F → IsRupert (univ.image x) := by
+  intro x F hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (hN x F hH.1.1 hO (hole24_cellCoverResidue L hH)).elim
+  · exact OSpec.hole24_offOB1_E hH hO hS
+
+/-- [PROVED] `CellCoverEmpty L` and `OSpec.OpenSpecialE` give `Stmt.Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty_E {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialE) :
+    Open24Rupert :=
+  OSpec.open24Rupert_of_split_E (openOB1_of_cellCoverEmpty hN) hS
+
+end Minimality.T24.Cell
