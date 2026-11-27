@@ -158,7 +158,8 @@ theorem hole24_ob1_or_special {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
     · exact Or.inl ((A19.ob1_comp_pi24 x).1 h.1)
     · exact Or.inl ((A19.ob1_comp_pi24 x).1 h.1)
 
-/-- [OPEN] The generic piece: `HoleFull` on `OB1`. -/
+/-- [OPEN] The generic piece: `HoleFull` on `OB1`.  Implied by `TwoCone.NamedCoverEmpty`
+(`Atlas.openOB1_of_namedCoverEmpty`, Type24HoleAtlasNC.lean), the current open form of this piece. -/
 def OpenOB1 : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), H24K.SAT.OB1 x → ¬ HoleFull x F
 
 /-- [OPEN] The special piece off `OB1` (walls and `Q45` strata). -/

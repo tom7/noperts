@@ -34,6 +34,11 @@ Every atlas fact is obtained by running the leaf's own cell data through a gener
 `SplitAny`), which `Hole24` excludes (`hole24_leaves`).  The hole supplies `CbarIn x` and injectivity of `x`
 (`inj_of_fac`); `OB1`, `Delta24 > 0`, `b3 < 1` and the other region hypotheses of the leaves are kept as explicit
 hypotheses (they are not consequences of `Hole24`).  See nopert229 notes/TYPE24-HOLE-ATLAS.md.
+
+Later atlas modules: `Type24HoleAtlasEP` / `Type24HoleAtlasEPRev` (contrapositives of the Edge-Plane arrows, 5-rim
+classification) and `Type24HoleAtlasNC` (the named-view certificates: arrows "certificate => generic leaf", the bundle
+`holeLeaf_namedCoverResidue`, and `NamedCoverEmpty → OpenOB1`).  `Type24HoleAtlasNC`'s module docstring is the
+index of all lattice arrows proved elsewhere (Edge-Plane, order certificates, Split family, RobUni).
 -/
 
 @[expose] public section
@@ -168,9 +173,9 @@ theorem holeLeaf_inputs (h : HoleLeaf x F) : CbarIn x ∧ Function.Injective x �
   ⟨h.1, Minimality.H24.SAT.inj_of_fac F, holeLeaf_not_lexAny h⟩
 
 /-- On `HoleLeaf` there is no Edge-Plane view (`Gen.EdgePlaneAny`, first-order free by the Edge-Plane Lemma).
-Census (FREECERT 11-25): every free view found at hole-candidate points was an Edge-Plane view.  CONJECTURE (not
-proved): `Gen.SplitAny F → Gen.EdgePlaneAny x` (1624 of 1624 `SplitRows` views tested on a C-covered sample were
-also Edge-Plane views), so `¬ EdgePlaneAny` would subsume `¬ SplitAny`. -/
+Census (FREECERT 11-25): every free view found at hole-candidate points was an Edge-Plane view.  PROVED since
+(noperts 7f2992c4): `Gen.SplitAny F → Gen.EdgePlaneAny x` (`Gen.splitAny_edgePlaneAny`), so `¬ EdgePlaneAny`
+subsumes `¬ SplitAny` (`holeLeaf_iff_min`); also `LexAny → EdgePlaneAny` (`T24.LexEP.lexAny_edgePlaneAny`). -/
 theorem holeLeaf_not_edgePlaneAny (h : HoleLeaf x F) : ¬ Gen.EdgePlaneAny x := h.2.2.2.2.2.2
 
 /-- `Hole24` form of `holeLeaf_not_edgePlaneAny`. -/

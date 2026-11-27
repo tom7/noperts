@@ -61,7 +61,10 @@ theorem hole24_namedCoverResidue {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} 
 /-! ## FU1: Top-level reduction to `NamedCoverEmpty` and `OpenSpecial` -/
 
 /-- **FU1 (`[OPEN]`):** The generic open part of P3: on `CbarIn` and `OB1`, the named-cover
-residue is empty (no `Hole24` point can survive all named cover exclusions). -/
+residue is empty (no `Hole24` point can survive all named cover exclusions).  It implies `Stmt.OpenOB1`
+(`Atlas.openOB1_of_namedCoverEmpty`, Type24HoleAtlasNC.lean).  Refuted sub-covers (EXACT, witnesses in nopert229
+data/hard/holekit/): T_2 alone (`t2uni_p1_cube.lines`), `{w_C, T_2}` (`t2adv_union_fail15.lines`), one cone
+`C(x1)` (`wcadv_noEPinC43.lines`); see notes/TYPE24-HOLE-ATLAS.md section 0. -/
 def NamedCoverEmpty : Prop :=
   ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x),
     CbarIn x → H24K.SAT.OB1 x → ¬ NamedCoverResidue x F
@@ -82,7 +85,10 @@ theorem not_hole24_of_namedCoverEmpty (hN : NamedCoverEmpty) (hS : OpenSpecial) 
     · exact hN x F hC hO hres
     · exact hS x F hO (Or.inr hq) hF
 
-/-! ## FU2–FU3: Carbon's revised 4-leaf tree (`A86 addendum to Q86 addendum`, §1) -/
+/-! ## FU2–FU3: Carbon's revised 4-leaf tree (`A86 addendum to Q86 addendum`, §1)
+
+Bookkeeping only.  The tree is judged a fitted cover (nopert229 notes/NAMED-COVER-STRATEGY.md), not the proof plan;
+`Leaf4` was never used on 12097 hard points (Q86BREF). -/
 
 /-- **Leaf 1 (`w_C` on `x` or `π_24` twin):** existence of a `WCCertAt` certificate on `(x, F)`
 or its `π_24` twin.
@@ -118,8 +124,8 @@ Real-point satisfiability (FU3):
 * `CA2CertAt`: `F~mrad_41002_8594` (line 7 of `q84ref_pool_miss39.lines`, Task FS,
   `(β, γ) = (0.8, 0.07)`, `a = 1`, `sh = -1`, `μ = 3.053421221`, `α = 1.158907471`,
   `margin = 0.04217616374`).
-* `CB2CertAt`: complementary `γ < γ_8` branch (`(U_B2, D_B2)` cell) in the same `T_2` cone
-  (Task FS; not individually logged in FL–FT C++ runs). -/
+* `CB2CertAt`: complementary `γ < γ_8` branch (`(U_B2, D_B2)` cell) in the same `T_2` cone;
+  satisfiable on a real point (Task FW0: `namedcov_gap31.lines`, lines 1 and 6, with `CB0CertAt`). -/
 def Leaf3 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   (∃ beta gamma : ℝ, CA2CertAt x F beta gamma ∨ CB2CertAt x F beta gamma) ∨
   (∃ beta gamma : ℝ, CA2CertAt (x ∘ Sym.pi24) (Sym.sym24 F) beta gamma ∨
@@ -132,8 +138,8 @@ Real-point satisfiability (FU3):
 * `CA0CertAt`: `w54_161` in `twoadv_gap234.lines` (Task FT, `(b, γ) = (3/10, 16/25)`,
   `a = 2`, `sh = 1`, `μ = 9.413244071`, `α = -2.902317691`, `margin = 0.1983535724`, and
   `a = 4`, `sh = -1`, `μ = -4.676488455`, `α = -1.419789395`, `margin = 0.2956894851`).
-* `CB0CertAt`: complementary `γ < γ_8` branch (`(U_B0, D_B0)` cell) at `b = 3/10` (Task FT;
-  not individually logged in FL–FT C++ runs). -/
+* `CB0CertAt`: complementary `γ < γ_8` branch (`(U_B0, D_B0)` cell); satisfiable on a real point
+  (Task FW0: `namedcov_gap31.lines`, lines 1 and 6, with `CB2CertAt`). -/
 def Leaf4 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   (∃ gamma : ℝ, CA0CertAt x F (3 / 10) gamma ∨ CB0CertAt x F (3 / 10) gamma) ∨
   (∃ gamma : ℝ, CA0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) (3 / 10) gamma ∨
