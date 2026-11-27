@@ -2466,3 +2466,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_cB0_twin
 #assert_standard_axioms Minimality.T24.TwoCone.hole24_not_cB0_twin
 #assert_standard_axioms Minimality.T24.TwoCone.hole24_namedCoverResidue
+#assert_standard_axioms Minimality.T24.TwoCone.not_hole24_of_namedCoverEmpty
+#assert_standard_axioms Minimality.T24.TwoCone.namedCoverEmpty_of_leaves
