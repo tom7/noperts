@@ -2364,3 +2364,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.TwoCone.hole24_not_wc
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_T0_family
 #assert_standard_axioms Minimality.T24.TwoCone.hole24_not_T0_family
+#assert_standard_axioms Minimality.T24.TwoCone.edgePlaneAny_of_comp_pi24
+#assert_standard_axioms Minimality.T24.TwoCone.wc_edgePlaneAny_twin
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_wc_twin
+#assert_standard_axioms Minimality.T24.TwoCone.hole24_not_wc_twin
+#assert_standard_axioms Minimality.T24.TwoCone.hole24_twoConeResidue

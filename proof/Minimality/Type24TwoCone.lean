@@ -698,4 +698,238 @@ theorem hole24_not_T0_family {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF 
     ∀ᶠ δ : ℝ in 𝓝[>] 0, ¬ EdgePlaneAt (x ∘ (0 : Fin 7).succAbove) (uF x x0 δ) :=
   holeLeaf_not_T0_family hF.1 hI
 
+/-! ## FM1: `π_24` twin of the `w_C` leaf -/
+
+/-- `Gen.EdgePlaneAny` is preserved under the `Sym.pi24` vertex permutation. -/
+theorem edgePlaneAny_of_comp_pi24 (x : Fin 7 → ℝ³)
+    (h : Gen.EdgePlaneAny (x ∘ Sym.pi24)) : Gen.EdgePlaneAny x := by
+  rcases h with ⟨k, hne, lab, w, a, s, α, μ, hk, hinj, hrim, hhid, hDw, hrows⟩
+  let lab' : ZMod k → Fin 7 := fun i => Sym.pi24 (lab i)
+  have hinj' : Function.Injective lab' := Sym.pi24.injective.comp hinj
+  have hrim' : Split.StrictRimN x w lab' := by
+    intro m i hm1 hm2
+    let m' : Fin 7 := Sym.pi24.symm m
+    have hm' : Sym.pi24 m' = m := Sym.pi24.apply_symm_apply m
+    have h1 : m' ≠ lab i := fun h => hm1 (by rw [← hm']; exact congrArg Sym.pi24 h)
+    have h2 : m' ≠ lab (i + 1) := fun h => hm2 (by rw [← hm']; exact congrArg Sym.pi24 h)
+    simpa only [Function.comp_apply, hm', lab'] using hrim m' i h1 h2
+  have hhid' : Split.HiddenInTriangles x w lab' := by
+    have himg : univ.image (x ∘ Sym.pi24) = univ.image x := by
+      ext y
+      simp only [mem_image, mem_univ, true_and, Function.comp_apply]
+      exact ⟨fun ⟨i, hi⟩ => ⟨Sym.pi24 i, hi⟩,
+        fun ⟨i, hi⟩ => ⟨Sym.pi24.symm i, by simpa using hi⟩⟩
+    intro m hm
+    let m' : Fin 7 := Sym.pi24.symm m
+    have hm' : Sym.pi24 m' = m := Sym.pi24.apply_symm_apply m
+    have hmi : ∀ i, m' ≠ lab i := fun i h => hm i (by rw [← hm']; exact congrArg Sym.pi24 h)
+    obtain ⟨p, hp, q, hq, r, hr, t1, t2, t3, t4⟩ := hhid m' hmi
+    rw [himg] at hp hq hr
+    simp only [Function.comp_apply, hm'] at t2 t3 t4
+    exact ⟨p, hp, q, hq, r, hr, t1, t2, t3, t4⟩
+  exact ⟨k, hne, lab', w, a, s, α, μ, hk, hinj', hrim', hhid', hDw, hrows⟩
+
+/-- The `π_24` twin rim `Sym.pi24 ∘ wcRim = ![0, 4, 6, 3, 2]`. -/
+def wcTwinRim : ZMod 5 → Fin 7 := ![0, 4, 6, 3, 2]
+
+theorem wcTwinRim_eq : ∀ i : ZMod 5, wcTwinRim i = Sym.pi24 (wcRim i) := by
+  decide
+
+/-- **FM1 (`w_C` twin leaf):** `π_24` image of `wc_edgePlaneAny` (view `capView (x ∘ Sym.pi24) 1 η cb`,
+rim `wcTwinRim = ![0, 4, 6, 3, 2]`, edge `2 → 0`). -/
+theorem wc_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x) (cb : ℝ)
+    (hw5 : 1 / omega5 (x ∘ Sym.pi24) < cb) (hw3 : cb < omega3 (x ∘ Sym.pi24))
+    (h368_pos : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      0 < ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ →
+      -⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫ /
+        ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ < cb)
+    (h368_neg : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ < 0 →
+      cb < -⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫ /
+        ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫)
+    (h368_zero : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ = 0 →
+      0 < ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫)
+    (hD0 : ⟪(x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4),
+      capView (x ∘ Sym.pi24) 1 0 cb⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod 5, i ≠ 4 →
+      Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+        ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+        (capView (x ∘ Sym.pi24) 1 0 cb) ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod 5, i ≠ 4 → (j = i ∨ j = i + 1) →
+      0 < Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+          ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+          (capView (x ∘ Sym.pi24) 1 0 cb) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (wcRim t)) 4 i j,
+            capView (x ∘ Sym.pi24) 1 0 cb⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+            ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+            (capView (x ∘ Sym.pi24) 1 0 cb)) -
+        μ' * ⟪(x ∘ Sym.pi24) (wcRim j) - (x ∘ Sym.pi24) (wcRim 4),
+          capView (x ∘ Sym.pi24) 1 0 cb⟫ < α')
+    (hOrange0 : ∀ p q : ZMod 5, p ≠ 4 → (q = p ∨ q = p + 1) →
+      Split.det3 ((x ∘ Sym.pi24) (wcRim (p + 1)) - (x ∘ Sym.pi24) (wcRim p))
+          ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+          (capView (x ∘ Sym.pi24) 1 0 cb) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (wcRim t)) 4 p q,
+            capView (x ∘ Sym.pi24) 1 0 cb⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (wcRim (p + 1)) - (x ∘ Sym.pi24) (wcRim p))
+            ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+            (capView (x ∘ Sym.pi24) 1 0 cb)) -
+        μ' * ⟪(x ∘ Sym.pi24) (wcRim q) - (x ∘ Sym.pi24) (wcRim 4),
+          capView (x ∘ Sym.pi24) 1 0 cb⟫) :
+    Gen.EdgePlaneAny x :=
+  edgePlaneAny_of_comp_pi24 x
+    (wc_edgePlaneAny (Sym.sym24 F) ((Sym.cbarIn_comp_pi24 x).2 hC) cb
+      hw5 hw3 h368_pos h368_neg h368_zero hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0)
+
+/-- **FM1 (`HoleLeaf` `w_C` twin hole fact).** -/
+theorem holeLeaf_not_wc_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    (cb : ℝ) (hw5 : 1 / omega5 (x ∘ Sym.pi24) < cb) (hw3 : cb < omega3 (x ∘ Sym.pi24))
+    (h368_pos : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      0 < ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ →
+      -⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫ /
+        ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ < cb)
+    (h368_neg : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ < 0 →
+      cb < -⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫ /
+        ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫)
+    (h368_zero : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ = 0 →
+      0 < ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫)
+    (hD0 : ⟪(x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4),
+      capView (x ∘ Sym.pi24) 1 0 cb⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod 5, i ≠ 4 →
+      Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+        ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+        (capView (x ∘ Sym.pi24) 1 0 cb) ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod 5, i ≠ 4 → (j = i ∨ j = i + 1) →
+      0 < Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+          ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+          (capView (x ∘ Sym.pi24) 1 0 cb) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (wcRim t)) 4 i j,
+            capView (x ∘ Sym.pi24) 1 0 cb⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+            ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+            (capView (x ∘ Sym.pi24) 1 0 cb)) -
+        μ' * ⟪(x ∘ Sym.pi24) (wcRim j) - (x ∘ Sym.pi24) (wcRim 4),
+          capView (x ∘ Sym.pi24) 1 0 cb⟫ < α')
+    (hOrange0 : ∀ p q : ZMod 5, p ≠ 4 → (q = p ∨ q = p + 1) →
+      Split.det3 ((x ∘ Sym.pi24) (wcRim (p + 1)) - (x ∘ Sym.pi24) (wcRim p))
+          ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+          (capView (x ∘ Sym.pi24) 1 0 cb) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (wcRim t)) 4 p q,
+            capView (x ∘ Sym.pi24) 1 0 cb⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (wcRim (p + 1)) - (x ∘ Sym.pi24) (wcRim p))
+            ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+            (capView (x ∘ Sym.pi24) 1 0 cb)) -
+        μ' * ⟪(x ∘ Sym.pi24) (wcRim q) - (x ∘ Sym.pi24) (wcRim 4),
+          capView (x ∘ Sym.pi24) 1 0 cb⟫) :
+    False :=
+  Atlas.holeLeaf_not_edgePlaneAny hF
+    (wc_edgePlaneAny_twin F hF.1 cb hw5 hw3 h368_pos h368_neg h368_zero
+      hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0)
+
+/-- **FM1 (`Hole24` `w_C` twin hole fact).** -/
+theorem hole24_not_wc_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
+    (cb : ℝ) (hw5 : 1 / omega5 (x ∘ Sym.pi24) < cb) (hw3 : cb < omega3 (x ∘ Sym.pi24))
+    (h368_pos : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      0 < ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ →
+      -⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫ /
+        ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ < cb)
+    (h368_neg : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ < 0 →
+      cb < -⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫ /
+        ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫)
+    (h368_zero : ∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+      ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 6 - (x ∘ Sym.pi24) 1⟫ = 0 →
+      0 < ⟪(Sym.sym24 F).N t, (x ∘ Sym.pi24) 0 - (x ∘ Sym.pi24) 1⟫)
+    (hD0 : ⟪(x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4),
+      capView (x ∘ Sym.pi24) 1 0 cb⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod 5, i ≠ 4 →
+      Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+        ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+        (capView (x ∘ Sym.pi24) 1 0 cb) ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod 5, i ≠ 4 → (j = i ∨ j = i + 1) →
+      0 < Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+          ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+          (capView (x ∘ Sym.pi24) 1 0 cb) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (wcRim t)) 4 i j,
+            capView (x ∘ Sym.pi24) 1 0 cb⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (wcRim (i + 1)) - (x ∘ Sym.pi24) (wcRim i))
+            ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+            (capView (x ∘ Sym.pi24) 1 0 cb)) -
+        μ' * ⟪(x ∘ Sym.pi24) (wcRim j) - (x ∘ Sym.pi24) (wcRim 4),
+          capView (x ∘ Sym.pi24) 1 0 cb⟫ < α')
+    (hOrange0 : ∀ p q : ZMod 5, p ≠ 4 → (q = p ∨ q = p + 1) →
+      Split.det3 ((x ∘ Sym.pi24) (wcRim (p + 1)) - (x ∘ Sym.pi24) (wcRim p))
+          ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+          (capView (x ∘ Sym.pi24) 1 0 cb) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (wcRim t)) 4 p q,
+            capView (x ∘ Sym.pi24) 1 0 cb⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (wcRim (p + 1)) - (x ∘ Sym.pi24) (wcRim p))
+            ((x ∘ Sym.pi24) (wcRim (4 + 1)) - (x ∘ Sym.pi24) (wcRim 4))
+            (capView (x ∘ Sym.pi24) 1 0 cb)) -
+        μ' * ⟪(x ∘ Sym.pi24) (wcRim q) - (x ∘ Sym.pi24) (wcRim 4),
+          capView (x ∘ Sym.pi24) 1 0 cb⟫) :
+    False :=
+  holeLeaf_not_wc_twin hF.1 cb hw5 hw3 h368_pos h368_neg h368_zero hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0
+
+/-! ## FM2: Packaged two-cone residue -/
+
+/-- The `w_C` window and strict line-separation hypothesis at `w0 = capView x 1 0 cc`. -/
+def WCCertAt (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) (cc : ℝ) : Prop :=
+  1 / omega5 x < cc ∧ cc < omega3 x ∧
+  (∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+    0 < ⟪F.N t, x 6 - x 1⟫ → -⟪F.N t, x 0 - x 1⟫ / ⟪F.N t, x 6 - x 1⟫ < cc) ∧
+  (∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+    ⟪F.N t, x 6 - x 1⟫ < 0 → cc < -⟪F.N t, x 0 - x 1⟫ / ⟪F.N t, x 6 - x 1⟫) ∧
+  (∀ t ∈ ({3, 6, 8} : Finset (Fin 9)),
+    ⟪F.N t, x 6 - x 1⟫ = 0 → 0 < ⟪F.N t, x 0 - x 1⟫) ∧
+  ⟪x (wcRim (4 + 1)) - x (wcRim 4), capView x 1 0 cc⟫ ≠ 0 ∧
+  (∀ i : ZMod 5, i ≠ 4 →
+    Split.det3 (x (wcRim (i + 1)) - x (wcRim i))
+      (x (wcRim (4 + 1)) - x (wcRim 4)) (capView x 1 0 cc) ≠ 0) ∧
+  ∃ sh α' μ' : ℝ, (sh = 1 ∨ sh = -1) ∧
+    (∀ i j : ZMod 5, i ≠ 4 → (j = i ∨ j = i + 1) →
+      0 < Split.det3 (x (wcRim (i + 1)) - x (wcRim i))
+          (x (wcRim (4 + 1)) - x (wcRim 4)) (capView x 1 0 cc) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => x (wcRim t)) 4 i j, capView x 1 0 cc⟫ /
+          Split.det3 (x (wcRim (i + 1)) - x (wcRim i))
+            (x (wcRim (4 + 1)) - x (wcRim 4)) (capView x 1 0 cc)) -
+        μ' * ⟪x (wcRim j) - x (wcRim 4), capView x 1 0 cc⟫ < α') ∧
+    (∀ p q : ZMod 5, p ≠ 4 → (q = p ∨ q = p + 1) →
+      Split.det3 (x (wcRim (p + 1)) - x (wcRim p))
+          (x (wcRim (4 + 1)) - x (wcRim 4)) (capView x 1 0 cc) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => x (wcRim t)) 4 p q, capView x 1 0 cc⟫ /
+          Split.det3 (x (wcRim (p + 1)) - x (wcRim p))
+            (x (wcRim (4 + 1)) - x (wcRim 4)) (capView x 1 0 cc)) -
+        μ' * ⟪x (wcRim q) - x (wcRim 4), capView x 1 0 cc⟫)
+
+/-- **FM2 (`TwoConeResidue`):** packaged two-cone residue for `Hole24 x F`. -/
+def TwoConeResidue (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  CbarIn x ∧
+  (∀ x0 : ℝ, InI5 x x0 → ¬ SplitFamily F x0) ∧
+  (∀ x0 : ℝ, InI5 (x ∘ Sym.pi24) x0 → ¬ SplitFamilyTwin F x0) ∧
+  (∀ cc : ℝ, ¬ WCCertAt x F cc) ∧
+  (∀ cb : ℝ, ¬ WCCertAt (x ∘ Sym.pi24) (Sym.sym24 F) cb) ∧
+  (∀ x0 : ℝ, InI5 x x0 → ∀ᶠ δ : ℝ in 𝓝[>] 0, ¬ EdgePlaneAt (x ∘ (0 : Fin 7).succAbove) (uF x x0 δ))
+
+/-- **FM2 (`hole24_twoConeResidue`):** `Hole24 x F` implies `TwoConeResidue x F`. -/
+theorem hole24_twoConeResidue {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F) :
+    TwoConeResidue x F := by
+  refine ⟨hF.1.1,
+    fun x0 hI => holeLeaf_not_splitFamily F hF.1 hI,
+    fun x0 hI => holeLeaf_not_splitFamilyTwin F hF.1 hI,
+    fun cc hcc => ?_,
+    fun cb hcb => ?_,
+    fun x0 hI => holeLeaf_not_T0_family hF.1 hI⟩
+  · rcases hcc with ⟨hw5, hw3, h368p, h368n, h368z, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
+    exact hole24_not_wc hF cc hw5 hw3 h368p h368n h368z hD0 hcn sh hsh α' μ' hB hO
+  · rcases hcb with ⟨hw5, hw3, h368p, h368n, h368z, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
+    exact hole24_not_wc_twin hF cb hw5 hw3 h368p h368n h368z hD0 hcn sh hsh α' μ' hB hO
+
 end Minimality.T24.TwoCone
