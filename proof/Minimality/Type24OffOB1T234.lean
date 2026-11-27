@@ -47,7 +47,11 @@ opposite sides of the plane `2 3 4` (`x 2` lies in the dihedral wedge of the edg
 (`t234_dn8_iff`), and with `h4 ≤ h5` (`T234BrL`) `126` flips with `236` off `t234C = 0` (`t234_prod5` via the
 Binet-Cauchy `t234_gram`; `t234_dn5_of`, `t234_up5_of`).  So the residue letters are `016 046` down, the cone condition
 `T234Cone` (`0 ≤ X6`, `X6 ≤ X2`) and the rim choice (`T234RedL`, `t234ViewOK_iff_redL`); `OpenSpecialL`
-(equivalent to `OpenSpecialJ`).
+(equivalent to `OpenSpecialJ`).  Section `T234G`: off the cone the same view is still a lex cell, with the rim `0 1 6 3 4`
+(`t234C < 0`: `126 236` up), `0 1 2 3 6 4` or `0 2 3 6 4` (`X6 < 0`: `346` up), all depth letters derived
+(`t234_depths`); so on `T234BrL` the view needs only `T234RedM` (`016 046` down, `012` up or (`012` down, `025` up,
+`t234C ≥ 0`), `126` down at `t234C = 0`; `lexAny_of_t234RedM`).  Residue `Q45ResWM`, `OpenSpecialM` (implied by
+`OpenSpecialL`, a strictly smaller piece).
 -/
 
 namespace Minimality.T24.OSpec
@@ -1208,5 +1212,299 @@ theorem open24Rupert_of_split_L (h1 : OpenOB1) (h2 : OpenSpecialL) : Open24Ruper
   open24Rupert_of_split_J h1 (openSpecialL_iff_J.mp h2)
 
 end T234F
+
+
+section T234G
+open Minimality.LexCell
+
+variable {x : Fin 7 → ℝ³}
+
+/-! ### OSPEC17 (b): the T234 view off the cone (three more rims, all depth letters derived) -/
+
+/-- Rim `0 1 6 3 4` (`126 236` up: `t234b` past the line `2 6` of the tie section). -/
+def rimTE : ZMod 5 → Fin 7 := ![0, 1, 6, 3, 4]
+def UTE : Finset (Fin 9) := {0, 3, 5, 7}
+def DnTE : Finset (Fin 9) := {1, 4, 8}
+theorem rimTE_cyc : S0xCycUD s0x_S24 rimTE UTE DnTE := by decide
+theorem rimTE_inj : Function.Injective rimTE := by decide
+
+/-- Rim `0 1 2 3 6 4` (`346` up: `t234b` past the line `6 P0`). -/
+def rimTF : ZMod 6 → Fin 7 := ![0, 1, 2, 3, 6, 4]
+def UTF : Finset (Fin 9) := {0, 3, 6, 8}
+def DnTF : Finset (Fin 9) := {1, 4, 5, 7}
+theorem rimTF_cyc : S0xCycUD s0x_S24 rimTF UTF DnTF := by decide
+theorem rimTF_inj : Function.Injective rimTF := by decide
+
+/-- Rim `0 2 3 6 4` (`012` down, `025 346` up). -/
+def rimTG : ZMod 5 → Fin 7 := ![0, 2, 3, 6, 4]
+def UTG : Finset (Fin 9) := {2, 3, 6, 8}
+def DnTG : Finset (Fin 9) := {0, 4, 7}
+theorem rimTG_cyc : S0xCycUD s0x_S24 rimTG UTG DnTG := by decide
+theorem rimTG_inj : Function.Injective rimTG := by decide
+
+/-- The depth letters of the T234 view at `t234b` on `T234BrJ`, all derived: `z2 = z3 = z4` (level 1), `z6 < z2 <
+z0, z1` (level 1), `z3 < z4` and `z3 < z2` (level 2, `|e34|² > 0` and `τ > 0`). -/
+theorem t234_depths (F : S0xFac 9 s0x_S24 x) (hB : T234BrJ F) :
+    ⟪x 3, t234b x⟫ = ⟪x 2, t234b x⟫ ∧ ⟪x 4, t234b x⟫ = ⟪x 2, t234b x⟫ ∧ ⟪x 2, t234b x⟫ < ⟪x 0, t234b x⟫ ∧
+      ⟪x 2, t234b x⟫ < ⟪x 1, t234b x⟫ ∧ ⟪x 6, t234b x⟫ < ⟪x 2, t234b x⟫ ∧
+      ⟪x 3, x 4 - x 3⟫ < ⟪x 4, x 4 - x 3⟫ ∧ ⟪x 3, x 4 - x 3⟫ < ⟪x 2, x 4 - x 3⟫ := by
+  obtain ⟨-, -, h20, h21⟩ := t234_derived F hB.1
+  have h6 := t234_z6 F hB.1
+  rw [inner_sub_left] at h6
+  obtain ⟨htau, -, eg⟩ := t234_tau_eqs F hB
+  have h32 : ⟪x 3, x 4 - x 3⟫ < ⟪x 2, x 4 - x 3⟫ := by
+    have h : 0 < ⟪x 4 - x 3, x 2 - x 3⟫ := eg ▸ htau
+    rw [← sub_pos, ← inner_sub_left, real_inner_comm]; exact h
+  exact ⟨t234_tie3 (t234b_cases x), t234_tie4 (t234b_cases x), h20, h21, by linarith, t234_lt34 F, h32⟩
+
+/-- `236` up at `t234b` when the angle at `x 2` is obtuse (`T234BrJ`, `t234C < 0`). -/
+theorem t234_up7_of (F : S0xFac 9 s0x_S24 x) (hB : T234BrJ F) (hc : t234C x < 0) : T234Up F (t234b x) 7 := by
+  have hq := t234_z6 F hB.1
+  obtain ⟨htau, e6, -⟩ := t234_tau_eqs F hB
+  have htie26 : ⟪x 2, x 3 - x 4⟫ = ⟪x 6, x 3 - x 4⟫ := by
+    obtain ⟨⟨-, -, -, -, -, -, htie, -⟩, h56, -⟩ := hB; exact htie.trans h56
+  have hp : ⟪F.N 7, t234b x⟫ * ⟪x 6 - x 2, t234b x⟫ =
+      (-F.f 7 (x 4) * ⟪x 5 - x 3, x 4 - x 3⟫) * t234C x := by
+    rw [t234b_prod, t234_prod7 F htie26, e6, t234C]; ring
+  have hK : 0 < -F.f 7 (x 4) * ⟪x 5 - x 3, x 4 - x 3⟫ := mul_pos (neg_pos.mpr (F.neg 7 4 (by decide))) htau
+  left
+  have : ⟪F.N 7, t234b x⟫ * ⟪x 6 - x 2, t234b x⟫ < 0 := by rw [hp]; exact mul_neg_of_pos_of_neg hK hc
+  by_contra hn
+  nlinarith [mul_nonneg_of_nonpos_of_nonpos (not_lt.mp hn) hq.le]
+
+/-- `346` up at `t234b` when `X6 < 0` (`T234Br`). -/
+theorem t234_up8_of (F : S0xFac 9 s0x_S24 x) (hB : T234Br F) (hX : t234X6 x < 0) : T234Up F (t234b x) 8 := by
+  have hq := t234_z6 F hB
+  have hp : ⟪F.N 8, t234b x⟫ * ⟪x 6 - x 2, t234b x⟫ = (-F.f 8 (x 2)) * t234X6 x := by
+    rw [t234b_prod, t234_prod8, t234X6]; ring
+  have hK : 0 < -F.f 8 (x 2) := neg_pos.mpr (F.neg 8 2 (by decide))
+  left
+  have : ⟪F.N 8, t234b x⟫ * ⟪x 6 - x 2, t234b x⟫ < 0 := by rw [hp]; exact mul_neg_of_pos_of_neg hK hX
+  by_contra hn
+  nlinarith [mul_nonneg_of_nonpos_of_nonpos (not_lt.mp hn) hq.le]
+
+/-- On the tie `h2 = h6`: `X2 - X6 = |e|² t234C` with `X2 = |e|² |g|² - ⟪e, g⟫² ≥ 0`, so `X6 < 0` forces `t234C > 0`. -/
+theorem t234C_pos_of_X6 (F : S0xFac 9 s0x_S24 x) (hB : T234BrJ F) (hX : t234X6 x < 0) : 0 < t234C x := by
+  have htie26 : ⟪x 2, x 3 - x 4⟫ = ⟪x 6, x 3 - x 4⟫ := by
+    obtain ⟨⟨-, -, -, -, -, -, htie, -⟩, h56, -⟩ := hB; exact htie.trans h56
+  have hEd : ⟪x 4 - x 3, x 2 - x 6⟫ = 0 := by
+    simp only [t234_inner3, PiLp.sub_apply] at htie26 ⊢; linear_combination -htie26
+  have hw : x 6 - x 3 = (x 2 - x 3) - (x 2 - x 6) := by abel
+  have hX6 : t234X6 x = (⟪x 4 - x 3, x 4 - x 3⟫ * ⟪x 2 - x 3, x 2 - x 3⟫ - ⟪x 4 - x 3, x 2 - x 3⟫ ^ 2) -
+      ⟪x 4 - x 3, x 4 - x 3⟫ * t234C x := by
+    have e1 : ⟪x 4 - x 3, x 6 - x 3⟫ = ⟪x 4 - x 3, x 2 - x 3⟫ - ⟪x 4 - x 3, x 2 - x 6⟫ := by rw [hw, inner_sub_right]
+    have e2 : ⟪x 6 - x 3, x 2 - x 3⟫ = ⟪x 2 - x 3, x 2 - x 3⟫ - ⟪x 2 - x 6, x 2 - x 3⟫ := by rw [hw, inner_sub_left]
+    rw [t234X6, t234C, e1, e2, hEd, real_inner_comm (x 2 - x 3) (x 2 - x 6)]; ring
+  have hCS := real_inner_mul_inner_self_le (x 4 - x 3) (x 2 - x 3)
+  have hee : 0 ≤ ⟪x 4 - x 3, x 4 - x 3⟫ := real_inner_self_nonneg
+  by_contra hc
+  have : 0 ≤ -(⟪x 4 - x 3, x 4 - x 3⟫ * t234C x) := by
+    have := mul_nonneg hee (neg_nonneg.mpr (not_lt.mp hc)); linarith
+  nlinarith
+
+/-- **The general T234 residue letters** on `T234BrL` (OSPEC17 (b)): `016 046` down, `012` up or (`012` down, `025` up,
+`t234C ≥ 0`), and `126` down on the boundary `t234C = 0`.  The cone condition is gone: off the cone the same view
+`(t234b, x 4 - x 3, x 5 - x 6)` has the rim `0 1 6 3 4` (`t234C < 0`) or `0 1 2 3 6 4` / `0 2 3 6 4` (`X6 < 0`). -/
+def T234RedM {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  T234Dn F (t234b x) 1 ∧ T234Dn F (t234b x) 4 ∧
+    (T234Up F (t234b x) 0 ∨ (T234Dn F (t234b x) 0 ∧ T234Up F (t234b x) 2 ∧ 0 ≤ t234C x)) ∧
+    (t234C x = 0 → T234Dn F (t234b x) 5)
+
+/-- **The T234 view is a lex cell on the B2 branch from the general letters** (five rims). -/
+theorem lexAny_of_t234RedM (F : S0xFac 9 s0x_S24 x) (hB : T234BrL F) (h : T234RedM F) : Gen.LexAny F := by
+  obtain ⟨n1, n4, h0, h5⟩ := h
+  obtain ⟨t3, t4, h20, h21, h62, l34, l32⟩ := t234_depths F hB.1
+  have u3 : T234Up F (t234b x) 3 := Or.inl (t234_derived F hB.1.1).2.1
+  have u6 := t234_up6 F hB.1
+  set b := t234b x with hbdef
+  -- the three new rims
+  have rimE : RobUniLex (t234Z x b rimTE) := by
+    have e0 : rimTE 0 = 0 := by decide
+    have e1 : rimTE 1 = 1 := by decide
+    have e2 : rimTE 2 = 6 := by decide
+    have e3 : rimTE 3 = 3 := by decide
+    have e4 : rimTE 4 = 4 := by decide
+    apply robUniLex_five_e26
+    · simp only [t234Z, e1, e2]; exact lexLt3_of_fst (by simp only; linarith)
+    · simp only [t234Z, e3, e4]
+      exact Or.inr ⟨by simp only; linarith, Or.inl (by simp only; linarith)⟩
+    · simp only [t234Z, e4, e0]; exact lexLt3_of_fst (by simp only; linarith)
+    · simp only [t234Z, e3, e0]; exact lexLt3_of_fst (by simp only; linarith)
+  have rimG : RobUniLex (t234Z x b rimTG) := by
+    have e0 : rimTG 0 = 0 := by decide
+    have e1 : rimTG 1 = 2 := by decide
+    have e2 : rimTG 2 = 3 := by decide
+    have e3 : rimTG 3 = 6 := by decide
+    have e4 : rimTG 4 = 4 := by decide
+    apply robUniLex_five_e26
+    · simp only [t234Z, e1, e2]
+      exact Or.inr ⟨by simp only; linarith, Or.inl (by simp only; linarith)⟩
+    · simp only [t234Z, e3, e4]; exact lexLt3_of_fst (by simp only; linarith)
+    · simp only [t234Z, e4, e0]; exact lexLt3_of_fst (by simp only; linarith)
+    · simp only [t234Z, e3, e0]; exact lexLt3_of_fst (by simp only; linarith)
+  have rimF : RobUniLex (t234Z x b rimTF) := by
+    have e0 : rimTF 0 = 0 := by decide
+    have e1 : rimTF 1 = 1 := by decide
+    have e2 : rimTF 2 = 2 := by decide
+    have e3 : rimTF 3 = 3 := by decide
+    have e4 : rimTF 4 = 6 := by decide
+    have e5 : rimTF 5 = 4 := by decide
+    apply robUniLex_six_dw
+    · left; simp only [t234Z, e3, e2]
+      exact Or.inr ⟨by simp only; linarith, Or.inl (by simp only; linarith)⟩
+    · left; simp only [t234Z, e5, e0]; exact lexLt3_of_fst (by simp only; linarith)
+    · left; simp only [t234Z, e4, e5]; exact lexLt3_of_fst (by simp only; linarith)
+    · left; simp only [t234Z, e2, e1]; exact lexLt3_of_fst (by simp only; linarith)
+  -- facet cases
+  have hcell : ∀ {k : ℕ} [NeZero k] (c : ZMod k → Fin 7) (U Dn : Finset (Fin 9)), 4 ≤ k → Function.Injective c →
+      S0xCycUD s0x_S24 c U Dn → (∀ t ∈ U, T234Up F b t) → (∀ t ∈ Dn, T234Dn F b t) → RobUniLex (t234Z x b c) →
+      Gen.LexAny F := by
+    intro k _ c U Dn hk hc hcyc hU hD hR
+    exact ⟨k, inferInstance, c, U, Dn, b, x 4 - x 3, x 5 - x 6, hk, hc, hcyc, hU, hD, hR⟩
+  have hb := t234b_cases x
+  rcases lt_or_ge (t234X6 x) 0 with hX | hX
+  · -- `X6 < 0`: `346` up, `t234C > 0`, `126 236` down
+    have u8 := t234_up8_of F hB.1.1 hX
+    have hc := t234C_pos_of_X6 F hB.1 hX
+    have n5 := t234_dn5_of F hB hc
+    have n7 := (t234_dn7_iff F hB.1).mpr hc.le
+    rcases h0 with u0 | ⟨n0, u2, -⟩
+    · refine hcell rimTF UTF DnTF (by norm_num) rimTF_inj rimTF_cyc ?_ ?_ rimF
+      · intro t ht; simp only [UTF, Finset.mem_insert, Finset.mem_singleton] at ht
+        rcases ht with rfl | rfl | rfl | rfl
+        exacts [u0, u3, u6, u8]
+      · intro t ht; simp only [DnTF, Finset.mem_insert, Finset.mem_singleton] at ht
+        rcases ht with rfl | rfl | rfl | rfl
+        exacts [n1, n4, n5, n7]
+    · refine hcell rimTG UTG DnTG (by norm_num) rimTG_inj rimTG_cyc ?_ ?_ rimG
+      · intro t ht; simp only [UTG, Finset.mem_insert, Finset.mem_singleton] at ht
+        rcases ht with rfl | rfl | rfl | rfl
+        exacts [u2, u3, u6, u8]
+      · intro t ht; simp only [DnTG, Finset.mem_insert, Finset.mem_singleton] at ht
+        rcases ht with rfl | rfl | rfl
+        exacts [n0, n4, n7]
+  · have n8 := (t234_dn8_iff F hB.1.1).mpr hX
+    rcases lt_or_ge (t234C x) 0 with hc | hc
+    · -- `t234C < 0`: `126 236` up, rim `0 1 6 3 4`; `012` must be up
+      have u5 := t234_up5_of F hB hc
+      have u7 := t234_up7_of F hB.1 hc
+      have u0 : T234Up F b 0 := by
+        rcases h0 with u0 | ⟨-, -, hc'⟩
+        · exact u0
+        · exact absurd hc' (not_le.mpr hc)
+      refine hcell rimTE UTE DnTE (by norm_num) rimTE_inj rimTE_cyc ?_ ?_ rimE
+      · intro t ht; simp only [UTE, Finset.mem_insert, Finset.mem_singleton] at ht
+        rcases ht with rfl | rfl | rfl | rfl
+        exacts [u0, u3, u5, u7]
+      · intro t ht; simp only [DnTE, Finset.mem_insert, Finset.mem_singleton] at ht
+        rcases ht with rfl | rfl | rfl
+        exacts [n1, n4, n8]
+    · -- the cone: the OSPEC14 rims
+      have n7 := (t234_dn7_iff F hB.1).mpr hc
+      have n5 : T234Dn F b 5 := by
+        rcases hc.lt_or_eq with hc | hc
+        · exact t234_dn5_of F hB hc
+        · exact h5 hc.symm
+      refine lexAny_of_t234At F hb ⟨u3, u6, n1, n4, n5, n7, n8, h20, ?_⟩
+      rcases h0 with u0 | ⟨n0, u2, -⟩
+      · exact Or.inl ⟨u0, h21⟩
+      · exact Or.inr ⟨n0, u2⟩
+
+/-- `T234RedM` is weaker than `T234RedL` (the old letters imply the new ones). -/
+theorem t234RedM_of_L (F : S0xFac 9 s0x_S24 x) (h : T234RedL F) : T234RedM F := by
+  obtain ⟨n1, n4, ⟨-, hc⟩, h0⟩ := h
+  refine ⟨n1, n4, ?_, ?_⟩
+  · rcases h0 with u0 | ⟨n0, u2⟩
+    · exact Or.inl u0
+    · refine Or.inr ⟨n0, u2, ?_⟩
+      rcases hc with hc | ⟨hc, -⟩
+      · exact hc.le
+      · exact hc.ge
+  · intro h0c
+    rcases hc with hc | ⟨-, n5⟩
+    · exact absurd h0c hc.ne'
+    · exact n5
+
+/-! ### The residue after the general T234 view (OSPEC17 (b)) -/
+
+/-- The general T234 view: `T234ViewOK`, or on `T234BrL` the letters `T234RedM`. -/
+def T234ViewM {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  T234ViewOK F ∨ (T234BrL F ∧ T234RedM F)
+
+theorem lexAny_of_t234ViewM (F : S0xFac 9 s0x_S24 x) (h : T234ViewM F) : Gen.LexAny F := by
+  rcases h with h | ⟨hB, h⟩
+  · exact lexAny_of_t234View F h
+  · exact lexAny_of_t234RedM F hB h
+
+/-- `Q45ResSTG` where neither general T234 view (nor its mirror) applies: on the B2 branch the failure of `T234RedM`
+(`016` or `046` up, `012` down with `025` down or `t234C < 0`, or `126` not down at `t234C = 0`). -/
+def Q45ResSTM {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  Q45ResSTG F s t ∧ ¬ T234ViewM F ∧ ¬ T234ViewM (Sym.sym24 F)
+
+/-- The branch-tagged residue after OSPEC17 (b). -/
+def Q45ResWM {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTM F s t
+
+/-- **The general T234 views cut the residue**: a point of `Q45ResSTG` is `LexAny` or in `Q45ResSTM`. -/
+theorem q45_resM_local (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (h : Q45ResSTG F s t) :
+    Gen.LexAny F ∨ Q45ResSTM F s t := by
+  by_cases hA : T234ViewM F
+  · exact Or.inl (lexAny_of_t234ViewM F hA)
+  by_cases hB : T234ViewM (Sym.sym24 F)
+  · exact Or.inl (Sym.lexAny_sym F (lexAny_of_t234ViewM (Sym.sym24 F) hB))
+  exact Or.inr ⟨h, hA, hB⟩
+
+/-- `Q45ResWM ⊆ Q45ResWH` (so also `⊆ Q45ResWL`). -/
+theorem q45ResWH_of_M {F : S0xFac 9 s0x_S24 x} (h : Q45ResWM F) : Q45ResWH F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h, hA, hB⟩ := h
+  exact ⟨s, t, hs, ht, hst, hd, h, fun h' => hA (Or.inl h'), fun h' => hB (Or.inl h')⟩
+
+/-- **Global form**: on the corner every point has `LexAny`, `AnyFaceChord`, is Rupert, or lies in `Q45ResWM`. -/
+theorem q45_resM (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) :
+    Gen.LexAny F ∨ Gen.AnyFaceChord F ∨ IsRupert (univ.image x) ∨ Q45ResWM F := by
+  rcases q45_resG F h4 h5 with h | h | h | ⟨s, t, hs0, ht, hst, hd, h⟩
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · rcases q45_resM_local F h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr ⟨s, t, hs0, ht, hst, hd, h⟩))
+
+/-- [OPEN] **The special piece after the general T234 view, Rupert form**: `OpenSpecialL` with `Q45ResWM` in place of
+`Q45ResWL` (implied by it: `openSpecialM_of_openSpecialL`). -/
+def OpenSpecialM : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWM F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialL → OpenSpecialM` (`Q45ResWM ⊆ Q45ResWH = Q45ResWI = Q45ResWJ = Q45ResWL`). -/
+theorem openSpecialM_of_openSpecialL (h : OpenSpecialL) : OpenSpecialM :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4
+    ((q45ResWL_iff_J F).mpr ((q45ResWJ_iff_I F).mpr ((q45ResWI_iff_H F).mpr (q45ResWH_of_M hr)))) hF
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialM`. -/
+theorem hole24_offOB1_M {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialM) : IsRupert (univ.image x) := by
+  obtain ⟨b1, b2, b3⟩ := resid24_frame_signs h.2.2.1 hO
+  have b4 := resid24_b1245 h.2.2.1 hO
+  obtain ⟨-, h4, h5⟩ := offWall_of_hole24 h hO
+  have hF := holeFull_of_hole24 h
+  rcases q45_resM F h4 h5 with hL | hA | hR | hr
+  · exact (hF.1.2.2.2.1 hL).elim
+  · exact (hF.1.2.2.1 hA).elim
+  · exact hR
+  · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
+
+/-- [PROVED] Generic + special (after the general T234 view) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_M (h1 : OpenOB1) (h2 : OpenSpecialM) : Open24Rupert := by
+  intro x fs hh hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
+  · exact hole24_offOB1_M hH hO h2
+
+end T234G
 
 end Minimality.T24.OSpec

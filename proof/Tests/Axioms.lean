@@ -2951,6 +2951,25 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_L
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_L
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_L
+-- OSPEC17 (b): the T234 view off the cone (rims 0 1 6 3 4, 0 1 2 3 6 4, 0 2 3 6 4), residue Q45ResWM / OpenSpecialM
+#assert_standard_axioms Minimality.T24.OSpec.rimTE_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTF_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTG_cyc
+#assert_standard_axioms Minimality.T24.OSpec.t234_depths
+#assert_standard_axioms Minimality.T24.OSpec.t234_up7_of
+#assert_standard_axioms Minimality.T24.OSpec.t234_up8_of
+#assert_standard_axioms Minimality.T24.OSpec.t234C_pos_of_X6
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_t234RedM
+#assert_standard_axioms Minimality.T24.OSpec.t234RedM_of_L
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_t234ViewM
+#assert_standard_axioms Minimality.T24.OSpec.q45_resM_local
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWH_of_M
+#assert_standard_axioms Minimality.T24.OSpec.q45_resM
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialM_of_openSpecialL
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_M
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_M
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_M
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_M
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
