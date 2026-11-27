@@ -28,4 +28,10 @@ theorem open24Rupert_of_cellCoverEmpty28_B (hN : CellCoverEmpty cells28) (hS : O
     Open24Rupert :=
   open24Rupert_of_cellCoverEmpty_B hN hS
 
+/-- [PROVED] Headline chain with `cells28` after the double-wall K0 views (OSPEC11): `CellCoverEmpty cells28` and
+`OSpec.OpenSpecialD` give `Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty28_D (hN : CellCoverEmpty cells28) (hS : OSpec.OpenSpecialD) :
+    Open24Rupert :=
+  open24Rupert_of_cellCoverEmpty_D hN hS
+
 end Minimality.T24.Cell

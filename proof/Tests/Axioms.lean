@@ -278,6 +278,7 @@ import Minimality.Type24T2Corner
 import Minimality.Type24T2Peak0
 import Minimality.Type24GapLemmas
 import Minimality.Type24GapLemmas2
+import Minimality.Type24Cells28
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2844,6 +2845,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.openSpecialD_of_openSpecialB
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_D
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_D
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_B
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_D
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
