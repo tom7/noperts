@@ -254,6 +254,7 @@ import Minimality.Type24T0Interior
 import Minimality.Type24NamedCover
 import Minimality.Type24OffOB1
 import Minimality.Type24OffOB1Res
+import Minimality.Type24OffOB1Bs
 import Minimality.Type24HoleAtlasNC
 import Minimality.Type24WallFoot
 import Minimality.Type24WallFoot126
@@ -2808,6 +2809,19 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.openSpecialF_of_openSpecialK
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_F
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_F
+
+-- OSPEC10 (11-27): the Bs view (x0 - x4, x5 - x0, -N3) and its mirror (BsCond, the double-wall 126 || 0345), global JFaceOK; OpenSpecialB
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_bsView
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_bsView_sym
+#assert_standard_axioms Minimality.T24.OSpec.bs_n53_neg
+#assert_standard_axioms Minimality.T24.OSpec.bs_dn7
+#assert_standard_axioms Minimality.T24.OSpec.bsViewOK_of
+#assert_standard_axioms Minimality.T24.OSpec.bsViewOK_sym_of
+#assert_standard_axioms Minimality.T24.OSpec.q45_resB_local
+#assert_standard_axioms Minimality.T24.OSpec.q45_resB
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialB_of_openSpecialF
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_B
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_B
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3

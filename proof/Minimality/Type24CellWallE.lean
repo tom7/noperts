@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type24CellWall
+public import Minimality.Type24OffOB1Bs
 
 @[expose] public section
 
@@ -145,5 +146,18 @@ theorem rupert_of_cellCoverEmpty_F {L : List Cell24} (hN : CellCoverEmpty L) (hS
 theorem open24Rupert_of_cellCoverEmpty_F {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialF) :
     Open24Rupert :=
   OSpec.open24Rupert_of_split_F (openOB1_of_cellCoverEmpty hN) hS
+
+/-- [PROVED] Headline chain after the Bs views (OSPEC10): `CellCoverEmpty L` and `OSpec.OpenSpecialB`. -/
+theorem rupert_of_cellCoverEmpty_B {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialB) :
+    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), Hole24 x F → IsRupert (univ.image x) := by
+  intro x F hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (hN x F hH.1.1 hO (hole24_cellCoverResidue L hH)).elim
+  · exact OSpec.hole24_offOB1_B hH hO hS
+
+/-- [PROVED] `CellCoverEmpty L` and `OSpec.OpenSpecialB` give `Stmt.Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty_B {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialB) :
+    Open24Rupert :=
+  OSpec.open24Rupert_of_split_B (openOB1_of_cellCoverEmpty hN) hS
 
 end Minimality.T24.Cell
