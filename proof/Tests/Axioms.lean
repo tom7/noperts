@@ -2786,6 +2786,29 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_Z
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_Z
 
+-- OSPEC9 (11-27): the K0 view and its mirror (ResK0K, OpenSpecialK); the face-on J0 views (JFaceOK, OpenSpecialF)
+#assert_standard_axioms Minimality.T24.OSpec.kJ_obl
+#assert_standard_axioms Minimality.T24.OSpec.k0_dn7
+#assert_standard_axioms Minimality.T24.OSpec.k0_a45_of_s3
+#assert_standard_axioms Minimality.T24.OSpec.k0_h7_or
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_k0View
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_k0View_sym
+#assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_of
+#assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_sym_of
+#assert_standard_axioms Minimality.T24.OSpec.resK0K_of
+#assert_standard_axioms Minimality.T24.OSpec.q45_resK_local
+#assert_standard_axioms Minimality.T24.OSpec.q45_resK
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialK_of_openSpecialZ
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_K
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_K
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_j64View
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_j64View_sym
+#assert_standard_axioms Minimality.T24.OSpec.q45_resF_local
+#assert_standard_axioms Minimality.T24.OSpec.q45_resF
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialF_of_openSpecialK
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_F
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_F
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve
