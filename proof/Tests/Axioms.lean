@@ -274,6 +274,7 @@ import Minimality.Q45W4View
 import Minimality.Q45J0Edge
 import Minimality.Type24FootLex
 import Minimality.Type24T2Corner
+import Minimality.Type24T2Peak0
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2819,3 +2820,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_t2cCorner_twin
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_t2cCorner
 #assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_t2cCorner_twin
+
+-- Type24T2Peak0 (A2PEAK, 11-27)
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_robUni_of_p0
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_lexAny_of_p0
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_exists_of_p0Edge025
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_p0Edge025
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_p0Edge025_twin
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_p0Edge025
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_p0Edge025_twin
