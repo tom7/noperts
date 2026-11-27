@@ -266,6 +266,7 @@ import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
 import Minimality.UnimodalSplit
+import Minimality.Type24RayCT
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2608,3 +2609,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_E
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_E
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_E
+#assert_standard_axioms Minimality.T24.Cell.det3_cone
+#assert_standard_axioms Minimality.T24.Cell.apexCert_chordTop
+#assert_standard_axioms Minimality.T24.Cell.rimSign_of_cell
+#assert_standard_axioms Minimality.T24.Cell.rayCT02_frame
+#assert_standard_axioms Minimality.T24.Cell.rayCT02_exists_apex
+#assert_standard_axioms Minimality.T24.Cell.rayCT02_exists_cellCert
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_rayCT02
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_rayCT02_twin
+#assert_standard_axioms Minimality.T24.Cell.not_cellCoverResidue_of_rayCT02
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_rayCT02
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_rayCT02_twin
