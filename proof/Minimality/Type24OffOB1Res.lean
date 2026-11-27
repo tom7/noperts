@@ -5,6 +5,7 @@ public import Minimality.Q45
 public import Minimality.Q45J0Edge
 public import Minimality.Q45J0Tilt
 public import Minimality.Q45B2View
+public import Minimality.Q45W4View
 
 @[expose] public section
 
@@ -1476,5 +1477,116 @@ theorem open24Rupert_of_split_X (h1 : OpenOB1) (h2 : OpenSpecialX) : Open24Ruper
   by_cases hO : H24K.SAT.OB1 x
   · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
   · exact hole24_offOB1_X hH hO h2
+
+/-! ### The wall view on the walls `a4 = 1`, `a5 = 1` (job OSPEC7)
+
+On the wall `a4 = 1` the corner cell `C1` loses the sign of `126`; the 3-level view `(x 0 - x 4, x 2 - x 6, x 0 - x 5)`
+(Q45W4View.lean, rim `0 5 2 6`) decides `126` in its own plane and is a lex cell whenever `W4ViewOK F`; on `a5 = 1`
+its mirror `W4ViewOK (Sym.sym24 F)`.  Mechanism of two of its four conditions (`w4_up5_of_wall`, `w4_dn6_of_t`):
+`126` is up on the wall `a4 = 1` off the double wall (`a5 > 1`), `235` is down for `t < 1` (the corner
+sub-branch `K-`, `t < 1`, `h2hi`).  The walls of `ResWallU` keep the points where both views fail. -/
+
+/-- `126` is up in the wall view on `a4 = 1` off the double wall. -/
+theorem w4_up5_of_wall (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (h5 : 1 < oblX0 x 5) : W4Up F 5 := by
+  have e1 : ⟪F.N 5, x 0 - x 4⟫ = 0 := by
+    rw [← neg_sub, inner_neg_right, n5_zero F hw4, neg_zero]
+  have e2 : ⟪F.N 5, x 2 - x 6⟫ = 0 := by
+    rw [F.inner_sub 5 2 6, F.zero 5 2 (by decide), F.zero 5 6 (by decide)]; ring
+  have e3 := (sgn_a F 5 h5.le).resolve_right h5.ne'
+  right; refine ⟨e1, Or.inr ⟨e2, ?_⟩⟩
+  rw [← neg_sub, inner_neg_right]; linarith
+
+/-- `235` is down in the wall view for `t < 1` (`x 3 - x 0 = s e4 + t e5`, `s > 0`): `x 0` is farther from the edge
+line `3 5` of the face `0345` than `x 4`. -/
+theorem w4_dn6_of_t (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht1 : t < 1)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) : W4Dn F 6 := by
+  have h3 := congrArg (fun v => ⟪F.N 6, v⟫) hdec
+  simp only [inner_add_right, real_inner_smul_right] at h3
+  rw [F.inner_sub 6 3 0, F.inner_sub 6 4 0, F.inner_sub 6 5 0, F.zero 6 3 (by decide),
+    F.zero 6 5 (by decide)] at h3
+  have hA : 0 < -F.f 6 (x 0) := by linarith [F.neg 6 0 (by decide)]
+  have hB : 0 < F.f 6 (x 4) - F.f 6 (x 0) := by
+    by_contra hB
+    push Not at hB
+    nlinarith
+  left
+  rw [F.inner_sub 6 0 4]; linarith
+
+/-- `ResWallU` where both wall views fail. -/
+def ResWallY {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ResWallU F s t ∧ ¬ W4ViewOK F ∧ ¬ W4ViewOK (Sym.sym24 F)
+
+/-- `Q45ResSTX` after the wall views. -/
+def Q45ResSTY {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ResWallY F s t ∨ ResB1T x s ∨ ResBs1 F s ∨ ResJ0aX F s ∨ ResB2V F s ∨ ResJ0bX F s ∨ ResK0 F ∨
+    ResC1T x t ∨ ResCt1 F t ∨ ResJ0cX F t ∨ ResC2V F t ∨ ResJ0dX F t
+
+/-- The branch-tagged residue after the wall views. -/
+def Q45ResWY {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTY F s t
+
+/-- **The wall views shrink the walls**: a point of `Q45ResSTX` is `LexAny` or in `Q45ResSTY`. -/
+theorem q45_resY_local (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (h : Q45ResSTX F s t) :
+    Gen.LexAny F ∨ Q45ResSTY F s t := by
+  rcases h with h | h
+  · by_cases hA : W4ViewOK F
+    · exact Or.inl (lexAny_of_w4View F hA)
+    by_cases hB : W4ViewOK (Sym.sym24 F)
+    · exact Or.inl (lexAny_of_w4View_sym F hB)
+    exact Or.inr (Or.inl ⟨h, hA, hB⟩)
+  · exact Or.inr (Or.inr h)
+
+/-- `Q45ResWY ⊆ Q45ResWX`. -/
+theorem q45ResWY_sub {F : S0xFac 9 s0x_S24 x} (h : Q45ResWY F) : Q45ResWX F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
+  refine ⟨s, t, hs, ht, hst, hd, ?_⟩
+  rcases h with h | h
+  · exact Or.inl h.1
+  · exact Or.inr h
+
+/-- **Global form**: on the corner every point has `LexAny`, `AnyFaceChord`, is Rupert, or lies in `Q45ResWY`. -/
+theorem q45_resY (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) :
+    Gen.LexAny F ∨ Gen.AnyFaceChord F ∨ IsRupert (univ.image x) ∨ Q45ResWY F := by
+  rcases q45_resX F h4 h5 with h | h | h | ⟨s, t, hs0, ht, hst, hd, h⟩
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · rcases q45_resY_local F h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr ⟨s, t, hs0, ht, hst, hd, h⟩))
+
+/-- [OPEN] **The special piece after the wall views, Rupert form**: as `OpenSpecialX` with `Q45ResWY` (the walls cut
+down to the points where both wall views fail) in place of `Q45ResWX`. -/
+def OpenSpecialY : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWY F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialX → OpenSpecialY` (`q45ResWY_sub`). -/
+theorem openSpecialY_of_openSpecialX (h : OpenSpecialX) : OpenSpecialY :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4 (q45ResWY_sub hr) hF
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialY`. -/
+theorem hole24_offOB1_Y {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialY) : IsRupert (univ.image x) := by
+  obtain ⟨b1, b2, b3⟩ := resid24_frame_signs h.2.2.1 hO
+  have b4 := resid24_b1245 h.2.2.1 hO
+  obtain ⟨-, h4, h5⟩ := offWall_of_hole24 h hO
+  have hF := holeFull_of_hole24 h
+  rcases q45_resY F h4 h5 with hL | hA | hR | hr
+  · exact (hF.1.2.2.2.1 hL).elim
+  · exact (hF.1.2.2.1 hA).elim
+  · exact hR
+  · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
+
+/-- [PROVED] Generic + special (wall view form) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_Y (h1 : OpenOB1) (h2 : OpenSpecialY) : Open24Rupert := by
+  intro x fs hh hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
+  · exact hole24_offOB1_Y hH hO h2
 
 end Minimality.T24.OSpec

@@ -270,6 +270,7 @@ import Minimality.Type24RayCT
 import Minimality.Type24W2OC
 import Minimality.Q45J0Tilt
 import Minimality.Q45B2View
+import Minimality.Q45W4View
 import Minimality.Q45J0Edge
 import Minimality.Type24FootLex
 import Minimality.Type24T2Corner
@@ -2744,6 +2745,25 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_X
 #assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_X
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_X
+
+-- OSPEC7 (11-27): the wall view (x0 - x4, x2 - x6, x0 - x5) on a4 = 1 and its mirror on a5 = 1 (Q45W4View), OpenSpecialY
+#assert_standard_axioms Minimality.T24.Q45.rimW4_cyc
+#assert_standard_axioms Minimality.T24.Q45.rimW4_inj
+#assert_standard_axioms Minimality.T24.Q45.w4_up_of_mem
+#assert_standard_axioms Minimality.T24.Q45.w4_dn8
+#assert_standard_axioms Minimality.T24.Q45.w4_dn4
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_w4View
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_w4View_sym
+#assert_standard_axioms Minimality.T24.OSpec.w4_up5_of_wall
+#assert_standard_axioms Minimality.T24.OSpec.w4_dn6_of_t
+#assert_standard_axioms Minimality.T24.OSpec.q45_resY_local
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWY_sub
+#assert_standard_axioms Minimality.T24.OSpec.q45_resY
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialY_of_openSpecialX
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_Y
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_Y
+#assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_Y
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_Y
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
