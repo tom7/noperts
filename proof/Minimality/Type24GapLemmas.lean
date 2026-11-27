@@ -18,11 +18,15 @@ RobUni view) carry their certificates on two edges of the `T_0` cone (nopert229 
   `r s = x₂ - x₁ + s (x₆ - x₁)`, `s > 0` (facet `126` edge-on: the face of `T_0` at infinity), from three strictly
   monotone rim corners (`robUni_of_monoCorners`; at the gap points `z₁ < z₂ < z₅ < z₃ > z₄ > z₆`).
 
+* `T0Edge012B0` (all 12 w1_7_3 points again, and the one neighbour that `T0Edge012` misses): a strict-apex
+  certificate (`ApexCert`, e.g. base `3-4`, apex `1`) on the `B0` rim at the same edge views `t0e012 x p`, on the `B0`
+  side of the `346` crossing.
 * `T2Edge012B2` (the cB2-twin RobUni views of 5 of the 14): three strictly monotone corners of the `B2` rim
   `0.5.3.4.6.1` at `x₀ - x₁ - β (x₂ - x₁)`, `β > 1`, on the `T_2` cone edge `γ = 0` (facet `012` edge-on).
 
-All push the edge view into the open cell (`cellAt_eventually_of_wall`); the generic step for `RobUni` is
-`lexAny_of_wall_monoCorners` (any cell, any wall view, `k - 3` strictly monotone corners).
+All push the edge view into the open cell (`cellAt_eventually_of_wall`); the generic steps are
+`lexAny_of_wall_monoCorners` (any cell, any wall view, `k - 3` strictly monotone corners) and
+`splitAny_of_wall_apexCert` (any cell, any wall view carrying `ApexCert`).
 -/
 
 @[expose] public section
@@ -65,6 +69,59 @@ theorem lexAny_of_wall_monoCorners (F : S0xFac 9 s0x_S24 x) (c : Cell24) {r v : 
     exact Split.AcuteEdge.ev_pos hc (by simpa using hm i hi)
   obtain ⟨η, hcell, hmη⟩ := (evC.and evM).exists
   exact lexAny_of_cellRob F c hcell (GenPlus.robUni_of_monoCorners c.hk S hS hmη)
+
+/-- **Wall view with a strict-apex certificate**: a view `r` on the closed face of a cell `c` at which the rim
+already carries `ApexCert` gives `Gen.SplitAny F` (`ApexCert` is a finite conjunction of strict inequalities between
+continuous functions of the view, so it persists to `r + η v`, which lies in the open cell for small `η > 0`). -/
+theorem splitAny_of_wall_apexCert (F : S0xFac 9 s0x_S24 x) (c : Cell24) {r v : ℝ³}
+    (hU : ∀ t ∈ c.U, 0 < ⟪F.N t, r⟫ ∨ (⟪F.N t, r⟫ = 0 ∧ 0 < ⟪F.N t, v⟫))
+    (hD : ∀ t ∉ c.U, ⟪F.N t, r⟫ < 0 ∨ (⟪F.N t, r⟫ = 0 ∧ ⟪F.N t, v⟫ < 0))
+    (hA : ApexCert (fun i => x (c.r i)) r) : Gen.SplitAny F := by
+  obtain ⟨a, cc, h1, h2, hext, σ, hσ, hlo, hhi⟩ := hA
+  have evC := cellAt_eventually_of_wall F c.U hU hD
+  have ed : ∀ p q : ℝ³, ∀ η : ℝ, Split.det3 p q (r + η • v) = Split.det3 p q r + η * Split.det3 p q v :=
+    fun p q η => by simp only [Split.det3, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
+  have ez : ∀ q : ℝ³, ∀ η : ℝ, ⟪q, r + η • v⟫ = ⟪q, r⟫ + η * ⟪q, v⟫ := fun q η => by
+    rw [inner_add_right, real_inner_smul_right]
+  have evE : ∀ᶠ η : ℝ in 𝓝[>] 0, ∀ j : ZMod c.k, j ≠ a → j ≠ a + 1 → j ≠ cc →
+      |Split.det3 (x (c.r j) - x (c.r a)) (x (c.r (a + 1)) - x (c.r a)) (r + η • v)| <
+        |Split.det3 (x (c.r cc) - x (c.r a)) (x (c.r (a + 1)) - x (c.r a)) (r + η • v)| := by
+    rw [Filter.eventually_all]; intro j
+    by_cases hj : j ≠ a ∧ j ≠ a + 1 ∧ j ≠ cc
+    · have h := hext j hj.1 hj.2.1 hj.2.2
+      have hc : Continuous fun η : ℝ =>
+          |Split.det3 (x (c.r cc) - x (c.r a)) (x (c.r (a + 1)) - x (c.r a)) r +
+              η * Split.det3 (x (c.r cc) - x (c.r a)) (x (c.r (a + 1)) - x (c.r a)) v| -
+            |Split.det3 (x (c.r j) - x (c.r a)) (x (c.r (a + 1)) - x (c.r a)) r +
+              η * Split.det3 (x (c.r j) - x (c.r a)) (x (c.r (a + 1)) - x (c.r a)) v| := by
+        fun_prop
+      refine (Split.AcuteEdge.ev_pos hc (by simpa [sub_pos] using h)).mono fun η hη _ _ _ => ?_
+      rw [ed, ed]; linarith
+    · exact Filter.Eventually.of_forall fun η e1 e2 e3 => absurd ⟨e1, e2, e3⟩ hj
+  have evL : ∀ᶠ η : ℝ in 𝓝[>] 0, ∀ j : ZMod c.k, (j - a - 1).val < (cc - a - 1).val →
+      σ * (⟪x (c.r j), r + η • v⟫ - ⟪x (c.r cc), r + η • v⟫) < 0 := by
+    rw [Filter.eventually_all]; intro j
+    by_cases hj : (j - a - 1).val < (cc - a - 1).val
+    · have h := hlo j hj
+      have hc : Continuous fun η : ℝ =>
+          -(σ * ((⟪x (c.r j), r⟫ + η * ⟪x (c.r j), v⟫) - (⟪x (c.r cc), r⟫ + η * ⟪x (c.r cc), v⟫))) := by
+        fun_prop
+      refine (Split.AcuteEdge.ev_pos hc (by simpa using h)).mono fun η hη _ => ?_
+      rw [ez, ez]; linarith
+    · exact Filter.Eventually.of_forall fun η e => absurd e hj
+  have evH : ∀ᶠ η : ℝ in 𝓝[>] 0, ∀ j : ZMod c.k, (cc - a - 1).val < (j - a - 1).val →
+      0 < σ * (⟪x (c.r j), r + η • v⟫ - ⟪x (c.r cc), r + η • v⟫) := by
+    rw [Filter.eventually_all]; intro j
+    by_cases hj : (cc - a - 1).val < (j - a - 1).val
+    · have h := hhi j hj
+      have hc : Continuous fun η : ℝ =>
+          σ * ((⟪x (c.r j), r⟫ + η * ⟪x (c.r j), v⟫) - (⟪x (c.r cc), r⟫ + η * ⟪x (c.r cc), v⟫)) := by
+        fun_prop
+      refine (Split.AcuteEdge.ev_pos hc (by simpa using h)).mono fun η hη _ => ?_
+      rw [ez, ez]; linarith
+    · exact Filter.Eventually.of_forall fun η e => absurd e hj
+  obtain ⟨η, hcell, hE, hL, hH⟩ := (evC.and (evE.and (evL.and evH))).exists
+  exact splitAny_of_cellApex F c hcell ⟨a, cc, h1, h2, hE, σ, hσ, hL, hH⟩
 
 /-! ## `T0Edge012`: Lemma CT on the `012` edge of `T_0` (cell `A0`) -/
 
@@ -221,6 +278,70 @@ theorem rayCT02_t0Edge012 {F : S0xFac 9 s0x_S24 x} (h : RayCT02 x F) : T0Edge012
   · rw [F.zero 3 0 (by decide)]; linarith [F.neg 3 2 (by decide)]
   · rw [F.zero 4 0 (by decide)]; linarith [F.neg 4 2 (by decide)]
   · linarith
+
+/-! ## `T0Edge012B0`: a strict-apex certificate on the `012` edge of `T_0`, cell `B0` -/
+
+/-- **T0Edge012B0:** some `p ∈ (-1, 0]` such that at the edge view `r = x₂ - x₀ + p (x₂ - x₁)` (facet `012` edge-on)
+the `B0` facets `235, 236, 346` are in front and `0345, 046` behind (`016`, `025`, `126` automatic) and the `B0` rim
+`cB = 1.2.5.3.4.6` carries a strict-apex certificate (e.g. base `3-4`, apex `1`, `z₄, z₆ < z₁ < z₂, z₅, z₃`: the
+B0 side of the same edge, between the `346` crossing and the corner `x₂ - x₀`). -/
+def T0Edge012B0 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ p : ℝ, -1 < p ∧ p ≤ 0 ∧
+    0 < ⟪F.N 6, t0e012 x p⟫ ∧ 0 < ⟪F.N 7, t0e012 x p⟫ ∧ 0 < ⟪F.N 8, t0e012 x p⟫ ∧
+    ⟪F.N 3, t0e012 x p⟫ < 0 ∧ ⟪F.N 4, t0e012 x p⟫ < 0 ∧ ApexCert (fun i => x (cB i)) (t0e012 x p)
+
+/-- **T0Edge012B0 (Split leaf):** `T0Edge012B0 x F` gives `Gen.SplitAny F` (push `x₆ - x₀` into the open `B0`). -/
+theorem splitAny_of_t0Edge012B0 {F : S0xFac 9 s0x_S24 x} (h : T0Edge012B0 x F) : Gen.SplitAny F := by
+  obtain ⟨p, hp1, hp0, h6, h7, h8, h3, h4, hA⟩ := h
+  have hNr : ∀ t : Fin 9, ⟪F.N t, t0e012 x p⟫ =
+      (F.f t (x 2) - F.f t (x 0)) + p * (F.f t (x 2) - F.f t (x 1)) := by
+    intro t
+    rw [t0e012, inner_add_right, real_inner_smul_right, F.inner_sub, F.inner_sub]
+  refine splitAny_of_wall_apexCert F cellB0 (v := x 6 - x 0) ?_ ?_ hA
+  · intro t ht
+    have ht' : t ∈ ({5, 6, 7, 8} : Finset (Fin 9)) := ht
+    simp only [mem_insert, mem_singleton] at ht'
+    left
+    rcases ht' with rfl | rfl | rfl | rfl
+    · rw [hNr, F.zero 5 2 (by decide), F.zero 5 1 (by decide)]
+      linarith [F.neg 5 0 (by decide)]
+    · exact h6
+    · exact h7
+    · exact h8
+  · intro t ht
+    have ht' : t ∉ ({5, 6, 7, 8} : Finset (Fin 9)) := ht
+    have ht'' : t = 0 ∨ t = 1 ∨ t = 2 ∨ t = 3 ∨ t = 4 := by revert t; decide
+    rcases ht'' with rfl | rfl | rfl | rfl | rfl
+    · right
+      rw [hNr, F.inner_sub, F.zero 0 2 (by decide), F.zero 0 0 (by decide), F.zero 0 1 (by decide)]
+      exact ⟨by ring, by linarith [F.neg 0 6 (by decide)]⟩
+    · left
+      rw [hNr, F.zero 1 0 (by decide), F.zero 1 1 (by decide)]
+      have hf := F.neg 1 2 (by decide)
+      nlinarith
+    · rw [hNr, F.zero 2 2 (by decide), F.zero 2 0 (by decide)]
+      have hf := F.neg 2 1 (by decide)
+      rcases hp0.lt_or_eq with hp | hp
+      · left; nlinarith
+      · right
+        rw [F.inner_sub, F.zero 2 0 (by decide), hp]
+        exact ⟨by ring, by linarith [F.neg 2 6 (by decide)]⟩
+    · exact Or.inl h3
+    · exact Or.inl h4
+
+/-- **T0Edge012B0, `π_24` twin.** -/
+theorem splitAny_of_t0Edge012B0_twin {F : S0xFac 9 s0x_S24 x}
+    (h : T0Edge012B0 (x ∘ Sym.pi24) (Sym.sym24 F)) : Gen.SplitAny F :=
+  Sym.splitAny24_sym F (splitAny_of_t0Edge012B0 h)
+
+/-- **T0Edge012B0 hole fact.** -/
+theorem holeLeaf_not_t0Edge012B0 {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F) : ¬ T0Edge012B0 x F :=
+  fun h => hF.2.2.2.2.1 (splitAny_of_t0Edge012B0 h)
+
+/-- **T0Edge012B0 twin hole fact.** -/
+theorem holeLeaf_not_t0Edge012B0_twin {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F) :
+    ¬ T0Edge012B0 (x ∘ Sym.pi24) (Sym.sym24 F) :=
+  fun h => hF.2.2.2.2.1 (splitAny_of_t0Edge012B0_twin h)
 
 /-! ## `T0Edge126B0`: monotone corners on the `126` edge of `T_0` (cell `B0`) -/
 

@@ -2856,6 +2856,11 @@ elab "#assert_standard_axioms " id:ident : command => do
 
 -- Type24GapLemmas (GAP14, 11-27)
 #assert_standard_axioms Minimality.T24.Cell.lexAny_of_wall_monoCorners
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_wall_apexCert
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_t0Edge012B0
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_t0Edge012B0_twin
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t0Edge012B0
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_t0Edge012B0_twin
 #assert_standard_axioms Minimality.T24.Cell.t0Edge012_exists_apex
 #assert_standard_axioms Minimality.T24.Cell.splitAny_of_t0Edge012
 #assert_standard_axioms Minimality.T24.Cell.splitAny_of_t0Edge012_twin
