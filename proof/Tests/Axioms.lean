@@ -241,6 +241,7 @@ import Minimality.EdgePlaneRev
 import Minimality.Type24HoleAtlasEPRev
 import Minimality.EdgePlaneDual
 import Minimality.Type24DeepC
+import Minimality.EdgePlaneNeg
 import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
@@ -2342,3 +2343,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.LexEP.lexAny_edgePlaneAny
 #assert_standard_axioms Minimality.T24.LexEP.holeLeaf_iff_core2
 #assert_standard_axioms Minimality.T24.LexEP.hole24_core2
+#assert_standard_axioms Minimality.T24.DeepC.edgePlaneSpin_rev
+#assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_neg
+#assert_standard_axioms Minimality.T24.DeepC.edgePlaneAt_neg_iff
