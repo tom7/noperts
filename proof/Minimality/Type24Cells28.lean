@@ -1,0 +1,31 @@
+module
+
+public import Minimality.Type24CellWallE
+public import Minimality.Type24GapLemmas2
+
+/-!
+# Type 24: the extended cell list `cells28`
+
+The pocket point `t1_1e-2_nb548_k0_e1e-02` (nopert229 data/hard/holekit/gapt2oc_resid.lines, GAPT2OC 11-27) has no
+Lex / Split certificate in any cell of `cells24` [EXACT], while its certificates sit on walls of the four cells
+`cell0164`, `cell01634`, `cell05326`, `cell046125` (Type24GapLemmas2.lean).  Since a longer list gives a weaker open Prop
+(`cellCoverEmpty_mono`), the headline open Prop on `OB1` becomes `CellCoverEmpty cells28`.
+-/
+
+@[expose] public section
+
+open Finset
+open Minimality Minimality.H21 Minimality.T24.SAT Minimality.T24.Stmt
+
+namespace Minimality.T24.Cell
+
+/-- `cells24` plus the four cells of the GAPT2OC pocket. -/
+def cells28 : List Cell24 :=
+  cells24 ++ [cell0164, cell01634, cell05326, cell046125]
+
+/-- [PROVED] Headline chain with `cells28`: `CellCoverEmpty cells28` and `OSpec.OpenSpecialB` give `Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty28_B (hN : CellCoverEmpty cells28) (hS : OSpec.OpenSpecialB) :
+    Open24Rupert :=
+  open24Rupert_of_cellCoverEmpty_B hN hS
+
+end Minimality.T24.Cell
