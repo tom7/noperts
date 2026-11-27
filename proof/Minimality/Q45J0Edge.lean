@@ -21,7 +21,7 @@ view on the face circle of 0345, rim 6 4 5 2, chord 4 → 5, middles 0, 3) use t
 * `J0Chord F u ρ`: the rest of the face-chord data at `u` (everything except the far vertex);
 * `q45_*_j0w` (OSPEC4): the four cores with only the ADJACENT rim pairs off the S2 locus (`hS2a`; opposite corners
   may tie, `unimodal_quad_Kplus_adj`, `strictUnimodal_four_of_adj`), concluding `⟪N3, u⟫ = 0`, `J0Extra`, `u = B + ε D`
-  and, under the full `hS2`, `J0Chord`; `s2_opp_of` (an S2 pair off the adjacent ones is `4 2` or `6 5`);
+  and the lex order at `(B, D)` read at `u`, and, under the full `hS2`, `J0Chord`; `s2_opp_of` (an S2 pair off the adjacent ones is `4 2` or `6 5`);
 * `q45_*_j0`: the four leaves without `hS3`, `hS4`, concluding `J0Chord` and `J0Extra` (OSPEC4: the facet signs
   `J0Signs`, strictly unimodal rim depths, middle `0` below `max z4 z5` and `3` above `min z4 z5`, used by the tilt
   of Q45J0Tilt.lean) (the proofs are those of Q45J0.lean up to the far-vertex goals; DEDUP TODO: at the next rebuild
@@ -184,6 +184,8 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 5 - x 0) + ε • (x 4 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 5 - x 0⟫ ∨ (⟪x a - x c, x 5 - x 0⟫ = 0 ∧ 0 < ⟪x a - x c, x 4 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0 ∨
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
@@ -219,8 +221,17 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
   have ev_adj := eventually_adj_quad p_quad b d hS2a
-  have ev_all := ev_eps.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and ev_adj))))
-  obtain ⟨ε, hε, h6, hN5_u, h6lo_u, hinj_u, hadj_u⟩ := ev_all.exists
+  have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
+      (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
+    refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
+    by_cases hlx : 0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)
+    · filter_upwards [eventually_pos_affine hlx] with ε hε _
+      have hl : ⟪x a, b + ε • d⟫ - ⟪x c, b + ε • d⟫ = ⟪x a - x c, b⟫ + ε * ⟪x a - x c, d⟫ := by
+        rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
+      linarith
+    · exact Eventually.of_forall fun ε h' => absurd h' hlx
+  have ev_all := ev_eps.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and (ev_adj.and ev_lex)))))
+  obtain ⟨ε, hε, h6, hN5_u, h6lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x 1 ε := hu_Pi ε
   have h8 : 0 < 1 * (1 - s) + ε * t := by nlinarith [hs, ht, hε]
@@ -280,7 +291,7 @@ theorem q45_Kplus_s_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
   have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
-  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩,
+  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩, hlex_u,
     fun hS2 => ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩⟩
   · have e0 := middle_quad_x0 x 1 ε (by linarith)
     rw [← hu_Pi_eq] at e0
@@ -328,7 +339,7 @@ theorem q45_Kplus_s_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
-  obtain ⟨u, ρ, -, hx, -, hc⟩ := q45_Kplus_s_le_one_j0w F ha5 s t hs0 ht hst hdecomp hk hs h6lo
+  obtain ⟨u, ρ, -, hx, -, -, hc⟩ := q45_Kplus_s_le_one_j0w F ha5 s t hs0 ht hst hdecomp hk hs h6lo
     (fun i => hS2 i (i + 1) (zmod4_ne_succ i))
   exact ⟨u, ρ, hc hS2, hx⟩
 
@@ -353,6 +364,8 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 3 - x 4⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 3 - x 4) + ε • (x 4 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 3 - x 4⟫ ∨ (⟪x a - x c, x 3 - x 4⟫ = 0 ∧ 0 < ⟪x a - x c, x 4 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 4⟫ ≠ 0 ∨
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
@@ -392,8 +405,17 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
   have ev_adj := eventually_adj_quad p_quad b d hS2a
-  have ev_all := ev_eps.and (ev_beta.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and ev_adj)))))
-  obtain ⟨ε, hε, hβ, h6, hN5_u, h6lo_u, hinj_u, hadj_u⟩ := ev_all.exists
+  have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
+      (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
+    refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
+    by_cases hlx : 0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)
+    · filter_upwards [eventually_pos_affine hlx] with ε hε _
+      have hl : ⟪x a, b + ε • d⟫ - ⟪x c, b + ε • d⟫ = ⟪x a - x c, b⟫ + ε * ⟪x a - x c, d⟫ := by
+        rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
+      linarith
+    · exact Eventually.of_forall fun ε h' => absurd h' hlx
+  have ev_all := ev_eps.and (ev_beta.and (ev_6.and (ev_N5.and (ev_6lo.and (ev_inj.and (ev_adj.and ev_lex))))))
+  obtain ⟨ε, hε, hβ, h6, hN5_u, h6lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x t (s - 1 + ε) := hu_Pi ε
   have h8 : 0 < t * (1 - s) + (s - 1 + ε) * t := by
@@ -455,7 +477,7 @@ theorem q45_Kplus_s_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
   have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
-  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩,
+  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩, hlex_u,
     fun hS2 => ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩⟩
   · have e0 := middle_quad_x0 x t (s - 1 + ε) (by linarith)
     rw [← hu_Pi_eq] at e0
@@ -503,7 +525,7 @@ theorem q45_Kplus_s_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 4⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
-  obtain ⟨u, ρ, -, hx, -, hc⟩ := q45_Kplus_s_gt_one_j0w F ha34 s t hs0 ht hst hdecomp hk hs h6lo
+  obtain ⟨u, ρ, -, hx, -, -, hc⟩ := q45_Kplus_s_gt_one_j0w F ha34 s t hs0 ht hst hdecomp hk hs h6lo
     (fun i => hS2 i (i + 1) (zmod4_ne_succ i))
   exact ⟨u, ρ, hc hS2, hx⟩
 
@@ -529,6 +551,8 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 4 - x 0⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 4 - x 0) + ε • (x 5 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 4 - x 0⟫ ∨ (⟪x a - x c, x 4 - x 0⟫ = 0 ∧ 0 < ⟪x a - x c, x 5 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
@@ -564,8 +588,17 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
   have ev_adj := eventually_adj_quad p_quad b d hS2a
-  have ev_all := ev_eps.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and ev_adj))))
-  obtain ⟨ε, hε, h8, hN5_u, h2lo_u, hinj_u, hadj_u⟩ := ev_all.exists
+  have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
+      (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
+    refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
+    by_cases hlx : 0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)
+    · filter_upwards [eventually_pos_affine hlx] with ε hε _
+      have hl : ⟪x a, b + ε • d⟫ - ⟪x c, b + ε • d⟫ = ⟪x a - x c, b⟫ + ε * ⟪x a - x c, d⟫ := by
+        rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
+      linarith
+    · exact Eventually.of_forall fun ε h' => absurd h' hlx
+  have ev_all := ev_eps.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and (ev_adj.and ev_lex)))))
+  obtain ⟨ε, hε, h8, hN5_u, h2lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x ε 1 := hu_Pi ε
   have h6 : 0 < ε * s + 1 * (1 - t) := by nlinarith [ht1, hs0, hε]
@@ -625,7 +658,7 @@ theorem q45_Kminus_t_le_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
   have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
-  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩,
+  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩, hlex_u,
     fun hS2 => ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩⟩
   · have e0 := middle_quad_x0 x ε 1 (by linarith)
     rw [← hu_Pi_eq] at e0
@@ -673,7 +706,7 @@ theorem q45_Kminus_t_le_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
-  obtain ⟨u, ρ, -, hx, -, hc⟩ := q45_Kminus_t_le_one_j0w F ha4 s t hs0 ht hst hdecomp hk ht1 h2lo
+  obtain ⟨u, ρ, -, hx, -, -, hc⟩ := q45_Kminus_t_le_one_j0w F ha4 s t hs0 ht hst hdecomp hk ht1 h2lo
     (fun i => hS2 i (i + 1) (zmod4_ne_succ i))
   exact ⟨u, ρ, hc hS2, hx⟩
 
@@ -698,6 +731,8 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 3 - x 5⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), x 5 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), ⟪F.N 3, u⟫ = 0 ∧ J0Extra F u ∧ (∃ ε : ℝ, u = (x 3 - x 5) + ε • (x 5 - x 0)) ∧
+      (∀ a c : Fin 7, (0 < ⟪x a - x c, x 3 - x 5⟫ ∨ (⟪x a - x c, x 3 - x 5⟫ = 0 ∧ 0 < ⟪x a - x c, x 5 - x 0⟫)) →
+        ⟪x c, u⟫ < ⟪x a, u⟫) ∧
       ((∀ i j : ZMod 4, i ≠ j →
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 5⟫ ≠ 0 ∨
         ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) → J0Chord F u ρ) := by
@@ -737,8 +772,17 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
     · filter_upwards [eventually_injective_quad p_quad b d hS2] with ε hε _ using hε
     · exact Eventually.of_forall fun ε h => absurd h hS2
   have ev_adj := eventually_adj_quad p_quad b d hS2a
-  have ev_all := ev_eps.and (ev_alpha.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and ev_adj)))))
-  obtain ⟨ε, hε, hα, h8, hN5_u, h2lo_u, hinj_u, hadj_u⟩ := ev_all.exists
+  have ev_lex : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ a c : Fin 7,
+      (0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)) → ⟪x c, b + ε • d⟫ < ⟪x a, b + ε • d⟫ := by
+    refine eventually_all.mpr fun a => eventually_all.mpr fun c => ?_
+    by_cases hlx : 0 < ⟪x a - x c, b⟫ ∨ (⟪x a - x c, b⟫ = 0 ∧ 0 < ⟪x a - x c, d⟫)
+    · filter_upwards [eventually_pos_affine hlx] with ε hε _
+      have hl : ⟪x a, b + ε • d⟫ - ⟪x c, b + ε • d⟫ = ⟪x a - x c, b⟫ + ε * ⟪x a - x c, d⟫ := by
+        rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
+      linarith
+    · exact Eventually.of_forall fun ε h' => absurd h' hlx
+  have ev_all := ev_eps.and (ev_alpha.and (ev_8.and (ev_N5.and (ev_2lo.and (ev_inj.and (ev_adj.and ev_lex))))))
+  obtain ⟨ε, hε, hα, h8, hN5_u, h2lo_u, hinj_u, hadj_u, hlex_u⟩ := ev_all.exists
   set u := b + ε • d
   have hu_Pi_eq : u = u_Pi x (t - 1 + ε) s := hu_Pi ε
   have h6 : 0 < (t - 1 + ε) * s + s * (1 - t) := by
@@ -800,7 +844,7 @@ theorem q45_Kminus_t_gt_one_j0w {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
   set a : ZMod 4 := 1
   have hr' : ∀ i : ZMod 4, x (quad 6 4 5 2 i) = p_quad i := hr
   have hu0 : u ≠ 0 := fun h0 => by rw [h0, inner_zero_right] at hN2; exact lt_irrefl _ hN2
-  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩,
+  refine ⟨u, ρ, hN3, ⟨⟨hN2, hN4, hN5, hN6, hN7, hN8⟩, h_uni, ?_, ?_⟩, ⟨ε, rfl⟩, hlex_u,
     fun hS2 => ⟨hN3, hρ_ne, ?_, ?_, ?_, ?_, ?_⟩⟩
   · have e0 := middle_quad_x0 x (t - 1 + ε) s (by linarith)
     rw [← hu_Pi_eq] at e0
@@ -848,7 +892,7 @@ theorem q45_Kminus_t_gt_one_j0 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 3 - x 5⟫ ≠ 0 ∨
       ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0) :
     ∃ (u : ℝ³) (ρ : ℝ), J0Chord F u ρ ∧ J0Extra F u := by
-  obtain ⟨u, ρ, -, hx, -, hc⟩ := q45_Kminus_t_gt_one_j0w F ha35 s t hs0 ht hst hdecomp hk ht1 h2lo
+  obtain ⟨u, ρ, -, hx, -, -, hc⟩ := q45_Kminus_t_gt_one_j0w F ha35 s t hs0 ht hst hdecomp hk ht1 h2lo
     (fun i => hS2 i (i + 1) (zmod4_ne_succ i))
   exact ⟨u, ρ, hc hS2, hx⟩
 

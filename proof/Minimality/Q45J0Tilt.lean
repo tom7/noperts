@@ -32,7 +32,8 @@ Which middle pops: if the rim depths at `u` are strictly unimodal and the chord 
 and `z5` at every view of the circle (`depth_between_of_s4`): the chord is not inside a monotone chain, and every J0
 point of S4J0 is a lex cell (`lexAny_of_j0S4`).  On the S2 locus with an OPPOSITE pair only (`4 2` or `6 5` orthogonal
 to the face plane) the tied corners rule out the monotone chain (`lexAny_of_j0_tie`, `lexAny_of_j0_s2opp`, with the
-weak cores `q45_*_j0w`).  General form: `lexAny_of_j0_noMid`.
+weak cores `q45_*_j0w`); off both, unless the lex order at the core's base is a monotone chain (`J0MidLex`,
+`lexAny_of_j0_lexNoMid`; the S3 crossing part).  General form: `lexAny_of_j0_noMid`.
 -/
 
 namespace Minimality.T24.Q45
@@ -356,6 +357,46 @@ theorem lexAny_of_j0_s2opp (F : S0xFac 9 s0x_S24 x) {u B D : ℝ³} (h3 : ⟪F.N
     change ⟪x 6 - x 5, B⟫ = 0 at hb
     change ⟪x 6 - x 5, D⟫ = 0 at hd
     rw [hb, hd, mul_zero, add_zero] at this; linarith
+
+/-- `z a < z c` in the lex order of the views `B + ε D` (`ε → 0⁺`). -/
+def LexLt2 (x : Fin 7 → ℝ³) (B D : ℝ³) (a c : Fin 7) : Prop :=
+  0 < ⟪x c - x a, B⟫ ∨ (⟪x c - x a, B⟫ = 0 ∧ 0 < ⟪x c - x a, D⟫)
+
+/-- The J0 rim depths in lex order at `(B, D)` with the chord inside a monotone chain (`6 → 4 → 5 → 2`). -/
+def J0MidLex (x : Fin 7 → ℝ³) (B D : ℝ³) : Prop :=
+  (LexLt2 x B D 6 4 ∧ LexLt2 x B D 4 5 ∧ LexLt2 x B D 5 2) ∨
+    (LexLt2 x B D 2 5 ∧ LexLt2 x B D 5 4 ∧ LexLt2 x B D 4 6)
+
+/-- A strict depth order at a view `u = B + ε D` that reads the lex order (`hlex`) is a lex order. -/
+theorem lexLt2_of_lt {B D u : ℝ³} (hu : ∃ ε : ℝ, u = B + ε • D)
+    (hlex : ∀ a c : Fin 7, (0 < ⟪x a - x c, B⟫ ∨ (⟪x a - x c, B⟫ = 0 ∧ 0 < ⟪x a - x c, D⟫)) →
+      ⟪x c, u⟫ < ⟪x a, u⟫) {a c : Fin 7} (h : ⟪x a, u⟫ < ⟪x c, u⟫) : LexLt2 x B D a c := by
+  obtain ⟨ε, rfl⟩ := hu
+  have hl : ⟪x c, B + ε • D⟫ - ⟪x a, B + ε • D⟫ = ⟪x c - x a, B⟫ + ε * ⟪x c - x a, D⟫ := by
+    rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
+  have nB : ⟪x a - x c, B⟫ = -⟪x c - x a, B⟫ := by rw [← inner_neg_left, neg_sub]
+  have nD : ⟪x a - x c, D⟫ = -⟪x c - x a, D⟫ := by rw [← inner_neg_left, neg_sub]
+  by_contra hn
+  simp only [LexLt2, not_or, not_and, not_lt] at hn
+  obtain ⟨h1, h2⟩ := hn
+  rcases lt_or_eq_of_le h1 with h1 | h1
+  · have := hlex a c (Or.inl (by rw [nB]; linarith)); linarith
+  · rcases lt_or_eq_of_le (h2 h1) with h3 | h3
+    · have := hlex a c (Or.inr ⟨by rw [nB, h1, neg_zero], by rw [nD]; linarith⟩); linarith
+    · rw [h1, h3, mul_zero, add_zero] at hl; linarith
+
+/-- **The tilt off the lex monotone chain**: a weak J0 core's view (`u = B + ε D` reading the lex order at `(B, D)`)
+with the rim not in a lex monotone chain through the chord is a lex cell. -/
+theorem lexAny_of_j0_lexNoMid (F : S0xFac 9 s0x_S24 x) {u B D : ℝ³} (h3 : ⟪F.N 3, u⟫ = 0) (hx : J0Extra F u)
+    (hu : ∃ ε : ℝ, u = B + ε • D)
+    (hlex : ∀ a c : Fin 7, (0 < ⟪x a - x c, B⟫ ∨ (⟪x a - x c, B⟫ = 0 ∧ 0 < ⟪x a - x c, D⟫)) →
+      ⟪x c, u⟫ < ⟪x a, u⟫)
+    (hnm : ¬ J0MidLex x B D) : Gen.LexAny F := by
+  refine lexAny_of_j0_noMid F h3 hx ?_ ?_
+  · rintro ⟨c1, c2, c3⟩
+    exact hnm (Or.inl ⟨lexLt2_of_lt hu hlex c1, lexLt2_of_lt hu hlex c2, lexLt2_of_lt hu hlex c3⟩)
+  · rintro ⟨c1, c2, c3⟩
+    exact hnm (Or.inr ⟨lexLt2_of_lt hu hlex c1, lexLt2_of_lt hu hlex c2, lexLt2_of_lt hu hlex c3⟩)
 
 /-- **A J0 core's view on S4J0 is a lex cell** (`J0Chord` gives `⟪N3, u⟫ = 0`). -/
 theorem lexAny_of_j0Chord_s4 (F : S0xFac 9 s0x_S24 x) {u : ℝ³} {ρ : ℝ} (hc : J0Chord F u ρ) (hx : J0Extra F u)

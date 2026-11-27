@@ -640,8 +640,10 @@ and the tilted view is a lex cell whenever the chord `4 5` is not inside a monot
 the farther vertex's depth lies between `z4` and `z5` (`lexAny_of_j0Chord_s4`); on the S2 locus with no ADJACENT S2
 pair (only `4 2` or `6 5` orthogonal to the face plane) the opposite corners are tied at every view of the circle and
 the weak cores (`q45_*_j0w`, adjacent rim depths distinct only) give strictly unimodal depths (`lexAny_of_j0_s2opp`).
-What is left of the J0 loci: an adjacent S2 pair (`64 52 62`, `Q45S2AdjJ0`), or the S3 crossing part (`¬ J0PairOff`)
-off S2 and S4J0.  The conclusion `LexAny` is a hole leaf. -/
+Off S2 and S4J0 (the S3 crossing part, `¬ J0PairOff`) the weak cores read the lex order of the rim depths at their
+base `(B, D)`; unless it is a monotone chain through the chord (`J0MidLex`) the tilt is a lex cell
+(`lexAny_of_j0_lexNoMid`).  What is left of the J0 loci: an adjacent S2 pair (`64 52 62`, `Q45S2AdjJ0`), or the S3
+crossing part off S2 and S4J0 with a lex monotone chain.  The conclusion `LexAny` is a hole leaf. -/
 
 /-- An adjacent pair of the rim `6 4 5 2` orthogonal to `B` and `D` (the face plane): `64`, `52` or `62`. -/
 def Q45S2AdjJ0 (x : Fin 7 → ℝ³) (B D : ℝ³) : Prop :=
@@ -649,31 +651,32 @@ def Q45S2AdjJ0 (x : Fin 7 → ℝ³) (B D : ℝ³) : Prop :=
     ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), D⟫ = 0
 
 /-- What is left of a `J0` piece after the tilt: an adjacent S2 pair, or (off S2) the projected far segment meets the
-chord and the farther vertex's foot is off the chord (the S3 crossing part). -/
-def J0LeftT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (S2 S2adj : Prop) : Prop :=
-  S2adj ∨ (¬ S2 ∧ ¬ J0PairOff F ∧ ¬ Q45S4LocusJ0 F)
+chord, the farther vertex's foot is off the chord (the S3 crossing part) and the lex depth order `Mid` at the core's
+base is a monotone chain through the chord. -/
+def J0LeftT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (S2 S2adj Mid : Prop) : Prop :=
+  S2adj ∨ (¬ S2 ∧ ¬ J0PairOff F ∧ ¬ Q45S4LocusJ0 F ∧ Mid)
 
 def ResJ0aT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s : ℝ) : Prop :=
-  ResJ0a F s ∧ J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0))
+  ResJ0a F s ∧ J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0)) (J0MidLex x (x 5 - x 0) (x 4 - x 0))
 def ResJ0bT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s : ℝ) : Prop :=
-  ResJ0b F s ∧ J0LeftT F (Q45S2LocusJ0_e34 x) (Q45S2AdjJ0 x (x 3 - x 4) (x 4 - x 0))
+  ResJ0b F s ∧ J0LeftT F (Q45S2LocusJ0_e34 x) (Q45S2AdjJ0 x (x 3 - x 4) (x 4 - x 0)) (J0MidLex x (x 3 - x 4) (x 4 - x 0))
 def ResJ0cT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : ℝ) : Prop :=
-  ResJ0c F t ∧ J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0))
+  ResJ0c F t ∧ J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0)) (J0MidLex x (x 4 - x 0) (x 5 - x 0))
 def ResJ0dT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : ℝ) : Prop :=
-  ResJ0d F t ∧ J0LeftT F (Q45S2LocusJ0_e35 x) (Q45S2AdjJ0 x (x 3 - x 5) (x 5 - x 0))
+  ResJ0d F t ∧ J0LeftT F (Q45S2LocusJ0_e35 x) (Q45S2AdjJ0 x (x 3 - x 5) (x 5 - x 0)) (J0MidLex x (x 3 - x 5) (x 5 - x 0))
 
 /-- A J0 wall chord fails after the tilt: an adjacent S2 pair, or (off S2) the S3 tie off S4J0 with the far pair
-failing. -/
-def J0FailT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (S2 S2adj : Prop) : Prop :=
-  S2adj ∨ (¬ S2 ∧ F.f 3 (x 2) = F.f 3 (x 6) ∧ ¬ Q45S4LocusJ0 F ∧ ¬ J0PairOff F)
+failing and a lex monotone chain `Mid`. -/
+def J0FailT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (S2 S2adj Mid : Prop) : Prop :=
+  S2adj ∨ (¬ S2 ∧ F.f 3 (x 2) = F.f 3 (x 6) ∧ ¬ Q45S4LocusJ0 F ∧ ¬ J0PairOff F ∧ Mid)
 
 def ResWallT {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
   (kOm x < 0 ∧ s ≤ 1 ∧ oblX0 x 5 = 1 ∧
       (max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ ≤ ⟪x 6, x 5 - x 0⟫ ∨
-        J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0)))) ∨
+        J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0)) (J0MidLex x (x 5 - x 0) (x 4 - x 0)))) ∨
     (0 < kOm x ∧ t ≤ 1 ∧ oblX0 x 4 = 1 ∧
       (max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫ ∨
-        J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0)))) ∨
+        J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0)) (J0MidLex x (x 4 - x 0) (x 5 - x 0)))) ∨
     (det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) = 0 ∧ (oblX0 x 4 = 1 ∨ oblX0 x 5 = 1)) ∨
     (oblX0 x 4 = 1 ∧ oblX0 x 5 = 1)
 
@@ -693,6 +696,13 @@ private theorem s2a_of_not_adj {B D : ℝ³} (h : ¬ Q45S2AdjJ0 x B D) : ∀ i :
   by_contra hc
   simp only [not_or, not_not] at hc
   exact h ⟨i, hc.1, hc.2⟩
+
+private theorem s2a_of_full {B D : ℝ³} (h : ∀ i j : ZMod 4, i ≠ j →
+    ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, B⟫ ≠ 0 ∨
+    ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, D⟫ ≠ 0) : ∀ i : ZMod 4,
+    ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), B⟫ ≠ 0 ∨
+    ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), D⟫ ≠ 0 :=
+  fun i => h i (i + 1) (zmod4_ne_succ i)
 
 /-- An adjacent S2 pair is an S2 pair. -/
 private theorem s2_of_adj {B D : ℝ³} (h : Q45S2AdjJ0 x B D) : ¬ ∀ i j : ZMod 4, i ≠ j →
@@ -720,7 +730,7 @@ theorem q45_resT_local (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 �
       ⟨⟨hk, ht1, h2, hL0⟩, hL⟩ | h | ⟨⟨hk, ht1, h2, hL0⟩, hL⟩
   · rcases h with ⟨hk, hs, hw5, hR⟩ | ⟨hk, ht1, hw4, hR⟩ | h | h
     · by_cases hT : max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ ≤ ⟪x 6, x 5 - x 0⟫ ∨
-          J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0))
+          J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0)) (J0MidLex x (x 5 - x 0) (x 4 - x 0))
       · exact Or.inr (Or.inl (Or.inl ⟨hk, hs, hw5, hT⟩))
       have h6 : ¬ (max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ ≤ ⟪x 6, x 5 - x 0⟫) := fun h => hT (Or.inl h)
       have hadj : ¬ Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0) := fun h => hT (Or.inr (Or.inl h))
@@ -731,21 +741,24 @@ theorem q45_resT_local (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 �
       have h6lo : min ⟪x 6, x 5 - x 0⟫ ⟪x 5, x 5 - x 0⟫ < max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ :=
         lt_of_le_of_lt (min_le_left _ _) (not_le.mp h6)
       by_cases hs2 : Q45S2LocusJ0_e5 x
-      · obtain ⟨u, ρ, h3, hx, hu, -⟩ := q45_Kplus_s_le_one_j0w F (Or.inr ⟨n5_zero F hw5, ha4⟩) s t hs0 ht hst
+      · obtain ⟨u, ρ, h3, hx, hu, -, -⟩ := q45_Kplus_s_le_one_j0w F (Or.inr ⟨n5_zero F hw5, ha4⟩) s t hs0 ht hst
           hdecomp hk hs h6lo (s2a_of_not_adj hadj)
         exact Or.inl (lexAny_of_j0_s2opp F h3 hx hu (s2a_of_not_adj hadj) hs2)
-      · have hS4 : Q45S4LocusJ0 F := by
-          rcases hF with h | ⟨h34, hp⟩
-          · exact absurd h hs2
-          · by_contra h4'
-            rcases h34 with h3' | h4''
-            · exact hT (Or.inr (Or.inr ⟨hs2, h3', h4', hp⟩))
-            · exact h4' h4''
-        obtain ⟨u, ρ, hc, hx⟩ := q45_Kplus_s_le_one_j0 F (Or.inr ⟨n5_zero F hw5, ha4⟩) s t hs0 ht hst hdecomp hk hs
-          h6lo (not_not.mp hs2)
-        exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+      · by_cases hS4 : Q45S4LocusJ0 F
+        · obtain ⟨u, ρ, hc, hx⟩ := q45_Kplus_s_le_one_j0 F (Or.inr ⟨n5_zero F hw5, ha4⟩) s t hs0 ht hst hdecomp hk hs
+            h6lo (not_not.mp hs2)
+          exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        · have hnm : ¬ J0MidLex x (x 5 - x 0) (x 4 - x 0) := by
+            intro hm
+            rcases hF with h | ⟨h34 | h34, hp⟩
+            · exact hs2 h
+            · exact hT (Or.inr (Or.inr ⟨hs2, h34, hS4, hp, hm⟩))
+            · exact hS4 h34
+          obtain ⟨u, ρ, h3, hx, hu, hlex, -⟩ := q45_Kplus_s_le_one_j0w F (Or.inr ⟨n5_zero F hw5, ha4⟩) s t hs0 ht hst hdecomp hk hs
+            h6lo (s2a_of_full (not_not.mp hs2))
+          exact Or.inl (lexAny_of_j0_lexNoMid F h3 hx hu hlex hnm)
     · by_cases hT : max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫ ∨
-          J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0))
+          J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0)) (J0MidLex x (x 4 - x 0) (x 5 - x 0))
       · exact Or.inr (Or.inl (Or.inr (Or.inl ⟨hk, ht1, hw4, hT⟩)))
       have h2 : ¬ (max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫) := fun h => hT (Or.inl h)
       have hadj : ¬ Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0) := fun h => hT (Or.inr (Or.inl h))
@@ -756,29 +769,32 @@ theorem q45_resT_local (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 �
       have h2lo : min ⟪x 4, x 4 - x 0⟫ ⟪x 2, x 4 - x 0⟫ < max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ :=
         lt_of_le_of_lt (min_le_right _ _) (not_le.mp h2)
       by_cases hs2 : Q45S2LocusJ0_e5 x
-      · obtain ⟨u, ρ, h3, hx, hu, -⟩ := q45_Kminus_t_le_one_j0w F (Or.inr ⟨n5_zero F hw4, ha5⟩) s t hs0 ht hst
+      · obtain ⟨u, ρ, h3, hx, hu, -, -⟩ := q45_Kminus_t_le_one_j0w F (Or.inr ⟨n5_zero F hw4, ha5⟩) s t hs0 ht hst
           hdecomp hk ht1 h2lo (s2a_of_not_adj hadj)
         exact Or.inl (lexAny_of_j0_s2opp F h3 hx hu (s2a_of_not_adj hadj) (swapS2.mp hs2))
-      · have hS4 : Q45S4LocusJ0 F := by
-          rcases hF with h | ⟨h34, hp⟩
-          · exact absurd h hs2
-          · by_contra h4'
-            rcases h34 with h3' | h4''
-            · exact hT (Or.inr (Or.inr ⟨hs2, h3', h4', hp⟩))
-            · exact h4' h4''
-        have hs2' : ∀ i j : ZMod 4, i ≠ j →
+      · have hs2' : ∀ i j : ZMod 4, i ≠ j →
             ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
             ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0 := by
           intro i j hij; exact ((not_not.mp hs2) i j hij).symm
-        obtain ⟨u, ρ, hc, hx⟩ := q45_Kminus_t_le_one_j0 F (Or.inr ⟨n5_zero F hw4, ha5⟩) s t hs0 ht hst hdecomp hk
-          ht1 h2lo hs2'
-        exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        by_cases hS4 : Q45S4LocusJ0 F
+        · obtain ⟨u, ρ, hc, hx⟩ := q45_Kminus_t_le_one_j0 F (Or.inr ⟨n5_zero F hw4, ha5⟩) s t hs0 ht hst hdecomp hk
+            ht1 h2lo hs2'
+          exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        · have hnm : ¬ J0MidLex x (x 4 - x 0) (x 5 - x 0) := by
+            intro hm
+            rcases hF with h | ⟨h34 | h34, hp⟩
+            · exact hs2 h
+            · exact hT (Or.inr (Or.inr ⟨hs2, h34, hS4, hp, hm⟩))
+            · exact hS4 h34
+          obtain ⟨u, ρ, h3, hx, hu, hlex, -⟩ := q45_Kminus_t_le_one_j0w F (Or.inr ⟨n5_zero F hw4, ha5⟩) s t hs0 ht hst hdecomp hk
+            ht1 h2lo (s2a_of_full hs2')
+          exact Or.inl (lexAny_of_j0_lexNoMid F h3 hx hu hlex hnm)
     · exact Or.inr (Or.inl (Or.inr (Or.inr (Or.inl h))))
     · exact Or.inr (Or.inl (Or.inr (Or.inr (Or.inr h))))
   · exact Or.inr (Or.inr (Or.inl h))
   · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
   · -- J0a
-    by_cases hT : J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0))
+    by_cases hT : J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0)) (J0MidLex x (x 5 - x 0) (x 4 - x 0))
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨⟨hk, hs, h6, hL0⟩, hT⟩))))
     have hadj : ¬ Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0) := fun h => hT (Or.inl h)
     have ha5 : ⟪F.N 5, x 5 - x 0⟫ < 0 ∨ (⟪F.N 5, x 5 - x 0⟫ = 0 ∧ ⟪F.N 5, x 4 - x 0⟫ < 0) ∨
@@ -795,36 +811,39 @@ theorem q45_resT_local (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 �
     · exact Or.inr (Or.inl (Or.inr (Or.inr (Or.inr hw))))
     all_goals
       by_cases hs2 : Q45S2LocusJ0_e5 x
-      · obtain ⟨u, ρ, h3, hx, hu, -⟩ := q45_Kplus_s_le_one_j0w F (by first | exact Or.inl ha5 | exact Or.inr ha5)
+      · obtain ⟨u, ρ, h3, hx, hu, -, -⟩ := q45_Kplus_s_le_one_j0w F (by first | exact Or.inl ha5 | exact Or.inr ha5)
           s t hs0 ht hst hdecomp hk hs h6lo (s2a_of_not_adj hadj)
         exact Or.inl (lexAny_of_j0_s2opp F h3 hx hu (s2a_of_not_adj hadj) hs2)
-      · have hS4 : Q45S4LocusJ0 F := by
-          by_contra h4'
-          exact hT (Or.inr ⟨hs2, hL.resolve_left hs2, h4'⟩)
-        obtain ⟨u, ρ, hc, hx⟩ := q45_Kplus_s_le_one_j0 F (by first | exact Or.inl ha5 | exact Or.inr ha5)
-          s t hs0 ht hst hdecomp hk hs h6lo (not_not.mp hs2)
-        exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+      · by_cases hS4 : Q45S4LocusJ0 F
+        · obtain ⟨u, ρ, hc, hx⟩ := q45_Kplus_s_le_one_j0 F (by first | exact Or.inl ha5 | exact Or.inr ha5)
+            s t hs0 ht hst hdecomp hk hs h6lo (not_not.mp hs2)
+          exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        · have hnm : ¬ J0MidLex x (x 5 - x 0) (x 4 - x 0) := fun hm => hT (Or.inr ⟨hs2, hL.resolve_left hs2, hS4, hm⟩)
+          obtain ⟨u, ρ, h3, hx, hu, hlex, -⟩ := q45_Kplus_s_le_one_j0w F (by first | exact Or.inl ha5 | exact Or.inr ha5)
+            s t hs0 ht hst hdecomp hk hs h6lo (s2a_of_full (not_not.mp hs2))
+          exact Or.inl (lexAny_of_j0_lexNoMid F h3 hx hu hlex hnm)
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
   · -- J0b
-    by_cases hT : J0LeftT F (Q45S2LocusJ0_e34 x) (Q45S2AdjJ0 x (x 3 - x 4) (x 4 - x 0))
+    by_cases hT : J0LeftT F (Q45S2LocusJ0_e34 x) (Q45S2AdjJ0 x (x 3 - x 4) (x 4 - x 0)) (J0MidLex x (x 3 - x 4) (x 4 - x 0))
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨⟨hk, hs, h6, hL0⟩, hT⟩))))))
     have hadj : ¬ Q45S2AdjJ0 x (x 3 - x 4) (x 4 - x 0) := fun h => hT (Or.inl h)
     rcases sgn_34 F h4 h5 hs ht hdecomp with ha34 | hw
     · by_cases hs2 : Q45S2LocusJ0_e34 x
-      · obtain ⟨u, ρ, h3, hx, hu, -⟩ := q45_Kplus_s_gt_one_j0w F ha34 s t hs0 ht hst hdecomp hk hs h6
+      · obtain ⟨u, ρ, h3, hx, hu, -, -⟩ := q45_Kplus_s_gt_one_j0w F ha34 s t hs0 ht hst hdecomp hk hs h6
           (s2a_of_not_adj hadj)
         exact Or.inl (lexAny_of_j0_s2opp F h3 hx hu (s2a_of_not_adj hadj) hs2)
-      · have hS4 : Q45S4LocusJ0 F := by
-          by_contra h4'
-          exact hT (Or.inr ⟨hs2, hL.resolve_left hs2, h4'⟩)
-        obtain ⟨u, ρ, hc, hx⟩ := q45_Kplus_s_gt_one_j0 F ha34 s t hs0 ht hst hdecomp hk hs h6 (not_not.mp hs2)
-        exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+      · by_cases hS4 : Q45S4LocusJ0 F
+        · obtain ⟨u, ρ, hc, hx⟩ := q45_Kplus_s_gt_one_j0 F ha34 s t hs0 ht hst hdecomp hk hs h6 (not_not.mp hs2)
+          exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        · have hnm : ¬ J0MidLex x (x 3 - x 4) (x 4 - x 0) := fun hm => hT (Or.inr ⟨hs2, hL.resolve_left hs2, hS4, hm⟩)
+          obtain ⟨u, ρ, h3, hx, hu, hlex, -⟩ := q45_Kplus_s_gt_one_j0w F ha34 s t hs0 ht hst hdecomp hk hs h6 (s2a_of_full (not_not.mp hs2))
+          exact Or.inl (lexAny_of_j0_lexNoMid F h3 hx hu hlex hnm)
     · exact Or.inr (Or.inl (Or.inr (Or.inr (Or.inr hw))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))))
   · -- J0c
-    by_cases hT : J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0))
+    by_cases hT : J0LeftT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0)) (J0MidLex x (x 4 - x 0) (x 5 - x 0))
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
         ⟨⟨hk, ht1, h2, hL0⟩, hT⟩))))))))))
     have hadj : ¬ Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0) := fun h => hT (Or.inl h)
@@ -842,23 +861,25 @@ theorem q45_resT_local (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 �
     · exact Or.inr (Or.inl (Or.inr (Or.inr (Or.inr hw))))
     all_goals
       by_cases hs2 : Q45S2LocusJ0_e5 x
-      · obtain ⟨u, ρ, h3, hx, hu, -⟩ := q45_Kminus_t_le_one_j0w F (by first | exact Or.inl ha4 | exact Or.inr ha4)
+      · obtain ⟨u, ρ, h3, hx, hu, -, -⟩ := q45_Kminus_t_le_one_j0w F (by first | exact Or.inl ha4 | exact Or.inr ha4)
           s t hs0 ht hst hdecomp hk ht1 h2lo (s2a_of_not_adj hadj)
         exact Or.inl (lexAny_of_j0_s2opp F h3 hx hu (s2a_of_not_adj hadj) (swapS2.mp hs2))
-      · have hS4 : Q45S4LocusJ0 F := by
-          by_contra h4'
-          exact hT (Or.inr ⟨hs2, hL.resolve_left hs2, h4'⟩)
-        have hs2' : ∀ i j : ZMod 4, i ≠ j →
+      · have hs2' : ∀ i j : ZMod 4, i ≠ j →
             ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 4 - x 0⟫ ≠ 0 ∨
             ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, x 5 - x 0⟫ ≠ 0 := by
           intro i j hij; exact ((not_not.mp hs2) i j hij).symm
-        obtain ⟨u, ρ, hc, hx⟩ := q45_Kminus_t_le_one_j0 F (by first | exact Or.inl ha4 | exact Or.inr ha4)
-          s t hs0 ht hst hdecomp hk ht1 h2lo hs2'
-        exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        by_cases hS4 : Q45S4LocusJ0 F
+        · obtain ⟨u, ρ, hc, hx⟩ := q45_Kminus_t_le_one_j0 F (by first | exact Or.inl ha4 | exact Or.inr ha4)
+            s t hs0 ht hst hdecomp hk ht1 h2lo hs2'
+          exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        · have hnm : ¬ J0MidLex x (x 4 - x 0) (x 5 - x 0) := fun hm => hT (Or.inr ⟨hs2, hL.resolve_left hs2, hS4, hm⟩)
+          obtain ⟨u, ρ, h3, hx, hu, hlex, -⟩ := q45_Kminus_t_le_one_j0w F (by first | exact Or.inl ha4 | exact Or.inr ha4)
+            s t hs0 ht hst hdecomp hk ht1 h2lo (s2a_of_full hs2')
+          exact Or.inl (lexAny_of_j0_lexNoMid F h3 hx hu hlex hnm)
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
       (Or.inl h)))))))))))
   · -- J0d
-    by_cases hT : J0LeftT F (Q45S2LocusJ0_e35 x) (Q45S2AdjJ0 x (x 3 - x 5) (x 5 - x 0))
+    by_cases hT : J0LeftT F (Q45S2LocusJ0_e35 x) (Q45S2AdjJ0 x (x 3 - x 5) (x 5 - x 0)) (J0MidLex x (x 3 - x 5) (x 5 - x 0))
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
         (Or.inr ⟨⟨hk, ht1, h2, hL0⟩, hT⟩)))))))))))
     have hadj : ¬ Q45S2AdjJ0 x (x 3 - x 5) (x 5 - x 0) := fun h => hT (Or.inl h)
@@ -866,24 +887,27 @@ theorem q45_resT_local (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 �
       rw [min_comm]; exact h2
     rcases sgn_35 F h4 h5 hs0 ht1 hdecomp with ha35 | hw
     · by_cases hs2 : Q45S2LocusJ0_e35 x
-      · obtain ⟨u, ρ, h3, hx, hu, -⟩ := q45_Kminus_t_gt_one_j0w F ha35 s t hs0 ht hst hdecomp hk ht1 h2'
+      · obtain ⟨u, ρ, h3, hx, hu, -, -⟩ := q45_Kminus_t_gt_one_j0w F ha35 s t hs0 ht hst hdecomp hk ht1 h2'
           (s2a_of_not_adj hadj)
         exact Or.inl (lexAny_of_j0_s2opp F h3 hx hu (s2a_of_not_adj hadj) hs2)
-      · have hS4 : Q45S4LocusJ0 F := by
-          by_contra h4'
-          exact hT (Or.inr ⟨hs2, hL.resolve_left hs2, h4'⟩)
-        obtain ⟨u, ρ, hc, hx⟩ := q45_Kminus_t_gt_one_j0 F ha35 s t hs0 ht hst hdecomp hk ht1 h2' (not_not.mp hs2)
-        exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+      · by_cases hS4 : Q45S4LocusJ0 F
+        · obtain ⟨u, ρ, hc, hx⟩ := q45_Kminus_t_gt_one_j0 F ha35 s t hs0 ht hst hdecomp hk ht1 h2' (not_not.mp hs2)
+          exact Or.inl (lexAny_of_j0Chord_s4 F hc hx hS4)
+        · have hnm : ¬ J0MidLex x (x 3 - x 5) (x 5 - x 0) := fun hm => hT (Or.inr ⟨hs2, hL.resolve_left hs2, hS4, hm⟩)
+          obtain ⟨u, ρ, h3, hx, hu, hlex, -⟩ := q45_Kminus_t_gt_one_j0w F ha35 s t hs0 ht hst hdecomp hk ht1 h2' (s2a_of_full (not_not.mp hs2))
+          exact Or.inl (lexAny_of_j0_lexNoMid F h3 hx hu hlex hnm)
     · exact Or.inr (Or.inl (Or.inr (Or.inr (Or.inr hw))))
 
 /-- `Q45ResWT ⊆ Q45ResWE`. -/
 theorem q45ResWT_sub {F : S0xFac 9 s0x_S24 x} (h : Q45ResWT F) : Q45ResWE F := by
   obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
   refine ⟨s, t, hs, ht, hst, hd, ?_⟩
-  have hL : ∀ {S2 : Prop} {B D : ℝ³}, (Q45S2AdjJ0 x B D → S2) → J0LeftT F S2 (Q45S2AdjJ0 x B D) → J0Left F S2 :=
+  have hL : ∀ {S2 Mid : Prop} {B D : ℝ³}, (Q45S2AdjJ0 x B D → S2) → J0LeftT F S2 (Q45S2AdjJ0 x B D) Mid →
+      J0Left F S2 :=
     fun hs h => h.imp hs (fun h' => h'.2.1)
-  have hW : ∀ {S2 : Prop} {B D : ℝ³}, (Q45S2AdjJ0 x B D → S2) → J0FailT F S2 (Q45S2AdjJ0 x B D) → J0Fail F S2 :=
-    fun hs h => h.imp hs (fun h' => ⟨Or.inl h'.2.1, h'.2.2.2⟩)
+  have hW : ∀ {S2 Mid : Prop} {B D : ℝ³}, (Q45S2AdjJ0 x B D → S2) → J0FailT F S2 (Q45S2AdjJ0 x B D) Mid →
+      J0Fail F S2 :=
+    fun hs h => h.imp hs (fun h' => ⟨Or.inl h'.2.1, h'.2.2.2.1⟩)
   have a5 : Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0) → Q45S2LocusJ0_e5 x := s2_of_adj
   have a4 : Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0) → Q45S2LocusJ0_e5 x := fun h => swapS2.mpr (s2_of_adj h)
   have a34 : Q45S2AdjJ0 x (x 3 - x 4) (x 4 - x 0) → Q45S2LocusJ0_e34 x := s2_of_adj
@@ -916,7 +940,8 @@ theorem q45_resT (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ obl
     · exact Or.inr (Or.inr (Or.inr ⟨s, t, hs0, ht, hst, hd, h⟩))
 
 /-- [OPEN] **The special piece after the J0 tilt, Rupert form**: as `OpenSpecialE` with `Q45ResWT` (the J0 pieces
-and J0 walls shrunk to an adjacent S2 pair or, off S2, the S3 crossing part off S4J0) in place of `Q45ResWE`. -/
+and J0 walls shrunk to an adjacent S2 pair or, off S2, the S3 crossing part off S4J0 with a lex monotone chain) in
+place of `Q45ResWE`. -/
 def OpenSpecialT : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
   1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
   oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
