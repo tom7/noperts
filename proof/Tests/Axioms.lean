@@ -267,6 +267,9 @@ import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
 import Minimality.UnimodalSplit
 import Minimality.Type24RayCT
+import Minimality.Q45J0Tilt
+import Minimality.Q45J0Edge
+import Minimality.Type24FootLex
 
 /-!
 # The headline theorems use only the standard axioms
@@ -2620,3 +2623,55 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.not_cellCoverResidue_of_rayCT02
 #assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_rayCT02
 #assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_rayCT02_twin
+
+-- Q45J0Tilt / Q45J0Edge (OSPEC4 J0 tilt and edge cores), OSPEC4 T-chain in Type24OffOB1Res, CellWallE T forms (11-27)
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_tilt
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0Tilt0
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0Tilt3
+#assert_standard_axioms Minimality.T24.Q45.j0Tilt_corners
+#assert_standard_axioms Minimality.T24.Q45.depth_between_of_s4
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0_noMid
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0S4
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0_tie
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0_s2opp
+#assert_standard_axioms Minimality.T24.Q45.lexLt2_of_lt
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0_lexNoMid
+#assert_standard_axioms Minimality.T24.Q45.lexAny_of_j0Chord_s4
+#assert_standard_axioms Minimality.T24.Q45.strictUnimodal_four_of_adj
+#assert_standard_axioms Minimality.T24.Q45.s2_opp_of
+#assert_standard_axioms Minimality.T24.Q45.q45_Kplus_s_le_one_j0w
+#assert_standard_axioms Minimality.T24.Q45.q45_Kplus_s_gt_one_j0w
+#assert_standard_axioms Minimality.T24.Q45.q45_Kminus_t_le_one_j0w
+#assert_standard_axioms Minimality.T24.Q45.q45_Kminus_t_gt_one_j0w
+#assert_standard_axioms Minimality.T24.OSpec.q45_resT_local
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWT_sub
+#assert_standard_axioms Minimality.T24.OSpec.q45_resT
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialT_of_openSpecialE
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_T
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_T
+#assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_T
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_T
+
+-- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
+#assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
+#assert_standard_axioms Minimality.T24.FootLex.inner_curve
+#assert_standard_axioms Minimality.T24.FootLex.tie_pair_of_merged
+#assert_standard_axioms Minimality.T24.FootLex.exists_cellAt_cu_of_tie
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_tie
+#assert_standard_axioms Minimality.T24.FootLex.cellCert_of_tie
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_levelChordAt
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_footW0
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_footW2
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_footW0_twin
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_footW2_twin
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_levelChordAt
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_levelChordAt_twin
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_footW0
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_footW0_twin
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_footW2
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_footW2_twin
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_rayRLex
+#assert_standard_axioms Minimality.T24.FootLex.lexAny_of_rayRLex_twin
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_rayRLex
+#assert_standard_axioms Minimality.T24.FootLex.holeLeaf_not_rayRLex_twin
+#assert_standard_axioms Minimality.T24.FootLex.rayRLex_of_closedFace
