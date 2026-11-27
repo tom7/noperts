@@ -267,6 +267,7 @@ import Minimality.Type24HoleCore3
 import Minimality.Type24BeltCell
 import Minimality.UnimodalSplit
 import Minimality.Type24RayCT
+import Minimality.Type24W2OC
 import Minimality.Q45J0Tilt
 import Minimality.Q45J0Edge
 import Minimality.Type24FootLex
@@ -2623,6 +2624,23 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.not_cellCoverResidue_of_rayCT02
 #assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_rayCT02
 #assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_rayCT02_twin
+#assert_standard_axioms Minimality.T24.Cell.w2oc_noMax
+#assert_standard_axioms Minimality.T24.Cell.w2oc_extA
+#assert_standard_axioms Minimality.T24.Cell.w2oc_extB
+#assert_standard_axioms Minimality.T24.Cell.w2oc_apexA
+#assert_standard_axioms Minimality.T24.Cell.w2oc_apexB
+#assert_standard_axioms Minimality.T24.Cell.w2oc_h62_5
+#assert_standard_axioms Minimality.T24.Cell.w2oc_h62_0
+#assert_standard_axioms Minimality.T24.Cell.w2oc_hB
+#assert_standard_axioms Minimality.T24.Cell.w2oc_a5
+#assert_standard_axioms Minimality.T24.Cell.w2oc_cellAt_eventually
+#assert_standard_axioms Minimality.T24.Cell.w2oc_exists_apex
+#assert_standard_axioms Minimality.T24.Cell.w2oc_exists_cellCert
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_w2oc
+#assert_standard_axioms Minimality.T24.Cell.splitAny_of_w2oc_twin
+#assert_standard_axioms Minimality.T24.Cell.not_cellCoverResidue_of_w2oc
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_w2oc
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_not_w2oc_twin
 
 -- Q45J0Tilt / Q45J0Edge (OSPEC4 J0 tilt and edge cores), OSPEC4 T-chain in Type24OffOB1Res, CellWallE T forms (11-27)
 #assert_standard_axioms Minimality.T24.Q45.lexAny_of_tilt
