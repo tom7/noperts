@@ -532,19 +532,6 @@ theorem cell_lineSep_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
       have h0 := hOrange0 (-p - 1) (-q) (hi_iff p hp) (hj_iff p q hq) hneg
       linarith
 
-/-- **FV2 (`cell_oc_edgePlaneAny`):** `CellAt` plus `OrderCertAt` (with shared-apex ties)
-yields `Gen.EdgePlaneAny x`. -/
-theorem cell_oc_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
-    {k : ℕ} [NeZero k] (hk : 3 ≤ k) (r : ZMod k → Fin 7) (hr : Function.Injective r)
-    {U D : Finset (Fin 9)} (hcyc : S0xCycUD s0x_S24 r U D) (hcell : CellAt F U D w)
-    (hhid : Split.HiddenInTriangles x w r)
-    (hoc : Split.Slope.OrderCertAt (fun t => x (r t)) w) :
-    Gen.EdgePlaneAny x := by
-  rcases hoc with ⟨a, hD0, hc_ne0, sh, hsh, hOrd, hEq⟩
-  obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
-    (fun t => x (r t)) w a sh hOrd hEq
-  exact cell_lineSep_edgePlaneAny F hk r hr hcyc hcell hhid a hD0 hc_ne0 sh hsh α' μ' hB hO
-
 /-- **FR2 (`w_D` leaf):** strict line separation at an interior view `wD x β γ` of `(U_D, D_D)`
 on any edge `a` yields `Gen.EdgePlaneAny x` (no limit argument needed). -/
 theorem wd_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
@@ -616,10 +603,6 @@ theorem wdCertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {beta gamm
     (fun t => x (rD t)) (wD x beta gamma) a sh hOrd hEq
   exact ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
 
-theorem holeLeaf_not_wd_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {beta gamma : ℝ} (hc : WDOCCertAt x F beta gamma) : False :=
-  holeLeaf_not_wd hF (wdCertAt_of_oc hc)
-
 /-- **FR2 (`π_24` twin of `wd_edgePlaneAny`).** -/
 theorem wd_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
     {beta gamma : ℝ} (hbeta : 0 < beta) (hgamma : 0 < gamma)
@@ -676,59 +659,6 @@ theorem hole24_twoConeResidue''' {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} 
     fun _ _ h => hole24_not_wd_twin hF h⟩
 
 /-! ## FR3: Rim determinants on `rD = ![0, 1, 2, 3, 6]`, edge `6 → 0` -/
-
-/-- **FR3 (general frame form):** for `E = u_a • (x 0 - x 1) + u_b • (x 2 - x 1) + u_c • (x 6 - x 1)`,
-`Split.det3 E (x 0 - x 6) (wD x β γ) = det24 x * ((1 - γ) * u_b - β * (u_a + u_c))`. -/
-theorem wd_det3_frame (x : Fin 7 → ℝ³) (ua ub uc beta gamma : ℝ) :
-    Split.det3 (ua • (x 0 - x 1) + ub • (x 2 - x 1) + uc • (x 6 - x 1))
-      (x 0 - x 6) (wD x beta gamma) =
-    det24 x * ((1 - gamma) * ub - beta * (ua + uc)) := by
-  have hd : x 0 - x 6 = (1 : ℝ) • (x 0 - x 1) + (0 : ℝ) • (x 2 - x 1) + (-1 : ℝ) • (x 6 - x 1) := by
-    module
-  have hw : wD x beta gamma =
-      (-1 : ℝ) • (x 0 - x 1) + (-beta) • (x 2 - x 1) + gamma • (x 6 - x 1) := by
-    unfold wD capView; module
-  rw [Split.det3_eq_minimality, hd, hw, M4.det3_frame]
-  ring
-
-/-- **FR3 (explicit `rD` rim determinants, edge `a = 4`, `6 → 0`):**
-the four non-`a` determinants `Split.det3 (x (rD (i + 1)) - x (rD i)) (x 0 - x 6) (wD x β γ)`
-equal `det24 x` times `β`, `1 - γ`, `-(1 - b_3)(1 - γ) - β(a_3 + c_3)`, and
-`-b_3(1 - γ) - β(1 - a_3 - c_3)`. -/
-theorem wd_det3_rim {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (beta gamma : ℝ) :
-    Split.det3 (x (rD (0 + 1)) - x (rD 0)) (x 0 - x 6) (wD x beta gamma) =
-      beta * det24 x ∧
-    Split.det3 (x (rD (1 + 1)) - x (rD 1)) (x 0 - x 6) (wD x beta gamma) =
-      (1 - gamma) * det24 x ∧
-    Split.det3 (x (rD (2 + 1)) - x (rD 2)) (x 0 - x 6) (wD x beta gamma) =
-      (-(1 - oblX2 x 3) * (1 - gamma) - beta * (oblX0 x 3 + oblX6 x 3)) * det24 x ∧
-    Split.det3 (x (rD (3 + 1)) - x (rD 3)) (x 0 - x 6) (wD x beta gamma) =
-      (-oblX2 x 3 * (1 - gamma) - beta * (1 - oblX0 x 3 - oblX6 x 3)) * det24 x := by
-  have T := type24OfFac F
-  have hrep : ∀ v : Fin 7, x v - x 1 =
-      oblX0 x v • (x 0 - x 1) + oblX2 x v • (x 2 - x 1) + oblX6 x v • (x 6 - x 1) := by
-    intro v; rw [T.rep v]; abel
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · have h0 : x (rD (0 + 1)) - x (rD 0) =
-        (-1 : ℝ) • (x 0 - x 1) + (0 : ℝ) • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) := by
-      show x 1 - x 0 = _; module
-    rw [h0, wd_det3_frame]; ring
-  · have h1 : x (rD (1 + 1)) - x (rD 1) =
-        (0 : ℝ) • (x 0 - x 1) + (1 : ℝ) • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) := by
-      show x 2 - x 1 = _; module
-    rw [h1, wd_det3_frame]; ring
-  · have h2 : x (rD (2 + 1)) - x (rD 2) =
-        oblX0 x 3 • (x 0 - x 1) + (oblX2 x 3 - 1) • (x 2 - x 1) + oblX6 x 3 • (x 6 - x 1) := by
-      have h32 : x (rD (2 + 1)) - x (rD 2) = (x 3 - x 1) - (x 2 - x 1) := by
-        show x 3 - x 2 = _; abel
-      rw [h32, hrep 3]; module
-    rw [h2, wd_det3_frame]; ring
-  · have h3 : x (rD (3 + 1)) - x (rD 3) =
-        (-oblX0 x 3) • (x 0 - x 1) + (-oblX2 x 3) • (x 2 - x 1) + (1 - oblX6 x 3) • (x 6 - x 1) := by
-      have h63 : x (rD (3 + 1)) - x (rD 3) = (x 6 - x 1) - (x 3 - x 1) := by
-        show x 6 - x 3 = _; abel
-      rw [h63, hrep 3]; module
-    rw [h3, wd_det3_frame]; ring
 
 /-! ## FS1: `w_D6` cell (`rD6 = ![0, 1, 2, 3, 4, 6]`, vertex `5` hidden) -/
 
@@ -871,10 +801,6 @@ theorem wd6CertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {beta gam
   obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
     (fun t => x (rD6 t)) (wD x beta gamma) a sh hOrd hEq
   exact ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
-
-theorem holeLeaf_not_wd6_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {beta gamma : ℝ} (hc : WD6OCCertAt x F beta gamma) : False :=
-  holeLeaf_not_wd6 hF (wd6CertAt_of_oc hc)
 
 /-- **FS1 (`π_24` twin of `wd6_edgePlaneAny`).** -/
 theorem wd6_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)

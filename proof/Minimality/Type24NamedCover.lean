@@ -45,19 +45,6 @@ def NamedCoverResidue (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   (∀ b gamma : ℝ, ¬ CA0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) ∧
   (∀ b gamma : ℝ, ¬ CB0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma)
 
-/-- **FT2:** `Hole24 x F` implies `NamedCoverResidue x F`. -/
-theorem hole24_namedCoverResidue {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F) :
-    NamedCoverResidue x F := by
-  have hres := hole24_twoConeResidue_FS2 hF
-  rcases hres with ⟨⟨⟨⟨⟨⟨hC, hSF, hSFt, hWC, hWCt, _⟩, hFA, hFB⟩, hFAt, hFBt⟩, hWD, hWDt⟩,
-    hWD6, hWD6t⟩, hA2, hB2, hA2t, hB2t⟩
-  exact ⟨hC, hSF, hSFt, hWC, hWCt, hFA, hFB, hFAt, hFBt, hWD, hWDt, hWD6, hWD6t,
-    hA2, hB2, hA2t, hB2t,
-    fun _ _ h => hole24_not_cA0 hF h,
-    fun _ _ h => hole24_not_cB0 hF h,
-    fun _ _ h => hole24_not_cA0_twin hF h,
-    fun _ _ h => hole24_not_cB0_twin hF h⟩
-
 /-! ## FU1: Top-level reduction to `NamedCoverEmpty` and `OpenSpecial` -/
 
 /-- **FU1 (`[OPEN]`):** The generic open part of P3: on `CbarIn` and `OB1`, the named-cover
@@ -68,22 +55,6 @@ data/hard/holekit/): T_2 alone (`t2uni_p1_cube.lines`), `{w_C, T_2}` (`t2adv_uni
 def NamedCoverEmpty : Prop :=
   ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x),
     CbarIn x → H24K.SAT.OB1 x → ¬ NamedCoverResidue x F
-
-/-- **FU1:** `NamedCoverEmpty` together with `OpenSpecial` (the off-`OB1` walls `a₄ = 1 ∨ a₅ = 1`
-and `Q45Special'`) rules out every `Hole24 x F`, via `hole24_namedCoverResidue` and
-`hole24_ob1_or_special`. -/
-theorem not_hole24_of_namedCoverEmpty (hN : NamedCoverEmpty) (hS : OpenSpecial) :
-    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ Hole24 x F := by
-  intro x F hH
-  have hres := hole24_namedCoverResidue hH
-  have hC : CbarIn x := hres.1
-  have hF : HoleFull x F := holeFull_of_hole24 hH
-  rcases hole24_ob1_or_special hH with hO | ⟨hO, hw⟩ | hq
-  · exact hN x F hC hO hres
-  · exact hS x F hO (Or.inl hw) hF
-  · by_cases hO : H24K.SAT.OB1 x
-    · exact hN x F hC hO hres
-    · exact hS x F hO (Or.inr hq) hF
 
 /-! ## FU2–FU3: Carbon's revised 4-leaf tree (`A86 addendum to Q86 addendum`, §1)
 

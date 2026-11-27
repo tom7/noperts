@@ -95,15 +95,6 @@ theorem hole24_offOB1 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h : Hole24
   · exact hS x F hO h4 h5 h1 h2 h3 h6 (Or.inl hw) (holeFull_of_hole24 h)
   · exact hS x F hO h4 h5 h1 h2 h3 h6 (Or.inr hq) (holeFull_of_hole24 h)
 
-/-- [PROVED] `NamedCoverEmpty` and the restricted special piece rule out every `Hole24` point. -/
-theorem not_hole24_of_namedCoverEmpty_W (hN : TwoCone.NamedCoverEmpty) (hS : OpenSpecialW) :
-    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ Hole24 x F := by
-  intro x F hH
-  by_cases hO : H24K.SAT.OB1 x
-  · have hres := TwoCone.hole24_namedCoverResidue hH
-    exact hN x F hres.1 hO hres
-  · exact hole24_offOB1 hH hO hS
-
 /-- [PROVED] Generic + restricted special assemble to `Open24`. -/
 theorem open24_of_split_W (h1 : OpenOB1) (h2 : OpenSpecialW) : Open24 := by
   intro x fs hh hH

@@ -692,12 +692,6 @@ theorem holeLeaf_not_T0_family {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (h
   simp only [Filter.not_eventually, not_not] at h
   exact Atlas.holeLeaf_not_edgePlaneAny hF (edgePlaneAny_of_T0_family F hF.1 hI h)
 
-/-- **FL3 (`Hole24` `T_0` family form).** -/
-theorem hole24_not_T0_family {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
-    {x0 : ℝ} (hI : InI5 x x0) :
-    ∀ᶠ δ : ℝ in 𝓝[>] 0, ¬ EdgePlaneAt (x ∘ (0 : Fin 7).succAbove) (uF x x0 δ) :=
-  holeLeaf_not_T0_family hF.1 hI
-
 /-! ## FM1: `π_24` twin of the `w_C` leaf -/
 
 /-- `Gen.EdgePlaneAny` is preserved under the `Sym.pi24` vertex permutation. -/
@@ -728,12 +722,6 @@ theorem edgePlaneAny_of_comp_pi24 (x : Fin 7 → ℝ³)
     simp only [Function.comp_apply, hm'] at t2 t3 t4
     exact ⟨p, hp, q, hq, r, hr, t1, t2, t3, t4⟩
   exact ⟨k, hne, lab', w, a, s, α, μ, hk, hinj', hrim', hhid', hDw, hrows⟩
-
-/-- The `π_24` twin rim `Sym.pi24 ∘ wcRim = ![0, 4, 6, 3, 2]`. -/
-def wcTwinRim : ZMod 5 → Fin 7 := ![0, 4, 6, 3, 2]
-
-theorem wcTwinRim_eq : ∀ i : ZMod 5, wcTwinRim i = Sym.pi24 (wcRim i) := by
-  decide
 
 /-- **FM1 (`w_C` twin leaf):** `π_24` image of `wc_edgePlaneAny` (view `capView (x ∘ Sym.pi24) 1 η cb`,
 rim `wcTwinRim = ![0, 4, 6, 3, 2]`, edge `2 → 0`). -/

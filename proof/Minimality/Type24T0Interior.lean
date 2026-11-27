@@ -38,12 +38,6 @@ def U_B0 : Finset (Fin 9) := {5, 6, 7, 8}
 /-- Down facets `{0, 1, 2, 3, 4}` of `cB = ![1, 2, 5, 3, 4, 6]`. -/
 def D_B0 : Finset (Fin 9) := {0, 1, 2, 3, 4}
 
-theorem cA_cycUD : S0xCycUD s0x_S24 cA U_A0 D_A0 := by
-  decide
-
-theorem cB_cycUD : S0xCycUD s0x_S24 cB U_B0 D_B0 := by
-  decide
-
 /-- Interior `T_0` view `u_{T_0}(x, b, γ) := capView x (-1) b γ`. -/
 noncomputable def uT0 (x : Fin 7 → ℝ³) (b gamma : ℝ) : ℝ³ :=
   capView x (-1) b gamma
@@ -541,60 +535,6 @@ theorem hidden_in_cB_of_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w :
     exact mem_image_of_mem x (mem_univ _)
   exact ⟨p, hsub p hp, q, hsub q hq, r, hsub r hr, d1, d2, d3, d4⟩
 
-/-- **FT1 (`cA0` interior leaf):** strict line separation at an interior view `uT0 x b γ` of
-`(U_A0, D_A0)` on any edge `a : ZMod 5` yields `Gen.EdgePlaneAny x` (zero `hhid4` needed). -/
-theorem cA0_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    {b gamma : ℝ} (hb : 0 < b) (hgamma : 0 < gamma)
-    (hcell_win : gamma_A0_lo x b < gamma ∧ gamma < gamma_A0_hi x b ∧
-      (t0_nC x = 0 → 0 < t0_Delta_bc x - t0_nB x * b) ∧ (t0_s6 x = 0 → 0 < t0_r6 x b))
-    (a : ZMod 5)
-    (hD0 : ⟪x (cA (a + 1)) - x (cA a), uT0 x b gamma⟫ ≠ 0)
-    (hc_ne0 : ∀ i : ZMod 5, i ≠ a →
-      Split.det3 (x (cA (i + 1)) - x (cA i)) (x (cA (a + 1)) - x (cA a)) (uT0 x b gamma) ≠ 0)
-    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
-    (hBlue0 : ∀ i j : ZMod 5, i ≠ a → (j = i ∨ j = i + 1) →
-      0 < Split.det3 (x (cA (i + 1)) - x (cA i)) (x (cA (a + 1)) - x (cA a)) (uT0 x b gamma) →
-      (-sh * ⟪Split.Slope.linSpinVec (fun t => x (cA t)) a i j, uT0 x b gamma⟫ /
-          Split.det3 (x (cA (i + 1)) - x (cA i)) (x (cA (a + 1)) - x (cA a)) (uT0 x b gamma)) -
-        μ' * ⟪x (cA j) - x (cA a), uT0 x b gamma⟫ < α')
-    (hOrange0 : ∀ p q : ZMod 5, p ≠ a → (q = p ∨ q = p + 1) →
-      Split.det3 (x (cA (p + 1)) - x (cA p)) (x (cA (a + 1)) - x (cA a)) (uT0 x b gamma) < 0 →
-      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => x (cA t)) a p q, uT0 x b gamma⟫ /
-          Split.det3 (x (cA (p + 1)) - x (cA p)) (x (cA (a + 1)) - x (cA a)) (uT0 x b gamma)) -
-        μ' * ⟪x (cA q) - x (cA a), uT0 x b gamma⟫) :
-    Gen.EdgePlaneAny x := by
-  have hcell : CellAt F U_A0 D_A0 (uT0 x b gamma) :=
-    (cA0_cellAt_iff F hC hb hgamma).mpr hcell_win
-  exact cell_lineSep_edgePlaneAny F (by norm_num) cA cA_inj cA_cycUD hcell
-    (hidden_in_cA_of_cell F hcell) a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0
-
-/-- **FT1 (`cB0` interior leaf):** strict line separation at an interior view `uT0 x b γ` of
-`(U_B0, D_B0)` on any edge `a : ZMod 6` yields `Gen.EdgePlaneAny x`. -/
-theorem cB0_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    {b gamma : ℝ} (hb : 0 < b) (hgamma : 0 < gamma)
-    (hcell_win : gamma_B0_lo x b < gamma ∧ gamma < gamma_B0_hi x b ∧
-      (t0_nC x = 0 → 0 < t0_Delta_bc x - t0_nB x * b) ∧ (t0_s6 x = 0 → 0 < t0_r6 x b))
-    (a : ZMod 6)
-    (hD0 : ⟪x (cB (a + 1)) - x (cB a), uT0 x b gamma⟫ ≠ 0)
-    (hc_ne0 : ∀ i : ZMod 6, i ≠ a →
-      Split.det3 (x (cB (i + 1)) - x (cB i)) (x (cB (a + 1)) - x (cB a)) (uT0 x b gamma) ≠ 0)
-    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
-    (hBlue0 : ∀ i j : ZMod 6, i ≠ a → (j = i ∨ j = i + 1) →
-      0 < Split.det3 (x (cB (i + 1)) - x (cB i)) (x (cB (a + 1)) - x (cB a)) (uT0 x b gamma) →
-      (-sh * ⟪Split.Slope.linSpinVec (fun t => x (cB t)) a i j, uT0 x b gamma⟫ /
-          Split.det3 (x (cB (i + 1)) - x (cB i)) (x (cB (a + 1)) - x (cB a)) (uT0 x b gamma)) -
-        μ' * ⟪x (cB j) - x (cB a), uT0 x b gamma⟫ < α')
-    (hOrange0 : ∀ p q : ZMod 6, p ≠ a → (q = p ∨ q = p + 1) →
-      Split.det3 (x (cB (p + 1)) - x (cB p)) (x (cB (a + 1)) - x (cB a)) (uT0 x b gamma) < 0 →
-      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => x (cB t)) a p q, uT0 x b gamma⟫ /
-          Split.det3 (x (cB (p + 1)) - x (cB p)) (x (cB (a + 1)) - x (cB a)) (uT0 x b gamma)) -
-        μ' * ⟪x (cB q) - x (cB a), uT0 x b gamma⟫) :
-    Gen.EdgePlaneAny x := by
-  have hcell : CellAt F U_B0 D_B0 (uT0 x b gamma) :=
-    (cB0_cellAt_iff F hC hb hgamma).mpr hcell_win
-  exact cell_lineSep_edgePlaneAny F (by norm_num) cB cB_inj cB_cycUD hcell
-    (hidden_in_cB_of_cell F hcell) a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0
-
 /-- `CA0CertAt x F b γ`: interior `(U_A0, D_A0)` cell conditions and strict line separation at
 `uT0 x b γ` on some edge `a : ZMod 5` of `cA = ![1, 2, 5, 3, 6]`. -/
 def CA0CertAt (x : Fin 7 → ℝ³) (_F : S0xFac 9 s0x_S24 x) (b gamma : ℝ) : Prop :=
@@ -639,26 +579,6 @@ def CB0CertAt (x : Fin 7 → ℝ³) (_F : S0xFac 9 s0x_S24 x) (b gamma : ℝ) : 
             Split.det3 (x (cB (p + 1)) - x (cB p)) (x (cB (a + 1)) - x (cB a)) (uT0 x b gamma)) -
           μ' * ⟪x (cB q) - x (cB a), uT0 x b gamma⟫)
 
-theorem holeLeaf_not_cA0 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {b gamma : ℝ} (hc : CA0CertAt x F b gamma) : False := by
-  rcases hc with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
-  exact Atlas.holeLeaf_not_edgePlaneAny hF
-    (cA0_edgePlaneAny F hF.1 hb hg ⟨hlo, hhi, hnC, hs6⟩ a hD0 hc_ne0 sh hsh α' μ' hB hO)
-
-theorem hole24_not_cA0 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
-    {b gamma : ℝ} (hc : CA0CertAt x F b gamma) : False :=
-  holeLeaf_not_cA0 hF.1 hc
-
-theorem holeLeaf_not_cB0 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {b gamma : ℝ} (hc : CB0CertAt x F b gamma) : False := by
-  rcases hc with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
-  exact Atlas.holeLeaf_not_edgePlaneAny hF
-    (cB0_edgePlaneAny F hF.1 hb hg ⟨hlo, hhi, hnC, hs6⟩ a hD0 hc_ne0 sh hsh α' μ' hB hO)
-
-theorem hole24_not_cB0 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
-    {b gamma : ℝ} (hc : CB0CertAt x F b gamma) : False :=
-  holeLeaf_not_cB0 hF.1 hc
-
 /-- **FV2 (`CA0OCCertAt`):** `CA0` cell conditions plus `OrderCertAt` at `uT0 x b γ`. -/
 def CA0OCCertAt (x : Fin 7 → ℝ³) (_F : S0xFac 9 s0x_S24 x) (b gamma : ℝ) : Prop :=
   0 < b ∧ 0 < gamma ∧
@@ -686,45 +606,5 @@ theorem cB0CertAt_of_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} {b gamma 
   obtain ⟨α', μ', hB, hO⟩ := Split.Slope.lineSep_of_depthOrder_ties
     (fun t => x (cB t)) (uT0 x b gamma) a sh hOrd hEq
   exact ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
-
-theorem holeLeaf_not_cA0_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {b gamma : ℝ} (hc : CA0OCCertAt x F b gamma) : False :=
-  holeLeaf_not_cA0 hF (cA0CertAt_of_oc hc)
-
-theorem holeLeaf_not_cB0_oc {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {b gamma : ℝ} (hc : CB0OCCertAt x F b gamma) : False :=
-  holeLeaf_not_cB0 hF (cB0CertAt_of_oc hc)
-
-theorem cA0_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    {b gamma : ℝ} (hc : CA0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases hc with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
-  exact edgePlaneAny_of_comp_pi24 x
-    (cA0_edgePlaneAny (Sym.sym24 F) ((Sym.cbarIn_comp_pi24 x).2 hC) hb hg ⟨hlo, hhi, hnC, hs6⟩
-      a hD0 hc_ne0 sh hsh α' μ' hB hO)
-
-theorem cB0_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
-    {b gamma : ℝ} (hc : CB0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases hc with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
-  exact edgePlaneAny_of_comp_pi24 x
-    (cB0_edgePlaneAny (Sym.sym24 F) ((Sym.cbarIn_comp_pi24 x).2 hC) hb hg ⟨hlo, hhi, hnC, hs6⟩
-      a hD0 hc_ne0 sh hsh α' μ' hB hO)
-
-theorem holeLeaf_not_cA0_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {b gamma : ℝ} (hc : CA0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) : False :=
-  Atlas.holeLeaf_not_edgePlaneAny hF (cA0_edgePlaneAny_twin F hF.1 hc)
-
-theorem hole24_not_cA0_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
-    {b gamma : ℝ} (hc : CA0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) : False :=
-  holeLeaf_not_cA0_twin hF.1 hc
-
-theorem holeLeaf_not_cB0_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    {b gamma : ℝ} (hc : CB0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) : False :=
-  Atlas.holeLeaf_not_edgePlaneAny hF (cB0_edgePlaneAny_twin F hF.1 hc)
-
-theorem hole24_not_cB0_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
-    {b gamma : ℝ} (hc : CB0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b gamma) : False :=
-  holeLeaf_not_cB0_twin hF.1 hc
 
 end Minimality.T24.TwoCone

@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type24NamedCover
+public import Minimality.Type24NamedCoverRes
 public import Minimality.Type24HoleAtlasEP
 public import Minimality.Type24HoleAtlasEPRev
 public import Minimality.Type24WCOrder
@@ -14,21 +14,23 @@ sections 2 and 3.11.
 
 ## Section A: lattice arrows of the named certificates (named certificate => generic leaf)
 
-Proved here (each needs `CbarIn x` only; the twin forms are on `(x ∘ Sym.pi24, Sym.sym24 F)`):
-`wcCert_edgePlaneAny`, `wcCertTwin_edgePlaneAny` (w_C), `famACert_edgePlaneAny`, `famACertTwin_edgePlaneAny`,
-`famBCert_edgePlaneAny`, `famBCertTwin_edgePlaneAny` (T_0 floor families, limit form), `wdCert_edgePlaneAny`,
-`wdCertTwin_edgePlaneAny`, `wd6Cert_edgePlaneAny`, `wd6CertTwin_edgePlaneAny` (w_D, w_D6 cells), `cA2Cert_edgePlaneAny`,
-`cB2Cert_edgePlaneAny` (T_2 cells), `cA0Cert_edgePlaneAny`, `cB0Cert_edgePlaneAny` (interior T_0 cells), and the
-disjunction `NamedEPCert` with `namedEPCert_edgePlaneAny`.
+Every named certificate is a cell certificate of `Cell.cells24`: `Cell.wcCert_cellCert`, `famACert_cellCert`,
+`famBCert_cellCert`, `wdCert_cellCert`, `wd6Cert_cellCert`, `cA2Cert_cellCert`, `cB2Cert_cellCert`, `cA0Cert_cellCert`,
+`cB0Cert_cellCert` (twin forms on `(x ∘ Sym.pi24, Sym.sym24 F)`), and a cell certificate is a generic leaf
+(`Cell.cellCert_leaf`, `cellCert_twin_leaf`: `Gen.LexAny`, `Gen.SplitAny` or `Gen.EdgePlaneAny`).  The per-certificate
+arrows `wcCert_edgePlaneAny`, ..., `cB0Cert_edgePlaneAny` and `namedEPCert_edgePlaneAny` of the first version of this
+file were deleted (PRUNE24, nopert229 notes/TOOLBOX-LEAN.md): the target of a named certificate is now `LexAny`,
+`SplitAny` or `EdgePlaneAny` by cell, not always `EdgePlaneAny`.  `NamedEPCert` (the 18 slope-window certificates) stays,
+with `holeLeaf_not_namedEPCert`.
 
 Arrows proved elsewhere (cited, not restated):
 * Split family => `Gen.SplitAny`: `SF.splitFamily_splitAny`, `SF.splitFamilyTwin_splitAny` (needs `InI5`).
-* Twins of the T_2 / T_0 cells => `EdgePlaneAny`: `TwoCone.cA2_edgePlaneAny_twin`, `cB2_edgePlaneAny_twin`,
-  `cA0_edgePlaneAny_twin`, `cB0_edgePlaneAny_twin`.
+* Twins of the T_2 / T_0 cells => `EdgePlaneAny`: `TwoCone.cA2_edgePlaneAny_twin`, `cB2_edgePlaneAny_twin`
+  (the interior T_0 twins are covered by `Cell.cA0Cert_cellCert` / `cB0Cert_cellCert` on the twin).
 * Order certificate (OC) => slope-window certificate (line separation): `Split.Slope.lineSep_of_depthOrder`,
   `lineSep_of_depthOrder_ties`, `lineSep_of_depthOrder_dir`; per cell `TwoCone.wdCertAt_of_oc`, `wd6CertAt_of_oc`,
   `cA2CertAt_of_oc`, `cB2CertAt_of_oc`, `cA0CertAt_of_oc`, `cB0CertAt_of_oc`; any open cell
-  `TwoCone.cell_oc_edgePlaneAny`, `TwoCone.cell_lineSep_edgePlaneAny`.
+  `TwoCone.cell_lineSep_edgePlaneAny`, `Cell.epCert_of_orderCert`.
 * Strict-apex OC in an open cell => `Gen.SplitAny`: `SF.oc_splitAny_of_cell` (FW1).  NOT stated: "the named
   `*OCCertAt` => `Gen.SplitAny`" (the `OrderCertAt` form allows ties and has no strict apex; translating it is new
   work, listed in the atlas note).
@@ -51,7 +53,7 @@ Arrows proved elsewhere (cited, not restated):
   on `OB1`), and with `Stmt.OpenSpecial` it gives `Stmt.Open24`.
 * Other named hole facts (cited): `TwoCone.holeLeaf_not_T0_family` (T_0 family base EP, eventually in delta),
   `WC.holeLeaf_not_wc_unimodal`, `WC.holeLeaf_not_wc_r60`, `WC.wc_r60_z1_z3_nonneg`, `SF.holeLeaf_not_oc_cell`,
-  `SF.holeLeaf_not_splitFamS6m` / `S6p` / `S4p`, the `holeLeaf_not_*_oc` forms of the six cells.
+  `SF.holeLeaf_not_splitFamS6m` / `S6p` / `S4p`, `TwoCone.holeLeaf_not_cA2_oc` / `holeLeaf_not_cB2_oc`.
 -/
 
 @[expose] public section
@@ -70,87 +72,6 @@ variable {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
 
 /-! ## Section A: named certificate => `Gen.EdgePlaneAny` -/
 
-/-- `w_C` certificate => Edge-Plane view (`TwoCone.wc_edgePlaneAny`). -/
-theorem wcCert_edgePlaneAny (hC : CbarIn x) {cc : ℝ} (h : WCCertAt x F cc) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨hw5, hw3, hp, hn, hz, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact wc_edgePlaneAny F hC cc hw5 hw3 hp hn hz hD0 hcn sh hsh α' μ' hB hO
-
-/-- `π_24` twin `w_C` certificate => Edge-Plane view of `x` (`TwoCone.wc_edgePlaneAny_twin`). -/
-theorem wcCertTwin_edgePlaneAny (hC : CbarIn x) {cb : ℝ} (h : WCCertAt (x ∘ Sym.pi24) (Sym.sym24 F) cb) :
-    Gen.EdgePlaneAny x := by
-  rcases h with ⟨hw5, hw3, hp, hn, hz, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact wc_edgePlaneAny_twin F hC cb hw5 hw3 hp hn hz hD0 hcn sh hsh α' μ' hB hO
-
-/-- T_0 floor family A certificate => Edge-Plane view (`TwoCone.famA_edgePlaneAny`). -/
-theorem famACert_edgePlaneAny (hC : CbarIn x) {x0 : ℝ} (h : FamACertAt x F x0) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨hI, h6, h8, hhid4, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact famA_edgePlaneAny F hC hI h6 h8 hhid4 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- Twin of `famACert_edgePlaneAny` (`TwoCone.famA_edgePlaneAny_twin`). -/
-theorem famACertTwin_edgePlaneAny (hC : CbarIn x) {x0 : ℝ}
-    (h : FamACertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨hI, h6, h8, hhid4, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact famA_edgePlaneAny_twin F hC hI h6 h8 hhid4 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- T_0 floor family B certificate => Edge-Plane view (`TwoCone.famB_edgePlaneAny`). -/
-theorem famBCert_edgePlaneAny (hC : CbarIn x) {x0 : ℝ} (h : FamBCertAt x F x0) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨hI, h6, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact famB_edgePlaneAny F hC hI h6 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- Twin of `famBCert_edgePlaneAny` (`TwoCone.famB_edgePlaneAny_twin`). -/
-theorem famBCertTwin_edgePlaneAny (hC : CbarIn x) {x0 : ℝ}
-    (h : FamBCertAt (x ∘ Sym.pi24) (Sym.sym24 F) x0) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨hI, h6, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact famB_edgePlaneAny_twin F hC hI h6 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- `w_D` cell certificate => Edge-Plane view (`TwoCone.wd_edgePlaneAny`). -/
-theorem wdCert_edgePlaneAny (hC : CbarIn x) {beta gamma : ℝ} (h : WDCertAt x F beta gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, hr, h6, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact wd_edgePlaneAny F hC hb hg hr h6 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- Twin of `wdCert_edgePlaneAny` (`TwoCone.wd_edgePlaneAny_twin`). -/
-theorem wdCertTwin_edgePlaneAny (hC : CbarIn x) {beta gamma : ℝ}
-    (h : WDCertAt (x ∘ Sym.pi24) (Sym.sym24 F) beta gamma) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, hr, h6, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact wd_edgePlaneAny_twin F hC hb hg hr h6 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- `w_D6` cell certificate => Edge-Plane view (`TwoCone.wd6_edgePlaneAny`). -/
-theorem wd6Cert_edgePlaneAny (hC : CbarIn x) {beta gamma : ℝ} (h : WD6CertAt x F beta gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, hr, h6, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact wd6_edgePlaneAny F hC hb hg hr h6 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- Twin of `wd6Cert_edgePlaneAny` (`TwoCone.wd6_edgePlaneAny_twin`). -/
-theorem wd6CertTwin_edgePlaneAny (hC : CbarIn x) {beta gamma : ℝ}
-    (h : WD6CertAt (x ∘ Sym.pi24) (Sym.sym24 F) beta gamma) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, hr, h6, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact wd6_edgePlaneAny_twin F hC hb hg hr h6 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- T_2 cell `cA2` certificate => Edge-Plane view (`TwoCone.cA2_edgePlaneAny`). -/
-theorem cA2Cert_edgePlaneAny (hC : CbarIn x) {beta gamma : ℝ} (h : CA2CertAt x F beta gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact cA2_edgePlaneAny F hC hb hg h2 h3 h6 h7 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- T_2 cell `cB2` certificate => Edge-Plane view (`TwoCone.cB2_edgePlaneAny`). -/
-theorem cB2Cert_edgePlaneAny (hC : CbarIn x) {beta gamma : ℝ} (h : CB2CertAt x F beta gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, h2, h3, h6, h7, h8, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact cB2_edgePlaneAny F hC hb hg h2 h3 h6 h7 h8 a hD0 hcn sh hsh α' μ' hB hO
-
-/-- Interior T_0 cell `cA0` certificate => Edge-Plane view (`TwoCone.cA0_edgePlaneAny`). -/
-theorem cA0Cert_edgePlaneAny (hC : CbarIn x) {b gamma : ℝ} (h : CA0CertAt x F b gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact cA0_edgePlaneAny F hC hb hg ⟨hlo, hhi, hnC, hs6⟩ a hD0 hcn sh hsh α' μ' hB hO
-
-/-- Interior T_0 cell `cB0` certificate => Edge-Plane view (`TwoCone.cB0_edgePlaneAny`). -/
-theorem cB0Cert_edgePlaneAny (hC : CbarIn x) {b gamma : ℝ} (h : CB0CertAt x F b gamma) :
-    Gen.EdgePlaneAny x := by
-  rcases h with ⟨hb, hg, hlo, hhi, hnC, hs6, a, hD0, hcn, sh, α', μ', hsh, hB, hO⟩
-  exact cB0_edgePlaneAny F hC hb hg ⟨hlo, hhi, hnC, hs6⟩ a hD0 hcn sh hsh α' μ' hB hO
-
 /-- Some named Edge-Plane certificate holds at `(x, F)` or at its `π_24` twin: the 18 slope-window certificates of
 `NamedCoverResidue` (everything except the Split family, which is a `Gen.SplitAny` certificate). -/
 def NamedEPCert (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
@@ -164,50 +85,21 @@ def NamedEPCert (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
   (∃ b γ, CA0CertAt x F b γ) ∨ (∃ b γ, CB0CertAt x F b γ) ∨
   (∃ b γ, CA0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b γ) ∨ (∃ b γ, CB0CertAt (x ∘ Sym.pi24) (Sym.sym24 F) b γ)
 
-/-- Every named Edge-Plane certificate gives `Gen.EdgePlaneAny x` (on `CbarIn`). -/
-theorem namedEPCert_edgePlaneAny (hC : CbarIn x) (h : NamedEPCert x F) : Gen.EdgePlaneAny x := by
-  rcases h with ⟨_, h⟩ | ⟨_, h⟩ | ⟨_, h⟩ | ⟨_, h⟩ | ⟨_, h⟩ | ⟨_, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ |
-    ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩
-  · exact wcCert_edgePlaneAny hC h
-  · exact wcCertTwin_edgePlaneAny hC h
-  · exact famACert_edgePlaneAny hC h
-  · exact famBCert_edgePlaneAny hC h
-  · exact famACertTwin_edgePlaneAny hC h
-  · exact famBCertTwin_edgePlaneAny hC h
-  · exact wdCert_edgePlaneAny hC h
-  · exact wdCertTwin_edgePlaneAny hC h
-  · exact wd6Cert_edgePlaneAny hC h
-  · exact wd6CertTwin_edgePlaneAny hC h
-  · exact cA2Cert_edgePlaneAny hC h
-  · exact cB2Cert_edgePlaneAny hC h
-  · exact cA2_edgePlaneAny_twin F hC h
-  · exact cB2_edgePlaneAny_twin F hC h
-  · exact cA0Cert_edgePlaneAny hC h
-  · exact cB0Cert_edgePlaneAny hC h
-  · exact cA0_edgePlaneAny_twin F hC h
-  · exact cB0_edgePlaneAny_twin F hC h
-
 /-! ## Section B: the named facts on `HoleLeaf` -/
 
 /-- **`HoleLeaf` form of `hole24_namedCoverResidue`**: a point of the generic hole has no named certificate.
 Every named exclusion only uses `HoleLeaf`. -/
-theorem holeLeaf_namedCoverResidue (h : HoleLeaf x F) : NamedCoverResidue x F := by
-  have hC : CbarIn x := h.1
-  refine ⟨hC, fun _ hI => holeLeaf_not_splitFamily F h hI, fun _ hI => holeLeaf_not_splitFamilyTwin F h hI,
-    fun _ hc => holeLeaf_not_edgePlaneAny h (wcCert_edgePlaneAny hC hc),
-    fun _ hc => holeLeaf_not_edgePlaneAny h (wcCertTwin_edgePlaneAny hC hc),
-    fun _ hc => holeLeaf_not_famA h hc, fun _ hc => holeLeaf_not_famB h hc,
-    fun _ hc => holeLeaf_not_famA_twin h hc, fun _ hc => holeLeaf_not_famB_twin h hc,
-    fun _ _ hc => holeLeaf_not_wd h hc, fun _ _ hc => holeLeaf_not_wd_twin h hc,
-    fun _ _ hc => holeLeaf_not_wd6 h hc, fun _ _ hc => holeLeaf_not_wd6_twin h hc,
-    fun _ _ hc => holeLeaf_not_cA2 h hc, fun _ _ hc => holeLeaf_not_cB2 h hc,
-    fun _ _ hc => holeLeaf_not_cA2_twin h hc, fun _ _ hc => holeLeaf_not_cB2_twin h hc,
-    fun _ _ hc => holeLeaf_not_cA0 h hc, fun _ _ hc => holeLeaf_not_cB0 h hc,
-    fun _ _ hc => holeLeaf_not_cA0_twin h hc, fun _ _ hc => holeLeaf_not_cB0_twin h hc⟩
+theorem holeLeaf_namedCoverResidue (h : HoleLeaf x F) : NamedCoverResidue x F :=
+  Cell.namedCoverResidue_of_cellCoverResidue (Cell.holeLeaf_cellCoverResidue Cell.cells24 h)
 
 /-- On `HoleLeaf` no named Edge-Plane certificate holds. -/
-theorem holeLeaf_not_namedEPCert (h : HoleLeaf x F) : ¬ NamedEPCert x F := fun hc =>
-  holeLeaf_not_edgePlaneAny h (namedEPCert_edgePlaneAny h.1 hc)
+theorem holeLeaf_not_namedEPCert (h : HoleLeaf x F) : ¬ NamedEPCert x F := by
+  obtain ⟨_, _, _, hWC, hWCt, hFA, hFB, hFAt, hFBt, hWD, hWDt, hWD6, hWD6t, hA2, hB2, hA2t, hB2t, hA0, hB0, hA0t,
+    hB0t⟩ := holeLeaf_namedCoverResidue h
+  rintro (⟨_, c⟩ | ⟨_, c⟩ | ⟨_, c⟩ | ⟨_, c⟩ | ⟨_, c⟩ | ⟨_, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ |
+    ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩ | ⟨_, _, c⟩)
+  exacts [hWC _ c, hWCt _ c, hFA _ c, hFB _ c, hFAt _ c, hFBt _ c, hWD _ _ c, hWDt _ _ c, hWD6 _ _ c, hWD6t _ _ c,
+    hA2 _ _ c, hB2 _ _ c, hA2t _ _ c, hB2t _ _ c, hA0 _ _ c, hB0 _ _ c, hA0t _ _ c, hB0t _ _ c]
 
 /-- The residue excludes every named ORDER certificate, on `x` and on the `π_24` twin (through the `*CertAt_of_oc`
 arrows). -/
