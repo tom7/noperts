@@ -48,9 +48,10 @@ opposite sides of the plane `2 3 4` (`x 2` lies in the dihedral wedge of the edg
 Binet-Cauchy `t234_gram`; `t234_dn5_of`, `t234_up5_of`).  So the residue letters are `016 046` down, the cone condition
 `T234Cone` (`0 ≤ X6`, `X6 ≤ X2`) and the rim choice (`T234RedL`, `t234ViewOK_iff_redL`); `OpenSpecialL`
 (equivalent to `OpenSpecialJ`).  Section `T234G`: off the cone the same view is still a lex cell, with the rim `0 1 6 3 4`
-(`t234C < 0`: `126 236` up), `0 1 2 3 6 4` or `0 2 3 6 4` (`X6 < 0`: `346` up), all depth letters derived
-(`t234_depths`); so on `T234BrL` the view needs only `T234RedM` (`016 046` down, `012` up or (`012` down, `025` up,
-`t234C ≥ 0`), `126` down at `t234C = 0`; `lexAny_of_t234RedM`).  Residue `Q45ResWM`, `OpenSpecialM` (implied by
+(`t234C < 0`: `126 236` up), `0 1 2 3 6 4` or `0 2 3 6 4` (`X6 < 0`: `346` up; with `046` up too `0 1 2 3 6` / `0 2
+3 6`), all depth letters derived (`t234_depths`); so on `T234BrL` the view needs only `T234RedM` (`016` down, `046`
+down unless `X6 < 0`, `012` up or (`012` down, `025` up, `t234C ≥ 0`), `126` down at `t234C = 0`;
+`lexAny_of_t234RedM`).  Residue `Q45ResWM`, `OpenSpecialM` (implied by
 `OpenSpecialL`, a strictly smaller piece).  Section `E26C`: OSPEC12's `E26Cond` from five inner-product signs
 (`E26CondI`, `e26Cond_of_I`): the dihedral signs `⟪N3, N5⟫`, `⟪N3, N7⟫` on `TBs1` by Binet-Cauchy (`e26_dihedral`) and
 two orientation products in the frame at `1` (`e26_orient`).
@@ -1304,17 +1305,33 @@ theorem t234C_pos_of_X6 (F : S0xFac 9 s0x_S24 x) (hB : T234BrJ F) (hX : t234X6 x
     have := mul_nonneg hee (neg_nonneg.mpr (not_lt.mp hc)); linarith
   nlinarith
 
-/-- **The general T234 residue letters** on `T234BrL` (OSPEC17 (b)): `016 046` down, `012` up or (`012` down, `025` up,
-`t234C ≥ 0`), and `126` down on the boundary `t234C = 0`.  The cone condition is gone: off the cone the same view
-`(t234b, x 4 - x 3, x 5 - x 6)` has the rim `0 1 6 3 4` (`t234C < 0`) or `0 1 2 3 6 4` / `0 2 3 6 4` (`X6 < 0`). -/
+/-- Rim `0 1 2 3 6` written from `1` backwards (`346 046` up, `012` up). -/
+def rimTH : ZMod 5 → Fin 7 := ![1, 0, 6, 3, 2]
+def UTH : Finset (Fin 9) := {0, 4, 6, 8}
+def DnTH : Finset (Fin 9) := {1, 5, 7}
+theorem rimTH_cyc : S0xCycUD s0x_S24 rimTH UTH DnTH := by decide
+theorem rimTH_inj : Function.Injective rimTH := by decide
+
+/-- Rim `0 2 3 6` (`346 046` up, `012` down, `025` up). -/
+def rimTI : ZMod 4 → Fin 7 := ![0, 2, 3, 6]
+def UTI : Finset (Fin 9) := {2, 4, 6, 8}
+def DnTI : Finset (Fin 9) := {0, 1, 7}
+theorem rimTI_cyc : S0xCycUD s0x_S24 rimTI UTI DnTI := by decide
+theorem rimTI_inj : Function.Injective rimTI := by decide
+
+/-- **The general T234 residue letters** on `T234BrL` (OSPEC17 (b)): `016` down, `046` down or (`X6 < 0` and `046`
+up), `012` up or (`012` down, `025` up, `t234C ≥ 0`), and `126` down on the boundary `t234C = 0`.  The cone condition
+is gone: off the cone the same view `(t234b, x 4 - x 3, x 5 - x 6)` has the rim `0 1 6 3 4` (`t234C < 0`) or `0 1 2 3
+6 4` / `0 2 3 6 4` (`X6 < 0`), and with `046` up as well `0 1 2 3 6` / `0 2 3 6` (the OSPEC17 adversary point
+`TC2_3159`). -/
 def T234RedM {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
-  T234Dn F (t234b x) 1 ∧ T234Dn F (t234b x) 4 ∧
+  T234Dn F (t234b x) 1 ∧ (T234Dn F (t234b x) 4 ∨ (t234X6 x < 0 ∧ T234Up F (t234b x) 4)) ∧
     (T234Up F (t234b x) 0 ∨ (T234Dn F (t234b x) 0 ∧ T234Up F (t234b x) 2 ∧ 0 ≤ t234C x)) ∧
     (t234C x = 0 → T234Dn F (t234b x) 5)
 
-/-- **The T234 view is a lex cell on the B2 branch from the general letters** (five rims). -/
+/-- **The T234 view is a lex cell on the B2 branch from the general letters** (seven rims). -/
 theorem lexAny_of_t234RedM (F : S0xFac 9 s0x_S24 x) (hB : T234BrL F) (h : T234RedM F) : Gen.LexAny F := by
-  obtain ⟨n1, n4, h0, h5⟩ := h
+  obtain ⟨n1, h4, h0, h5⟩ := h
   obtain ⟨t3, t4, h20, h21, h62, l34, l32⟩ := t234_depths F hB.1
   have u3 : T234Up F (t234b x) 3 := Or.inl (t234_derived F hB.1.1).2.1
   have u6 := t234_up6 F hB.1
@@ -1357,6 +1374,29 @@ theorem lexAny_of_t234RedM (F : S0xFac 9 s0x_S24 x) (hB : T234BrL F) (h : T234Re
     · left; simp only [t234Z, e5, e0]; exact lexLt3_of_fst (by simp only; linarith)
     · left; simp only [t234Z, e4, e5]; exact lexLt3_of_fst (by simp only; linarith)
     · left; simp only [t234Z, e2, e1]; exact lexLt3_of_fst (by simp only; linarith)
+  have rimH : RobUniLex (t234Z x b rimTH) := by
+    have e0 : rimTH 0 = 1 := by decide
+    have e1 : rimTH 1 = 0 := by decide
+    have e2 : rimTH 2 = 6 := by decide
+    have e3 : rimTH 3 = 3 := by decide
+    have e4 : rimTH 4 = 2 := by decide
+    apply robUniLex_five_e26
+    · simp only [t234Z, e1, e2]; exact lexLt3_of_fst (by simp only; linarith)
+    · simp only [t234Z, e3, e4]
+      exact Or.inr ⟨by simp only; linarith, Or.inl (by simp only; linarith)⟩
+    · simp only [t234Z, e4, e0]; exact lexLt3_of_fst (by simp only; linarith)
+    · simp only [t234Z, e3, e0]; exact lexLt3_of_fst (by simp only; linarith)
+  have rimI : RobUniLex (t234Z x b rimTI) := by
+    have e0 : rimTI 0 = 0 := by decide
+    have e1 : rimTI 1 = 2 := by decide
+    have e2 : rimTI 2 = 3 := by decide
+    have e3 : rimTI 3 = 6 := by decide
+    apply robUniLex_four_of_mixed
+    · refine ⟨(2, 1), by decide, ?_⟩
+      simp only [t234Z, e2, e1]
+      exact Or.inr ⟨by simp only; linarith, Or.inl (by simp only; linarith)⟩
+    · refine ⟨(0, 3), by decide, ?_⟩
+      simp only [t234Z, e0, e3]; exact lexLt3_of_fst (by simp only; linarith)
   -- facet cases
   have hcell : ∀ {k : ℕ} [NeZero k] (c : ZMod k → Fin 7) (U Dn : Finset (Fin 9)), 4 ≤ k → Function.Injective c →
       S0xCycUD s0x_S24 c U Dn → (∀ t ∈ U, T234Up F b t) → (∀ t ∈ Dn, T234Dn F b t) → RobUniLex (t234Z x b c) →
@@ -1370,6 +1410,24 @@ theorem lexAny_of_t234RedM (F : S0xFac 9 s0x_S24 x) (hB : T234BrL F) (h : T234Re
     have hc := t234C_pos_of_X6 F hB.1 hX
     have n5 := t234_dn5_of F hB hc
     have n7 := (t234_dn7_iff F hB.1).mpr hc.le
+    rcases h4 with n4 | ⟨-, u4⟩
+    swap
+    · -- `046` up as well: rims `0 1 2 3 6` / `0 2 3 6`
+      rcases h0 with u0 | ⟨n0, u2, -⟩
+      · refine hcell rimTH UTH DnTH (by norm_num) rimTH_inj rimTH_cyc ?_ ?_ rimH
+        · intro t ht; simp only [UTH, Finset.mem_insert, Finset.mem_singleton] at ht
+          rcases ht with rfl | rfl | rfl | rfl
+          exacts [u0, u4, u6, u8]
+        · intro t ht; simp only [DnTH, Finset.mem_insert, Finset.mem_singleton] at ht
+          rcases ht with rfl | rfl | rfl
+          exacts [n1, n5, n7]
+      · refine hcell rimTI UTI DnTI le_rfl rimTI_inj rimTI_cyc ?_ ?_ rimI
+        · intro t ht; simp only [UTI, Finset.mem_insert, Finset.mem_singleton] at ht
+          rcases ht with rfl | rfl | rfl | rfl
+          exacts [u2, u4, u6, u8]
+        · intro t ht; simp only [DnTI, Finset.mem_insert, Finset.mem_singleton] at ht
+          rcases ht with rfl | rfl | rfl
+          exacts [n0, n1, n7]
     rcases h0 with u0 | ⟨n0, u2, -⟩
     · refine hcell rimTF UTF DnTF (by norm_num) rimTF_inj rimTF_cyc ?_ ?_ rimF
       · intro t ht; simp only [UTF, Finset.mem_insert, Finset.mem_singleton] at ht
@@ -1386,6 +1444,10 @@ theorem lexAny_of_t234RedM (F : S0xFac 9 s0x_S24 x) (hB : T234BrL F) (h : T234Re
         rcases ht with rfl | rfl | rfl
         exacts [n0, n4, n7]
   · have n8 := (t234_dn8_iff F hB.1.1).mpr hX
+    have n4 : T234Dn F b 4 := by
+      rcases h4 with n4 | ⟨hX', -⟩
+      · exact n4
+      · exact absurd hX (not_le.mpr hX')
     rcases lt_or_ge (t234C x) 0 with hc | hc
     · -- `t234C < 0`: `126 236` up, rim `0 1 6 3 4`; `012` must be up
       have u5 := t234_up5_of F hB hc
@@ -1415,7 +1477,7 @@ theorem lexAny_of_t234RedM (F : S0xFac 9 s0x_S24 x) (hB : T234BrL F) (h : T234Re
 /-- `T234RedM` is weaker than `T234RedL` (the old letters imply the new ones). -/
 theorem t234RedM_of_L (F : S0xFac 9 s0x_S24 x) (h : T234RedL F) : T234RedM F := by
   obtain ⟨n1, n4, ⟨-, hc⟩, h0⟩ := h
-  refine ⟨n1, n4, ?_, ?_⟩
+  refine ⟨n1, Or.inl n4, ?_, ?_⟩
   · rcases h0 with u0 | ⟨n0, u2⟩
     · exact Or.inl u0
     · refine Or.inr ⟨n0, u2, ?_⟩
@@ -1439,7 +1501,7 @@ theorem lexAny_of_t234ViewM (F : S0xFac 9 s0x_S24 x) (h : T234ViewM F) : Gen.Lex
   · exact lexAny_of_t234RedM F hB h
 
 /-- `Q45ResSTG` where neither general T234 view (nor its mirror) applies: on the B2 branch the failure of `T234RedM`
-(`016` or `046` up, `012` down with `025` down or `t234C < 0`, or `126` not down at `t234C = 0`). -/
+(`016` up, `046` up with `X6 ≥ 0`, `012` down with `025` down or `t234C < 0`, or `126` not down at `t234C = 0`). -/
 def Q45ResSTM {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
   Q45ResSTG F s t ∧ ¬ T234ViewM F ∧ ¬ T234ViewM (Sym.sym24 F)
 

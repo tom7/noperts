@@ -2955,6 +2955,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.rimTE_cyc
 #assert_standard_axioms Minimality.T24.OSpec.rimTF_cyc
 #assert_standard_axioms Minimality.T24.OSpec.rimTG_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTH_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimTI_cyc
 #assert_standard_axioms Minimality.T24.OSpec.t234_depths
 #assert_standard_axioms Minimality.T24.OSpec.t234_up7_of
 #assert_standard_axioms Minimality.T24.OSpec.t234_up8_of
