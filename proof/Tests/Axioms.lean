@@ -2579,3 +2579,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.cA0Cert_cellCert
 #assert_standard_axioms Minimality.T24.Cell.cB0Cert_cellCert
 #assert_standard_axioms Minimality.T24.Cell.cellC'_cert_of_mixed
+#assert_standard_axioms Minimality.T24.TwoCone.uT2_depth_signs
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_not_back_03_56
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_robUni_of_z0_lt
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_lexAny_of_z0_lt
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_cA2_z1_le_z0
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_cA2_z1_le_z0_twin
+#assert_standard_axioms Minimality.T24.TwoCone.cA2_exists_of_z1Region
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_z1Region
+#assert_standard_axioms Minimality.T24.TwoCone.lexAny_of_z1Region_twin
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_z1Region
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_z1Region_twin
