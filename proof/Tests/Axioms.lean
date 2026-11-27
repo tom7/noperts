@@ -246,6 +246,7 @@ import Minimality.EdgePlaneHidden
 import Minimality.EdgePlaneSlope
 import Minimality.Type24TwoCone
 import Minimality.Type24WCOrder
+import Minimality.Type24WCLemmas
 import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
@@ -2377,3 +2378,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.WC.hole24_not_wc_unimodal
 #assert_standard_axioms Minimality.T24.WC.holeLeaf_not_wc_r60
 #assert_standard_axioms Minimality.T24.WC.hole24_not_wc_r60
+#assert_standard_axioms Minimality.T24.WC.wc_cramer_signs
+#assert_standard_axioms Minimality.T24.WC.wc_wallI_pos_368
+#assert_standard_axioms Minimality.T24.WC.wc_window_nonempty
+#assert_standard_axioms Minimality.T24.WC.wc_apex_gap
+#assert_standard_axioms Minimality.T24.WC.wcCertAt_of_yHat
+#assert_standard_axioms Minimality.T24.WC.wc_r60_z1_z3_nonneg
