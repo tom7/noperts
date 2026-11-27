@@ -2260,4 +2260,179 @@ theorem open24Rupert_of_split_K (h1 : OpenOB1) (h2 : OpenSpecialK) : Open24Ruper
   · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
   · exact hole24_offOB1_K hH hO h2
 
+
+/-! ### The face-on J0 view (job OSPEC9)
+
+The J0 residue after OSPEC7 consists of persistent double normals along `N3`: the adjacent S2 ties `64` (`x 6 - x 4`
+parallel to `N3`) and `52`.  The view `(N3, bB2, x 0 - x 4)` (face-on to `0345`, then in the face plane perpendicular
+to the edge `3 4` into the face, then `-e4`; `bB2` from Q45B2View.lean) is a lex cell for each of four facet patterns
+(`J64ViewOK`, `lexAny_of_j64View`); its mirror `(N3, ⟨N6,N3⟩ N3 - |N3|² N6, x 0 - x 5)` takes the `52` ties
+(`lexAny_of_j64View_sym`).  On a `64` tie `046` and `346` are edge-on at level 1 (`N4, N8 ⊥ x 6 - x 4`); the other
+facet signs at level 1 are dihedral-type signs `⟨N t, N3⟩` (not derived here). -/
+
+section J64
+open Minimality.LexCell
+
+/-- Rim `0 1 2 3 4` of the face-on view (facets `012 025 0345 235` up, the rest down). -/
+def rimFA : ZMod 5 → Fin 7 := ![0, 1, 2, 3, 4]
+def UFA : Finset (Fin 9) := {0, 2, 3, 6}
+def DnFA : Finset (Fin 9) := {1, 4, 5, 7, 8}
+/-- Rim `0 2 3 4` (facets `025 0345 235` up). -/
+def rimFB : ZMod 4 → Fin 7 := ![0, 2, 3, 4]
+def UFB : Finset (Fin 9) := {2, 3, 6}
+def DnFB : Finset (Fin 9) := {0, 1, 4, 5, 7, 8}
+/-- Rim `0 4 3 2 5` (facets `0345 235` up). -/
+def rimFC : ZMod 5 → Fin 7 := ![0, 4, 3, 2, 5]
+def UFC : Finset (Fin 9) := {3, 6}
+def DnFC : Finset (Fin 9) := {0, 1, 2, 4, 5, 7, 8}
+/-- Rim `0 4 3 5` (only `0345` up). -/
+def rimFD : ZMod 4 → Fin 7 := ![0, 4, 3, 5]
+def UFD : Finset (Fin 9) := {3}
+def DnFD : Finset (Fin 9) := {0, 1, 2, 4, 5, 6, 7, 8}
+
+theorem rimFA_cyc : S0xCycUD s0x_S24 rimFA UFA DnFA := by decide
+theorem rimFA_inj : Function.Injective rimFA := by decide
+theorem rimFB_cyc : S0xCycUD s0x_S24 rimFB UFB DnFB := by decide
+theorem rimFB_inj : Function.Injective rimFB := by decide
+theorem rimFC_cyc : S0xCycUD s0x_S24 rimFC UFC DnFC := by decide
+theorem rimFC_inj : Function.Injective rimFC := by decide
+theorem rimFD_cyc : S0xCycUD s0x_S24 rimFD UFD DnFD := by decide
+theorem rimFD_inj : Function.Injective rimFD := by decide
+
+/-- The face-on lex view `(N3, bB2, x 0 - x 4)` with rim `c`, up facets `U`, down facets `Dn`. -/
+def FaceOnCell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {k : ℕ} (c : ZMod k → Fin 7) (U Dn : Finset (Fin 9)) :
+    Prop :=
+  (∀ t ∈ U, LexPos3 ⟪F.N t, F.N 3⟫ ⟪F.N t, bB2 F⟫ ⟪F.N t, x 0 - x 4⟫) ∧
+  (∀ t ∈ Dn, LexPos3 (-⟪F.N t, F.N 3⟫) (-⟪F.N t, bB2 F⟫) (-⟪F.N t, x 0 - x 4⟫)) ∧
+  RobUniLex (fun i => (⟪x (c i), F.N 3⟫, ⟪x (c i), bB2 F⟫, ⟪x (c i), x 0 - x 4⟫))
+
+theorem lexAny_of_faceOnCell (F : S0xFac 9 s0x_S24 x) {k : ℕ} [NeZero k] (hk : 4 ≤ k) {c : ZMod k → Fin 7}
+    (hc : Function.Injective c) {U Dn : Finset (Fin 9)} (hcyc : S0xCycUD s0x_S24 c U Dn)
+    (h : FaceOnCell F c U Dn) : Gen.LexAny F :=
+  ⟨k, inferInstance, c, U, Dn, F.N 3, bB2 F, x 0 - x 4, hk, hc, hcyc, h.1, h.2.1, h.2.2⟩
+
+/-- **The face-on J0 view condition** (`N3`, then `bB2` in the face plane perpendicular to edge `3 4`, then
+`x 0 - x 4`): one of the four facet patterns seen on the J0 double normals (rims `0 1 2 3 4`, `0 2 3 4`,
+`0 4 3 2 5`, `0 4 3 5`) with its rim `RobUniLex`. -/
+def J64ViewOK {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  FaceOnCell F rimFA UFA DnFA ∨ FaceOnCell F rimFB UFB DnFB ∨ FaceOnCell F rimFC UFC DnFC ∨
+    FaceOnCell F rimFD UFD DnFD
+
+/-- **The face-on J0 view is a lex cell.** -/
+theorem lexAny_of_j64View (F : S0xFac 9 s0x_S24 x) (h : J64ViewOK F) : Gen.LexAny F := by
+  rcases h with h | h | h | h
+  · exact lexAny_of_faceOnCell F (by norm_num) rimFA_inj rimFA_cyc h
+  · exact lexAny_of_faceOnCell F le_rfl rimFB_inj rimFB_cyc h
+  · exact lexAny_of_faceOnCell F (by norm_num) rimFC_inj rimFC_cyc h
+  · exact lexAny_of_faceOnCell F le_rfl rimFD_inj rimFD_cyc h
+
+/-- **The mirror form** (`π = (2 6)(4 5)`): the view `(N3, ⟨N6,N3⟩ N3 - |N3|² N6, x 0 - x 5)` of `x`. -/
+theorem lexAny_of_j64View_sym (F : S0xFac 9 s0x_S24 x) (h : J64ViewOK (Sym.sym24 F)) : Gen.LexAny F :=
+  Sym.lexAny_sym F (lexAny_of_j64View (Sym.sym24 F) h)
+
+end J64
+
+/-- One of the two face-on J0 views. -/
+def JFaceOK {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop := J64ViewOK F ∨ J64ViewOK (Sym.sym24 F)
+
+theorem lexAny_of_jFace (F : S0xFac 9 s0x_S24 x) (h : JFaceOK F) : Gen.LexAny F :=
+  h.elim (lexAny_of_j64View F) (lexAny_of_j64View_sym F)
+
+def ResJ0aF {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s : ℝ) : Prop := ResJ0aX F s ∧ ¬ JFaceOK F
+def ResJ0bF {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s : ℝ) : Prop := ResJ0bX F s ∧ ¬ JFaceOK F
+def ResJ0cF {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : ℝ) : Prop := ResJ0cX F t ∧ ¬ JFaceOK F
+def ResJ0dF {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : ℝ) : Prop := ResJ0dX F t ∧ ¬ JFaceOK F
+
+/-- `Q45ResSTK` after the face-on J0 views. -/
+def Q45ResSTF {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ResWallZ F s t ∨ ResB1T x s ∨ ResBs1 F s ∨ ResJ0aF F s ∨ ResB2V F s ∨ ResJ0bF F s ∨ ResK0K F s t ∨
+    ResC1T x t ∨ ResCt1 F t ∨ ResJ0cF F t ∨ ResC2V F t ∨ ResJ0dF F t
+
+/-- The branch-tagged residue after the face-on J0 views. -/
+def Q45ResWF {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTF F s t
+
+/-- **The face-on J0 views shrink the J0 pieces**: a point of `Q45ResSTK` is `LexAny` or in `Q45ResSTF`. -/
+theorem q45_resF_local (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (h : Q45ResSTK F s t) :
+    Gen.LexAny F ∨ Q45ResSTF F s t := by
+  by_cases hJ : JFaceOK F
+  · exact Or.inl (lexAny_of_jFace F hJ)
+  right
+  rcases h with h | h | h | h | h | h | h | h | h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨h, hJ⟩)))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨h, hJ⟩)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨h, hJ⟩)))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h, hJ⟩))))))))))
+
+/-- `Q45ResWF ⊆ Q45ResWK`. -/
+theorem q45ResWK_of_F {F : S0xFac 9 s0x_S24 x} (h : Q45ResWF F) : Q45ResWK F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
+  refine ⟨s, t, hs, ht, hst, hd, ?_⟩
+  rcases h with h | h | h | h | h | h | h | h | h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl h.1)))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.1)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.1)))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h.1))))))))))
+
+/-- **Global form**: on the corner every point has `LexAny`, `AnyFaceChord`, is Rupert, or lies in `Q45ResWF`. -/
+theorem q45_resF (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) :
+    Gen.LexAny F ∨ Gen.AnyFaceChord F ∨ IsRupert (univ.image x) ∨ Q45ResWF F := by
+  rcases q45_resK F h4 h5 with h | h | h | ⟨s, t, hs0, ht, hst, hd, h⟩
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · rcases q45_resF_local F h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr ⟨s, t, hs0, ht, hst, hd, h⟩))
+
+/-- [OPEN] **The special piece after the K0 and face-on J0 views, Rupert form**: `OpenSpecialK` with `Q45ResWF` (the
+J0 pieces cut by the face-on views) in place of `Q45ResWK`. -/
+def OpenSpecialF : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWF F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialK → OpenSpecialF` (`q45ResWK_of_F`). -/
+theorem openSpecialF_of_openSpecialK (h : OpenSpecialK) : OpenSpecialF :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4 (q45ResWK_of_F hr) hF
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialF`. -/
+theorem hole24_offOB1_F {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialF) : IsRupert (univ.image x) := by
+  obtain ⟨b1, b2, b3⟩ := resid24_frame_signs h.2.2.1 hO
+  have b4 := resid24_b1245 h.2.2.1 hO
+  obtain ⟨-, h4, h5⟩ := offWall_of_hole24 h hO
+  have hF := holeFull_of_hole24 h
+  rcases q45_resF F h4 h5 with hL | hA | hR | hr
+  · exact (hF.1.2.2.2.1 hL).elim
+  · exact (hF.1.2.2.1 hA).elim
+  · exact hR
+  · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
+
+/-- [PROVED] Generic + special (after the face-on J0 views) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_F (h1 : OpenOB1) (h2 : OpenSpecialF) : Open24Rupert := by
+  intro x fs hh hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
+  · exact hole24_offOB1_F hH hO h2
+
 end Minimality.T24.OSpec
