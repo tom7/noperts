@@ -2893,6 +2893,21 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_H
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_H
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_H
+-- OSPEC15: T234 letters derived on the B2 branch (z0, z1, 0345 up), reduced residue Q45ResWI / OpenSpecialI
+#assert_standard_axioms Minimality.T24.OSpec.t234_z0
+#assert_standard_axioms Minimality.T24.OSpec.t234_z1
+#assert_standard_axioms Minimality.T24.OSpec.t234_up3_prod
+#assert_standard_axioms Minimality.T24.OSpec.t234_derived
+#assert_standard_axioms Minimality.T24.OSpec.t234At_of_red
+#assert_standard_axioms Minimality.T24.OSpec.t234ViewOK_iff_red
+#assert_standard_axioms Minimality.T24.OSpec.t234Br_of_resB2T
+#assert_standard_axioms Minimality.T24.OSpec.t234ViewI_iff
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_t234ViewI
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWI_iff_H
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialI_iff_H
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_I
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_I
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_I
 
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
