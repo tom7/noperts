@@ -30,7 +30,9 @@ Which middle pops: if the rim depths at `u` are strictly unimodal and the chord 
 `0` (`z0 < max z4 z5`).  The only bad case is the chord inside a monotone chain (`6 → 4 → 5 → 2` monotone,
 `j0Tilt_corners`).  On the S4J0 locus the farther vertex has its foot on the chord, so its depth lies between `z4`
 and `z5` at every view of the circle (`depth_between_of_s4`): the chord is not inside a monotone chain, and every J0
-point of S4J0 is a lex cell (`lexAny_of_j0S4`).
+point of S4J0 is a lex cell (`lexAny_of_j0S4`).  On the S2 locus with an OPPOSITE pair only (`4 2` or `6 5` orthogonal
+to the face plane) the tied corners rule out the monotone chain (`lexAny_of_j0_tie`, `lexAny_of_j0_s2opp`, with the
+weak cores `q45_*_j0w`).  General form: `lexAny_of_j0_noMid`.
 -/
 
 namespace Minimality.T24.Q45
@@ -282,11 +284,12 @@ theorem su4_facts {z : ZMod 4 → ℝ} (h : StrictUnimodal z) :
     exact two 1 3 (by decide) ⟨lt_of_le_of_ne c1 e0, lt_of_le_of_ne c2 e1.symm⟩
       ⟨lt_of_le_of_ne c4 e2, lt_of_le_of_ne c3 e3.symm⟩
 
-/-- **Every J0 view on the S4J0 locus tilts to a lex cell.**  `u` a J0 view (on the `0345` circle, `J0Extra`: the J0
-facet signs, strictly unimodal rim depths, middle `0` below `max z4 z5`, middle `3` above `min z4 z5`); on S4J0 the chord
-is not inside a monotone chain (`depth_between_of_s4`), so `j0Tilt_corners` picks the middle to pop. -/
-theorem lexAny_of_j0S4 (F : S0xFac 9 s0x_S24 x) {u : ℝ³} (h3 : ⟪F.N 3, u⟫ = 0) (hx : J0Extra F u)
-    (hS4 : Q45S4LocusJ0 F) : Gen.LexAny F := by
+/-- **A J0 view whose chord is not inside a monotone chain tilts to a lex cell.**  `u` a J0 view (on the `0345`
+circle, `J0Extra`: the J0 facet signs, strictly unimodal rim depths, middle `0` below `max z4 z5`, middle `3` above
+`min z4 z5`); `hmid`, `hmid'`: the rim `6 → 4 → 5 → 2` is not monotone; `j0Tilt_corners` picks the middle to pop. -/
+theorem lexAny_of_j0_noMid (F : S0xFac 9 s0x_S24 x) {u : ℝ³} (h3 : ⟪F.N 3, u⟫ = 0) (hx : J0Extra F u)
+    (hmid : ¬ (⟪x 6, u⟫ < ⟪x 4, u⟫ ∧ ⟪x 4, u⟫ < ⟪x 5, u⟫ ∧ ⟪x 5, u⟫ < ⟪x 2, u⟫))
+    (hmid' : ¬ (⟪x 2, u⟫ < ⟪x 5, u⟫ ∧ ⟪x 5, u⟫ < ⟪x 4, u⟫ ∧ ⟪x 4, u⟫ < ⟪x 6, u⟫)) : Gen.LexAny F := by
   obtain ⟨hs, huni, h0, h3'⟩ := hx
   obtain ⟨e0, e1, e2, e3, hn, hp⟩ := su4_facts huni
   simp only [quad] at e0 e1 e2 e3 hn hp
@@ -296,15 +299,6 @@ theorem lexAny_of_j0S4 (F : S0xFac 9 s0x_S24 x) {u : ℝ³} (h3 : ⟪F.N 3, u⟫
   change ⟪x 2, u⟫ ≠ ⟪x 6, u⟫ at e3
   change ⟪x 6, u⟫ < ⟪x 4, u⟫ ∨ ⟪x 6, u⟫ < ⟪x 2, u⟫ ∨ ⟪x 5, u⟫ < ⟪x 4, u⟫ ∨ ⟪x 5, u⟫ < ⟪x 2, u⟫ at hn
   change ⟪x 4, u⟫ < ⟪x 6, u⟫ ∨ ⟪x 4, u⟫ < ⟪x 5, u⟫ ∨ ⟪x 2, u⟫ < ⟪x 6, u⟫ ∨ ⟪x 2, u⟫ < ⟪x 5, u⟫ at hp
-  have hb := depth_between_of_s4 F h3 hS4
-  have hmid : ¬ (⟪x 6, u⟫ < ⟪x 4, u⟫ ∧ ⟪x 4, u⟫ < ⟪x 5, u⟫ ∧ ⟪x 5, u⟫ < ⟪x 2, u⟫) := by
-    rintro ⟨c1, c2, c3⟩
-    rw [min_eq_left c2.le, max_eq_right c2.le] at hb
-    split_ifs at hb <;> linarith [hb.1, hb.2]
-  have hmid' : ¬ (⟪x 2, u⟫ < ⟪x 5, u⟫ ∧ ⟪x 5, u⟫ < ⟪x 4, u⟫ ∧ ⟪x 4, u⟫ < ⟪x 6, u⟫) := by
-    rintro ⟨c1, c2, c3⟩
-    rw [min_eq_right c2.le, max_eq_left c2.le] at hb
-    split_ifs at hb <;> linarith [hb.1, hb.2]
   have hz3 : (fun i => ⟪x (rimP3 i), u⟫) = ![⟪x 6, u⟫, ⟪x 4, u⟫, ⟪x 3, u⟫, ⟪x 5, u⟫, ⟪x 2, u⟫] := by
     funext i; fin_cases i <;> rfl
   have hz0 : (fun i => ⟪x (rimP0 i), u⟫) = ![⟪x 6, u⟫, ⟪x 4, u⟫, ⟪x 0, u⟫, ⟪x 5, u⟫, ⟪x 2, u⟫] := by
@@ -313,6 +307,55 @@ theorem lexAny_of_j0S4 (F : S0xFac 9 s0x_S24 x) {u : ℝ³} (h3 : ⟪F.N 3, u⟫
     ⟨v₁, v₂, hv, m₁, m₂⟩ | ⟨v₁, v₂, hv, m₁, m₂⟩
   · exact lexAny_of_j0Tilt3 F h3 hs v₁ v₂ hv (by rw [hz3]; exact m₁) (by rw [hz3]; exact m₂)
   · exact lexAny_of_j0Tilt0 F h3 hs v₁ v₂ hv (by rw [hz0]; exact m₁) (by rw [hz0]; exact m₂)
+
+/-- **Every J0 view on the S4J0 locus tilts to a lex cell**: the farther vertex's depth lies between `z4` and `z5`
+(`depth_between_of_s4`), so the chord is not inside a monotone chain. -/
+theorem lexAny_of_j0S4 (F : S0xFac 9 s0x_S24 x) {u : ℝ³} (h3 : ⟪F.N 3, u⟫ = 0) (hx : J0Extra F u)
+    (hS4 : Q45S4LocusJ0 F) : Gen.LexAny F := by
+  have hb := depth_between_of_s4 F h3 hS4
+  refine lexAny_of_j0_noMid F h3 hx ?_ ?_
+  · rintro ⟨c1, c2, c3⟩
+    rw [min_eq_left c2.le, max_eq_right c2.le] at hb
+    split_ifs at hb <;> linarith [hb.1, hb.2]
+  · rintro ⟨c1, c2, c3⟩
+    rw [min_eq_right c2.le, max_eq_left c2.le] at hb
+    split_ifs at hb <;> linarith [hb.1, hb.2]
+
+/-- **A J0 view with an opposite depth tie tilts to a lex cell** (`z4 = z2` or `z6 = z5`: the S2 pairs `4 2`, `6 5`
+of the rim `6 4 5 2`): a monotone chain through the chord would separate the tied corners. -/
+theorem lexAny_of_j0_tie (F : S0xFac 9 s0x_S24 x) {u : ℝ³} (h3 : ⟪F.N 3, u⟫ = 0) (hx : J0Extra F u)
+    (htie : ⟪x 4, u⟫ = ⟪x 2, u⟫ ∨ ⟪x 6, u⟫ = ⟪x 5, u⟫) : Gen.LexAny F := by
+  refine lexAny_of_j0_noMid F h3 hx ?_ ?_
+  · rintro ⟨c1, c2, c3⟩; rcases htie with h | h <;> linarith
+  · rintro ⟨c1, c2, c3⟩; rcases htie with h | h <;> linarith
+
+/-- **The S2J0 locus with no adjacent S2 pair** (a weak J0 core's view `u = B + ε D`, `hS2a`, the full S2 condition
+failing): an opposite pair is orthogonal to `B` and `D`, hence tied at `u`, and the tilt is a lex cell. -/
+theorem lexAny_of_j0_s2opp (F : S0xFac 9 s0x_S24 x) {u B D : ℝ³} (h3 : ⟪F.N 3, u⟫ = 0) (hx : J0Extra F u)
+    (hu : ∃ ε : ℝ, u = B + ε • D)
+    (hS2a : ∀ i : ZMod 4,
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), B⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) (i + 1), D⟫ ≠ 0)
+    (hS2 : ¬ ∀ i j : ZMod 4, i ≠ j →
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, B⟫ ≠ 0 ∨
+      ⟪quad (x 6) (x 4) (x 5) (x 2) i - quad (x 6) (x 4) (x 5) (x 2) j, D⟫ ≠ 0) : Gen.LexAny F := by
+  obtain ⟨ε, rfl⟩ := hu
+  refine lexAny_of_j0_tie F h3 hx ?_
+  have hlin : ∀ a c : ℝ³, ⟪a, B + ε • D⟫ - ⟪c, B + ε • D⟫ = ⟪a - c, B⟫ + ε * ⟪a - c, D⟫ := by
+    intro a c; rw [← inner_sub_left, inner_add_right, real_inner_smul_right]
+  rcases s2_opp_of _ B D hS2a hS2 with ⟨hb, hd⟩ | ⟨hb, hd⟩
+  · left
+    have := hlin (x 4) (x 2)
+    simp only [quad] at hb hd
+    change ⟪x 4 - x 2, B⟫ = 0 at hb
+    change ⟪x 4 - x 2, D⟫ = 0 at hd
+    rw [hb, hd, mul_zero, add_zero] at this; linarith
+  · right
+    have := hlin (x 6) (x 5)
+    simp only [quad] at hb hd
+    change ⟪x 6 - x 5, B⟫ = 0 at hb
+    change ⟪x 6 - x 5, D⟫ = 0 at hd
+    rw [hb, hd, mul_zero, add_zero] at this; linarith
 
 /-- **A J0 core's view on S4J0 is a lex cell** (`J0Chord` gives `⟪N3, u⟫ = 0`). -/
 theorem lexAny_of_j0Chord_s4 (F : S0xFac 9 s0x_S24 x) {u : ℝ³} {ρ : ℝ} (hc : J0Chord F u ρ) (hx : J0Extra F u)
