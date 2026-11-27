@@ -119,4 +119,18 @@ theorem open24Rupert_of_cellCoverEmpty_Z {L : List Cell24} (hN : CellCoverEmpty 
     Open24Rupert :=
   OSpec.open24Rupert_of_split_Z (openOB1_of_cellCoverEmpty hN) hS
 
+/-- [PROVED] Headline chain after OSPEC9: `CellCoverEmpty L` and `OSpec.OpenSpecialK` (the special piece after the K0
+views) rule out every `Hole24` up to Rupert-ness. -/
+theorem rupert_of_cellCoverEmpty_K {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialK) :
+    ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), Hole24 x F → IsRupert (univ.image x) := by
+  intro x F hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (hN x F hH.1.1 hO (hole24_cellCoverResidue L hH)).elim
+  · exact OSpec.hole24_offOB1_K hH hO hS
+
+/-- [PROVED] `CellCoverEmpty L` and `OSpec.OpenSpecialK` give `Stmt.Open24Rupert`. -/
+theorem open24Rupert_of_cellCoverEmpty_K {L : List Cell24} (hN : CellCoverEmpty L) (hS : OSpec.OpenSpecialK) :
+    Open24Rupert :=
+  OSpec.open24Rupert_of_split_K (openOB1_of_cellCoverEmpty hN) hS
+
 end Minimality.T24.Cell

@@ -1876,4 +1876,388 @@ theorem hole24_offOB1_Z {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.
 theorem open24Rupert_of_split_Z (h1 : OpenOB1) (h2 : OpenSpecialZ) : Open24Rupert :=
   open24Rupert_of_split_Y h1 (openSpecialY_of_openSpecialZ h2)
 
+
+/-! ### The K0 view (job OSPEC9)
+
+On `kJ = 0` (`x 2, x 4, x 5, x 6` coplanar) the 3-level lex view `(x 0 - x 4, x 0 - x 5, N3)` is a lex cell with rim
+`2 5 3 4 6` (`235` down) or `2 3 4 6` (`235` up) as soon as its rim is `RobUniLex` (`lexAny_of_k0View`).  Facet
+signs: `012 016 025` up and `346` down at level 1, `046` up at level 2 (`-f4(x 5) > 0`), `0345` up at level 3
+(`|N3|² > 0`), all automatic; `126` up off the wall `a4 = 1` (`k0_up5`); `235` has `s (f6(x 0) - f6(x 4)) = (1 - t)
+f6(x 0)` (`k0_f6`): down for `t ≤ 1`, up for `t > 1`; `236` is down at level 1 when `a4 (t - 1) < t a5`
+(`k0_dn7`): `kJ = 0` is `a5 (b4 + c4 - 1) = a4 (b5 + c5 - 1)` in oblique coordinates (`kJ_obl`), so `a5 f7(x 4) =
+a4 f7(x 5)`, and `f7(x 3) = 0` gives `(f7(x 0) - f7(x 4)) (s a4 + t a5) = f7(x 0) (t a5 - a4 (t - 1))`.  The mirror
+view `(x 0 - x 5, x 0 - x 4, N3)` needs `a5 (s - 1) < s a4`; one of the two always holds (`k0_h7_or`), and on
+`kJ = 0 ∩ S3` both do (`k0_a45_of_s3`: `a4 = a5`).  Not derived: the rim's `RobUniLex` (`K0RU`; it fails on about
+2.4 % of random `kJ = 0` points of the region, mostly where the angle `0 4 6` is obtuse, `z4 > z6`). -/
+
+section K0
+open Minimality.LexCell
+
+/-- Rim `2 5 3 4 6` (facets `012 016 025 0345 046 126` up, `235 236 346` down). -/
+def rimK5 : ZMod 5 → Fin 7 := ![2, 5, 3, 4, 6]
+def UK5 : Finset (Fin 9) := {0, 1, 2, 3, 4, 5}
+def DnK5 : Finset (Fin 9) := {6, 7, 8}
+/-- Rim `2 3 4 6` (facets `012 016 025 0345 046 126 235` up, `236 346` down). -/
+def rimK4 : ZMod 4 → Fin 7 := ![2, 3, 4, 6]
+def UK4 : Finset (Fin 9) := {0, 1, 2, 3, 4, 5, 6}
+def DnK4 : Finset (Fin 9) := {7, 8}
+
+theorem rimK5_cyc : S0xCycUD s0x_S24 rimK5 UK5 DnK5 := by decide
+theorem rimK5_inj : Function.Injective rimK5 := by decide
+theorem rimK4_cyc : S0xCycUD s0x_S24 rimK4 UK4 DnK4 := by decide
+theorem rimK4_inj : Function.Injective rimK4 := by decide
+
+/-- Facet `t` is up in the K0 view `(x 0 - x 4, x 0 - x 5, N3)`. -/
+def K0Up {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : Fin 9) : Prop :=
+  LexPos3 ⟪F.N t, x 0 - x 4⟫ ⟪F.N t, x 0 - x 5⟫ ⟪F.N t, F.N 3⟫
+/-- Facet `t` is down in the K0 view. -/
+def K0Dn {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : Fin 9) : Prop :=
+  LexPos3 (-⟪F.N t, x 0 - x 4⟫) (-⟪F.N t, x 0 - x 5⟫) (-⟪F.N t, F.N 3⟫)
+
+/-- Lex depth triples of a rim in the K0 view. -/
+noncomputable def k0Z {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {k : ℕ} (c : ZMod k → Fin 7) :
+    ZMod k → ℝ × ℝ × ℝ :=
+  fun i => (⟪x (c i), x 0 - x 4⟫, ⟪x (c i), x 0 - x 5⟫, ⟪x (c i), F.N 3⟫)
+
+/-- **The K0 view condition**: `126` up, `236` down, and `235` down with the rim `2 5 3 4 6` `RobUniLex`, or `235`
+up with the rim `2 3 4 6` `RobUniLex` (lex order `(x 0 - x 4, x 0 - x 5, N3)`; the other facet signs are
+automatic). -/
+def K0ViewOK {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  K0Up F 5 ∧ K0Dn F 7 ∧ ((K0Dn F 6 ∧ RobUniLex (k0Z F rimK5)) ∨ (K0Up F 6 ∧ RobUniLex (k0Z F rimK4)))
+
+/-- A facet through `0` but not `4` is up (level 1). -/
+theorem k0_up_of_mem (F : S0xFac 9 s0x_S24 x) (t : Fin 9) (h0 : (0 : Fin 7) ∈ s0x_S24 t)
+    (h4 : (4 : Fin 7) ∉ s0x_S24 t) : K0Up F t := by
+  left
+  rw [F.inner_sub t 0 4, F.zero t 0 h0]
+  linarith [F.neg t 4 h4]
+
+/-- `346` is down (level 1). -/
+theorem k0_dn8 (F : S0xFac 9 s0x_S24 x) : K0Dn F 8 := by
+  left
+  rw [F.inner_sub 8 0 4, F.zero 8 4 (by decide)]
+  linarith [F.neg 8 0 (by decide)]
+
+/-- `046` is up (level 2: `-f4(x 5) > 0`). -/
+theorem k0_up4 (F : S0xFac 9 s0x_S24 x) : K0Up F 4 := by
+  right
+  refine ⟨?_, Or.inl ?_⟩
+  · rw [F.inner_sub 4 0 4, F.zero 4 0 (by decide), F.zero 4 4 (by decide)]; ring
+  · rw [F.inner_sub 4 0 5, F.zero 4 0 (by decide)]
+    linarith [F.neg 4 5 (by decide)]
+
+/-- `0345` is up (level 3: `|N3|² > 0`). -/
+theorem k0_up3 (F : S0xFac 9 s0x_S24 x) : K0Up F 3 := by
+  right
+  refine ⟨?_, Or.inr ⟨?_, ?_⟩⟩
+  · rw [F.inner_sub 3 0 4, F.zero 3 0 (by decide), F.zero 3 4 (by decide)]; ring
+  · rw [F.inner_sub 3 0 5, F.zero 3 0 (by decide), F.zero 3 5 (by decide)]; ring
+  · exact real_inner_self_pos.mpr (n3_ne_zero F)
+
+/-- **The K0 view is a lex cell** (either rim). -/
+theorem lexAny_of_k0View (F : S0xFac 9 s0x_S24 x) (h : K0ViewOK F) : Gen.LexAny F := by
+  obtain ⟨h5, h7, ⟨h6, hR⟩ | ⟨h6, hR⟩⟩ := h
+  · refine ⟨5, inferInstance, rimK5, UK5, DnK5, x 0 - x 4, x 0 - x 5, F.N 3, by norm_num, rimK5_inj,
+      rimK5_cyc, ?_, ?_, hR⟩
+    · intro t ht
+      simp only [UK5, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl | rfl | rfl | rfl
+      exacts [k0_up_of_mem F 0 (by decide) (by decide), k0_up_of_mem F 1 (by decide) (by decide),
+        k0_up_of_mem F 2 (by decide) (by decide), k0_up3 F, k0_up4 F, h5]
+    · intro t ht
+      simp only [DnK5, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl
+      exacts [h6, h7, k0_dn8 F]
+  · refine ⟨4, inferInstance, rimK4, UK4, DnK4, x 0 - x 4, x 0 - x 5, F.N 3, le_refl _, rimK4_inj,
+      rimK4_cyc, ?_, ?_, hR⟩
+    · intro t ht
+      simp only [UK4, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+      exacts [k0_up_of_mem F 0 (by decide) (by decide), k0_up_of_mem F 1 (by decide) (by decide),
+        k0_up_of_mem F 2 (by decide) (by decide), k0_up3 F, k0_up4 F, h5, h6]
+    · intro t ht
+      simp only [DnK4, Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with rfl | rfl
+      exacts [h7, k0_dn8 F]
+
+/-- **The mirror K0 view** (`π = (2 6)(4 5)`): the view `(x 0 - x 5, x 0 - x 4, N3)` of `x`. -/
+theorem lexAny_of_k0View_sym (F : S0xFac 9 s0x_S24 x) (h : K0ViewOK (Sym.sym24 F)) : Gen.LexAny F :=
+  Sym.lexAny_sym F (lexAny_of_k0View (Sym.sym24 F) h)
+
+/-! ### The facet signs from the K0 branch -/
+
+/-- `126` is up off the wall `a4 = 1` (level 1). -/
+theorem k0_up5 (F : S0xFac 9 s0x_S24 x) (h4 : 1 < oblX0 x 4) : K0Up F 5 := by
+  have e := (sgn_a F 4 h4.le).resolve_right h4.ne'
+  left
+  rw [← neg_sub, inner_neg_right]; linarith
+
+/-- `235` at level 1: `s (f6(x 0) - f6(x 4)) = (1 - t) f6(x 0)`, so down for `t < 1`, up for `t > 1`; at `t = 1`
+level 2 (`f6(x 0) < 0`) puts it down. -/
+theorem k0_f6 (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) :
+    s * ⟪F.N 6, x 0 - x 4⟫ = (1 - t) * F.f 6 (x 0) := by
+  have h3 := congrArg (fun v => ⟪F.N 6, v⟫) hdec
+  simp only [inner_add_right, real_inner_smul_right] at h3
+  rw [F.inner_sub 6 3 0, F.inner_sub 6 4 0, F.inner_sub 6 5 0, F.zero 6 3 (by decide),
+    F.zero 6 5 (by decide)] at h3
+  rw [F.inner_sub 6 0 4]; linarith
+
+theorem k0_dn6 (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht1 : t ≤ 1)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) : K0Dn F 6 := by
+  have e := k0_f6 F hdec
+  have h0 := F.neg 6 0 (by decide)
+  rcases ht1.lt_or_eq with ht | rfl
+  · left
+    have : s * ⟪F.N 6, x 0 - x 4⟫ < 0 := by rw [e]; nlinarith
+    have : ⟪F.N 6, x 0 - x 4⟫ < 0 := by
+      by_contra hc; push Not at hc; nlinarith
+    linarith
+  · right
+    have : ⟪F.N 6, x 0 - x 4⟫ = 0 := by
+      have : s * ⟪F.N 6, x 0 - x 4⟫ = 0 := by rw [e]; ring
+      rcases mul_eq_zero.mp this with h | h
+      · exact absurd h hs0.ne'
+      · exact h
+    refine ⟨by rw [this, neg_zero], Or.inl ?_⟩
+    rw [F.inner_sub 6 0 5, F.zero 6 5 (by decide)]; linarith
+
+theorem k0_up6 (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s) (ht1 : 1 < t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) : K0Up F 6 := by
+  have e := k0_f6 F hdec
+  have h0 := F.neg 6 0 (by decide)
+  left
+  have : 0 < s * ⟪F.N 6, x 0 - x 4⟫ := by rw [e]; nlinarith
+  by_contra hc; push Not at hc; nlinarith
+
+/-- `kJ = 0` in oblique coordinates: `a5 (b4 + c4 - 1) = a4 (b5 + c5 - 1)` (`x 4`, `x 5` on one plane through the
+edge `2 6`). -/
+theorem kJ_obl (F : S0xFac 9 s0x_S24 x) (hkJ : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) = 0) :
+    oblX0 x 5 * (oblX2 x 4 + oblX6 x 4 - 1) = oblX0 x 4 * (oblX2 x 5 + oblX6 x 5 - 1) := by
+  have T := M4.type24OfFac F
+  have r4 := T.rep 4
+  have r5 := T.rep 5
+  have d5 : x 5 - x 6 = oblX0 x 5 • (x 0 - x 1) + oblX2 x 5 • (x 2 - x 1) + (oblX6 x 5 - 1) • (x 6 - x 1) := by
+    have : x 5 - x 6 = (x 5 - x 1) - (x 6 - x 1) := by abel
+    rw [this, r5]; module
+  have d4 : x 4 - x 6 = oblX0 x 4 • (x 0 - x 1) + oblX2 x 4 • (x 2 - x 1) + (oblX6 x 4 - 1) • (x 6 - x 1) := by
+    have : x 4 - x 6 = (x 4 - x 1) - (x 6 - x 1) := by abel
+    rw [this, r4]; module
+  have d2 : x 2 - x 6 = (0 : ℝ) • (x 0 - x 1) + (1 : ℝ) • (x 2 - x 1) + (-1 : ℝ) • (x 6 - x 1) := by module
+  have hf := M4.det3_frame x (oblX0 x 5) (oblX2 x 5) (oblX6 x 5 - 1) 0 1 (-1) (oblX0 x 4) (oblX2 x 4)
+    (oblX6 x 4 - 1)
+  rw [← d5, ← d2, ← d4, hkJ] at hf
+  have h1 : (1 : ℝ) • (x 0 - x 1) + (0 : ℝ) • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) = x 0 - x 1 := by module
+  have h2 : (0 : ℝ) • (x 0 - x 1) + (1 : ℝ) • (x 2 - x 1) + (0 : ℝ) • (x 6 - x 1) = x 2 - x 1 := by module
+  have h6 : (0 : ℝ) • (x 0 - x 1) + (0 : ℝ) • (x 2 - x 1) + (1 : ℝ) • (x 6 - x 1) = x 6 - x 1 := by module
+  have hO := M4.det3_frame x 1 0 0 0 1 0 0 0 1
+  rw [h1, h2, h6] at hO
+  have hD : det24 x ≠ 0 := by
+    intro h0; apply omega_ne_zero F; rw [hO, h0]; ring
+  have := (mul_eq_zero.mp hf.symm).resolve_right hD
+  linarith
+
+/-- **`236` is down in the K0 view** on `kJ = 0` when `a4 (t - 1) < t a5` (level 1): with `a5 f7(x 4) = a4 f7(x 5)`
+(`kJ_obl`) and `f7(x 3) = 0`, `(f7(x 0) - f7(x 4)) (s a4 + t a5) = f7(x 0) (t a5 - a4 (t - 1))`. -/
+theorem k0_dn7 (F : S0xFac 9 s0x_S24 x) (hkJ : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) = 0)
+    (h4 : 0 < oblX0 x 4) (h5 : 0 < oblX0 x 5) {s t : ℝ} (hs0 : 0 < s) (ht0 : 0 < t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h7 : oblX0 x 4 * (t - 1) < t * oblX0 x 5) :
+    K0Dn F 7 := by
+  have hk := kJ_obl F hkJ
+  have e74 := M4.fac_eval F 7 4
+  have e75 := M4.fac_eval F 7 5
+  rw [F.zero 7 2 (by decide), F.zero 7 6 (by decide)] at e74 e75
+  have h3 := congrArg (fun v => ⟪F.N 7, v⟫) hdec
+  simp only [inner_add_right, real_inner_smul_right] at h3
+  rw [F.inner_sub 7 3 0, F.inner_sub 7 4 0, F.inner_sub 7 5 0, F.zero 7 3 (by decide)] at h3
+  have hQ := F.neg 7 0 (by decide)
+  -- a5 f7(x4) = a4 f7(x5)
+  have hp : oblX0 x 5 * F.f 7 (x 4) = oblX0 x 4 * F.f 7 (x 5) := by
+    rw [e74, e75]; linear_combination (-F.f 7 (x 1)) * hk
+  have key : (F.f 7 (x 0) - F.f 7 (x 4)) * (s * oblX0 x 4 + t * oblX0 x 5) =
+      F.f 7 (x 0) * (t * oblX0 x 5 - oblX0 x 4 * (t - 1)) := by
+    linear_combination oblX0 x 4 * h3 - t * hp
+  have hA : 0 < s * oblX0 x 4 + t * oblX0 x 5 := by positivity
+  have hneg : (F.f 7 (x 0) - F.f 7 (x 4)) * (s * oblX0 x 4 + t * oblX0 x 5) < 0 := by
+    rw [key]; exact mul_neg_of_neg_of_pos hQ (by linarith)
+  left
+  rw [F.inner_sub 7 0 4]
+  by_contra hc; push Not at hc; nlinarith
+
+/-- On `kJ = 0 ∩ S3` (`f3(x 2) = f3(x 6)`) in the corner `a4 ≥ 1`: `a4 = a5` (`x 4 - x 5` is parallel to `126`). -/
+theorem k0_a45_of_s3 (F : S0xFac 9 s0x_S24 x) (hkJ : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) = 0)
+    (hS3 : F.f 3 (x 2) = F.f 3 (x 6)) (h4 : 1 ≤ oblX0 x 4) : oblX0 x 4 = oblX0 x 5 := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (by decide)
+  have hk := kJ_obl F hkJ
+  have e34 := M4.fac_eval F 3 4
+  have e35 := M4.fac_eval F 3 5
+  rw [F.zero 3 0 (by decide), F.zero 3 4 (by decide), hS3] at e34
+  rw [F.zero 3 0 (by decide), F.zero 3 5 (by decide), hS3] at e35
+  have hG := F.neg 3 6 (by decide)
+  have hP := F.neg 3 1 (by decide)
+  have hPne : F.f 3 (x 1) ≠ 0 := hP.ne
+  have k1 : F.f 3 (x 1) * ((oblX2 x 5 + oblX6 x 5) - (oblX2 x 4 + oblX6 x 4) -
+      (oblX0 x 4 * (oblX2 x 5 + oblX6 x 5) - oblX0 x 5 * (oblX2 x 4 + oblX6 x 4))) = 0 := by
+    linear_combination (oblX2 x 4 + oblX6 x 4) * e35 - (oblX2 x 5 + oblX6 x 5) * e34
+  have E1 := (mul_eq_zero.mp k1).resolve_left hPne
+  have hd : (oblX0 x 4 - oblX0 x 5) * (oblX0 x 4 + oblX2 x 4 + oblX6 x 4 - 1) = 0 := by
+    linear_combination (oblX0 x 4 - 1) * hk - oblX0 x 4 * E1
+  have hpos : 0 < oblX0 x 4 + oblX2 x 4 + oblX6 x 4 - 1 := by linarith
+  have := (mul_eq_zero.mp hd).resolve_right hpos.ne'
+  linarith
+
+/-- The rim condition of the K0 view at the decomposition `t`: rim `2 5 3 4 6` for `t ≤ 1`, `2 3 4 6` for `t > 1`. -/
+def K0RU {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (t : ℝ) : Prop :=
+  (t ≤ 1 → RobUniLex (k0Z F rimK5)) ∧ (1 < t → RobUniLex (k0Z F rimK4))
+
+/-- **The K0 view from branch hypotheses**: on `kJ = 0` off the wall `a4 = 1`, with `a4 (t - 1) < t a5`, the K0 view
+holds as soon as its rim is `RobUniLex`. -/
+theorem k0ViewOK_of (F : S0xFac 9 s0x_S24 x) (hkJ : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) = 0)
+    (h4 : 1 < oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) {s t : ℝ} (hs0 : 0 < s) (ht0 : 0 < t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h7 : oblX0 x 4 * (t - 1) < t * oblX0 x 5)
+    (hR : K0RU F t) : K0ViewOK F := by
+  refine ⟨k0_up5 F h4, k0_dn7 F hkJ (by linarith) (by linarith) hs0 ht0 hdec h7, ?_⟩
+  rcases le_or_gt t 1 with ht | ht
+  · exact Or.inl ⟨k0_dn6 F hs0 ht hdec, hR.1 ht⟩
+  · exact Or.inr ⟨k0_up6 F hs0 ht hdec, hR.2 ht⟩
+
+/-- **The mirror form**: on `kJ = 0` off the wall `a5 = 1`, with `a5 (s - 1) < s a4`, the K0 view of the mirrored
+solid (the view `(x 0 - x 5, x 0 - x 4, N3)` of `x`) holds as soon as its rim is `RobUniLex`. -/
+theorem k0ViewOK_sym_of (F : S0xFac 9 s0x_S24 x) (hkJ : det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) = 0)
+    (h5 : 1 < oblX0 x 5) (h4 : 1 ≤ oblX0 x 4) {s t : ℝ} (hs0 : 0 < s) (ht0 : 0 < t)
+    (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h7 : oblX0 x 5 * (s - 1) < s * oblX0 x 4)
+    (hR : K0RU (Sym.sym24 F) s) : K0ViewOK (Sym.sym24 F) := by
+  have o4 : oblX0 (x ∘ Sym.pi24) 4 = oblX0 x 5 := by rw [Sym.oblX0_comp_pi24]; simp
+  have o5 : oblX0 (x ∘ Sym.pi24) 5 = oblX0 x 4 := by rw [Sym.oblX0_comp_pi24]; simp
+  refine k0ViewOK_of (Sym.sym24 F) (s := t) (t := s) ?_ (by rw [o4]; exact h5) (by rw [o5]; exact h4) ht0 hs0 ?_
+    (by rw [o4, o5]; exact h7) hR
+  · rw [Reg.q45_det_comp_pi24]; exact hkJ
+  · simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_3, Sym.pi24_4, Sym.pi24_5]
+    rw [hdec]; abel
+
+/-- One of the two `236` conditions always holds (`s, t > 0`, `s + t > 1`). -/
+theorem k0_h7_or (h4 : 0 < oblX0 x 4) (h5 : 0 < oblX0 x 5) {s t : ℝ} (hs0 : 0 < s) (ht0 : 0 < t)
+    (hst : 1 < s + t) : oblX0 x 4 * (t - 1) < t * oblX0 x 5 ∨ oblX0 x 5 * (s - 1) < s * oblX0 x 4 := by
+  by_contra hc
+  push Not at hc
+  obtain ⟨c1, c2⟩ := hc
+  have ht1 : 1 < t := by
+    by_contra h; push Not at h; nlinarith
+  have hs1 : 1 < s := by
+    by_contra h; push Not at h; nlinarith
+  nlinarith [mul_pos h4 h5, mul_le_mul_of_nonneg_right c1 (by linarith : (0 : ℝ) ≤ s - 1),
+    mul_le_mul_of_nonneg_left c2 (by linarith : (0 : ℝ) ≤ t)]
+
+/-- `ResK0` where both K0 views fail, explicit: a wall `a4 = 1` or `a5 = 1`, or for each view its `236` condition
+or its rim fails (on `S3` the `236` conditions hold: `k0_a45_of_s3`). -/
+def ResK0K {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ResK0 F ∧ (oblX0 x 4 = 1 ∨ oblX0 x 5 = 1 ∨
+    ((t * oblX0 x 5 ≤ oblX0 x 4 * (t - 1) ∨ ¬ K0RU F t) ∧
+      (s * oblX0 x 4 ≤ oblX0 x 5 * (s - 1) ∨ ¬ K0RU (Sym.sym24 F) s)))
+
+/-- **The K0 views cut `ResK0`**: a point of `ResK0` is `LexAny` or in `ResK0K`. -/
+theorem resK0K_of (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) {s t : ℝ} (hs0 : 0 < s)
+    (ht0 : 0 < t) (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h : ResK0 F) :
+    Gen.LexAny F ∨ ResK0K F s t := by
+  by_cases hw : oblX0 x 4 = 1 ∨ oblX0 x 5 = 1
+  · exact Or.inr ⟨h, hw.elim Or.inl (fun e => Or.inr (Or.inl e))⟩
+  push Not at hw
+  have h4' : 1 < oblX0 x 4 := lt_of_le_of_ne h4 (Ne.symm hw.1)
+  have h5' : 1 < oblX0 x 5 := lt_of_le_of_ne h5 (Ne.symm hw.2)
+  by_cases hA : oblX0 x 4 * (t - 1) < t * oblX0 x 5 ∧ K0RU F t
+  · exact Or.inl (lexAny_of_k0View F (k0ViewOK_of F h.1 h4' h5 hs0 ht0 hdec hA.1 hA.2))
+  by_cases hB : oblX0 x 5 * (s - 1) < s * oblX0 x 4 ∧ K0RU (Sym.sym24 F) s
+  · exact Or.inl (lexAny_of_k0View_sym F (k0ViewOK_sym_of F h.1 h5' h4 hs0 ht0 hdec hB.1 hB.2))
+  refine Or.inr ⟨h, Or.inr (Or.inr ⟨?_, ?_⟩)⟩
+  · by_contra hc; push Not at hc; exact hA ⟨by linarith [hc.1], hc.2⟩
+  · by_contra hc; push Not at hc; exact hB ⟨by linarith [hc.1], hc.2⟩
+
+end K0
+
+/-- `Q45ResSTZ` after the K0 views. -/
+def Q45ResSTK {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ResWallZ F s t ∨ ResB1T x s ∨ ResBs1 F s ∨ ResJ0aX F s ∨ ResB2V F s ∨ ResJ0bX F s ∨ ResK0K F s t ∨
+    ResC1T x t ∨ ResCt1 F t ∨ ResJ0cX F t ∨ ResC2V F t ∨ ResJ0dX F t
+
+/-- The branch-tagged residue after the K0 views. -/
+def Q45ResWK {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTK F s t
+
+/-- **The K0 views shrink `ResK0`**: a point of `Q45ResSTZ` is `LexAny` or in `Q45ResSTK`. -/
+theorem q45_resK_local (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) {s t : ℝ}
+    (hs0 : 0 < s) (ht0 : 0 < t) (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h : Q45ResSTZ F s t) :
+    Gen.LexAny F ∨ Q45ResSTK F s t := by
+  rcases h with h | h | h | h | h | h | h | h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))
+  · rcases resK0K_of F h4 h5 hs0 ht0 hdec h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h)))))))
+
+/-- `Q45ResWK ⊆ Q45ResWZ`. -/
+theorem q45ResWZ_of_K {F : S0xFac 9 s0x_S24 x} (h : Q45ResWK F) : Q45ResWZ F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
+  refine ⟨s, t, hs, ht, hst, hd, ?_⟩
+  rcases h with h | h | h | h | h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.1))))))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))))
+
+/-- **Global form**: on the corner every point has `LexAny`, `AnyFaceChord`, is Rupert, or lies in `Q45ResWK`. -/
+theorem q45_resK (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) :
+    Gen.LexAny F ∨ Gen.AnyFaceChord F ∨ IsRupert (univ.image x) ∨ Q45ResWK F := by
+  rcases q45_resY F h4 h5 with h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · obtain ⟨s, t, hs0, ht, hst, hd, h⟩ := q45ResWZ_of_Y F h4 h5 h
+    rcases q45_resK_local F h4 h5 hs0 ht hd h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr ⟨s, t, hs0, ht, hst, hd, h⟩))
+
+/-- [OPEN] **The special piece after the K0 views, Rupert form**: `OpenSpecialZ` with `Q45ResWK` (`ResK0` cut to the
+walls and the K0 rim failures, `ResK0K`) in place of `Q45ResWZ`. -/
+def OpenSpecialK : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWK F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialZ → OpenSpecialK` (`q45ResWZ_of_K`). -/
+theorem openSpecialK_of_openSpecialZ (h : OpenSpecialZ) : OpenSpecialK :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4 (q45ResWZ_of_K hr) hF
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialK`. -/
+theorem hole24_offOB1_K {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialK) : IsRupert (univ.image x) := by
+  obtain ⟨b1, b2, b3⟩ := resid24_frame_signs h.2.2.1 hO
+  have b4 := resid24_b1245 h.2.2.1 hO
+  obtain ⟨-, h4, h5⟩ := offWall_of_hole24 h hO
+  have hF := holeFull_of_hole24 h
+  rcases q45_resK F h4 h5 with hL | hA | hR | hr
+  · exact (hF.1.2.2.2.1 hL).elim
+  · exact (hF.1.2.2.1 hA).elim
+  · exact hR
+  · exact hS x F hO h4 h5 b1 b2 b3 b4 hr hF
+
+/-- [PROVED] Generic + special (after the K0 views) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_K (h1 : OpenOB1) (h2 : OpenSpecialK) : Open24Rupert := by
+  intro x fs hh hH
+  by_cases hO : H24K.SAT.OB1 x
+  · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
+  · exact hole24_offOB1_K hH hO h2
+
 end Minimality.T24.OSpec
