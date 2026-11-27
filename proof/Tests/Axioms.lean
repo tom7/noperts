@@ -2765,6 +2765,25 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_Y
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_Y
 
+-- OSPEC8 (11-27): the wall view from branch hypotheses (w4ViewOK_of_hi, mirror), explicit walls ResWallZ, OpenSpecialZ
+#assert_standard_axioms Minimality.T24.OSpec.w4_M_pos
+#assert_standard_axioms Minimality.T24.OSpec.w4_dn3_of_wall
+#assert_standard_axioms Minimality.T24.OSpec.w4_dn7_of_wall
+#assert_standard_axioms Minimality.T24.OSpec.w4_cone
+#assert_standard_axioms Minimality.T24.OSpec.w4_robUni_of_hi
+#assert_standard_axioms Minimality.T24.OSpec.w4ViewOK_of_hi
+#assert_standard_axioms Minimality.T24.OSpec.w4ViewOK_sym_of_hi
+#assert_standard_axioms Minimality.T24.OSpec.resWallZ_of_Y
+#assert_standard_axioms Minimality.T24.OSpec.resWallY_of_Z
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWZ_of_Y
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWY_of_Z
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialZ_of_openSpecialY
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialY_of_openSpecialZ
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_Z
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_Z
+#assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_Z
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_Z
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve

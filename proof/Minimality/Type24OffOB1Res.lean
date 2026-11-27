@@ -1589,4 +1589,291 @@ theorem open24Rupert_of_split_Y (h1 : OpenOB1) (h2 : OpenSpecialY) : Open24Ruper
   · exact (h1 x _ hO (holeFull_of_hole24 hH)).elim
   · exact hole24_offOB1_Y hH hO h2
 
+
+/-! ### The wall view from branch hypotheses (job OSPEC8)
+
+All four conditions of `W4ViewOK` hold in the corner sub-branch `K-, t < 1, h2hi` on `a4 = 1 < a5` off the tie
+`T-C1` (`w4ViewOK_of_hi`; mirror `w4ViewOK_sym_of_hi`).  Mechanism: on the wall `x 4 - x 0 = b4 (x 2 - x 1) + c4 (x 6 -
+x 1)` (oblique coordinates at `1`), so the facet `236` has `f7(x 4) - f7(x 0) = -(b4 + c4) f7(x 1) > 0`
+(`w4_dn7_of_wall`); the facet `046` puts `x 5` below it, `M = b5 c4 - b4 c5 - b4 (a5 - 1) > 0` (`w4_M_pos`), which
+forces `f3(x 2) < f3(x 1) < f3(x 6)` for `a5 > 1` (`w4_dn3_of_wall`: the S3 tie never meets the wall `a4 = 1` off the
+double wall); and `e4` lies in the cone of `x 5 - x 0, x 6 - x 0, x 6 - x 2` (`w4_cone`, Farkas certificate with
+coefficients `L = b4 + c4`, `L (a5 - 1)`, `M`), so with `⟪x 6 - x 2, e4⟫ ≤ 0` (`h2hi`) the vertex `x 0` is strictly
+above `x 5` or `x 6` at level 1, while `x 2` is strictly below one of them off the tie (`w4_robUni_of_hi`).
+`ResWallZ` / `Q45ResWZ` / `OpenSpecialZ` state the walls with the corner sub-branches cut to `s = 1` / `t = 1`, the
+double wall or the corner tie; on the corner they equal `ResWallY` / `Q45ResWY` / `OpenSpecialY`. -/
+
+/-- On the wall `a4 = 1` the facet `046` puts `x 5` below it: `b5 c4 - b4 c5 > b4 (a5 - 1)` (oblique coordinates). -/
+theorem w4_M_pos (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) :
+    oblX2 x 4 * (oblX0 x 5 - 1) < oblX2 x 5 * oblX6 x 4 - oblX2 x 4 * oblX6 x 5 := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (by decide)
+  have e44 := M4.fac_eval F 4 4
+  have e45 := M4.fac_eval F 4 5
+  rw [F.zero 4 0 (by decide), F.zero 4 4 (by decide), F.zero 4 6 (by decide), hw4] at e44
+  rw [F.zero 4 0 (by decide), F.zero 4 6 (by decide)] at e45
+  have h5 := F.neg 4 5 (by decide)
+  have h1 := F.neg 4 1 (by decide)
+  -- b4 (G2 - G1) = c4 G1
+  have k : oblX2 x 4 * (F.f 4 (x 2) - F.f 4 (x 1)) = oblX6 x 4 * F.f 4 (x 1) := by linarith
+  have k2 : oblX2 x 4 * F.f 4 (x 5) =
+      F.f 4 (x 1) * (oblX2 x 4 * (1 - oblX0 x 5) + oblX2 x 5 * oblX6 x 4 - oblX6 x 5 * oblX2 x 4) := by
+    rw [e45]; linear_combination oblX2 x 5 * k
+  have : oblX2 x 4 * F.f 4 (x 5) < 0 := mul_neg_of_pos_of_neg hb4 h5
+  have : 0 < oblX2 x 4 * (1 - oblX0 x 5) + oblX2 x 5 * oblX6 x 4 - oblX6 x 5 * oblX2 x 4 := by
+    by_contra hc; push Not at hc; nlinarith
+  linarith
+
+/-- **`0345` is down in the wall view** on `a4 = 1` off the double wall: `f3(x 2) < f3(x 6)`. -/
+theorem w4_dn3_of_wall (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (h5 : 1 < oblX0 x 5) : W4Dn F 3 := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (by decide)
+  have hM := w4_M_pos F hw4
+  have e34 := M4.fac_eval F 3 4
+  have e35 := M4.fac_eval F 3 5
+  rw [F.zero 3 0 (by decide), F.zero 3 4 (by decide), hw4] at e34
+  rw [F.zero 3 0 (by decide), F.zero 3 5 (by decide)] at e35
+  have h1 := F.neg 3 1 (by decide)
+  set P := F.f 3 (x 2) - F.f 3 (x 1)
+  set Q := F.f 3 (x 6) - F.f 3 (x 1)
+  have k1 : oblX2 x 4 * P + oblX6 x 4 * Q = 0 := by linarith
+  -- D Q = b4 F1 (a5 - 1), D = b4 c5 - b5 c4 < 0
+  have k2 : (oblX2 x 4 * oblX6 x 5 - oblX2 x 5 * oblX6 x 4) * Q =
+      oblX2 x 4 * F.f 3 (x 1) * (oblX0 x 5 - 1) := by
+    linear_combination (-oblX2 x 4) * e35 - oblX2 x 5 * k1
+  have hD : oblX2 x 4 * oblX6 x 5 - oblX2 x 5 * oblX6 x 4 < 0 := by nlinarith
+  have hR : oblX2 x 4 * F.f 3 (x 1) * (oblX0 x 5 - 1) < 0 :=
+    mul_neg_of_neg_of_pos (mul_neg_of_pos_of_neg hb4 h1) (by linarith)
+  have hQ : 0 < Q := by
+    by_contra hc; push Not at hc; nlinarith
+  have hP : P < 0 := by nlinarith
+  have e1 : ⟪F.N 3, x 0 - x 4⟫ = 0 := by
+    rw [F.inner_sub 3 0 4, F.zero 3 0 (by decide), F.zero 3 4 (by decide)]; ring
+  right
+  refine ⟨by rw [e1, neg_zero], Or.inl ?_⟩
+  rw [F.inner_sub 3 2 6]; linarith
+
+/-- **`236` is down in the wall view** on `a4 = 1` (level 1: `f7(x 4) - f7(x 0) = -(b4 + c4) f7(x 1) > 0`). -/
+theorem w4_dn7_of_wall (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) : W4Dn F 7 := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (by decide)
+  have e74 := M4.fac_eval F 7 4
+  rw [F.zero 7 2 (by decide), F.zero 7 6 (by decide), hw4] at e74
+  have h1 := F.neg 7 1 (by decide)
+  left
+  rw [F.inner_sub 7 0 4]; nlinarith
+
+/-- **The cone identity of the wall view** (`a4 = 1`): `S |e4|² = L ⟪x5-x0,e4⟫ + L (a5-1) ⟪x6-x0,e4⟫ + M ⟪x6-x2,e4⟫`
+with `S = a5 + b5 + c5 - 1`, `L = b4 + c4`, `M = b5 c4 - b4 c5 - b4 (a5 - 1)`: `e4` lies in the cone of
+`x5 - x0, x6 - x0, x6 - x2` (Farkas certificate of the above pair of the rim `0 5 2 6`). -/
+theorem w4_cone (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (w : ℝ³) :
+    (oblX0 x 5 + oblX2 x 5 + oblX6 x 5 - 1) * ⟪x 4 - x 0, w⟫ =
+      (oblX2 x 4 + oblX6 x 4) * ⟪x 5 - x 0, w⟫ + (oblX2 x 4 + oblX6 x 4) * (oblX0 x 5 - 1) * ⟪x 6 - x 0, w⟫ +
+        (oblX2 x 5 * oblX6 x 4 - oblX2 x 4 * oblX6 x 5 - oblX2 x 4 * (oblX0 x 5 - 1)) * ⟪x 6 - x 2, w⟫ := by
+  have T := M4.type24OfFac F
+  have r4 := T.rep 4
+  have r5 := T.rep 5
+  rw [hw4] at r4
+  have d4 : x 4 - x 0 = oblX2 x 4 • (x 2 - x 1) + oblX6 x 4 • (x 6 - x 1) := by
+    rw [r4]; module
+  have d5 : x 5 - x 0 = (oblX0 x 5 - 1) • (x 0 - x 1) + oblX2 x 5 • (x 2 - x 1) + oblX6 x 5 • (x 6 - x 1) := by
+    rw [r5]; module
+  have d6 : x 6 - x 0 = (x 6 - x 1) - (x 0 - x 1) := by abel
+  have d62 : x 6 - x 2 = (x 6 - x 1) - (x 2 - x 1) := by abel
+  rw [d4, d5, d6, d62]
+  simp only [inner_add_left, inner_sub_left, real_inner_smul_left]
+  ring
+
+open Minimality.LexCell in
+/-- **The rim `0 5 2 6` is `RobUniLex` in the wall view** on `a4 = 1` in the corner sub-branch `h2hi` off the tie
+`T-C1`: `x 2` is strictly below `x 5` or `x 6` at level 1 (`h2hi`, not the tie) and `x 0` strictly above `x 5` or
+`x 6` at level 1 (`w4_cone`: `e4` is in the cone of `x5 - x0, x6 - x0, x6 - x2`, and `⟪x6 - x2, e4⟫ ≤ 0`). -/
+theorem w4_robUni_of_hi (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (h5 : 1 ≤ oblX0 x 5)
+    (hhi : max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫) (hnt : ¬ Q45TieLocusC1 x) :
+    RobUniLex (w4Z F rimW4) := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (by decide)
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (by decide)
+  have hb5 : 0 < oblX2 x 5 := T.X2_pos (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (by decide)
+  have hM := w4_M_pos F hw4
+  have hc := w4_cone F hw4 (x 4 - x 0)
+  have h65 := le_max_left ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫
+  have h55 := le_max_right ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫
+  have hne : x 4 ≠ x 0 := by
+    intro h; have := F.neg 0 4 (by decide); rw [h, F.zero 0 0 (by decide)] at this; exact lt_irrefl _ this
+  have hpos : 0 < ⟪x 4 - x 0, x 4 - x 0⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr hne)
+  have h62 : ⟪x 6 - x 2, x 4 - x 0⟫ ≤ 0 := by rw [inner_sub_left]; linarith
+  -- the above pair: x 0 strictly above x 5 or x 6 at level 1
+  have hup : 0 < ⟪x 5 - x 0, x 4 - x 0⟫ ∨ 0 < ⟪x 6 - x 0, x 4 - x 0⟫ := by
+    by_contra hh
+    push Not at hh
+    obtain ⟨k5, k6⟩ := hh
+    have hL : 0 < oblX2 x 4 + oblX6 x 4 := by linarith
+    have t1 : (oblX2 x 4 + oblX6 x 4) * ⟪x 5 - x 0, x 4 - x 0⟫ ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hL.le k5
+    have t2 : (oblX2 x 4 + oblX6 x 4) * (oblX0 x 5 - 1) * ⟪x 6 - x 0, x 4 - x 0⟫ ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos (mul_nonneg hL.le (by linarith)) k6
+    have t3 : (oblX2 x 5 * oblX6 x 4 - oblX2 x 4 * oblX6 x 5 - oblX2 x 4 * (oblX0 x 5 - 1)) *
+        ⟪x 6 - x 2, x 4 - x 0⟫ ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (by linarith) h62
+    have hS : 0 < oblX0 x 5 + oblX2 x 5 + oblX6 x 5 - 1 := by linarith
+    have := mul_pos hS hpos
+    linarith
+  -- the below pair: x 2 strictly below x 5 or x 6 at level 1
+  have hdn : ⟪x 5, x 4 - x 0⟫ < ⟪x 2, x 4 - x 0⟫ ∨ ⟪x 6, x 4 - x 0⟫ < ⟪x 2, x 4 - x 0⟫ := by
+    by_contra hh
+    push Not at hh
+    exact hnt ⟨le_antisymm hh.1 (by linarith), le_antisymm (by linarith) (by linarith)⟩
+  have lv : ∀ a b : Fin 7, ⟪x b, x 0 - x 4⟫ - ⟪x a, x 0 - x 4⟫ = ⟪x a, x 4 - x 0⟫ - ⟪x b, x 4 - x 0⟫ := by
+    intro a b; rw [← neg_sub (x 4) (x 0), inner_neg_right, inner_neg_right]; ring
+  apply robUniLex_four_of_mixed
+  · rcases hdn with h | h
+    · refine ⟨(2, 1), by decide, Or.inl ?_⟩
+      show 0 < ⟪x 5, x 0 - x 4⟫ - ⟪x 2, x 0 - x 4⟫
+      rw [lv]; linarith
+    · refine ⟨(2, 3), by decide, Or.inl ?_⟩
+      show 0 < ⟪x 6, x 0 - x 4⟫ - ⟪x 2, x 0 - x 4⟫
+      rw [lv]; linarith
+  · rcases hup with h | h
+    · refine ⟨(0, 1), by decide, Or.inl ?_⟩
+      show 0 < ⟪x 0, x 0 - x 4⟫ - ⟪x 5, x 0 - x 4⟫
+      rw [lv, ← inner_sub_left]; linarith [show ⟪x 5 - x 0, x 4 - x 0⟫ = -⟪x 0 - x 5, x 4 - x 0⟫ by
+        rw [← inner_neg_left, neg_sub]]
+    · refine ⟨(0, 3), by decide, Or.inl ?_⟩
+      show 0 < ⟪x 0, x 0 - x 4⟫ - ⟪x 6, x 0 - x 4⟫
+      rw [lv, ← inner_sub_left]; linarith [show ⟪x 6 - x 0, x 4 - x 0⟫ = -⟪x 0 - x 6, x 4 - x 0⟫ by
+        rw [← inner_neg_left, neg_sub]]
+
+/-- **The wall view from branch hypotheses only**: on `a4 = 1 < a5`, `t < 1`, in the corner sub-branch `h2hi` off
+the tie `T-C1`, `W4ViewOK F` holds. -/
+theorem w4ViewOK_of_hi (F : S0xFac 9 s0x_S24 x) (hw4 : oblX0 x 4 = 1) (h5 : 1 < oblX0 x 5) {s t : ℝ}
+    (hs0 : 0 < s) (ht1 : t < 1) (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hhi : max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫) (hnt : ¬ Q45TieLocusC1 x) : W4ViewOK F :=
+  ⟨w4_dn3_of_wall F hw4 h5, w4_up5_of_wall F hw4 h5, w4_dn6_of_t F hs0 ht1 hdec, w4_dn7_of_wall F hw4,
+    w4_robUni_of_hi F hw4 h5.le hhi hnt⟩
+
+/-- **The mirror form** (`a5 = 1 < a4`, `s < 1`, the corner sub-branch `h6hi` off the tie `T-B1`): `W4ViewOK` of the
+mirrored solid (`π = (2 6)(4 5)`), i.e. the view `(x 0 - x 5, x 6 - x 2, x 0 - x 4)` of `x`. -/
+theorem w4ViewOK_sym_of_hi (F : S0xFac 9 s0x_S24 x) (hw5 : oblX0 x 5 = 1) (h4 : 1 < oblX0 x 4) {s t : ℝ}
+    (ht0 : 0 < t) (hs1 : s < 1) (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0))
+    (hhi : max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ ≤ ⟪x 6, x 5 - x 0⟫) (hnt : ¬ Q45TieLocusB1 x) :
+    W4ViewOK (Sym.sym24 F) := by
+  refine w4ViewOK_of_hi (Sym.sym24 F) (s := t) (t := s) ?_ ?_ ht0 hs1 ?_ ?_ ?_
+  · rw [Sym.oblX0_comp_pi24]; simpa using hw5
+  · rw [Sym.oblX0_comp_pi24]; simpa using h4
+  · simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_3, Sym.pi24_4, Sym.pi24_5]
+    rw [hdec]; abel
+  · simp only [Function.comp_apply, Sym.pi24_0, Sym.pi24_2, Sym.pi24_4, Sym.pi24_5, Sym.pi24_6]
+    rwa [max_comm]
+  · simp only [Q45TieLocusC1, Function.comp_apply, Sym.pi24_0, Sym.pi24_2, Sym.pi24_4, Sym.pi24_5, Sym.pi24_6]
+    rintro ⟨h1, h2⟩
+    exact hnt ⟨h2.symm, h1.symm⟩
+
+/-- `ResWallY` with the corner sub-branches of the walls cut to their exact failure set: on the wall of `K+, s ≤ 1`
+(`a5 = 1`) in `h6hi` only `s = 1`, the double wall or the tie `T-B1` stay (`w4ViewOK_sym_of_hi`); on the wall of
+`K-, t ≤ 1` (`a4 = 1`) in `h2hi` only `t = 1`, the double wall or `T-C1` (`w4ViewOK_of_hi`).  Both wall views fail. -/
+def ResWallZ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ((kOm x < 0 ∧ s ≤ 1 ∧ oblX0 x 5 = 1 ∧
+      ((max ⟪x 4, x 5 - x 0⟫ ⟪x 2, x 5 - x 0⟫ ≤ ⟪x 6, x 5 - x 0⟫ ∧
+          (s = 1 ∨ oblX0 x 4 = 1 ∨ Q45TieLocusB1 x)) ∨
+        (J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 5 - x 0) (x 4 - x 0)) (J0MidLex x (x 5 - x 0) (x 4 - x 0)) ∧
+          ¬ J0TiltOK F (x 5 - x 0) (x 4 - x 0)))) ∨
+    (0 < kOm x ∧ t ≤ 1 ∧ oblX0 x 4 = 1 ∧
+      ((max ⟪x 6, x 4 - x 0⟫ ⟪x 5, x 4 - x 0⟫ ≤ ⟪x 2, x 4 - x 0⟫ ∧
+          (t = 1 ∨ oblX0 x 5 = 1 ∨ Q45TieLocusC1 x)) ∨
+        (J0FailT F (Q45S2LocusJ0_e5 x) (Q45S2AdjJ0 x (x 4 - x 0) (x 5 - x 0)) (J0MidLex x (x 4 - x 0) (x 5 - x 0)) ∧
+          ¬ J0TiltOK F (x 4 - x 0) (x 5 - x 0)))) ∨
+    (det3 (x 5 - x 6) (x 2 - x 6) (x 4 - x 6) = 0 ∧ (oblX0 x 4 = 1 ∨ oblX0 x 5 = 1)) ∨
+    (oblX0 x 4 = 1 ∧ oblX0 x 5 = 1)) ∧
+  ¬ W4ViewOK F ∧ ¬ W4ViewOK (Sym.sym24 F)
+
+/-- `ResWallY = ResWallZ` on the corner (`a4, a5 ≥ 1`, `s, t > 0`): the corner sub-branches of the walls fail the
+wall view only at `s = 1` / `t = 1`, the double wall or the corner tie. -/
+theorem resWallZ_of_Y (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) {s t : ℝ}
+    (hs0 : 0 < s) (ht0 : 0 < t) (hdec : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (h : ResWallY F s t) :
+    ResWallZ F s t := by
+  obtain ⟨hU, hA, hB⟩ := h
+  refine ⟨?_, hA, hB⟩
+  rcases hU with ⟨hk, hs, hw, hhi | hj⟩ | ⟨hk, ht, hw, hhi | hj⟩ | h | h
+  · refine Or.inl ⟨hk, hs, hw, Or.inl ⟨hhi, ?_⟩⟩
+    by_contra hc
+    push Not at hc
+    obtain ⟨c1, c2, c3⟩ := hc
+    exact hB (w4ViewOK_sym_of_hi F hw (lt_of_le_of_ne h4 (Ne.symm c2)) ht0 (lt_of_le_of_ne hs c1) hdec hhi c3)
+  · exact Or.inl ⟨hk, hs, hw, Or.inr hj⟩
+  · refine Or.inr (Or.inl ⟨hk, ht, hw, Or.inl ⟨hhi, ?_⟩⟩)
+    by_contra hc
+    push Not at hc
+    obtain ⟨c1, c2, c3⟩ := hc
+    exact hA (w4ViewOK_of_hi F hw (lt_of_le_of_ne h5 (Ne.symm c2)) hs0 (lt_of_le_of_ne ht c1) hdec hhi c3)
+  · exact Or.inr (Or.inl ⟨hk, ht, hw, Or.inr hj⟩)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr h))
+
+/-- `ResWallZ ⊆ ResWallY`. -/
+theorem resWallY_of_Z {F : S0xFac 9 s0x_S24 x} {s t : ℝ} (h : ResWallZ F s t) : ResWallY F s t := by
+  obtain ⟨hU, hA, hB⟩ := h
+  refine ⟨?_, hA, hB⟩
+  rcases hU with ⟨hk, hs, hw, ⟨hhi, -⟩ | hj⟩ | ⟨hk, ht, hw, ⟨hhi, -⟩ | hj⟩ | h | h
+  · exact Or.inl ⟨hk, hs, hw, Or.inl hhi⟩
+  · exact Or.inl ⟨hk, hs, hw, Or.inr hj⟩
+  · exact Or.inr (Or.inl ⟨hk, ht, hw, Or.inl hhi⟩)
+  · exact Or.inr (Or.inl ⟨hk, ht, hw, Or.inr hj⟩)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr h))
+
+/-- `Q45ResSTY` with the walls in the explicit form `ResWallZ`. -/
+def Q45ResSTZ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (s t : ℝ) : Prop :=
+  ResWallZ F s t ∨ ResB1T x s ∨ ResBs1 F s ∨ ResJ0aX F s ∨ ResB2V F s ∨ ResJ0bX F s ∨ ResK0 F ∨
+    ResC1T x t ∨ ResCt1 F t ∨ ResJ0cX F t ∨ ResC2V F t ∨ ResJ0dX F t
+
+/-- The branch-tagged residue with the explicit walls. -/
+def Q45ResWZ {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : Prop :=
+  ∃ s t : ℝ, 0 < s ∧ 0 < t ∧ 1 < s + t ∧ x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0) ∧ Q45ResSTZ F s t
+
+/-- `Q45ResWY = Q45ResWZ` on the corner. -/
+theorem q45ResWZ_of_Y (F : S0xFac 9 s0x_S24 x) (h4 : 1 ≤ oblX0 x 4) (h5 : 1 ≤ oblX0 x 5) (h : Q45ResWY F) :
+    Q45ResWZ F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
+  refine ⟨s, t, hs, ht, hst, hd, ?_⟩
+  rcases h with h | h
+  · exact Or.inl (resWallZ_of_Y F h4 h5 hs ht hd h)
+  · exact Or.inr h
+
+/-- `Q45ResWZ ⊆ Q45ResWY`. -/
+theorem q45ResWY_of_Z {F : S0xFac 9 s0x_S24 x} (h : Q45ResWZ F) : Q45ResWY F := by
+  obtain ⟨s, t, hs, ht, hst, hd, h⟩ := h
+  refine ⟨s, t, hs, ht, hst, hd, ?_⟩
+  rcases h with h | h
+  · exact Or.inl (resWallY_of_Z h)
+  · exact Or.inr h
+
+/-- [OPEN] **The special piece with explicit walls, Rupert form**: `OpenSpecialY` with `Q45ResWZ` (equivalent on the
+corner: `q45ResWZ_of_Y`, `q45ResWY_of_Z`; the wall view is a region lemma in the corner sub-branches). -/
+def OpenSpecialZ : Prop := ∀ (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x), ¬ H24K.SAT.OB1 x →
+  1 ≤ oblX0 x 4 → 1 ≤ oblX0 x 5 →
+  oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0 →
+  0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3 →
+  0 < oblX0 x 4 * oblX2 x 5 - oblX0 x 5 * oblX2 x 4 →
+  0 < oblX0 x 5 * oblX6 x 4 - oblX0 x 4 * oblX6 x 5 →
+  Q45ResWZ F → HoleFull x F → IsRupert (univ.image x)
+
+/-- [PROVED] `OpenSpecialY → OpenSpecialZ`. -/
+theorem openSpecialZ_of_openSpecialY (h : OpenSpecialY) : OpenSpecialZ :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4 (q45ResWY_of_Z hr) hF
+
+/-- [PROVED] `OpenSpecialZ → OpenSpecialY` (the two are equivalent). -/
+theorem openSpecialY_of_openSpecialZ (h : OpenSpecialZ) : OpenSpecialY :=
+  fun x F hO h4 h5 b1 b2 b3 b4 hr hF => h x F hO h4 h5 b1 b2 b3 b4 (q45ResWZ_of_Y F h4 h5 hr) hF
+
+/-- Every `Hole24` point off `OB1` is Rupert, given `OpenSpecialZ`. -/
+theorem hole24_offOB1_Z {F : S0xFac 9 s0x_S24 x} (h : Hole24 x F) (hO : ¬ H24K.SAT.OB1 x)
+    (hS : OpenSpecialZ) : IsRupert (univ.image x) :=
+  hole24_offOB1_Y h hO (openSpecialY_of_openSpecialZ hS)
+
+/-- [PROVED] Generic + special (explicit walls) assemble to `Open24Rupert`. -/
+theorem open24Rupert_of_split_Z (h1 : OpenOB1) (h2 : OpenSpecialZ) : Open24Rupert :=
+  open24Rupert_of_split_Y h1 (openSpecialY_of_openSpecialZ h2)
+
 end Minimality.T24.OSpec
