@@ -248,6 +248,7 @@ import Minimality.Type24TwoCone
 import Minimality.Type24WCOrder
 import Minimality.Type24WCLemmas
 import Minimality.Type24FamSlope
+import Minimality.Type24WDCell
 import Minimality.LexTiltSplit
 import Minimality.EdgePlaneLevel
 import Minimality.Type24HoleCore3
@@ -2403,3 +2404,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.TwoCone.t0_det3_rim
 #assert_standard_axioms Minimality.T24.TwoCone.tau4_pos
 #assert_standard_axioms Minimality.T24.TwoCone.tau2_neg
+#assert_standard_axioms Minimality.T24.TwoCone.wd_seven_facets
+#assert_standard_axioms Minimality.T24.TwoCone.wd_cellAt_iff
+#assert_standard_axioms Minimality.T24.TwoCone.hidden_in_rD_of_cell
+#assert_standard_axioms Minimality.T24.TwoCone.wd_edgePlaneAny
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_wd
+#assert_standard_axioms Minimality.T24.TwoCone.hole24_not_wd
+#assert_standard_axioms Minimality.T24.TwoCone.wd_edgePlaneAny_twin
+#assert_standard_axioms Minimality.T24.TwoCone.holeLeaf_not_wd_twin
+#assert_standard_axioms Minimality.T24.TwoCone.hole24_not_wd_twin
+#assert_standard_axioms Minimality.T24.TwoCone.hole24_twoConeResidue'''
+#assert_standard_axioms Minimality.T24.TwoCone.wd_det3_frame
+#assert_standard_axioms Minimality.T24.TwoCone.wd_det3_rim
