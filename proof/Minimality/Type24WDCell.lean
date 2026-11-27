@@ -190,13 +190,15 @@ theorem wd_cellAt_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarI
 (off `p2`), `(p1, p2)` on `t1` (off `p0`), and `(p2, p0)` on `t2` (off `p1`), and all three
 facets satisfy `⟪F.N t, w⟫ < 0`, then `x v` lies strictly inside `(x p0, x p1, x p2)` or
 `(x p0, x p2, x p1)` in `w^⊥`. -/
-private theorem hidden_of_three_facets {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
+theorem hidden_of_three_facets {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
     (v p0 p1 p2 : Fin 7) (t0 t1 t2 : Fin 9)
     (hv0 : v ∈ s0x_S24 t0) (hp00 : p0 ∈ s0x_S24 t0) (hp10 : p1 ∈ s0x_S24 t0) (hp20 : p2 ∉ s0x_S24 t0)
     (hv1 : v ∈ s0x_S24 t1) (hp11 : p1 ∈ s0x_S24 t1) (hp21 : p2 ∈ s0x_S24 t1) (hp01 : p0 ∉ s0x_S24 t1)
     (hv2 : v ∈ s0x_S24 t2) (hp22 : p2 ∈ s0x_S24 t2) (hp02 : p0 ∈ s0x_S24 t2) (hp12 : p1 ∉ s0x_S24 t2)
     (ht0 : ⟪F.N t0, w⟫ < 0) (ht1 : ⟪F.N t1, w⟫ < 0) (ht2 : ⟪F.N t2, w⟫ < 0) :
-    ∃ p ∈ univ.image x, ∃ q ∈ univ.image x, ∃ r ∈ univ.image x,
+    ∃ p ∈ ({x p0, x p1, x p2} : Finset ℝ³),
+      ∃ q ∈ ({x p0, x p1, x p2} : Finset ℝ³),
+      ∃ r ∈ ({x p0, x p1, x p2} : Finset ℝ³),
       0 < Split.det3 (q - p) (r - p) w ∧ 0 < Split.det3 (q - p) (x v - p) w ∧
       0 < Split.det3 (r - q) (x v - q) w ∧ 0 < Split.det3 (p - r) (x v - r) w := by
   let e0 := x p0 - x v
@@ -362,9 +364,9 @@ private theorem hidden_of_three_facets {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S
       Split.det3 (x p1 - x p0) (x p2 - x p0) w := by
     dsimp only [e0, e1, e2]
     simp only [Split.det3, PiLp.sub_apply]; ring
-  have hp0m : x p0 ∈ univ.image x := mem_image_of_mem x (mem_univ p0)
-  have hp1m : x p1 ∈ univ.image x := mem_image_of_mem x (mem_univ p1)
-  have hp2m : x p2 ∈ univ.image x := mem_image_of_mem x (mem_univ p2)
+  have hp0m : x p0 ∈ ({x p0, x p1, x p2} : Finset ℝ³) := by simp
+  have hp1m : x p1 ∈ ({x p0, x p1, x p2} : Finset ℝ³) := by simp
+  have hp2m : x p2 ∈ ({x p0, x p1, x p2} : Finset ℝ³) := by simp
   rcases lt_or_gt_of_ne hne with hneg | hpos
   · have h01 : Split.det3 e0 e1 w < 0 := by nlinarith
     have h12 : Split.det3 e1 e2 w < 0 := by rw [heq12] at hd12; nlinarith
@@ -412,18 +414,123 @@ theorem hidden_in_rD_of_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w :
     · exact Or.inr rfl
     · exact absurd rfl (hm 4)
   rcases hm45 with rfl | rfl
-  · exact hidden_of_three_facets F 4 0 3 6 3 8 4
-      (by decide) (by decide) (by decide) (by decide)
-      (by decide) (by decide) (by decide) (by decide)
-      (by decide) (by decide) (by decide) (by decide)
-      (hcell.2 3 (by decide)) (hcell.2 8 (by decide)) (hcell.2 4 (by decide))
-  · exact hidden_of_three_facets F 5 0 3 2 3 6 2
-      (by decide) (by decide) (by decide) (by decide)
-      (by decide) (by decide) (by decide) (by decide)
-      (by decide) (by decide) (by decide) (by decide)
-      (hcell.2 3 (by decide)) (hcell.2 6 (by decide)) (hcell.2 2 (by decide))
+  · obtain ⟨p, hp, q, hq, r, hr, h1, h2, h3, h4⟩ :=
+      hidden_of_three_facets F 4 0 3 6 3 8 4
+        (by decide) (by decide) (by decide) (by decide)
+        (by decide) (by decide) (by decide) (by decide)
+        (by decide) (by decide) (by decide) (by decide)
+        (hcell.2 3 (by decide)) (hcell.2 8 (by decide)) (hcell.2 4 (by decide))
+    have hsub : ∀ y ∈ ({x 0, x 3, x 6} : Finset ℝ³), y ∈ univ.image x := fun y hy => by
+      simp only [mem_insert, mem_singleton] at hy
+      rcases hy with rfl | rfl | rfl <;> exact mem_image_of_mem x (mem_univ _)
+    exact ⟨p, hsub p hp, q, hsub q hq, r, hsub r hr, h1, h2, h3, h4⟩
+  · obtain ⟨p, hp, q, hq, r, hr, h1, h2, h3, h4⟩ :=
+      hidden_of_three_facets F 5 0 3 2 3 6 2
+        (by decide) (by decide) (by decide) (by decide)
+        (by decide) (by decide) (by decide) (by decide)
+        (by decide) (by decide) (by decide) (by decide)
+        (hcell.2 3 (by decide)) (hcell.2 6 (by decide)) (hcell.2 2 (by decide))
+    have hsub : ∀ y ∈ ({x 0, x 3, x 2} : Finset ℝ³), y ∈ univ.image x := fun y hy => by
+      simp only [mem_insert, mem_singleton] at hy
+      rcases hy with rfl | rfl | rfl <;> exact mem_image_of_mem x (mem_univ _)
+    exact ⟨p, hsub p hp, q, hsub q hq, r, hsub r hr, h1, h2, h3, h4⟩
 
 /-! ## FR2: `w_D` leaf, `π_24` twin, hole facts, and `TwoConeResidue'''` -/
+
+/-- Shared interior line-separation helper for any valid `(r, U, D)` cell. -/
+theorem cell_lineSep_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
+    {k : ℕ} [NeZero k] (hk : 3 ≤ k) (r : ZMod k → Fin 7) (hr : Function.Injective r)
+    {U D : Finset (Fin 9)} (hcyc : S0xCycUD s0x_S24 r U D) (hcell : CellAt F U D w)
+    (hhid : Split.HiddenInTriangles x w r)
+    (a : ZMod k)
+    (hD0 : ⟪x (r (a + 1)) - x (r a), w⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod k, i ≠ a →
+      Split.det3 (x (r (i + 1)) - x (r i)) (x (r (a + 1)) - x (r a)) w ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < Split.det3 (x (r (i + 1)) - x (r i)) (x (r (a + 1)) - x (r a)) w →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => x (r t)) a i j, w⟫ /
+          Split.det3 (x (r (i + 1)) - x (r i)) (x (r (a + 1)) - x (r a)) w) -
+        μ' * ⟪x (r j) - x (r a), w⟫ < α')
+    (hOrange0 : ∀ p q : ZMod k, p ≠ a → (q = p ∨ q = p + 1) →
+      Split.det3 (x (r (p + 1)) - x (r p)) (x (r (a + 1)) - x (r a)) w < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => x (r t)) a p q, w⟫ /
+          Split.det3 (x (r (p + 1)) - x (r p)) (x (r (a + 1)) - x (r a)) w) -
+        μ' * ⟪x (r q) - x (r a), w⟫) :
+    Gen.EdgePlaneAny x := by
+  refine (edgePlaneAny_iff_exists_at x).mpr ⟨w, ?_⟩
+  rcases LexEP.strictRimN_of_openCell hk F hr hcyc hcell with
+    hrim | hrim_rev
+  · exact Split.Slope.edgePlaneAt_of_lineSep hk x w r hr hrim hhid
+      a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0
+  · let r_rev : ZMod k → Fin 7 := fun i => r (-i)
+    let a' : ZMod k := -a - 1
+    have hr_rev_inj : Function.Injective r_rev :=
+      fun i j h => neg_inj.mp (hr h)
+    have hrim' : Split.StrictRimN x w r_rev := fun m i hm0 hm1 => hrim_rev m i hm0 hm1
+    have hhid' : Split.HiddenInTriangles x w r_rev := fun m hm =>
+      hhid m (fun i h => hm (-i) (by dsimp [r_rev]; simpa using h))
+    have ha1 : r_rev (a' + 1) = r a := by dsimp [r_rev, a']; congr 1; ring
+    have ha0 : r_rev a' = r (a + 1) := by dsimp [r_rev, a']; congr 1; ring
+    have hD' : ⟪x (r_rev (a' + 1)) - x (r_rev a'), w⟫ ≠ 0 := by
+      rw [ha1, ha0]
+      intro h; apply hD0
+      have hsub : x (r (a + 1)) - x (r a) = -(x (r a) - x (r (a + 1))) := by abel
+      rw [hsub, inner_neg_left, h, neg_zero]
+    have hc_eq : ∀ i : ZMod k,
+        Split.det3 (x (r_rev (i + 1)) - x (r_rev i)) (x (r_rev (a' + 1)) - x (r_rev a')) w =
+        Split.det3 (x (r (-i - 1 + 1)) - x (r (-i - 1))) (x (r (a + 1)) - x (r a)) w := by
+      intro i
+      have hc1 : r_rev (i + 1) = r (-i - 1) := by dsimp [r_rev]; congr 1; ring
+      have hc0 : r_rev i = r (-i - 1 + 1) := by dsimp [r_rev]; congr 1; ring
+      rw [hc1, hc0, ha1, ha0]
+      simp only [Split.det3, PiLp.sub_apply]
+      ring
+    have hv_eq : ∀ i j : ZMod k,
+        Split.Slope.linSpinVec (fun t => x (r_rev t)) a' i j =
+        Split.Slope.linSpinVec (fun t => x (r t)) a (-i - 1) (-j) := by
+      intro i j
+      have hc1 : r_rev (i + 1) = r (-i - 1) := by dsimp [r_rev]; congr 1; ring
+      have hc0 : r_rev i = r (-i - 1 + 1) := by dsimp [r_rev]; congr 1; ring
+      have hrj : r_rev j = r (-j) := rfl
+      dsimp only [Split.Slope.linSpinVec]
+      rw [hc1, hc0, ha1, ha0, hrj]
+      have hsub : x (r (-j)) - x (r (a + 1)) = (x (r (-j)) - x (r a)) - (x (r (a + 1)) - x (r a)) := by
+        abel
+      have he1 : x (r (-i - 1)) - x (r (-i - 1 + 1)) = -(x (r (-i - 1 + 1)) - x (r (-i - 1))) := by abel
+      have he2 : x (r a) - x (r (a + 1)) = -(x (r (a + 1)) - x (r a)) := by abel
+      rw [hsub, he1, he2]
+      simp only [inner_sub_right, inner_neg_left, inner_neg_right]
+      module
+    have hz_eq : ∀ j : ZMod k,
+        ⟪x (r_rev j) - x (r_rev a'), w⟫ =
+        ⟪x (r (-j)) - x (r a), w⟫ - ⟪x (r (a + 1)) - x (r a), w⟫ := by
+      intro j
+      have h4 : -a' = a + 1 := by dsimp [a']; ring
+      change ⟪x (r (-j)) - x (r (-a')), w⟫ = _
+      rw [h4]
+      have : x (r (-j)) - x (r (a + 1)) = (x (r (-j)) - x (r a)) - (x (r (a + 1)) - x (r a)) := by abel
+      rw [this, inner_sub_left]
+    have hi_iff : ∀ i : ZMod k, i ≠ a' → -i - 1 ≠ a := by
+      intro i hi h; apply hi; linear_combination -h
+    have hj_iff : ∀ i j : ZMod k, j = i ∨ j = i + 1 → -j = -i - 1 ∨ -j = -i - 1 + 1 := by
+      intro i j hj
+      rcases hj with rfl | rfl
+      · right; ring
+      · left; ring
+    refine Split.Slope.edgePlaneAt_of_lineSep hk x w r_rev hr_rev_inj hrim' hhid'
+      a' hD' (fun i hi => by rw [hc_eq]; exact hc_ne0 (-i - 1) (hi_iff i hi))
+      sh hsh (α' + μ' * ⟪x (r (a + 1)) - x (r a), w⟫) μ' ?_ ?_
+    · intro i j hi hj hpos
+      rw [hc_eq] at hpos
+      rw [hc_eq, hv_eq, hz_eq]
+      have h0 := hBlue0 (-i - 1) (-j) (hi_iff i hi) (hj_iff i j hj) hpos
+      linarith
+    · intro p q hp hq hneg
+      rw [hc_eq] at hneg
+      rw [hc_eq, hv_eq, hz_eq]
+      have h0 := hOrange0 (-p - 1) (-q) (hi_iff p hp) (hj_iff p q hq) hneg
+      linarith
 
 /-- **FR2 (`w_D` leaf):** strict line separation at an interior view `wD x β γ` of `(U_D, D_D)`
 on any edge `a` yields `Gen.EdgePlaneAny x` (no limit argument needed). -/
@@ -447,86 +554,10 @@ theorem wd_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : Cba
           Split.det3 (x (rD (p + 1)) - x (rD p)) (x (rD (a + 1)) - x (rD a)) (wD x beta gamma)) -
         μ' * ⟪x (rD q) - x (rD a), wD x beta gamma⟫) :
     Gen.EdgePlaneAny x := by
-  let w := wD x beta gamma
-  have hcell : CellAt F U_D D_D w :=
+  have hcell : CellAt F U_D D_D (wD x beta gamma) :=
     (wd_cellAt_iff F hC hbeta hgamma hroof).mpr ⟨h6, h8⟩
-  have hhid := hidden_in_rD_of_cell F hcell
-  refine (edgePlaneAny_iff_exists_at x).mpr ⟨w, ?_⟩
-  rcases LexEP.strictRimN_of_openCell (k := 5) (by norm_num) F rD_inj rD_cyc hcell with
-    hrim | hrim_rev
-  · exact Split.Slope.edgePlaneAt_of_lineSep (k := 5) (by norm_num) x w rD rD_inj hrim hhid
-      a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0
-  · let rD_rev : ZMod 5 → Fin 7 := fun i => rD (-i)
-    let a' : ZMod 5 := -a - 1
-    have hrD_rev_inj : Function.Injective rD_rev :=
-      fun i j h => neg_inj.mp (rD_inj h)
-    have hrim' : Split.StrictRimN x w rD_rev := by
-      intro m i hm0 hm1
-      exact hrim_rev m i hm0 hm1
-    have hhid' : Split.HiddenInTriangles x w rD_rev := by
-      intro m hm
-      exact hhid m (fun i h => hm (-i) (by dsimp [rD_rev]; simpa using h))
-    have ha1 : rD_rev (a' + 1) = rD a := by dsimp [rD_rev, a']; congr 1; ring
-    have ha0 : rD_rev a' = rD (a + 1) := by dsimp [rD_rev, a']; congr 1; ring
-    have hD' : ⟪x (rD_rev (a' + 1)) - x (rD_rev a'), w⟫ ≠ 0 := by
-      rw [ha1, ha0]
-      intro h; apply hD0
-      have hsub : x (rD (a + 1)) - x (rD a) = -(x (rD a) - x (rD (a + 1))) := by abel
-      rw [hsub, inner_neg_left, h, neg_zero]
-    have hc_eq : ∀ i : ZMod 5,
-        Split.det3 (x (rD_rev (i + 1)) - x (rD_rev i)) (x (rD_rev (a' + 1)) - x (rD_rev a')) w =
-        Split.det3 (x (rD (-i - 1 + 1)) - x (rD (-i - 1))) (x (rD (a + 1)) - x (rD a)) w := by
-      intro i
-      have hc1 : rD_rev (i + 1) = rD (-i - 1) := by dsimp [rD_rev]; congr 1; ring
-      have hc0 : rD_rev i = rD (-i - 1 + 1) := by dsimp [rD_rev]; congr 1; ring
-      rw [hc1, hc0, ha1, ha0]
-      simp only [Split.det3, PiLp.sub_apply]
-      ring
-    have hv_eq : ∀ i j : ZMod 5,
-        Split.Slope.linSpinVec (fun t => x (rD_rev t)) a' i j =
-        Split.Slope.linSpinVec (fun t => x (rD t)) a (-i - 1) (-j) := by
-      intro i j
-      have hc1 : rD_rev (i + 1) = rD (-i - 1) := by dsimp [rD_rev]; congr 1; ring
-      have hc0 : rD_rev i = rD (-i - 1 + 1) := by dsimp [rD_rev]; congr 1; ring
-      have hrj : rD_rev j = rD (-j) := rfl
-      dsimp only [Split.Slope.linSpinVec]
-      rw [hc1, hc0, ha1, ha0, hrj]
-      have hsub : x (rD (-j)) - x (rD (a + 1)) = (x (rD (-j)) - x (rD a)) - (x (rD (a + 1)) - x (rD a)) := by
-        abel
-      have he1 : x (rD (-i - 1)) - x (rD (-i - 1 + 1)) = -(x (rD (-i - 1 + 1)) - x (rD (-i - 1))) := by abel
-      have he2 : x (rD a) - x (rD (a + 1)) = -(x (rD (a + 1)) - x (rD a)) := by abel
-      rw [hsub, he1, he2]
-      simp only [inner_sub_right, inner_neg_left, inner_neg_right]
-      module
-    have hz_eq : ∀ j : ZMod 5,
-        ⟪x (rD_rev j) - x (rD_rev a'), w⟫ =
-        ⟪x (rD (-j)) - x (rD a), w⟫ - ⟪x (rD (a + 1)) - x (rD a), w⟫ := by
-      intro j
-      have h4 : -a' = a + 1 := by dsimp [a']; ring
-      change ⟪x (rD (-j)) - x (rD (-a')), w⟫ = _
-      rw [h4]
-      have : x (rD (-j)) - x (rD (a + 1)) = (x (rD (-j)) - x (rD a)) - (x (rD (a + 1)) - x (rD a)) := by abel
-      rw [this, inner_sub_left]
-    have hi_iff : ∀ i : ZMod 5, i ≠ a' → -i - 1 ≠ a := by
-      intro i hi h; apply hi; linear_combination -h
-    have hj_iff : ∀ i j : ZMod 5, j = i ∨ j = i + 1 → -j = -i - 1 ∨ -j = -i - 1 + 1 := by
-      intro i j hj
-      rcases hj with rfl | rfl
-      · right; ring
-      · left; ring
-    refine Split.Slope.edgePlaneAt_of_lineSep (k := 5) (by norm_num) x w rD_rev hrD_rev_inj hrim' hhid'
-      a' hD' (fun i hi => by rw [hc_eq]; exact hc_ne0 (-i - 1) (hi_iff i hi))
-      sh hsh (α' + μ' * ⟪x (rD (a + 1)) - x (rD a), w⟫) μ' ?_ ?_
-    · intro i j hi hj hpos
-      rw [hc_eq] at hpos
-      rw [hc_eq, hv_eq, hz_eq]
-      have h0 := hBlue0 (-i - 1) (-j) (hi_iff i hi) (hj_iff i j hj) hpos
-      linarith
-    · intro p q hp hq hneg
-      rw [hc_eq] at hneg
-      rw [hc_eq, hv_eq, hz_eq]
-      have h0 := hOrange0 (-p - 1) (-q) (hi_iff p hp) (hj_iff p q hq) hneg
-      linarith
+  exact cell_lineSep_edgePlaneAny F (by norm_num) rD rD_inj rD_cyc hcell
+    (hidden_in_rD_of_cell F hcell) a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0
 
 /-- `WDCertAt x F β γ`: interior `(U_D, D_D)` cell conditions and strict line separation at
 `wD x β γ` on some edge `a : ZMod 5` of `rD = ![0, 1, 2, 3, 6]`. -/
@@ -668,5 +699,189 @@ theorem wd_det3_rim {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (beta gamma :
         show x 6 - x 3 = _; abel
       rw [h63, hrep 3]; module
     rw [h3, wd_det3_frame]; ring
+
+/-! ## FS1: `w_D6` cell (`rD6 = ![0, 1, 2, 3, 4, 6]`, vertex `5` hidden) -/
+
+/-- Rim `rD6 = ![0, 1, 2, 3, 4, 6]` (reverse of `0.6.4.3.2.1`). -/
+def rD6 : ZMod 6 → Fin 7 := ![0, 1, 2, 3, 4, 6]
+
+theorem rD6_inj : Function.Injective rD6 := by
+  intro i j h; fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)
+
+/-- Up facets `{1, 5, 7, 8}` (`016, 126, 236, 346 > 0`) of the `w_D6` cell. -/
+def U_D6 : Finset (Fin 9) := {1, 5, 7, 8}
+
+/-- Down facets `{0, 2, 3, 4, 6}` (`012, 025, 0345, 046, 235 < 0`) of the `w_D6` cell. -/
+def D_D6 : Finset (Fin 9) := {0, 2, 3, 4, 6}
+
+theorem rD6_cyc : S0xCycUD s0x_S24 rD6 U_D6 D_D6 := by
+  decide
+
+/-- **FS1:** Under `CbarIn x`, `β > 0`, `γ > 0`, `ω_4(x) * β + γ < 1`,
+`CellAt F U_D6 D_D6 (wD x β γ)` holds iff facet `6` is strictly negative and facet `8` is
+strictly positive (so 7 of 9 facets hold automatically on the right triangle, and 8 of 9 hold
+when `0 < ⟪F.N 8, wD x β γ⟫`, e.g. near `γ = 1 - ω_4 * β` for `0 < β < min(b_4/a_4, 1/ω_4)`). -/
+theorem wd6_cellAt_iff {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+    {beta gamma : ℝ} (hbeta : 0 < beta) (hgamma : 0 < gamma)
+    (hroof : omega4 x * beta + gamma < 1) :
+    CellAt F U_D6 D_D6 (wD x beta gamma) ↔
+      ⟪F.N 6, wD x beta gamma⟫ < 0 ∧ 0 < ⟪F.N 8, wD x beta gamma⟫ := by
+  have ⟨hU7, hD7⟩ := wd_seven_facets F hC hbeta hgamma hroof
+  constructor
+  · intro ⟨hup, hdn⟩
+    exact ⟨hdn 6 (by decide), hup 8 (by decide)⟩
+  · intro ⟨h6, h8⟩
+    refine ⟨fun t ht => ?_, fun t ht => ?_⟩
+    · fin_cases t <;> simp [U_D6] at ht
+      · exact hU7 1 (by decide)
+      · exact hU7 5 (by decide)
+      · exact hU7 7 (by decide)
+      · exact h8
+    · fin_cases t <;> simp [D_D6] at ht
+      · exact hD7 0 (by decide)
+      · exact hD7 2 (by decide)
+      · exact hD7 3 (by decide)
+      · exact hD7 4 (by decide)
+      · exact h6
+
+/-- **FS1:** On any `CellAt F U_D6 D_D6 w`, vertex `5` lies strictly inside `(x 0, x 3, x 2)`
+or `(x 0, x 2, x 3)` via `{3, 6, 2} ⊆ D_D6`. -/
+theorem hidden_in_rD6_of_cell {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {w : ℝ³}
+    (hcell : CellAt F U_D6 D_D6 w) :
+    Split.HiddenInTriangles x w rD6 := by
+  intro m hm
+  have hm5 : m = 5 := by
+    fin_cases m
+    · exact absurd rfl (hm 0)
+    · exact absurd rfl (hm 1)
+    · exact absurd rfl (hm 2)
+    · exact absurd rfl (hm 3)
+    · exact absurd rfl (hm 4)
+    · rfl
+    · exact absurd rfl (hm 5)
+  subst hm5
+  obtain ⟨p, hp, q, hq, r, hr, h1, h2, h3, h4⟩ :=
+    hidden_of_three_facets F 5 0 3 2 3 6 2
+      (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide)
+      (hcell.2 3 (by decide)) (hcell.2 6 (by decide)) (hcell.2 2 (by decide))
+  have hsub : ∀ y ∈ ({x 0, x 3, x 2} : Finset ℝ³), y ∈ univ.image x := fun y hy => by
+    simp only [mem_insert, mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl <;> exact mem_image_of_mem x (mem_univ _)
+  exact ⟨p, hsub p hp, q, hsub q hq, r, hsub r hr, h1, h2, h3, h4⟩
+
+/-- **FS1 (`w_D6` leaf):** strict line separation at an interior view `wD x β γ` of `(U_D6, D_D6)`
+on any edge `a : ZMod 6` yields `Gen.EdgePlaneAny x`. -/
+theorem wd6_edgePlaneAny {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+    {beta gamma : ℝ} (hbeta : 0 < beta) (hgamma : 0 < gamma)
+    (hroof : omega4 x * beta + gamma < 1)
+    (h6 : ⟪F.N 6, wD x beta gamma⟫ < 0) (h8 : 0 < ⟪F.N 8, wD x beta gamma⟫)
+    (a : ZMod 6)
+    (hD0 : ⟪x (rD6 (a + 1)) - x (rD6 a), wD x beta gamma⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod 6, i ≠ a →
+      Split.det3 (x (rD6 (i + 1)) - x (rD6 i)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma) ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod 6, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < Split.det3 (x (rD6 (i + 1)) - x (rD6 i)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => x (rD6 t)) a i j, wD x beta gamma⟫ /
+          Split.det3 (x (rD6 (i + 1)) - x (rD6 i)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma)) -
+        μ' * ⟪x (rD6 j) - x (rD6 a), wD x beta gamma⟫ < α')
+    (hOrange0 : ∀ p q : ZMod 6, p ≠ a → (q = p ∨ q = p + 1) →
+      Split.det3 (x (rD6 (p + 1)) - x (rD6 p)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => x (rD6 t)) a p q, wD x beta gamma⟫ /
+          Split.det3 (x (rD6 (p + 1)) - x (rD6 p)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma)) -
+        μ' * ⟪x (rD6 q) - x (rD6 a), wD x beta gamma⟫) :
+    Gen.EdgePlaneAny x := by
+  have hcell : CellAt F U_D6 D_D6 (wD x beta gamma) :=
+    (wd6_cellAt_iff F hC hbeta hgamma hroof).mpr ⟨h6, h8⟩
+  exact cell_lineSep_edgePlaneAny F (by norm_num) rD6 rD6_inj rD6_cyc hcell
+    (hidden_in_rD6_of_cell F hcell) a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0
+
+/-- `WD6CertAt x F β γ`: interior `(U_D6, D_D6)` cell conditions and strict line separation at
+`wD x β γ` on some edge `a : ZMod 6` of `rD6 = ![0, 1, 2, 3, 4, 6]`. -/
+def WD6CertAt (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) (beta gamma : ℝ) : Prop :=
+  0 < beta ∧ 0 < gamma ∧ omega4 x * beta + gamma < 1 ∧
+  ⟪F.N 6, wD x beta gamma⟫ < 0 ∧ 0 < ⟪F.N 8, wD x beta gamma⟫ ∧
+  ∃ a : ZMod 6,
+    ⟪x (rD6 (a + 1)) - x (rD6 a), wD x beta gamma⟫ ≠ 0 ∧
+    (∀ i : ZMod 6, i ≠ a →
+      Split.det3 (x (rD6 (i + 1)) - x (rD6 i)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma) ≠ 0) ∧
+    ∃ sh α' μ' : ℝ, (sh = 1 ∨ sh = -1) ∧
+      (∀ i j : ZMod 6, i ≠ a → (j = i ∨ j = i + 1) →
+        0 < Split.det3 (x (rD6 (i + 1)) - x (rD6 i)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma) →
+        (-sh * ⟪Split.Slope.linSpinVec (fun t => x (rD6 t)) a i j, wD x beta gamma⟫ /
+            Split.det3 (x (rD6 (i + 1)) - x (rD6 i)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma)) -
+          μ' * ⟪x (rD6 j) - x (rD6 a), wD x beta gamma⟫ < α') ∧
+      (∀ p q : ZMod 6, p ≠ a → (q = p ∨ q = p + 1) →
+        Split.det3 (x (rD6 (p + 1)) - x (rD6 p)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma) < 0 →
+        α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => x (rD6 t)) a p q, wD x beta gamma⟫ /
+            Split.det3 (x (rD6 (p + 1)) - x (rD6 p)) (x (rD6 (a + 1)) - x (rD6 a)) (wD x beta gamma)) -
+          μ' * ⟪x (rD6 q) - x (rD6 a), wD x beta gamma⟫)
+
+theorem holeLeaf_not_wd6 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {beta gamma : ℝ} (hc : WD6CertAt x F beta gamma) : False := by
+  rcases hc with ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+  exact Atlas.holeLeaf_not_edgePlaneAny hF
+    (wd6_edgePlaneAny F hF.1 hb hg hr h6 h8 a hD0 hc_ne0 sh hsh α' μ' hB hO)
+
+theorem hole24_not_wd6 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
+    {beta gamma : ℝ} (hc : WD6CertAt x F beta gamma) : False :=
+  holeLeaf_not_wd6 hF.1 hc
+
+/-- **FS1 (`π_24` twin of `wd6_edgePlaneAny`).** -/
+theorem wd6_edgePlaneAny_twin {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hC : CbarIn x)
+    {beta gamma : ℝ} (hbeta : 0 < beta) (hgamma : 0 < gamma)
+    (hroof : omega4 (x ∘ Sym.pi24) * beta + gamma < 1)
+    (h6 : ⟪(Sym.sym24 F).N 6, wD (x ∘ Sym.pi24) beta gamma⟫ < 0)
+    (h8 : 0 < ⟪(Sym.sym24 F).N 8, wD (x ∘ Sym.pi24) beta gamma⟫)
+    (a : ZMod 6)
+    (hD0 : ⟪(x ∘ Sym.pi24) (rD6 (a + 1)) - (x ∘ Sym.pi24) (rD6 a), wD (x ∘ Sym.pi24) beta gamma⟫ ≠ 0)
+    (hc_ne0 : ∀ i : ZMod 6, i ≠ a →
+      Split.det3 ((x ∘ Sym.pi24) (rD6 (i + 1)) - (x ∘ Sym.pi24) (rD6 i))
+        ((x ∘ Sym.pi24) (rD6 (a + 1)) - (x ∘ Sym.pi24) (rD6 a)) (wD (x ∘ Sym.pi24) beta gamma) ≠ 0)
+    (sh : ℝ) (hsh : sh = 1 ∨ sh = -1) (α' μ' : ℝ)
+    (hBlue0 : ∀ i j : ZMod 6, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < Split.det3 ((x ∘ Sym.pi24) (rD6 (i + 1)) - (x ∘ Sym.pi24) (rD6 i))
+          ((x ∘ Sym.pi24) (rD6 (a + 1)) - (x ∘ Sym.pi24) (rD6 a)) (wD (x ∘ Sym.pi24) beta gamma) →
+      (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (rD6 t)) a i j,
+            wD (x ∘ Sym.pi24) beta gamma⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (rD6 (i + 1)) - (x ∘ Sym.pi24) (rD6 i))
+            ((x ∘ Sym.pi24) (rD6 (a + 1)) - (x ∘ Sym.pi24) (rD6 a)) (wD (x ∘ Sym.pi24) beta gamma)) -
+        μ' * ⟪(x ∘ Sym.pi24) (rD6 j) - (x ∘ Sym.pi24) (rD6 a), wD (x ∘ Sym.pi24) beta gamma⟫ < α')
+    (hOrange0 : ∀ p q : ZMod 6, p ≠ a → (q = p ∨ q = p + 1) →
+      Split.det3 ((x ∘ Sym.pi24) (rD6 (p + 1)) - (x ∘ Sym.pi24) (rD6 p))
+          ((x ∘ Sym.pi24) (rD6 (a + 1)) - (x ∘ Sym.pi24) (rD6 a)) (wD (x ∘ Sym.pi24) beta gamma) < 0 →
+      α' < (-sh * ⟪Split.Slope.linSpinVec (fun t => (x ∘ Sym.pi24) (rD6 t)) a p q,
+            wD (x ∘ Sym.pi24) beta gamma⟫ /
+          Split.det3 ((x ∘ Sym.pi24) (rD6 (p + 1)) - (x ∘ Sym.pi24) (rD6 p))
+            ((x ∘ Sym.pi24) (rD6 (a + 1)) - (x ∘ Sym.pi24) (rD6 a)) (wD (x ∘ Sym.pi24) beta gamma)) -
+        μ' * ⟪(x ∘ Sym.pi24) (rD6 q) - (x ∘ Sym.pi24) (rD6 a), wD (x ∘ Sym.pi24) beta gamma⟫) :
+    Gen.EdgePlaneAny x :=
+  edgePlaneAny_of_comp_pi24 x
+    (wd6_edgePlaneAny (Sym.sym24 F) ((Sym.cbarIn_comp_pi24 x).2 hC) hbeta hgamma hroof h6 h8
+      a hD0 hc_ne0 sh hsh α' μ' hBlue0 hOrange0)
+
+theorem holeLeaf_not_wd6_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
+    {beta gamma : ℝ} (hc : WD6CertAt (x ∘ Sym.pi24) (Sym.sym24 F) beta gamma) : False := by
+  rcases hc with ⟨hb, hg, hr, h6, h8, a, hD0, hc_ne0, sh, α', μ', hsh, hB, hO⟩
+  exact Atlas.holeLeaf_not_edgePlaneAny hF
+    (wd6_edgePlaneAny_twin F hF.1 hb hg hr h6 h8 a hD0 hc_ne0 sh hsh α' μ' hB hO)
+
+theorem hole24_not_wd6_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F)
+    {beta gamma : ℝ} (hc : WD6CertAt (x ∘ Sym.pi24) (Sym.sym24 F) beta gamma) : False :=
+  holeLeaf_not_wd6_twin hF.1 hc
+
+/-- Extended two-cone residue adding `¬ WD6CertAt` and its `π_24` twin. -/
+def TwoConeResidue_FS1 (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) : Prop :=
+  TwoConeResidue''' x F ∧
+  (∀ beta gamma : ℝ, ¬ WD6CertAt x F beta gamma) ∧
+  (∀ beta gamma : ℝ, ¬ WD6CertAt (x ∘ Sym.pi24) (Sym.sym24 F) beta gamma)
+
+theorem hole24_twoConeResidue_FS1 {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : Hole24 x F) :
+    TwoConeResidue_FS1 x F :=
+  ⟨hole24_twoConeResidue''' hF,
+    fun _ _ h => hole24_not_wd6 hF h,
+    fun _ _ h => hole24_not_wd6_twin hF h⟩
 
 end Minimality.T24.TwoCone

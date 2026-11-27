@@ -138,7 +138,7 @@ theorem edgePlaneAt_of_hidden {n : ℕ} (x : Fin (n + 1) → ℝ³) (v : Fin (n 
 
 /-- Five vectors `p1, p2, p5, p4, p6` in `w^⊥` with `0 < det3 p_i p_{i+1} w` around the cycle
 `(1, 2, 5, 4, 6, 1)` contain `0` strictly inside one of their triangles `(p_a, p_b, p_c)`. -/
-private theorem triangle_of_five_ccw (p1 p2 p5 p4 p6 w : ℝ³)
+theorem triangle_of_five_ccw (p1 p2 p5 p4 p6 w : ℝ³)
     (h12 : 0 < Split.det3 p1 p2 w)
     (h25 : 0 < Split.det3 p2 p5 w)
     (h54 : 0 < Split.det3 p5 p4 w)
