@@ -2729,6 +2729,22 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_V
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_V
 
+-- OSPEC7 (11-27): the J0 chord with a depth-separated pair (FaceChordDS, J0Tests, J0DSEv, J0FarOff), OpenSpecialX
+#assert_standard_axioms Minimality.FaceChord.injective_of_cyc
+#assert_standard_axioms Minimality.FaceChord.isRupert_faceChord_pair_ds
+#assert_standard_axioms Minimality.FaceChord.isRupert_faceChord_fac_pair_ds
+#assert_standard_axioms Minimality.T24.Q45.J0Chord.of_tests
+#assert_standard_axioms Minimality.T24.Q45.J0DSEv.eventually
+#assert_standard_axioms Minimality.T24.Q45.isRupert_of_j0Tests_ds
+#assert_standard_axioms Minimality.T24.OSpec.q45_resX_local
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWX_sub
+#assert_standard_axioms Minimality.T24.OSpec.q45_resX
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialX_of_openSpecialV
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_X
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_X
+#assert_standard_axioms Minimality.T24.Cell.rupert_of_cellCoverEmpty_X
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_X
+
 -- Type24FootLex: FOOT (level chord in Lex / cell form at the wall feet) and RAY-R (lex cells at edge views) (FOOTLEX, 11-27)
 #assert_standard_axioms Minimality.T24.FootLex.ev_lexPos3
 #assert_standard_axioms Minimality.T24.FootLex.inner_curve
