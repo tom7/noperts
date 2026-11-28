@@ -287,6 +287,7 @@ import Minimality.Type24Wall3Cover
 import Minimality.Type24CellWallGen
 import Minimality.Type24WallsAll
 import Minimality.Type24WallsAll2
+import Minimality.SupportStep
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
@@ -3259,3 +3260,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyAll2_of_cellCoverEmptyAll
 #assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyAll2
 #assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyAll2
+-- SupportStep (GD, 11-27): Theorem M (support differences not monotone round the circle)
+#assert_standard_axioms Minimality.SupportStep.supportStep_identity
+#assert_standard_axioms Minimality.SupportStep.supportStep_mono
+#assert_standard_axioms Minimality.SupportStep.supportStep_strict
+#assert_standard_axioms Minimality.SupportStep.supportStep_eq_zero
+#assert_standard_axioms Minimality.SupportStep.supportD_add_smul
+#assert_standard_axioms Minimality.SupportStep.supportStep_chain
+#assert_standard_axioms Minimality.SupportStep.supportStep_chain_contradiction
+#assert_standard_axioms Minimality.SupportStep.halfTurnExt_ccw
+#assert_standard_axioms Minimality.SupportStep.supportStep_chain_halfTurn
