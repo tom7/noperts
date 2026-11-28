@@ -1,12 +1,12 @@
 module
 
-public import Minimality.Type24T2AH
+public import Minimality.Type24T2Cone
 public import Minimality.Type24FootLex
 
 /-!
 # Corner rule `T2C` for the type-24 cone `T_2` (`cA2`)
 
-`z_q = ⟪x q, ·⟫`.  Lemma Z (`z₀ < z₁`) and Lemma AH (`z₀ < z₅`, `z₀ < z₃`) are the two ends of one rule:
+`z_q = ⟪x q, ·⟫`.  Lemma Z (`z₀ < z₁`) and the former Lemma AH (`z₀ < z₅`, `z₀ < z₃`; pruned, a special case) are the two ends of one rule:
 
 * `cA2_robUni_of_t2c`: every open `cA2` view `uT2 x β γ` with
   `z₀ < z₁  ∨  (z₀ < z₅ ∧ (z₀ ≤ z₆ ∨ z₀ ≤ z₃))` has `RobUni` depths on `cA2 = ![0, 5, 3, 6, 1]` under `OB1 x`
@@ -258,85 +258,5 @@ theorem lexAny_of_t2c {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hO : H24K.
     Gen.LexAny F :=
   FootLex.lexAny_of_rayRLex (rayRLex_of_t2c F hO v hb0 hg0 hr ha hb hc hU hD hlet)
 
-
-/-- **T2C corner region** at the edge ray `x v - x 2`, `v ∈ {0, 1, 3, 5, 6}`: for some push `uT2 x β₀ γ₀`
-the `cA2` facet pattern holds at the ray (strict, or vanishing with the sign of the push) and `T2CAt` holds. -/
-def T2CCorner (x : Fin 7 → ℝ³) (F : S0xFac 9 s0x_S24 x) (v : Fin 7) : Prop :=
-  ∃ beta0 gamma0 : ℝ, 0 < beta0 ∧ 0 < gamma0 ∧
-    (∀ s ∈ U_A2, 0 < ⟪F.N s, x v - x 2⟫ ∨
-      (⟪F.N s, x v - x 2⟫ = 0 ∧ 0 < ⟪F.N s, uT2 x beta0 gamma0⟫)) ∧
-    (∀ s ∈ D_A2, ⟪F.N s, x v - x 2⟫ < 0 ∨
-      (⟪F.N s, x v - x 2⟫ = 0 ∧ ⟪F.N s, uT2 x beta0 gamma0⟫ < 0)) ∧
-    T2CAt x (x v - x 2) (uT2 x beta0 gamma0)
-
-/-- The edge vector `x v - x 2` of a corner `v ∈ {0, 1, 3, 5, 6}` is `a e₀ + b e₂ + c e₆` with `a, c ≥ 0`, `b ≤ 0`
-(for `v = 3, 5` the sign of `b` is the front sign of facet `1 = 016` at the ray). -/
-theorem t2c_coeffs {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {v : Fin 7}
-    (hv : v = 0 ∨ v = 1 ∨ v = 3 ∨ v = 5 ∨ v = 6)
-    (h1 : 0 < ⟪F.N 1, x v - x 2⟫ ∨ ⟪F.N 1, x v - x 2⟫ = 0) :
-    ∃ a b c : ℝ, x v - x 2 = a • (x 0 - x 1) + b • (x 2 - x 1) + c • (x 6 - x 1) ∧ 0 ≤ a ∧ b ≤ 0 ∧ 0 ≤ c := by
-  have T := type24OfFac F
-  rcases hv with rfl | rfl | rfl | rfl | rfl
-  · exact ⟨1, -1, 0, by module, by norm_num, by norm_num, le_rfl⟩
-  · exact ⟨0, -1, 0, by module, le_rfl, by norm_num, le_rfl⟩
-  · have hq := fun w : Fin 7 => (T.rep w)
-    have hX0 := T.X0_pos (v := 3) (by decide)
-    have hX6 := T.X6_pos (v := 3) (by decide)
-    have e := fac_eval F 1 3
-    rw [F.zero 1 0 (by decide), F.zero 1 1 (by decide), F.zero 1 6 (by decide)] at e
-    have hA : ⟪F.N 1, x 3 - x 2⟫ = F.f 1 (x 3) - F.f 1 (x 2) := F.inner_sub 1 3 2
-    have hf2 := F.neg 1 2 (by decide)
-    refine ⟨oblX0 x 3, oblX2 x 3 - 1, oblX6 x 3, ?_, hX0.le, ?_, hX6.le⟩
-    · have h1' : x 3 - x 1 = oblX0 x 3 • (x 0 - x 1) + oblX2 x 3 • (x 2 - x 1) + oblX6 x 3 • (x 6 - x 1) := by
-        conv_lhs => rw [T.rep 3]
-        abel
-      rw [show x 3 - x 2 = (x 3 - x 1) - (x 2 - x 1) by abel, h1']; module
-    · rcases h1 with h | h <;> nlinarith
-  · have hX0 := T.X0_pos (v := 5) (by decide)
-    have hX6 := T.X6_pos (v := 5) (by decide)
-    have e := fac_eval F 1 5
-    rw [F.zero 1 0 (by decide), F.zero 1 1 (by decide), F.zero 1 6 (by decide)] at e
-    have hA : ⟪F.N 1, x 5 - x 2⟫ = F.f 1 (x 5) - F.f 1 (x 2) := F.inner_sub 1 5 2
-    have hf2 := F.neg 1 2 (by decide)
-    refine ⟨oblX0 x 5, oblX2 x 5 - 1, oblX6 x 5, ?_, hX0.le, ?_, hX6.le⟩
-    · have h1' : x 5 - x 1 = oblX0 x 5 • (x 0 - x 1) + oblX2 x 5 • (x 2 - x 1) + oblX6 x 5 • (x 6 - x 1) := by
-        conv_lhs => rw [T.rep 5]
-        abel
-      rw [show x 5 - x 2 = (x 5 - x 1) - (x 2 - x 1) by abel, h1']; module
-    · rcases h1 with h | h <;> nlinarith
-  · exact ⟨0, -1, 1, by module, le_rfl, by norm_num, by norm_num⟩
-
-/-- **T2C at a corner (`RayRLex` form).** -/
-theorem rayRLex_of_t2cCorner {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hO : H24K.SAT.OB1 x) {v : Fin 7}
-    (hv : v = 0 ∨ v = 1 ∨ v = 3 ∨ v = 5 ∨ v = 6) (h : T2CCorner x F v) : FootLex.RayRLex x F 2 v := by
-  obtain ⟨b0, g0, hb0, hg0, hU, hD, hl⟩ := h
-  obtain ⟨a, b, c, hr, ha, hb, hc⟩ := t2c_coeffs F hv (by
-    have := hU 1 (by decide)
-    rcases this with h | ⟨h, -⟩
-    · exact Or.inl h
-    · exact Or.inr h)
-  exact rayRLex_of_t2c F hO v hb0 hg0 hr ha hb hc hU hD hl
-
-theorem lexAny_of_t2cCorner {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hO : H24K.SAT.OB1 x) {v : Fin 7}
-    (hv : v = 0 ∨ v = 1 ∨ v = 3 ∨ v = 5 ∨ v = 6) (h : T2CCorner x F v) : Gen.LexAny F :=
-  FootLex.lexAny_of_rayRLex (rayRLex_of_t2cCorner hO hv h)
-
-/-- **T2C corner (`π_24` mirror).** -/
-theorem lexAny_of_t2cCorner_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x}
-    (hO : H24K.SAT.OB1 (x ∘ Sym.pi24)) {v : Fin 7}
-    (hv : v = 0 ∨ v = 1 ∨ v = 3 ∨ v = 5 ∨ v = 6) (h : T2CCorner (x ∘ Sym.pi24) (Sym.sym24 F) v) :
-    Gen.LexAny F :=
-  Sym.lexAny_sym F (lexAny_of_t2cCorner hO hv h)
-
-/-- **T2C hole fact:** `HoleLeaf x F` excludes a T2C corner (`OB1 x` is part of the hole leaf). -/
-theorem holeLeaf_not_t2cCorner {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    (hO : H24K.SAT.OB1 x) {v : Fin 7} (hv : v = 0 ∨ v = 1 ∨ v = 3 ∨ v = 5 ∨ v = 6) (h : T2CCorner x F v) :
-    False :=
-  hF.2.2.2.1 (lexAny_of_t2cCorner hO hv h)
-
-theorem holeLeaf_not_t2cCorner_twin {x : Fin 7 → ℝ³} {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F)
-    (hO : H24K.SAT.OB1 (x ∘ Sym.pi24)) {v : Fin 7} (hv : v = 0 ∨ v = 1 ∨ v = 3 ∨ v = 5 ∨ v = 6)
-    (h : T2CCorner (x ∘ Sym.pi24) (Sym.sym24 F) v) : False :=
-  hF.2.2.2.1 (lexAny_of_t2cCorner_twin hO hv h)
 
 end Minimality.T24.TwoCone

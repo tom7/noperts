@@ -393,19 +393,9 @@ theorem lexAny_of_t0Edge126B0 {F : S0xFac 9 s0x_S24 x} (h : T0Edge126B0 x F) : G
     · exact h3
     · exact h4
 
-/-- **T0Edge126B0, `π_24` twin.** -/
-theorem lexAny_of_t0Edge126B0_twin {F : S0xFac 9 s0x_S24 x}
-    (h : T0Edge126B0 (x ∘ Sym.pi24) (Sym.sym24 F)) : Gen.LexAny F :=
-  Sym.lexAny_sym F (lexAny_of_t0Edge126B0 h)
-
 /-- **T0Edge126B0 hole fact.** -/
 theorem holeLeaf_not_t0Edge126B0 {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F) : ¬ T0Edge126B0 x F :=
   fun h => hF.2.2.2.1 (lexAny_of_t0Edge126B0 h)
-
-/-- **T0Edge126B0 twin hole fact.** -/
-theorem holeLeaf_not_t0Edge126B0_twin {F : S0xFac 9 s0x_S24 x} (hF : HoleLeaf x F) :
-    ¬ T0Edge126B0 (x ∘ Sym.pi24) (Sym.sym24 F) :=
-  fun h => hF.2.2.2.1 (lexAny_of_t0Edge126B0_twin h)
 
 /-! ## `T2Edge012B2`: monotone corners on the `012` edge of `T_2` (cell `B2`) -/
 
