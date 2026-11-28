@@ -279,6 +279,7 @@ import Minimality.Type24T2Peak0
 import Minimality.Type24GapLemmas
 import Minimality.Type24GapLemmas2
 import Minimality.Type24A236S2
+import Minimality.Type24A236Cover
 import Minimality.Type24Cells28
 import Minimality.Type24OffOB1DW
 
@@ -3068,6 +3069,19 @@ elab "#assert_standard_axioms " id:ident : command => do
 -- Type24A236S2 (S2 of the A2.236 wall, 11-27)
 #assert_standard_axioms Minimality.T24.Cell.rim5_pluecker
 #assert_standard_axioms Minimality.T24.Cell.a236_S2
+#assert_standard_axioms Minimality.T24.Cell.cellA2_rimSign
+-- Type24A236Cover (A236LEAN, 11-27): L1 / L2 on the A2.236 wall, a236_cert_or_E (LexAny / SplitAny or the letters E)
+#assert_standard_axioms Minimality.T24.Cell.cA2_view_uT2
+#assert_standard_axioms Minimality.T24.Cell.cA2_robUni_of_cell
+#assert_standard_axioms Minimality.T24.Cell.cA2_apexCert_of_QD0
+#assert_standard_axioms Minimality.T24.Cell.cA2_cert_of_QD0
+#assert_standard_axioms Minimality.T24.Cell.a236_cert_of_cell
+#assert_standard_axioms Minimality.T24.Cell.a236_cert_of_wall
+#assert_standard_axioms Minimality.T24.Cell.a236_lexAny_of_wallRob
+#assert_standard_axioms Minimality.T24.Cell.segLet_iff
+#assert_standard_axioms Minimality.T24.Cell.a236_cert_or_E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_a236E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_a236E_twin
 -- OSPEC18: the T234 view with every facet pattern (13 rims); 016 / 046 derived on the tie-section cone; OpenSpecialN
 #assert_standard_axioms Minimality.T24.OSpec.rimTDN_cyc
 #assert_standard_axioms Minimality.T24.OSpec.rimTJ_cyc
