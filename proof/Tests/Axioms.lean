@@ -280,6 +280,7 @@ import Minimality.Type24GapLemmas
 import Minimality.Type24GapLemmas2
 import Minimality.Type24A236S2
 import Minimality.Type24Cells28
+import Minimality.Type24OffOB1DW
 
 /-!
 # The headline theorems use only the standard axioms
@@ -3097,3 +3098,20 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.dw_t_lt_one
 #assert_standard_axioms Minimality.T24.OSpec.dw_s_lt_one
 #assert_standard_axioms Minimality.T24.OSpec.dwK0Cut_iff
+-- OSPEC20: horizontal views on the double wall (rims 2 5 0 4 6 / 1 2 5 3 4 6 at m = α e4 + β e5); OpenSpecialO
+#assert_standard_axioms Minimality.T24.OSpec.dw_n7
+#assert_standard_axioms Minimality.T24.OSpec.dw_vB
+#assert_standard_axioms Minimality.T24.OSpec.dw_lamB
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_five_dwA
+#assert_standard_axioms Minimality.T24.OSpec.rimHA_cyc
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_horizA
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_horizB
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_dwHoriz
+#assert_standard_axioms Minimality.T24.OSpec.q45_resO_local
+#assert_standard_axioms Minimality.T24.OSpec.not_dwHorizOK_of_resO
+#assert_standard_axioms Minimality.T24.OSpec.q45_resO
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialO_of_openSpecialN
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_O
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_O
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_O
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_O
