@@ -285,6 +285,7 @@ import Minimality.Type24CellsE
 import Minimality.Type24P126Cover
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
+import Minimality.Type24OffOB1DW3
 
 /-!
 # The headline theorems use only the standard axioms
@@ -3153,6 +3154,18 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_P
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_P
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_P
+-- OSPEC22: the double wall reduces to DwSpec (Bs / mirror Bs off it, codim-1 special position on it); OpenSpecialQ
+#assert_standard_axioms Minimality.T24.OSpec.dw3_comb
+#assert_standard_axioms Minimality.T24.OSpec.dw3_delta_pos
+#assert_standard_axioms Minimality.T24.OSpec.dw3_bsCond
+#assert_standard_axioms Minimality.T24.OSpec.dw3_bsCondSym
+#assert_standard_axioms Minimality.T24.OSpec.dw3_split
+#assert_standard_axioms Minimality.T24.OSpec.dw3_spec_codim
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWQ_of_P
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialQ_iff_P
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_Q
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_Q
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_Q
 -- Type24CellsE (CELLE, 11-27): CellCoverEmptyE (only A236E points on both sides)
 #assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyE_of_cellCoverEmpty
 #assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyE
