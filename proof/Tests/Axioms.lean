@@ -294,6 +294,7 @@ import Minimality.Type24OffOB1DW3
 import Minimality.Type24OffOB1DW4
 import Minimality.Type24OffOB1S1
 import Minimality.Type24OffOB1K0
+import Minimality.Type24OffOB1B2C
 
 /-!
 # The headline theorems use only the standard axioms
@@ -3294,3 +3295,20 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_R2U
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_R2U
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_R2U
+-- OSPEC28 (11-27): the B2 valley corners off the tie-section cone (025 up, 012 up for t234C < 0, 046 via the edge 4 6);
+-- OpenSpecialR2B (= R2U), OpenSpecialR4 (= R3)
+#assert_standard_axioms Minimality.T24.OSpec.b2c_span_id
+#assert_standard_axioms Minimality.T24.OSpec.b2c_up2
+#assert_standard_axioms Minimality.T24.OSpec.b2c_up0_of_neg
+#assert_standard_axioms Minimality.T24.OSpec.b2c_dn4_prod
+#assert_standard_axioms Minimality.T24.OSpec.b2c_dn4_of
+#assert_standard_axioms Minimality.T24.OSpec.b2c_qd_pos
+#assert_standard_axioms Minimality.T24.OSpec.b2c_letters
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialR2B_iff_R2U
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialR4_iff_R3
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_R4
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_R2B
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_R2B
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_R4
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_R4
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_R4
