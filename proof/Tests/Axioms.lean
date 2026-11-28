@@ -281,6 +281,7 @@ import Minimality.Type24GapLemmas2
 import Minimality.Type24A236S2
 import Minimality.Type24A236Cover
 import Minimality.Type24Cells28
+import Minimality.Type24CellsE
 import Minimality.Type24OffOB1DW
 
 /-!
@@ -3129,3 +3130,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_O
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_O
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_O
+-- Type24CellsE (CELLE, 11-27): CellCoverEmptyE (only A236E points on both sides)
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyE_of_cellCoverEmpty
+#assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyE
+#assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyE
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE_O
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE28_O
