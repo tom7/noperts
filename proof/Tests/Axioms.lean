@@ -293,6 +293,7 @@ import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
 import Minimality.Type24OffOB1DW4
 import Minimality.Type24OffOB1S1
+import Minimality.Type24OffOB1K0
 
 /-!
 # The headline theorems use only the standard axioms
@@ -3269,6 +3270,20 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.openSpecialQ_of_QU
 #assert_standard_axioms Minimality.T24.OSpec.openSpecialO_of_QU
 #assert_standard_axioms Minimality.T24.OSpec.openSpecialR2U_iff_R2
+#assert_standard_axioms Minimality.T24.OSpec.lex_conv
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_five_k0R
+#assert_standard_axioms Minimality.T24.OSpec.k0Aff_of
+#assert_standard_axioms Minimality.T24.OSpec.k0Aff_sym
+#assert_standard_axioms Minimality.T24.OSpec.k0RU_of_aff
+#assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_of_acute
+#assert_standard_axioms Minimality.T24.OSpec.k0ViewOK_sym_of_acute
+#assert_standard_axioms Minimality.T24.OSpec.k0Res_of
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWR3_of_R2U
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialR3_iff_R2U
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_R3
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_R3
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_R3
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_R3
 #assert_standard_axioms Minimality.T24.OSpec.openSpecialQU_of_R2U
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_QU
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_QU
