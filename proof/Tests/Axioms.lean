@@ -283,6 +283,7 @@ import Minimality.Type24A236Cover
 import Minimality.Type24Cells28
 import Minimality.Type24CellsE
 import Minimality.Type24P126Cover
+import Minimality.Type24Wall3Cover
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
@@ -3185,3 +3186,25 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyEP
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP_O
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP28_O
+-- Type24Wall3Cover (WALL3, 11-27): walls C'.236, 0536.046, C.016 carry a certificate or their letter condition; CellCoverEmptyE4
+#assert_standard_axioms Minimality.T24.Cell.comb_pos
+#assert_standard_axioms Minimality.T24.Cell.comb_neg
+#assert_standard_axioms Minimality.T24.Cell.rho_of_perp
+#assert_standard_axioms Minimality.T24.Cell.rho_of_perp_neg
+#assert_standard_axioms Minimality.T24.Cell.cellCp_rho
+#assert_standard_axioms Minimality.T24.Cell.cellC_rho
+#assert_standard_axioms Minimality.T24.Cell.cell0536_rho
+#assert_standard_axioms Minimality.T24.Cell.cp236_cert_or_E
+#assert_standard_axioms Minimality.T24.Cell.c0536_cert_or_E
+#assert_standard_axioms Minimality.T24.Cell.c016_cert_or_E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_cp236E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_c0536E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_c016E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_cp236E_twin
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_c0536E_twin
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_c016E_twin
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyE4_of_EP
+#assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyE4
+#assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyE4
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_O
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_O
