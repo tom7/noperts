@@ -287,6 +287,7 @@ import Minimality.Type24Wall5Cover
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
+import Minimality.Type24OffOB1S1
 
 /-!
 # The headline theorems use only the standard axioms
@@ -3116,6 +3117,23 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE28_QT
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP28_QT
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_QT
+-- OSPEC25: the Bs rim on s = 1 / t = 1 from one sign; OpenSpecialR2 (= OpenSpecialQT)
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_five_bs1
+#assert_standard_axioms Minimality.T24.OSpec.bsCondSym_of_s1
+#assert_standard_axioms Minimality.T24.OSpec.bs1_h20
+#assert_standard_axioms Minimality.T24.OSpec.bsCond_of_t1
+#assert_standard_axioms Minimality.T24.OSpec.bs1_h60
+#assert_standard_axioms Minimality.T24.OSpec.bs1Res_of
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWR2_of_QT
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialR2_iff_QT
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialQ_of_R2
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialO_of_R2
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_R2
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_R2
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_R2
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE28_R2
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP28_R2
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_R2
 -- Type24CellsE (CELLE, 11-27): CellCoverEmptyE (only A236E points on both sides)
 #assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyE_of_cellCoverEmpty
 #assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyE
