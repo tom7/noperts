@@ -284,6 +284,7 @@ import Minimality.Type24Cells28
 import Minimality.Type24CellsE
 import Minimality.Type24P126Cover
 import Minimality.Type24Wall3Cover
+import Minimality.Type24CellWallGen
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
@@ -3232,3 +3233,13 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyE4
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_O
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_O
+-- Type24CellWallGen (GA, 11-27): generic cellWallOf constructor and four re-derived wall certificates
+#assert_standard_axioms Minimality.T24.Cell.wallE_congr
+#assert_standard_axioms Minimality.T24.Cell.wallE_p126Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.wallE_cp236Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.wallE_c0536Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.wallE_c016Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.p126_cert_or_E'
+#assert_standard_axioms Minimality.T24.Cell.cp236_cert_or_E'
+#assert_standard_axioms Minimality.T24.Cell.c0536_cert_or_E'
+#assert_standard_axioms Minimality.T24.Cell.c016_cert_or_E'
