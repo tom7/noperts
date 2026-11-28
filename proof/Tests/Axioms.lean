@@ -282,6 +282,7 @@ import Minimality.Type24A236S2
 import Minimality.Type24A236Cover
 import Minimality.Type24Cells28
 import Minimality.Type24CellsE
+import Minimality.Type24P126Cover
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 
@@ -3158,3 +3159,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyE
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE_O
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE28_O
+-- Type24P126Cover (P126, 11-27): the 126 wall of P carries a certificate or P126E; CellCoverEmptyEP (A236E and P126E)
+#assert_standard_axioms Minimality.T24.Cell.robUni_of_rForm
+#assert_standard_axioms Minimality.T24.Cell.apexCert_of_letters
+#assert_standard_axioms Minimality.T24.Cell.wall_cert_or_E
+#assert_standard_axioms Minimality.T24.Cell.cellP_rho
+#assert_standard_axioms Minimality.T24.Cell.p126_cert_or_E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_p126E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_p126E_twin
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyEP_of_cellCoverEmptyE
+#assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyEP
+#assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyEP
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP_O
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP28_O
