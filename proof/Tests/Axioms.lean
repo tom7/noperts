@@ -288,6 +288,7 @@ import Minimality.Type24CellWallGen
 import Minimality.Type24WallsAll
 import Minimality.Type24WallsAll2
 import Minimality.SupportStep
+import Minimality.Type24WallsTwin
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
@@ -3279,3 +3280,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_R2U
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_R2U
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_R2U
+-- Type24WallsTwin (GE, 11-27): pi24 image of Cell24/CellWall and one-sided 1023-wall CellCoverEmptyAll2S
+#assert_standard_axioms Minimality.T24.Cell.cellAt_sym24
+#assert_standard_axioms Minimality.T24.Cell.cellCert_sym_rob_iff
+#assert_standard_axioms Minimality.T24.Cell.cellCert_sym_apex_iff
+#assert_standard_axioms Minimality.T24.Cell.wallE_unsymCellWall
+#assert_standard_axioms Minimality.T24.Cell.wallE_selfDual_iff
+#assert_standard_axioms Minimality.T24.Cell.allWallE2S_iff
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_allWallE2S
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyAll2S_iff_cellCoverEmptyAll2
+#assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyAll2S
+#assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyAll2S
