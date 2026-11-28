@@ -286,6 +286,7 @@ import Minimality.Type24P126Cover
 import Minimality.Type24Wall3Cover
 import Minimality.Type24CellWallGen
 import Minimality.Type24WallsAll
+import Minimality.Type24WallsAll2
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
@@ -3252,3 +3253,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyAll_of_cellCoverEmpty
 #assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyAll
 #assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyAll
+-- Type24WallsAll2 (GC, 11-27): complete wall list across cells28 (140 + 454 = 594 walls)
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_allWallE2
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_allWallE2_twin
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyAll2_of_cellCoverEmptyAll
+#assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyAll2
+#assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyAll2
