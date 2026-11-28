@@ -284,9 +284,14 @@ import Minimality.Type24CellsE
 import Minimality.Type24P126Cover
 import Minimality.Type24Wall3Cover
 import Minimality.Type24Wall5Cover
+import Minimality.Type24CellWallGen
+import Minimality.Type24WallsAll
+import Minimality.Type24WallsAll2
+import Minimality.SupportStep
 import Minimality.Type24OffOB1DW
 import Minimality.Type24OffOB1DW2
 import Minimality.Type24OffOB1DW3
+import Minimality.Type24OffOB1DW4
 import Minimality.Type24OffOB1S1
 
 /-!
@@ -3208,3 +3213,69 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyE10
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_Q
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_Q
+-- Type24CellWallGen (GA, 11-27): generic cellWallOf constructor and four re-derived wall certificates
+#assert_standard_axioms Minimality.T24.Cell.wallE_congr
+#assert_standard_axioms Minimality.T24.Cell.wallE_p126Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.wallE_cp236Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.wallE_c0536Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.wallE_c016Wall'_iff
+#assert_standard_axioms Minimality.T24.Cell.p126_cert_or_E'
+#assert_standard_axioms Minimality.T24.Cell.cp236_cert_or_E'
+#assert_standard_axioms Minimality.T24.Cell.c0536_cert_or_E'
+#assert_standard_axioms Minimality.T24.Cell.c016_cert_or_E'
+-- Type24WallsAll (GB, 11-27): all 140 feasible shared-vertex walls across cells28
+#assert_standard_axioms Minimality.T24.Cell.cellRhoOf
+#assert_standard_axioms Minimality.T24.Cell.cellWall_cert_or_E
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_allWallE
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_allWallE_twin
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyAll_of_cellCoverEmpty
+#assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyAll
+#assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyAll
+-- Type24WallsAll2 (GC, 11-27): complete wall list across cells28 (140 + 454 = 594 walls)
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_allWallE2
+#assert_standard_axioms Minimality.T24.Cell.holeLeaf_allWallE2_twin
+#assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyAll2_of_cellCoverEmptyAll
+#assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyAll2
+#assert_standard_axioms Minimality.T24.Cell.openOB1_of_cellCoverEmptyAll2
+-- SupportStep (GD, 11-27): Theorem M (support differences not monotone round the circle)
+#assert_standard_axioms Minimality.SupportStep.supportStep_identity
+#assert_standard_axioms Minimality.SupportStep.supportStep_mono
+#assert_standard_axioms Minimality.SupportStep.supportStep_strict
+#assert_standard_axioms Minimality.SupportStep.supportStep_eq_zero
+#assert_standard_axioms Minimality.SupportStep.supportD_add_smul
+#assert_standard_axioms Minimality.SupportStep.supportStep_chain
+#assert_standard_axioms Minimality.SupportStep.supportStep_chain_contradiction
+#assert_standard_axioms Minimality.SupportStep.halfTurnExt_ccw
+#assert_standard_axioms Minimality.SupportStep.supportStep_chain_halfTurn
+
+-- OSPEC24: the double-wall slice tau = 0 (views A / B / B', classes C0652 / C0246 near g6 / g2); OpenSpecialQU
+#assert_standard_axioms Minimality.T24.OSpec.dw5_top
+#assert_standard_axioms Minimality.T24.OSpec.dw5_f3
+#assert_standard_axioms Minimality.T24.OSpec.dw5_comb_pos
+#assert_standard_axioms Minimality.T24.OSpec.dw5_g0_top
+#assert_standard_axioms Minimality.T24.OSpec.dw5_n7_top
+#assert_standard_axioms Minimality.T24.OSpec.dw5_viewA
+#assert_standard_axioms Minimality.T24.OSpec.dw5_c3
+#assert_standard_axioms Minimality.T24.OSpec.dw5_b3
+#assert_standard_axioms Minimality.T24.OSpec.dwW_n
+#assert_standard_axioms Minimality.T24.OSpec.dw5_viewB
+#assert_standard_axioms Minimality.T24.OSpec.dw5_viewB_sym
+#assert_standard_axioms Minimality.T24.OSpec.dw5_c0652
+#assert_standard_axioms Minimality.T24.OSpec.dw5_c0246
+#assert_standard_axioms Minimality.T24.OSpec.dw5_tau0
+#assert_standard_axioms Minimality.T24.OSpec.q45ResWQU_of_QT
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialQU_iff_QT
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_QU
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialQ_of_QU
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialO_of_QU
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialR2U_iff_R2
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialQU_of_R2U
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_QU
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_QU
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE28_QU
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP28_QU
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_QU
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_QU
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_R2U
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_R2U
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE10_28_R2U
