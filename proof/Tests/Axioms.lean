@@ -283,6 +283,7 @@ import Minimality.Type24A236Cover
 import Minimality.Type24Cells28
 import Minimality.Type24CellsE
 import Minimality.Type24OffOB1DW
+import Minimality.Type24OffOB1DW2
 
 /-!
 # The headline theorems use only the standard axioms
@@ -3130,6 +3131,27 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_O
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_O
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_O
+-- OSPEC21: the classes 02|46, 06|52 (rims 2 0 4 6 / 6 0 5 2), 01|52, 01|46 (rims 2 5 3 4 0 1 / 6 4 3 5 0 1); OpenSpecialP
+#assert_standard_axioms Minimality.T24.OSpec.dw2_below_of_comb
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_four_dw
+#assert_standard_axioms Minimality.T24.OSpec.rimC0152_cyc
+#assert_standard_axioms Minimality.T24.OSpec.rimC0146_cyc
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_c0246
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_c0652
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_c0152
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_c0146
+#assert_standard_axioms Minimality.T24.OSpec.dwC0652_of_e4
+#assert_standard_axioms Minimality.T24.OSpec.dwC0246_of_e5
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_dwCls
+#assert_standard_axioms Minimality.T24.OSpec.q45_resP_local
+#assert_standard_axioms Minimality.T24.OSpec.not_dwHoriz_of_resP
+#assert_standard_axioms Minimality.T24.OSpec.dw_letters_of_resP
+#assert_standard_axioms Minimality.T24.OSpec.q45_resP
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialP_of_openSpecialO
+#assert_standard_axioms Minimality.T24.OSpec.hole24_offOB1_P
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_P
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_P
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_P
 -- Type24CellsE (CELLE, 11-27): CellCoverEmptyE (only A236E points on both sides)
 #assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyE_of_cellCoverEmpty
 #assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyE
