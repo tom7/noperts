@@ -3092,3 +3092,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_N
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_N
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_N
+-- OSPEC19: on the double wall s, t < 1 from the frame signs (DwK0Cut = DwK0C there)
+#assert_standard_axioms Minimality.T24.OSpec.obl3_a
+#assert_standard_axioms Minimality.T24.OSpec.dw_t_lt_one
+#assert_standard_axioms Minimality.T24.OSpec.dw_s_lt_one
+#assert_standard_axioms Minimality.T24.OSpec.dwK0Cut_iff

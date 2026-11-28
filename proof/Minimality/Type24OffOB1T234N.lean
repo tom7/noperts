@@ -605,4 +605,63 @@ theorem open24Rupert_of_split_N (h1 : OpenOB1) (h2 : OpenSpecialN) : Open24Ruper
 
 end T234N
 
+/-! ### The double wall: `s, t < 1` from the frame signs (job OSPEC19)
+
+On the double wall `a4 = a5 = 1` the face `0345` lies in the plane `a = 1` parallel to `126` (`a = 0`), so the
+oblique coordinates of `x 3 = x 0 + s e4 + t e5` are `a3 = 1`, `b3 = s b4 + t b5`, `c3 = s c4 + t c5`.  The frame
+signs of `OpenSpecialN` then give `(1 - t) b5 > s b4 > 0` (`b2`) and `(1 - s) c4 > t c5 > 0` (`b1`): both `s` and `t`
+are `< 1`, so the `t ≤ 1` / `s ≤ 1` clauses of `DwK0Cut` (and the rim choice of `BsRU`) are automatic there. -/
+
+section DwST
+
+variable {x : Fin 7 → ℝ³}
+
+/-- `a3 = 1 - s - t + s a4 + t a5` (the facet `126` through the frame vertices, `bs_f5_obl`). -/
+theorem obl3_a (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) :
+    oblX0 x 3 = 1 - s - t + s * oblX0 x 4 + t * oblX0 x 5 := by
+  have h := congrArg (fun w => ⟪F.N 5, w⟫) hd
+  simp only [inner_add_right, real_inner_smul_right] at h
+  rw [F.inner_sub 5 3 0, F.inner_sub 5 4 0, F.inner_sub 5 5 0, bs_f5_obl F 3, bs_f5_obl F 4,
+    bs_f5_obl F 5] at h
+  have h0 : F.f 5 (x 0) < 0 := F.neg 5 0 (by decide)
+  have hid : F.f 5 (x 0) * (oblX0 x 3 - (1 - s - t + s * oblX0 x 4 + t * oblX0 x 5)) = 0 := by
+    linear_combination h
+  linarith [(mul_eq_zero.mp hid).resolve_left h0.ne]
+
+/-- **On the double wall `t < 1`** (frame sign `b2`: `0 < a3 b5 - a5 b3`). -/
+theorem dw_t_lt_one (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s)
+    (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hw4 : oblX0 x 4 = 1) (hw5 : oblX0 x 5 = 1)
+    (b2 : 0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3) : t < 1 := by
+  have T := M4.type24OfFac F
+  have hb4 : 0 < oblX2 x 4 := T.X2_pos (v := 4) (by decide)
+  have hb5 : 0 < oblX2 x 5 := T.X2_pos (v := 5) (by decide)
+  have ha3 : oblX0 x 3 = 1 := by rw [obl3_a F hd, hw4, hw5]; ring
+  obtain ⟨hb3, -⟩ := t234_obl3_bc F hd
+  rw [ha3, hw5, hb3] at b2
+  by_contra hc
+  push Not at hc
+  nlinarith [mul_pos hs0 hb4]
+
+/-- **On the double wall `s < 1`** (frame sign `b1`: `a4 c3 - a3 c4 < 0`). -/
+theorem dw_s_lt_one (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (ht0 : 0 < t)
+    (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hw4 : oblX0 x 4 = 1) (hw5 : oblX0 x 5 = 1)
+    (b1 : oblX0 x 4 * oblX6 x 3 - oblX0 x 3 * oblX6 x 4 < 0) : s < 1 := by
+  have T := M4.type24OfFac F
+  have hc4 : 0 < oblX6 x 4 := T.X6_pos (v := 4) (by decide)
+  have hc5 : 0 < oblX6 x 5 := T.X6_pos (v := 5) (by decide)
+  have ha3 : oblX0 x 3 = 1 := by rw [obl3_a F hd, hw4, hw5]; ring
+  obtain ⟨-, hc3⟩ := t234_obl3_bc F hd
+  rw [ha3, hw4, hc3] at b1
+  by_contra hc
+  push Not at hc
+  nlinarith [mul_pos ht0 hc5]
+
+/-- On the double wall (with the frame signs) the double-wall K0 cut is exactly its junction clauses. -/
+theorem dwK0Cut_iff (F : S0xFac 9 s0x_S24 x) {s t : ℝ} (hs0 : 0 < s)
+    (hd : x 3 - x 0 = s • (x 4 - x 0) + t • (x 5 - x 0)) (hw4 : oblX0 x 4 = 1) (hw5 : oblX0 x 5 = 1)
+    (b2 : 0 < oblX0 x 3 * oblX2 x 5 - oblX0 x 5 * oblX2 x 3) : DwK0Cut F t ↔ DwK0C F :=
+  ⟨fun h => h.2.2.2, fun h => ⟨hw4, hw5, (dw_t_lt_one F hs0 hd hw4 hw5 b2).le, h⟩⟩
+
+end DwST
+
 end Minimality.T24.OSpec
