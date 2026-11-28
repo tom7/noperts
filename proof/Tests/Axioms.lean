@@ -3167,6 +3167,30 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_Q
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_Q
 #assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_Q
+-- OSPEC23: e26 view / mirror on DwSpec without DwHorizOK for tau != 0; OpenSpecialQT (double wall: tau = 0 only)
+#assert_standard_axioms Minimality.T24.OSpec.dwMs_d
+#assert_standard_axioms Minimality.T24.OSpec.dw4_ms_top
+#assert_standard_axioms Minimality.T24.OSpec.dw4_d_not_both
+#assert_standard_axioms Minimality.T24.OSpec.dw4_kappa_pos
+#assert_standard_axioms Minimality.T24.OSpec.dw4_three_ext
+#assert_standard_axioms Minimality.T24.OSpec.dw4_x3_pos
+#assert_standard_axioms Minimality.T24.OSpec.dw4_up7
+#assert_standard_axioms Minimality.T24.OSpec.dw4_angles
+#assert_standard_axioms Minimality.T24.OSpec.robUniLex_five_dw4
+#assert_standard_axioms Minimality.T24.OSpec.dw4_e26
+#assert_standard_axioms Minimality.T24.OSpec.dwSpec_sym
+#assert_standard_axioms Minimality.T24.OSpec.not_dwHoriz_sym
+#assert_standard_axioms Minimality.T24.OSpec.dw4_e26_sym
+#assert_standard_axioms Minimality.T24.OSpec.lexAny_of_dwSpec
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialQT_iff_Q
+#assert_standard_axioms Minimality.T24.OSpec.open24Rupert_of_split_QT
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialO_of_P
+#assert_standard_axioms Minimality.T24.OSpec.openSpecialO_of_QT
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty_QT
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmpty28_QT
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE28_QT
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyEP28_QT
+#assert_standard_axioms Minimality.T24.Cell.open24Rupert_of_cellCoverEmptyE4_28_QT
 -- Type24CellsE (CELLE, 11-27): CellCoverEmptyE (only A236E points on both sides)
 #assert_standard_axioms Minimality.T24.Cell.cellCoverEmptyE_of_cellCoverEmpty
 #assert_standard_axioms Minimality.T24.Cell.not_holeLeaf_of_cellCoverEmptyE
